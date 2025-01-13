@@ -1,0 +1,2 @@
+E:
+cd git/project_z/develop
