@@ -2,6 +2,16 @@
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
+# Allow the essential Unity directories to be tracked
+!/[Aa]ssets/
+!/[Pp]rojectSettings/
+!/[Pp]ackages/
+
+# Unity generated folders that should be ignored
+/[Pp]ackages/cache/
+/[Pp]ackages/manifest.json
+/[Pp]ackages/package-lock.json
+/[Dd]evelop/
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -25,6 +35,7 @@
 
 # Visual Studio cache directory
 .vs/
+.vsconfig
 
 # Gradle cache directory
 .gradle/
