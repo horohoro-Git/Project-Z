@@ -7,3 +7,6 @@ develop123
 planning game system
 Camera Setting
 New InputSystem Setting
+
+01/15
+Camera, Player R&D

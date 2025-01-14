@@ -12,17 +12,7 @@ public class GameManager : MonoBehaviour
     {
         PC pc = Instantiate(player); //플레이어 생성
         pc.transform.position = startPosition; 
-        Instantiate(inputManager);  //입력 시스템 생성
-
-    }
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        InputManager inputMGR = Instantiate(inputManager);  //입력 시스템 생성
+        inputMGR.Setup(pc);
     }
 }

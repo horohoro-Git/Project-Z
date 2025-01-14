@@ -24,7 +24,7 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     ""name"": ""NewInput"",
     ""maps"": [
         {
-            ""name"": ""Move"",
+            ""name"": ""OnMove"",
             ""id"": ""d16730bd-0746-4758-938c-64a478cb87a9"",
             ""actions"": [
                 {
@@ -120,14 +120,14 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         }
     ]
 }");
-        // Move
-        m_Move = asset.FindActionMap("Move", throwIfNotFound: true);
-        m_Move_WASD = m_Move.FindAction("WASD", throwIfNotFound: true);
+        // OnMove
+        m_OnMove = asset.FindActionMap("OnMove", throwIfNotFound: true);
+        m_OnMove_WASD = m_OnMove.FindAction("WASD", throwIfNotFound: true);
     }
 
     ~@NewInput()
     {
-        UnityEngine.Debug.Assert(!m_Move.enabled, "This will cause a leak and performance issues, NewInput.Move.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnMove.enabled, "This will cause a leak and performance issues, NewInput.OnMove.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -186,51 +186,51 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         return asset.FindBinding(bindingMask, out action);
     }
 
-    // Move
-    private readonly InputActionMap m_Move;
-    private List<IMoveActions> m_MoveActionsCallbackInterfaces = new List<IMoveActions>();
-    private readonly InputAction m_Move_WASD;
-    public struct MoveActions
+    // OnMove
+    private readonly InputActionMap m_OnMove;
+    private List<IOnMoveActions> m_OnMoveActionsCallbackInterfaces = new List<IOnMoveActions>();
+    private readonly InputAction m_OnMove_WASD;
+    public struct OnMoveActions
     {
         private @NewInput m_Wrapper;
-        public MoveActions(@NewInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @WASD => m_Wrapper.m_Move_WASD;
-        public InputActionMap Get() { return m_Wrapper.m_Move; }
+        public OnMoveActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @WASD => m_Wrapper.m_OnMove_WASD;
+        public InputActionMap Get() { return m_Wrapper.m_OnMove; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(MoveActions set) { return set.Get(); }
-        public void AddCallbacks(IMoveActions instance)
+        public static implicit operator InputActionMap(OnMoveActions set) { return set.Get(); }
+        public void AddCallbacks(IOnMoveActions instance)
         {
-            if (instance == null || m_Wrapper.m_MoveActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_MoveActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_OnMoveActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnMoveActionsCallbackInterfaces.Add(instance);
             @WASD.started += instance.OnWASD;
             @WASD.performed += instance.OnWASD;
             @WASD.canceled += instance.OnWASD;
         }
 
-        private void UnregisterCallbacks(IMoveActions instance)
+        private void UnregisterCallbacks(IOnMoveActions instance)
         {
             @WASD.started -= instance.OnWASD;
             @WASD.performed -= instance.OnWASD;
             @WASD.canceled -= instance.OnWASD;
         }
 
-        public void RemoveCallbacks(IMoveActions instance)
+        public void RemoveCallbacks(IOnMoveActions instance)
         {
-            if (m_Wrapper.m_MoveActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_OnMoveActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
-        public void SetCallbacks(IMoveActions instance)
+        public void SetCallbacks(IOnMoveActions instance)
         {
-            foreach (var item in m_Wrapper.m_MoveActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_OnMoveActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_MoveActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_OnMoveActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
-    public MoveActions @Move => new MoveActions(this);
+    public OnMoveActions @OnMove => new OnMoveActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -249,7 +249,7 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
             return asset.controlSchemes[m_touchSchemeIndex];
         }
     }
-    public interface IMoveActions
+    public interface IOnMoveActions
     {
         void OnWASD(InputAction.CallbackContext context);
     }

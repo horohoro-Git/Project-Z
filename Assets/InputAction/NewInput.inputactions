@@ -2,7 +2,7 @@
     "name": "NewInput",
     "maps": [
         {
-            "name": "Move",
+            "name": "OnMove",
             "id": "d16730bd-0746-4758-938c-64a478cb87a9",
             "actions": [
                 {
