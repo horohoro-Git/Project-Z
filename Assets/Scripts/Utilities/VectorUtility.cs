@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class VectorUtility
 {
-    public static Vector3 RotateY45(Vector3 rotatingVector, float rotateValue)
+    public static Vector3 RotateY(Vector3 rotatingVector, float rotateValue)
     {
         Vector3 rotatedVector = Quaternion.Euler(new Vector3(0, rotateValue, 0)) * rotatingVector;
         return rotatedVector;

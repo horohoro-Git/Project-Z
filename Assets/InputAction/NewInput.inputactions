@@ -72,6 +72,34 @@
                     "isPartOfComposite": true
                 }
             ]
+        },
+        {
+            "name": "OnSprint",
+            "id": "001d3432-2816-4fd8-9e51-5f0181c2deff",
+            "actions": [
+                {
+                    "name": "Run",
+                    "type": "Button",
+                    "id": "c974f057-af7b-4687-88fe-2338e09a2bd1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "3f8293af-7113-4de6-a310-ace8529c6e69",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Run",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

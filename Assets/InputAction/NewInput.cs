@@ -94,6 +94,34 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""OnSprint"",
+            ""id"": ""001d3432-2816-4fd8-9e51-5f0181c2deff"",
+            ""actions"": [
+                {
+                    ""name"": ""Run"",
+                    ""type"": ""Button"",
+                    ""id"": ""c974f057-af7b-4687-88fe-2338e09a2bd1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""3f8293af-7113-4de6-a310-ace8529c6e69"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Run"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -123,11 +151,15 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         // OnMove
         m_OnMove = asset.FindActionMap("OnMove", throwIfNotFound: true);
         m_OnMove_WASD = m_OnMove.FindAction("WASD", throwIfNotFound: true);
+        // OnSprint
+        m_OnSprint = asset.FindActionMap("OnSprint", throwIfNotFound: true);
+        m_OnSprint_Run = m_OnSprint.FindAction("Run", throwIfNotFound: true);
     }
 
     ~@NewInput()
     {
         UnityEngine.Debug.Assert(!m_OnMove.enabled, "This will cause a leak and performance issues, NewInput.OnMove.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnSprint.enabled, "This will cause a leak and performance issues, NewInput.OnSprint.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -231,6 +263,52 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         }
     }
     public OnMoveActions @OnMove => new OnMoveActions(this);
+
+    // OnSprint
+    private readonly InputActionMap m_OnSprint;
+    private List<IOnSprintActions> m_OnSprintActionsCallbackInterfaces = new List<IOnSprintActions>();
+    private readonly InputAction m_OnSprint_Run;
+    public struct OnSprintActions
+    {
+        private @NewInput m_Wrapper;
+        public OnSprintActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Run => m_Wrapper.m_OnSprint_Run;
+        public InputActionMap Get() { return m_Wrapper.m_OnSprint; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(OnSprintActions set) { return set.Get(); }
+        public void AddCallbacks(IOnSprintActions instance)
+        {
+            if (instance == null || m_Wrapper.m_OnSprintActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnSprintActionsCallbackInterfaces.Add(instance);
+            @Run.started += instance.OnRun;
+            @Run.performed += instance.OnRun;
+            @Run.canceled += instance.OnRun;
+        }
+
+        private void UnregisterCallbacks(IOnSprintActions instance)
+        {
+            @Run.started -= instance.OnRun;
+            @Run.performed -= instance.OnRun;
+            @Run.canceled -= instance.OnRun;
+        }
+
+        public void RemoveCallbacks(IOnSprintActions instance)
+        {
+            if (m_Wrapper.m_OnSprintActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IOnSprintActions instance)
+        {
+            foreach (var item in m_Wrapper.m_OnSprintActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_OnSprintActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public OnSprintActions @OnSprint => new OnSprintActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -252,5 +330,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     public interface IOnMoveActions
     {
         void OnWASD(InputAction.CallbackContext context);
+    }
+    public interface IOnSprintActions
+    {
+        void OnRun(InputAction.CallbackContext context);
     }
 }
