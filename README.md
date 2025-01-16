@@ -13,3 +13,6 @@ Camera, Player R&D
 
 01/15
 Player move and rotate, grid system
+
+01/16
+Debugging system, grid highlight

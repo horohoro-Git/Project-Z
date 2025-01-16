@@ -5,15 +5,31 @@ using UnityEngine.SceneManagement;
 
 public class App : MonoBehaviour
 {
-    GameInstance gameInstance;
+
+    public Debugging debugging;
+    Scene scene;
     private void Awake()
     {
-        gameInstance = GameInstance.Instance;
-
+        Application.targetFrameRate = 60;
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+        SceneManager.sceneLoaded += SceneManager_sceneLoaded;
         DontDestroyOnLoad(this.gameObject);
-
         SceneManager.LoadSceneAsync("developScene", LoadSceneMode.Additive);
     }
 
+    private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
+    {
+        GameInstance.Instance.app = this;
+    }
 
+    private void OnApplicationQuit()
+    {
+        SceneManager.sceneUnloaded -= OnSceneUnloaded;
+        SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
+        GameInstance.Instance.Reset();
+    }
+    private void OnSceneUnloaded(Scene scene)
+    {
+        GameInstance.Instance.Reset();
+    }
 }

@@ -122,6 +122,34 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""OnDebug"",
+            ""id"": ""c2ef0854-d720-4dee-a600-67e74a3c989e"",
+            ""actions"": [
+                {
+                    ""name"": ""F3"",
+                    ""type"": ""Button"",
+                    ""id"": ""4871c4f9-bfa0-49dc-8362-7b5c7d2ec357"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""85078a32-8f10-4555-a7d2-7c28a8420e54"",
+                    ""path"": ""<Keyboard>/f3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""F3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -154,12 +182,16 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         // OnSprint
         m_OnSprint = asset.FindActionMap("OnSprint", throwIfNotFound: true);
         m_OnSprint_Run = m_OnSprint.FindAction("Run", throwIfNotFound: true);
+        // OnDebug
+        m_OnDebug = asset.FindActionMap("OnDebug", throwIfNotFound: true);
+        m_OnDebug_F3 = m_OnDebug.FindAction("F3", throwIfNotFound: true);
     }
 
     ~@NewInput()
     {
         UnityEngine.Debug.Assert(!m_OnMove.enabled, "This will cause a leak and performance issues, NewInput.OnMove.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnSprint.enabled, "This will cause a leak and performance issues, NewInput.OnSprint.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnDebug.enabled, "This will cause a leak and performance issues, NewInput.OnDebug.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -309,6 +341,52 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         }
     }
     public OnSprintActions @OnSprint => new OnSprintActions(this);
+
+    // OnDebug
+    private readonly InputActionMap m_OnDebug;
+    private List<IOnDebugActions> m_OnDebugActionsCallbackInterfaces = new List<IOnDebugActions>();
+    private readonly InputAction m_OnDebug_F3;
+    public struct OnDebugActions
+    {
+        private @NewInput m_Wrapper;
+        public OnDebugActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @F3 => m_Wrapper.m_OnDebug_F3;
+        public InputActionMap Get() { return m_Wrapper.m_OnDebug; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(OnDebugActions set) { return set.Get(); }
+        public void AddCallbacks(IOnDebugActions instance)
+        {
+            if (instance == null || m_Wrapper.m_OnDebugActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnDebugActionsCallbackInterfaces.Add(instance);
+            @F3.started += instance.OnF3;
+            @F3.performed += instance.OnF3;
+            @F3.canceled += instance.OnF3;
+        }
+
+        private void UnregisterCallbacks(IOnDebugActions instance)
+        {
+            @F3.started -= instance.OnF3;
+            @F3.performed -= instance.OnF3;
+            @F3.canceled -= instance.OnF3;
+        }
+
+        public void RemoveCallbacks(IOnDebugActions instance)
+        {
+            if (m_Wrapper.m_OnDebugActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IOnDebugActions instance)
+        {
+            foreach (var item in m_Wrapper.m_OnDebugActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_OnDebugActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public OnDebugActions @OnDebug => new OnDebugActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -334,5 +412,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     public interface IOnSprintActions
     {
         void OnRun(InputAction.CallbackContext context);
+    }
+    public interface IOnDebugActions
+    {
+        void OnF3(InputAction.CallbackContext context);
     }
 }

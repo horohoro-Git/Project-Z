@@ -16,4 +16,16 @@ public class GameInstance
     }
 
     public Vector2 currentDir;
+    public GameManager manager;
+    public InputManager inputManager;
+    public App app;
+    public DrawGrid drawGrid;
+    public void Reset()
+    {
+        app = null;
+        manager = null;
+        inputManager = null;
+        instance = null;
+        drawGrid = null;
+    }
 }

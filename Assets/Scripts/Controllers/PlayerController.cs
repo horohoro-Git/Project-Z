@@ -57,13 +57,19 @@ public class PlayerController : Controller
     {
         
     }
+    Vector2 lastVector = Vector2.zero;
     void MoveHandle(InputAction.CallbackContext callback)
     {
         Vector2 dir = callback.ReadValue<Vector2>();
+        
         moveDir = VectorUtility.RotateY(new Vector3(dir.x, 0, dir.y), 45);
 
-        float dot = Vector3.Dot(Transforms.forward.normalized, moveDir);
-        if (dot < -0.1f) longturn = true; else longturn = false;
+        if (lastVector != dir)
+        {
+            lastVector = dir;
+            float dot = Vector3.Dot(Transforms.forward.normalized, moveDir);
+            if (dot < -0.1f) longturn = true; else longturn = false;
+        }
     }
     void MoveStop(InputAction.CallbackContext callback)
     {
@@ -80,8 +86,4 @@ public class PlayerController : Controller
         moveSpeed = 200;
         sprint = false;
     }
-    /* public void OnMove(Vector2 pos)
-     {
-
-     }*/
 }

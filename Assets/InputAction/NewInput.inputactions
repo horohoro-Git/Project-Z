@@ -100,6 +100,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "OnDebug",
+            "id": "c2ef0854-d720-4dee-a600-67e74a3c989e",
+            "actions": [
+                {
+                    "name": "F3",
+                    "type": "Button",
+                    "id": "4871c4f9-bfa0-49dc-8362-7b5c7d2ec357",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "85078a32-8f10-4555-a7d2-7c28a8420e54",
+                    "path": "<Keyboard>/f3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "F3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
