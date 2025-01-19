@@ -16,3 +16,6 @@ Player move and rotate, grid system
 
 01/16
 Debugging system, grid highlight
+
+01/19
+Grid's cell Selection, enemysight
