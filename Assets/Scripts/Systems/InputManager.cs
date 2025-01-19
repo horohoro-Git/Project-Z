@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
+using UnityEngine.InputSystem.HID;
 public class InputManager : MonoBehaviour
 {
     const string debugAction = "F3";
-
+    Camera mainCamera;
     PlayerInput playerInput;
     Debugging debugging;
 
@@ -16,30 +18,35 @@ public class InputManager : MonoBehaviour
     public void Setup(PlayerInput playerInput)
     {
         this.playerInput = playerInput;
-        if (debugging)
+
+        if (debugging == null)
         {
-            debugging = GameInstance.Instance.app.debugging;
-            debugging.gameObject.SetActive(false);
+            if (GameInstance.Instance.app != null)
+            {
+                debugging = GameInstance.Instance.app.debugging;
+                debugging.gameObject.SetActive(false);
+            }
         }
     }
 
     private void Start()
     {
+        mainCamera = Camera.main;   
         if(debugging) playerInput.actions[debugAction].performed += DebugOn;
     }
 
     private void Update()
     {
-         Vector2 mousePos = Input.mousePosition;
-         worldPosition = Camera.main.ScreenToWorldPoint(mousePos);
-         Vector3 cameraPosition = Camera.main.transform.position;
-        worldPosition -= cameraPosition;
-       // worldPosition = Quaternion.Euler(-60,0,0) * worldPosition;
-        worldPosition.y = 0;
-         Debug.Log(worldPosition); 
-        if(GameInstance.Instance.drawGrid )
+        if (Input.GetMouseButtonDown(0))
         {
-            GameInstance.Instance.drawGrid.Select(worldPosition);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, int.MaxValue))
+            {
+                if (GameInstance.Instance.drawGrid)
+                {
+                    GameInstance.Instance.drawGrid.Select(hit.point);
+                }
+            }
         }
     }
 

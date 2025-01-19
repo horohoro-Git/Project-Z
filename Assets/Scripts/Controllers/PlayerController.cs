@@ -23,6 +23,7 @@ public class PlayerController : Controller
     private InputAction sprintAction;
     private void Awake()
     {
+        GameInstance.Instance.player = this;
         Input.defaultActionMap = "OnMove";
         moveSpeed = 200f;
       //  moveAction = Input.actions["OnMove"];

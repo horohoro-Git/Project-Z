@@ -40,6 +40,7 @@ public class Debugging : MonoBehaviour
         }
 
         DontDestroyOnLoad(this.gameObject);
+        gameObject.SetActive(false);
     }
    
     // Update is called once per frame

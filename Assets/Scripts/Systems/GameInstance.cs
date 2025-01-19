@@ -20,8 +20,11 @@ public class GameInstance
     public InputManager inputManager;
     public App app;
     public DrawGrid drawGrid;
+
+    public PlayerController player;
     public void Reset()
     {
+        player = null;
         app = null;
         manager = null;
         inputManager = null;

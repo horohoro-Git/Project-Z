@@ -6,10 +6,13 @@ using UnityEngine;
 public class DrawGrid : MonoBehaviour
 {
     [SerializeField]
+    Material mat;
+    [SerializeField]
     LineRenderer lineRenderer;
     int min = -10;
     int max = 10;
-    LineRenderer[,] lineRenderers = new LineRenderer[20, 20]; 
+    LineRenderer[,] lineRenderers = new LineRenderer[20, 20];
+    LineRenderer currentLineRender;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -65,21 +68,35 @@ public class DrawGrid : MonoBehaviour
 
     public void Select(Vector3 selectedCell)
     {
-      /*  int cellX = Mathf.FloorToInt(worldPosition.x / cellWidth);
-        int cellY = Mathf.FloorToInt(worldPosition.y / cellHeight);
+       // Debug.Log(selectedCell);
 
+   //     GameObject GO = new GameObject();
+       // LineRenderer line = GO.AddComponent<LineRenderer>();
+        if(currentLineRender!= null) GridManager.RemoveLine(currentLineRender);
+
+        currentLineRender = GridManager.GetLine();
+        int cellX = Mathf.FloorToInt(selectedCell.x / 2);
+        int cellY = Mathf.FloorToInt(selectedCell.z / 2);
+        Vector3[] corners = new Vector3[5];
         // 셀의 4개의 꼭지점 좌표 계산
-        corners[0] = new Vector3(cellX * cellWidth, cellY * cellHeight, 0);               // 왼쪽 아래
-        corners[1] = new Vector3((cellX + 1) * cellWidth, cellY * cellHeight, 0);         // 오른쪽 아래
-        corners[2] = new Vector3((cellX + 1) * cellWidth, (cellY + 1) * cellHeight, 0);   // 오른쪽 위
-        corners[3] = new Vector3(cellX * cellWidth, (cellY + 1) * cellHeight, 0);         // 왼쪽 위
-
+        corners[0] = new Vector3(cellX * 2, 0.1f, cellY * 2);               // 왼쪽 아래
+        corners[1] = new Vector3((cellX + 1) * 2, 0.1f, cellY * 2);         // 오른쪽 아래
+        corners[2] = new Vector3((cellX + 1) * 2, 0.1f, (cellY + 1) * 2);   // 오른쪽 위
+        corners[3] = new Vector3(cellX * 2, 0.1f, (cellY + 1) * 2);         // 왼쪽 위
+        corners[4] = new Vector3(cellX * 2, 0.1f, cellY * 2);               // 왼쪽 아래
+        
         // LineRenderer를 사용해 셀의 경계선 그리기
-        lineRenderer.positionCount = 5;  // 4개의 꼭지점 + 시작점
-        lineRenderer.SetPositions(new Vector3[] { corners[0], corners[1], corners[2], corners[3], corners[0] });
+        currentLineRender.positionCount = 5;  // 4개의 꼭지점 + 시작점
+        currentLineRender.SetPositions(corners);
 
         // 선 두께 설정
-        lineRenderer.startWidth = 0.1f;  // 선의 두께
-        lineRenderer.endWidth = 0.1f;*/
+        currentLineRender.startWidth = 0.2f;  // 선의 두께
+        currentLineRender.endWidth = 0.2f;
+        currentLineRender.material = mat;
+        currentLineRender.textureMode = LineTextureMode.Stretch;
+
+        currentLineRender.numCapVertices = 10; // 끝부분의 버텍스를 설정하여 선 끝이 부드럽게 처리됨
+        currentLineRender.numCornerVertices = 10;
+        Debug.Log((cellX + 5) + " " + (cellY + 5));
     }
 }
