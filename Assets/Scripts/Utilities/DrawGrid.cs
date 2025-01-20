@@ -9,8 +9,8 @@ public class DrawGrid : MonoBehaviour
     Material mat;
     [SerializeField]
     LineRenderer lineRenderer;
-    int min = -10;
-    int max = 10;
+   // int min = -10;
+   // int max = 10;
     LineRenderer[,] lineRenderers = new LineRenderer[20, 20];
     LineRenderer currentLineRender;
     // Start is called before the first frame update

@@ -17,8 +17,8 @@ public class PlayerController : Controller
         }
     }
     
-    public delegate void PlayerAction();
-    public event PlayerAction Runs;
+    //public delegate void PlayerAction();
+  //  public event PlayerAction Runs;
     private InputAction moveAction;  
     private InputAction sprintAction;
     private void Awake()

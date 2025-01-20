@@ -19,3 +19,6 @@ Debugging system, grid highlight
 
 01/19
 Grid's cell Selection, enemysight
+
+01/20
+Enemy player tracking (being improved)
