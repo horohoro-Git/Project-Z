@@ -33,7 +33,7 @@ public class EnemyController : Controller
     
     void DetectPlayer()
     {
-        float distance = Vector3.Distance(GameInstance.Instance.player.Transforms.position, transform.position);
+        float distance = Vector3.Distance(GameInstance.Instance.player.Transforms.position, Transforms.position);
         if (distance < 10)
         {
             hunting = true;
@@ -43,15 +43,24 @@ public class EnemyController : Controller
             }
             else
             {
+                agent.angularSpeed = 300f;
+                agent.updateRotation = false; // 회전 처리를 수동으로 수행
+
+                // 플레이어를 향한 방향 계산
+                Vector3 direction = (GameInstance.Instance.player.Transforms.position - transform.position).normalized;
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, lookRotation, 300f * Time.deltaTime);
+
+
 
                 agent.isStopped = false;
-                Vector3 dir = (GameInstance.Instance.player.Transforms.position - transform.position).normalized;
+                Vector3 dir = (GameInstance.Instance.player.Transforms.position - Transforms.position).normalized;
                 float angle = Vector3.Angle(transform.forward, dir);
 
                 if (angle < 110 / 2)
                 {
                     RaycastHit hit;
-                    if (Physics.Raycast(transform.position, dir, out hit))
+                    if (Physics.Raycast(Transforms.position, dir, out hit))
                     {
                         if (hit.collider.CompareTag("Player"))
                         {
@@ -63,9 +72,10 @@ public class EnemyController : Controller
                 }
             }
         }
-        else
+        else if(distance < 20) 
         {
-            hunting=false;
+            agent.isStopped = true;
+            hunting =false;
         }
     }
 
@@ -75,12 +85,14 @@ public class EnemyController : Controller
         if(!hunting) Gizmos.color = Color.yellow;
         else Gizmos.color = Color.red;
 
-        Gizmos.DrawWireSphere(transform.position, 10);
+        Gizmos.DrawWireSphere(Transforms.position, 10);
 
-        Vector3 leftBoundary = Quaternion.Euler(0, -110 / 2, 0) * transform.forward * 110;
-        Vector3 rightBoundary = Quaternion.Euler(0, 110 / 2, 0) * transform.forward * 110;
+        Vector3 leftBoundary = Quaternion.Euler(0, -110 / 2, 0) * Transforms.forward * 110;
+        Vector3 rightBoundary = Quaternion.Euler(0, 110 / 2, 0) * Transforms.forward * 110;
 
-        Gizmos.DrawLine(transform.position, transform.position + leftBoundary);
-        Gizmos.DrawLine(transform.position, transform.position + rightBoundary);
+        Gizmos.DrawLine(Transforms.position, Transforms.position + leftBoundary);
+        Gizmos.DrawLine(Transforms.position, Transforms.position + rightBoundary);
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(Transforms.position, 20);
     }
 }

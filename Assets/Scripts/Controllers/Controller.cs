@@ -43,7 +43,7 @@ public class Controller : MonoBehaviour
     public bool turn = false;
     public bool longturn = false;
     float velocity;
-    float smoothTime = 0.5f;
+   // float smoothTime = 0.5f;
     public bool sprint;
     void FixedUpdate()
     {
