@@ -24,6 +24,11 @@ public class MinHeap<T> where T : IComparable<T>
         nodes.RemoveAt(indexz);
     }
 
+    public bool Contains(T item)
+    {
+        return nodes.Contains(item);
+    }
+
     public T PopMin()
     {
         T min = nodes[0];

@@ -97,6 +97,5 @@ public class DrawGrid : MonoBehaviour
 
         currentLineRender.numCapVertices = 10; // 끝부분의 버텍스를 설정하여 선 끝이 부드럽게 처리됨
         currentLineRender.numCornerVertices = 10;
-        Debug.Log((cellX + 5) + " " + (cellY + 5));
     }
 }
