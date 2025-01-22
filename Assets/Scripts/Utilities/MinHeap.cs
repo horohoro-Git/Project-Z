@@ -6,22 +6,30 @@ using UnityEngine;
 public class MinHeap<T> where T : IComparable<T> 
 {
     List<T> nodes;
+    HashSet<T> set;
     public MinHeap(int size)
     {
         nodes = new List<T>(size);
+        set = new HashSet<T>(size);
     }
 
     public int Count {  get { return nodes.Count; } }
 
     public void Add(T addT)
     {
-        nodes.Add(addT);
-        SortYUp();
+        if(!set.Contains(addT))
+        {
+            nodes.Add(addT);
+            set.Add(addT);
+            SortYUp();
+
+        }
     }
 
-    public void RemoveAt(int indexz)
+    public void Clear()
     {
-        nodes.RemoveAt(indexz);
+        nodes.Clear();
+        set.Clear();
     }
 
     public bool Contains(T item)
@@ -32,27 +40,31 @@ public class MinHeap<T> where T : IComparable<T>
     public T PopMin()
     {
         T min = nodes[0];
+        set.Remove(min);
         nodes[0] = nodes[nodes.Count - 1];
-        nodes[nodes.Count - 1] = min;
         nodes.RemoveAt(nodes.Count - 1);
 
         SortYDown();
 
         return min;
     }
-
+    public T Peek()
+    {
+        return nodes[0];
+    }
     void SortYUp()
     {
-        int index = nodes.Count - 1;
+        int index =0;
 
         while (index > 0)
         {
-            if (nodes[index].CompareTo(nodes[index - 1]) >= 0) return;
+            int parentIndex = index / 2; 
+            if (nodes[index].CompareTo(nodes[parentIndex]) >= 0) return;
         
 
-            Swap(nodes[index], nodes[index - 1]);
+            Swap(index, parentIndex);
 
-            index--;
+            index = parentIndex;
         }
     }
 
@@ -65,26 +77,26 @@ public class MinHeap<T> where T : IComparable<T>
             int min = index;
             int leftChild = index * 2 + 1;
             int rightChild = index * 2 + 2;
-            if (leftChild < maxSize && nodes[min].CompareTo(nodes[leftChild]) > 0)
+            if (leftChild <= maxSize && nodes[min].CompareTo(nodes[leftChild]) > 0)
             {
                 min = leftChild;
             }
-            if (rightChild < maxSize && nodes[min].CompareTo(nodes[rightChild]) > 0)
+            if (rightChild <= maxSize && nodes[min].CompareTo(nodes[rightChild]) > 0)
             {
                 min = rightChild;
             }
             if (index == min) break;
 
-            Swap(nodes[index], nodes[min]);
+            Swap(index, min);
 
             index = min;
         }
     }
 
-    void Swap(T itemA, T itemB)
+    void Swap(int itemAIndex, int itemBIndex)
     {
-        T temp = itemA;
-        itemA = itemB;
-        itemB = temp;
+        T temp = nodes[itemAIndex];
+        nodes[itemAIndex] = nodes[itemBIndex];
+        nodes[itemBIndex] = temp;
     }
 }

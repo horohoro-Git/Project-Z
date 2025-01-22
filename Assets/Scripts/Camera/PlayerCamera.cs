@@ -31,7 +31,7 @@ public class PlayerCamera : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void LateUpdate()
     {
         if (PC)
         {
@@ -40,4 +40,13 @@ public class PlayerCamera : MonoBehaviour
 
         }
     }
+   /* Update()
+    {
+        if (PC)
+        {
+            Vector3 target = PC.Transforms.position;
+            Transforms.position = new Vector3(target.x - 40, 100, target.z - 40);
+
+        }
+    }*/
 }
