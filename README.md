@@ -21,7 +21,10 @@ Debugging system, grid highlight
 Grid's cell Selection, enemysight
 
 01/20
-Enemy player tracking (being improved)
+Enemy player tracking (improving)
 
 01/21
-Enemy player tracking (being improved (obstacles))
+Enemy player tracking (improving (obstacles))
+
+01/22
+Enemy Pathfinding (improving)
