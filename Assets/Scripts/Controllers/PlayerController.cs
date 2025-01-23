@@ -21,9 +21,12 @@ public class PlayerController : Controller
   //  public event PlayerAction Runs;
     private InputAction moveAction;  
     private InputAction sprintAction;
+
+    int lastGridX = 0;
+    int lastGridY = 0;
+    Vector3 LastPosition;
     private void Awake()
     {
-        GameInstance.Instance.player = this;
         Input.defaultActionMap = "OnMove";
         moveSpeed = 200f;
       //  moveAction = Input.actions["OnMove"];
@@ -50,14 +53,20 @@ public class PlayerController : Controller
     // Start is called before the first frame update
     void Start()
     {
+        GameInstance.Instance.AddPlayer(this);
        
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(LastPosition != Transforms.position)
+        {
+            LastPosition = Transforms.position;
+            GameInstance.Instance.worldGrids.UpdatePlayerInGrids(this, ref lastGridX, ref lastGridY);
+        }
     }
+    
     Vector2 lastVector = Vector2.zero;
     void MoveHandle(InputAction.CallbackContext callback)
     {

@@ -37,6 +37,7 @@ public class MoveCalculator
 
         //blockArea.Clear();
         Vector3 size = new Vector3(0.5f, 0.5f, 0.5f);
+   //     Vector3 size = new Vector3(1, 1, 1);
       /*  for (int i = -60; i < 60; i++)
         {
             for (int j = -60; j < 60; j++)
@@ -83,6 +84,7 @@ public class MoveCalculator
    //     Node start = NodePool.GetNode((int)(startPos.x - minX) * 2, (int)(startPos.z - minY) * 2);
         Node end = NodePool.GetNode((int)((endPos.x - minX) * 2), (int)((endPos.z - minY)*2));
 
+       // if (blockArea[20, 20]) Debug.Log("StartPosition Blocked");
      //   Debug.Log(startPos);
      //   Debug.Log(endPos);
     //    Debug.Log(end.X + " " + end.Y);
@@ -91,67 +93,103 @@ public class MoveCalculator
         usingNodes.Enqueue(end);
         openNode.Add(node);
         // int get = start.X / 2 + minX + (start.Y / 2 + minY) * 120;
-       // blockArea[start.X + start.Y * 40] = false;
-       // blockArea[start.X + start.Y * 40] = false;
-       // if (blockArea[get]) Debug.Log("GG");
+        // blockArea[start.X + start.Y * 40] = false;
+        // blockArea[start.X + start.Y * 40] = false;
+        // if (blockArea[get]) Debug.Log("GG");
+
+        /* while (openNode.Count > 0)
+         {
+             Node currentNode = openNode.PopMin();
+             nodes.Add(new Vector2(currentNode.X, currentNode.Y), currentNode);
+             closedNode.Add(currentNode);
+             for (int i = 0; i < 8; i++)
+             {
+                 int posX = currentNode.X + moveX[i];
+                 int posY = currentNode.Y + moveY[i];
+                 if (ValidCheck(posX, posY))
+                 {
+                     bool containsKey = nodes.ContainsKey(new Vector2(posX, posY));
+                     // Node neighbor = containsKey ? nodes[new Vector2(posX, posY)] : NodePool.GetNode(posX,posY);
+                     Node neighbor = NodePool.GetNode(posX, posY);
+                     usingNodes.Enqueue((neighbor));
+                     //int gety = posX / 2 + minX + (posY / 2 + minY) * 120; 
+
+                     if (!closedNode.Contains(neighbor) && (!blockArea[posX, posY]))
+                     {
+                         if (end.X == posX && end.Y == posY)
+                         {
+                             end.parentNode = currentNode;
+                             return ReturnNodes(end);
+                         }
+
+                         bool getContains = openNode.Contains(neighbor);
+                         bool lineOfSight = LineOfSight(currentNode.parentNode, neighbor, 0.5f);
+
+                         if (lineOfSight)
+                         {
+                             int g = currentNode.parentNode.G + GetCost(currentNode.parentNode, neighbor);
+
+                             if (g < neighbor.G || !getContains)
+                             {
+                                 neighbor.G = g;
+                                 neighbor.parentNode = currentNode.parentNode;
+                             }
+                         }
+                         else
+                         {
+                             int g = currentNode.G + GetCost(currentNode, neighbor);
+
+                             if (g < neighbor.G || !getContains)
+                             {
+                                 neighbor.G = g;
+                                 neighbor.parentNode = currentNode;
+                             }
+                         }
+
+                         neighbor.H = GetCost(neighbor, end);
+                         if (!getContains) openNode.Add(neighbor);
+                     }
+
+                 }
+             }
+         }*/
 
         while (openNode.Count > 0)
         {
             Node currentNode = openNode.PopMin();
-            nodes.Add(new Vector2(currentNode.X, currentNode.Y), currentNode);  
+
+            nodes.Add(new Vector2(currentNode.X, currentNode.Y), currentNode);
             closedNode.Add(currentNode);
             for (int i = 0; i < 8; i++)
             {
                 int posX = currentNode.X + moveX[i];
                 int posY = currentNode.Y + moveY[i];
-                if(ValidCheck(posX, posY))
+                if (ValidCheck(posX, posY))
                 {
-                    bool containsKey = nodes.ContainsKey(new Vector2(posX, posY));
-                   // Node neighbor = containsKey ? nodes[new Vector2(posX, posY)] : NodePool.GetNode(posX,posY);
                     Node neighbor = NodePool.GetNode(posX, posY);
                     usingNodes.Enqueue((neighbor));
-                    //int gety = posX / 2 + minX + (posY / 2 + minY) * 120; 
-
-                    if (!closedNode.Contains(neighbor) && (!blockArea[posX,posY]))
+                    if (!closedNode.Contains(neighbor) && (!blockArea[posX, posY]))
                     {
-                        if(end.X == posX && end.Y == posY)
+                        if (end.X == posX && end.Y == posY)
                         {
                             end.parentNode = currentNode;
                             return ReturnNodes(end);
                         }
-
                         bool getContains = openNode.Contains(neighbor);
-                        bool lineOfSight = LineOfSight(currentNode.parentNode, neighbor, 0.5f);
-
-                        if (lineOfSight)
+                        int g = currentNode.G + GetCost(currentNode, neighbor);
+                        if (g < neighbor.G || !getContains)
                         {
-                            int g = currentNode.parentNode.G + GetCost(currentNode.parentNode, neighbor);
-
-                            if (g < neighbor.G || !getContains)
-                            {
-                                neighbor.G = g;
-                                neighbor.parentNode = currentNode.parentNode;
-                            }
+                            neighbor.G = g;
+                            neighbor.parentNode = currentNode;
+                            neighbor.H = GetCost(neighbor, end);
+                            if (!getContains) openNode.Add(neighbor);
                         }
-                        else
-                        {
-                            int g = currentNode.G + GetCost(currentNode, neighbor);
-
-                            if(g < neighbor.G || !getContains)
-                            {
-                                neighbor.G = g;
-                                neighbor.parentNode = currentNode;
-                            }
-                        }
-                        
-                        neighbor.H = GetCost(neighbor, end);
-                        if(!getContains) openNode.Add(neighbor);
                     }
-                 
                 }
             }
         }
-     //   Debug.Log("GG");
+
+        //   Debug.Log("GG");
         return null;
     }
     int GetMapIndex(float coordinate, float currentPos)
@@ -203,28 +241,28 @@ public class MoveCalculator
 
     bool LineOfSight(Node start, Node end, float size)
     {
-        /*if(start == null || end == null) return false;
+        if (start == null || end == null) return false;
 
         Vector3 sizeVector = new Vector3(size, size, size);
         Vector3 startPos = new Vector3(start.X / 2f + minX, 0, start.Y / 2f + minY);
         Vector3 endPos = new Vector3(end.X / 2f + minX, 0, end.Y / 2f + minY);
 
 
-        Vector3 dir = endPos - startPos; 
+        Vector3 dir = endPos - startPos;
         float distance = dir.magnitude;
         dir = Vector3.Normalize(dir);
-
-        return !Physics.BoxCast(startPos, sizeVector, dir, Quaternion.identity, distance, 1 << 6);*/
-        if (start == null || end == null) return false;
+        Quaternion rotation = Quaternion.LookRotation(dir);
+        return !Physics.BoxCast(startPos, sizeVector, dir, Quaternion.identity, distance, 1 << 6);
+    /*    if (start == null || end == null) return false;
 
         Vector3 startPos = new Vector3(
             start.X * 0.5f + minX,
-            0,
+            0.5f,
             start.Y * 0.5f + minY
         );
         Vector3 endPos = new Vector3(
             end.X * 0.5f + minX,
-            0,
+            0.5f,
             end.Y * 0.5f + minY
         );
 
@@ -236,8 +274,7 @@ public class MoveCalculator
             direction.y /= distance;
             direction.z /= distance;
         }
-        // SphereCast를 사용하여 충돌 검사
-        return !Physics.BoxCast(startPos, new Vector3(size,size,size), direction, Quaternion.identity, distance, 1 << 6);
+        return !Physics.SphereCast(startPos, size, direction, out RaycastHit hit, distance , 1 << 6);*/
     }
 
     bool ValidCheck(int a, int b)

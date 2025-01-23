@@ -20,15 +20,23 @@ public class GameInstance
     public InputManager inputManager;
     public App app;
     public DrawGrid drawGrid;
+    List<PlayerController> players = new List<PlayerController>();
 
-    public PlayerController player;
+    public List<PlayerController> GetPlayers { get { return players; } }
+    public WorldGrids worldGrids;
     public void Reset()
     {
-        player = null;
+        worldGrids = null;
+        players.Clear();
         app = null;
         manager = null;
         inputManager = null;
         instance = null;
         drawGrid = null;
+    }
+
+    public void AddPlayer(PlayerController pc)
+    {
+        players.Add(pc);
     }
 }
