@@ -28,3 +28,6 @@ Enemy player tracking (improving (obstacles))
 
 01/22
 Enemy Pathfinding (improving)
+
+01/23
+Grid based navigation system and aabb worldpositions debugging
