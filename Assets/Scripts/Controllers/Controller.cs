@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -8,6 +9,9 @@ public class Controller : MonoBehaviour
 {
     Transform transforms;
     Rigidbody rigid;
+
+    [NonSerialized]
+    public Vector3 LastPosition;
     public Transform Transforms
     {
         get

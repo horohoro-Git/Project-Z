@@ -31,3 +31,6 @@ Enemy Pathfinding (improving)
 
 01/23
 Grid based navigation system and aabb worldpositions debugging
+
+01/24
+Grid based system, enemies seek out players

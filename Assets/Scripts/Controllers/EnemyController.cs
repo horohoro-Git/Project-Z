@@ -20,7 +20,6 @@ public class EnemyController : Controller
     public bool theta;
 
     Vector3 enemyDir = Vector3.zero;
-
     [SerializeField]
     NavMeshAgent agent;
     PlayerController target;
@@ -45,6 +44,11 @@ public class EnemyController : Controller
     // Update is called once per frame
     void Update()
     {
+     //   if (LastPosition != Transforms.position)
+        {
+       //     LastPosition = Transforms.position;
+            DetectPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms));
+        }
        /* if (GameInstance.Instance.player)
         {
             DetectPlayer(false);
@@ -67,35 +71,51 @@ public class EnemyController : Controller
         }
     }
 
-
-    void DetectPlayer(bool skipAngle)
+    //탐색한 플레이어들 중 최적의 플레이어를 찾고 추적
+    void DetectPlayer(List<PlayerController> players, bool skipAngle = false)
     {
-        if (destinations.Count == 0)
+        int index = 0;
+        while (players.Count > index)
         {
-          /*  float distance = Vector3.Distance(GameInstance.Instance.player.Transforms.position, Transforms.position);
+            PlayerController pc = players[index++];
+            float distance = Vector3.Distance(pc.Transforms.position, Transforms.position);
 
-
-            if (distance < 10)
+            if (distance < 10)  
             {
-                Vector3 dir = (GameInstance.Instance.player.Transforms.position - Transforms.position).normalized;
-                float angle = Vector3.Angle(transform.forward, dir);
+                Vector3 dir = (pc.Transforms.position - Transforms.position).normalized;
+                float angle = Vector3.Angle(Transforms.forward, dir);   // 적의 전면부에서 110도 까지 탐지 
 
                 if (angle < 110 / 2 || skipAngle)
                 {
-                    hunting = true;
-                    agent.isStopped = false;
-                    enemyType = EnemyType.TargetDetect;
-                
-
+                    if (!target) target = pc;
+                    else
+                    {
+                        float dis = Vector3.Distance(target.Transforms.position, Transforms.position);
+                        if (distance < dis)
+                        {
+                            target = pc;
+                        }
+                    }
                 }
             }
-            else if (distance >= 20)
+        }
+
+        if(target != null)
+        {
+            float distance = Vector3.Distance(target.Transforms.position, Transforms.position);
+            if(distance < 10)
             {
-                moveDir = Vector3.zero;
-                enemyType = EnemyType.Roaming;
+                agent.isStopped = false;
+                agent.SetDestination(target.Transforms.position);
+            }
+            else if(distance > 20)
+            {
                 agent.isStopped = true;
-                hunting = false;
-            }*/
+            }
+        }
+        else
+        {
+            agent.isStopped = true;
         }
     }
 

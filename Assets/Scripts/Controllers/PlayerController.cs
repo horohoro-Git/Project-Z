@@ -22,9 +22,9 @@ public class PlayerController : Controller
     private InputAction moveAction;  
     private InputAction sprintAction;
 
-    int lastGridX = 0;
+    int lastGridX = 0; 
     int lastGridY = 0;
-    Vector3 LastPosition;
+   
     private void Awake()
     {
         Input.defaultActionMap = "OnMove";
@@ -63,7 +63,7 @@ public class PlayerController : Controller
         if(LastPosition != Transforms.position)
         {
             LastPosition = Transforms.position;
-            GameInstance.Instance.worldGrids.UpdatePlayerInGrids(this, ref lastGridX, ref lastGridY);
+            GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY);
         }
     }
     
