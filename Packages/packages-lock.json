@@ -266,7 +266,7 @@
         "com.unity.modules.physics": "1.0.0",
         "com.unity.modules.terrain": "1.0.0"
       }
-    },
+    }, 
     "com.unity.modules.tilemap": {
       "version": "1.0.0",
       "depth": 0,
