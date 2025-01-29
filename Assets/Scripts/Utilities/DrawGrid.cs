@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class DrawGrid : MonoBehaviour
@@ -9,6 +10,8 @@ public class DrawGrid : MonoBehaviour
     Material mat;
     [SerializeField]
     LineRenderer lineRenderer;
+
+    List<LineRenderer> lines = new List<LineRenderer>();
    // int min = -10;
    // int max = 10;
     LineRenderer[,] lineRenderers = new LineRenderer[20, 20];
@@ -19,13 +22,7 @@ public class DrawGrid : MonoBehaviour
         GameInstance.Instance.drawGrid = this;
         GridManager.CreateLines(lineRenderer, 200);
     }
-    void Start()
-    {
-        Draw();
-
-    }
-
-    void Draw()
+    public void Draw()
     {
         for (int i = 0; i <= 10; i++)
         {
@@ -45,7 +42,7 @@ public class DrawGrid : MonoBehaviour
             horizontalRender.positionCount = points.Length;
             horizontalRender.SetPositions(points);
 
-            
+            lines.Add(horizontalRender);
         }
 
         for (int i = 0; i <= 10; i++)
@@ -56,27 +53,44 @@ public class DrawGrid : MonoBehaviour
             verticalRenderer.startWidth = 0.05f;
             verticalRenderer.endWidth = 0.05f;
 
-            // 점 설정
             Vector3[] points = new Vector3[2];
             points[0] = new Vector3(i * 2 -10, 0, -10);  // 시작점
             points[1] = new Vector3(i * 2 -10, 0, 10);  // 끝점
 
             verticalRenderer.positionCount = points.Length;
             verticalRenderer.SetPositions(points);
+
+            lines.Add(verticalRenderer);
         }
     }
 
-    public void Select(Vector3 selectedCell)
+    public void Remove()
     {
-       // Debug.Log(selectedCell);
+        for(int i=lines.Count-1; i>=0; i--)
+        {
+            LineRenderer lineRenderer = lines[i];
+            lines.RemoveAt(i);
+            GridManager.RemoveLine(lineRenderer);
+        }
+    }
 
-   //     GameObject GO = new GameObject();
-       // LineRenderer line = GO.AddComponent<LineRenderer>();
-        if(currentLineRender!= null) GridManager.RemoveLine(currentLineRender);
+    public void Select(Vector3 selectedCell, ref int x, ref int y)
+    {
+        // Debug.Log(selectedCell);
 
-        currentLineRender = GridManager.GetLine();
+        //     GameObject GO = new GameObject();
+        // LineRenderer line = GO.AddComponent<LineRenderer>();
         int cellX = Mathf.FloorToInt(selectedCell.x / 2);
         int cellY = Mathf.FloorToInt(selectedCell.z / 2);
+
+        if (x == cellX && y == cellY) return;
+
+        x= cellX; y= cellY;
+        Debug.Log(x + " " + y); 
+        if (currentLineRender!= null) GridManager.RemoveLine(currentLineRender);
+
+        currentLineRender = GridManager.GetLine();
+       
         Vector3[] corners = new Vector3[5];
         // 셀의 4개의 꼭지점 좌표 계산
         corners[0] = new Vector3(cellX * 2, 0.1f, cellY * 2);               // 왼쪽 아래

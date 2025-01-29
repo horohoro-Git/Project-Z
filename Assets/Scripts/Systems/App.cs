@@ -30,6 +30,7 @@ public class App : MonoBehaviour
     }
     private void OnSceneUnloaded(Scene scene)
     {
+        if (GameInstance.Instance.assetLoader != null) GameInstance.Instance.assetLoader.Clear();
         GameInstance.Instance.Reset();
     }
 }

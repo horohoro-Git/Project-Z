@@ -8,13 +8,38 @@ using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.HID;
 public class InputManager : MonoBehaviour
 {
+    PlayerController pc;
+    public PlayerController PC
+    {
+        get
+        {
+            if (pc == null) pc = GetComponent<PlayerController>();
+            return pc;
+        }
+    }
+    public enum StructureState
+    {
+        None,
+        Floor,
+        Wall,
+        Door
+    }
+
+    [NonSerialized]
+    public StructureState structureState = StructureState.None;
+
     const string debugAction = "F3";
     Camera mainCamera;
     PlayerInput playerInput;
     Debugging debugging;
+    int x, y;
 
     [NonSerialized]
     public Vector3 worldPosition;
+
+
+
+
     public void Setup(PlayerInput playerInput)
     {
         this.playerInput = playerInput;
@@ -31,21 +56,41 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
+        GameInstance.Instance.inputManager = this;
         mainCamera = Camera.main;   
         if(debugging) playerInput.actions[debugAction].performed += DebugOn;
     }
 
     private void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (GameInstance.Instance.creativeMode)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, int.MaxValue))
             {
                 if (GameInstance.Instance.drawGrid)
                 {
-                    GameInstance.Instance.drawGrid.Select(hit.point);
+                    GameInstance.Instance.drawGrid.Select(hit.point, ref x, ref y);
+
                 }
+            }
+            if (Input.GetMouseButtonDown(0))
+            {
+                switch (structureState)
+                {
+                    case StructureState.None: break;
+                    case StructureState.Floor:
+                        GameInstance.Instance.assetLoader.LoadFloor(x, y);
+                        break;
+                    case StructureState.Wall:
+
+                        break;
+
+                    case StructureState.Door:
+                        break;
+                }
+
+               
             }
         }
     }
