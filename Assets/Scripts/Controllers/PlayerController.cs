@@ -27,6 +27,7 @@ public class PlayerController : Controller
    
     private void Awake()
     {
+        GameInstance.Instance.playerController = this;
         Input.defaultActionMap = "OnMove";
         moveSpeed = 200f;
       //  moveAction = Input.actions["OnMove"];
@@ -35,21 +36,28 @@ public class PlayerController : Controller
 
     private void OnEnable()
     {
+        AddAction();
+    }
+
+    private void OnDisable()
+    {
+        RemoveAction();
+    }
+
+    public void AddAction()
+    {
         Input.actions["WASD"].performed += MoveHandle;
         Input.actions["WASD"].canceled += MoveStop;
         Input.actions["Run"].performed += Run;
         Input.actions["Run"].canceled += RunStop;
-     //   Input.actions[]
     }
-
-    private void OnDisable()
+    public void RemoveAction()
     {
         Input.actions["WASD"].performed -= MoveHandle;
         Input.actions["WASD"].performed -= MoveStop;
         Input.actions["Run"].performed -= Run;
         Input.actions["Run"].canceled -= RunStop;
     }
-
     // Start is called before the first frame update
     void Start()
     {

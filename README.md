@@ -1,5 +1,9 @@
+Icon Assets: Used UI icons by Icons8
+
 # Project-Z
 zombie survival game
+
+
 
 develop123
 
@@ -34,3 +38,9 @@ Grid based navigation system and aabb worldpositions debugging
 
 01/24
 Grid based system, enemies seek out players
+
+01/25 ~ 01/28
+Create asset hosting server, loaded assets by the addresable assets system and assetbundle 
+
+01/29
+Grid-based structure (floor) construction function, apply ui to grid
