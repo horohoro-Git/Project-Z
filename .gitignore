@@ -20,6 +20,11 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+/[Ss]erverData/
+/[Aa]ssets/[Ee]dited/
+/[Aa]ssets/[Ww]oodsLifestyle/
+/[Aa]ssets/[Aa]ddressableAssetsData.meta
+/[Aa]ssets/[Aa]ddressableAssetsData/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
@@ -58,6 +63,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.npmrc
 
 # Unity3D generated meta files
 *.pidb.meta
