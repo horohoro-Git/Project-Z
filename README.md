@@ -44,3 +44,6 @@ Create asset hosting server, loaded assets by the addresable assets system and a
 
 01/29
 Grid-based structure (floor) construction function, apply ui to grid
+
+01/30
+Housing system deugging (wall)
