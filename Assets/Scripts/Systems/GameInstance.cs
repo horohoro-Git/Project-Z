@@ -22,6 +22,7 @@ public class GameInstance
     public App app;
     public DrawGrid drawGrid;
     public AssetLoader assetLoader;
+    public HousingSystem housingSystem;
     public bool creativeMode;
     List<PlayerController> players = new List<PlayerController>();
 
@@ -29,6 +30,7 @@ public class GameInstance
     public WorldGrids worldGrids;
     public void Reset()
     {
+        housingSystem = null;
         playerController = null;
         worldGrids = null;
         players.Clear();

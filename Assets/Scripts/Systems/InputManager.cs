@@ -83,7 +83,7 @@ public class InputManager : MonoBehaviour
                         GameInstance.Instance.assetLoader.LoadFloor(x, y);
                         break;
                     case StructureState.Wall:
-
+                        GameInstance.Instance.assetLoader.LoadWall(hit.point, x, y);
                         break;
 
                     case StructureState.Door:

@@ -41,7 +41,7 @@ public class DrawGrid : MonoBehaviour
 
             horizontalRender.positionCount = points.Length;
             horizontalRender.SetPositions(points);
-
+            horizontalRender.material = null;
             lines.Add(horizontalRender);
         }
 
@@ -58,6 +58,7 @@ public class DrawGrid : MonoBehaviour
             points[1] = new Vector3(i * 2 -10, 0, 10);  // ³¡Á¡
 
             verticalRenderer.positionCount = points.Length;
+            verticalRenderer.material = null;
             verticalRenderer.SetPositions(points);
 
             lines.Add(verticalRenderer);
@@ -86,7 +87,7 @@ public class DrawGrid : MonoBehaviour
         if (x == cellX && y == cellY) return;
 
         x= cellX; y= cellY;
-        Debug.Log(x + " " + y); 
+   //     Debug.Log(x + " " + y); 
         if (currentLineRender!= null) GridManager.RemoveLine(currentLineRender);
 
         currentLineRender = GridManager.GetLine();
