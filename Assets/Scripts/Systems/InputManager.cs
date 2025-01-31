@@ -63,7 +63,7 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
-        if (GameInstance.Instance.creativeMode)
+        if (GameInstance.Instance.editMode != GameInstance.EditMode.None)
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, int.MaxValue))
@@ -74,23 +74,28 @@ public class InputManager : MonoBehaviour
 
                 }
             }
-            if (Input.GetMouseButtonDown(0))
+            if (!(x >= 5 || x < -5 || y >= 5 || y < -5))
             {
-                switch (structureState)
+                if (Input.GetMouseButtonDown(0))
                 {
-                    case StructureState.None: break;
-                    case StructureState.Floor:
-                        GameInstance.Instance.assetLoader.LoadFloor(x, y);
-                        break;
-                    case StructureState.Wall:
-                        GameInstance.Instance.assetLoader.LoadWall(hit.point, x, y);
-                        break;
+                    switch (structureState)
+                    {
+                        case StructureState.None: break;
+                        case StructureState.Floor:
+                            if(GameInstance.Instance.editMode == GameInstance.EditMode.CreativeMode) GameInstance.Instance.assetLoader.LoadFloor(x, y);
+                            else if(GameInstance.Instance.editMode == GameInstance.EditMode.DestroyMode) GameInstance.Instance.housingSystem.RemoveFloor(x, y);
+                            break;
+                        case StructureState.Wall:
+                            HousingSystem.BuildWallDirection buildWallDirection = GameInstance.Instance.housingSystem.GetWallDirection(hit.point, x, y);
+                            if (GameInstance.Instance.editMode == GameInstance.EditMode.CreativeMode) GameInstance.Instance.assetLoader.LoadWall(buildWallDirection, x, y);
+                            else if (GameInstance.Instance.editMode == GameInstance.EditMode.DestroyMode) GameInstance.Instance.housingSystem.RemoveWall(buildWallDirection, x, y);
+                            break;
 
-                    case StructureState.Door:
-                        break;
+                        case StructureState.Door:
+                            break;
+                    }
+
                 }
-
-               
             }
         }
     }

@@ -13,6 +13,17 @@ public class CreatableUISystem : MonoBehaviour
     public Button floorBtn;
     public Button wallBtn;
     public Button doorBtn;
+
+    [SerializeField]
+    Button editModeButton;
+    [SerializeField]
+    Image modeImage;
+
+    [SerializeField]
+    Sprite plus;
+    [SerializeField]    
+    Sprite minus;
+
     // Start is called before the first frame update
 
     private void OnEnable()
@@ -35,6 +46,11 @@ public class CreatableUISystem : MonoBehaviour
         {
             ChangeSelectionType(InputManager.StructureState.Door);
         });
+
+        editModeButton.onClick.AddListener(() =>
+        {
+            ChangeMode();
+        });
     }
 
     private void OnDisable()
@@ -55,6 +71,10 @@ public class CreatableUISystem : MonoBehaviour
         {
             ChangeSelectionType(InputManager.StructureState.Door);
         });
+        editModeButton.onClick.RemoveListener(() =>
+        {
+            ChangeMode();
+        });
     }
 
     void ChangeSelectionType(InputManager.StructureState structureState)
@@ -66,19 +86,34 @@ public class CreatableUISystem : MonoBehaviour
     {
         if (upgradeGO.gameObject.activeSelf)
         {
-            GameInstance.Instance.creativeMode = false;
+            GameInstance.Instance.editMode = GameInstance.EditMode.None;
             upgradeGO.gameObject.SetActive(false);
             GameInstance.Instance.drawGrid.Remove();
             GameInstance.Instance.playerController.AddAction();
         }
         else
         {
-            GameInstance.Instance.creativeMode = true;
+            GameInstance.Instance.editMode = GameInstance.EditMode.CreativeMode;
             upgradeGO.gameObject.SetActive(true);
             GameInstance.Instance.drawGrid.Draw();
             GameInstance.Instance.playerController.RemoveAction();
             GameInstance.Instance.playerController.Rigid.velocity = Vector3.zero;
           
         }
+    }
+
+    void ChangeMode()
+    {
+        if(GameInstance.Instance.editMode == GameInstance.EditMode.CreativeMode)
+        {
+            modeImage.sprite = plus;
+            GameInstance.Instance.editMode = GameInstance.EditMode.DestroyMode;
+        }
+        else if(GameInstance.Instance.editMode == GameInstance.EditMode.DestroyMode)
+        {
+            modeImage.sprite = minus;
+            GameInstance.Instance.editMode = GameInstance.EditMode.CreativeMode;
+        }
+       
     }
 }
