@@ -47,3 +47,6 @@ Grid-based structure (floor) construction function, apply ui to grid
 
 01/30
 Housing system deugging (wall)
+
+01/31
+Housing system (build and destroy)

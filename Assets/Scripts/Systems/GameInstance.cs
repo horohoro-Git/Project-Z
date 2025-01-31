@@ -11,9 +11,17 @@ public class GameInstance
     {     
         get {
             if (instance == null) instance = new GameInstance();              
-            return instance; 
+            return instance;
         }
     }
+    public enum EditMode
+    {
+        None,
+        CreativeMode,
+        DestroyMode
+    
+    }
+
 
     public Vector2 currentDir;
     public GameManager manager;
@@ -23,7 +31,7 @@ public class GameInstance
     public DrawGrid drawGrid;
     public AssetLoader assetLoader;
     public HousingSystem housingSystem;
-    public bool creativeMode;
+    public EditMode editMode;
     List<PlayerController> players = new List<PlayerController>();
 
     public List<PlayerController> GetPlayers { get { return players; } }

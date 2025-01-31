@@ -87,8 +87,14 @@ public class DrawGrid : MonoBehaviour
         if (x == cellX && y == cellY) return;
 
         x= cellX; y= cellY;
-   //     Debug.Log(x + " " + y); 
+        Debug.Log(x + " " + y); 
         if (currentLineRender!= null) GridManager.RemoveLine(currentLineRender);
+
+        if(x >= 5 || x < -5 || y >= 5 || y< -5)
+        {
+            currentLineRender = null;
+            return;
+        }
 
         currentLineRender = GridManager.GetLine();
        

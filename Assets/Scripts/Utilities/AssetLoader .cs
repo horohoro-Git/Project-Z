@@ -8,13 +8,18 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
 public class AssetLoader : MonoBehaviour
 {
+    
+
     GameObject root;
     [NonSerialized]
     public AssetBundle bundle;
 
     public string floor_url = "Assets/Edited/Floor/Floor.prefab";
+    public string wall_url = "Assets/Edited/wall/wall.prefab";
     [NonSerialized]
     public GameObject floor; 
+    public GameObject wall;
+    
     List<GameObject> floor_List = new List<GameObject>();
     public void Awake()
     {
@@ -60,11 +65,53 @@ public class AssetLoader : MonoBehaviour
         }
     }
 
-    public void LoadWall(Vector3 point, int x, int y)
+    public void LoadWall(HousingSystem.BuildWallDirection buildWallDirection, int x, int y)
     {
-       // if (GameInstance.Instance.housingSystem.CheckFloor(x, y)) // 바닥 확인
+        if (GameInstance.Instance.housingSystem.CheckFloor(x, y)) // 바닥 확인
         {
-            float pointX = point.x;
+            if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
+            {
+                GameObject go = Instantiate(wall);
+                Wall w = go.GetComponent<Wall>();
+                w.x = x - GameInstance.Instance.housingSystem.minx;
+                w.y = y - GameInstance.Instance.housingSystem.minx;
+                switch (buildWallDirection)
+                {
+                    case HousingSystem.BuildWallDirection.None:
+                         return;
+                    case HousingSystem.BuildWallDirection.Left:
+                        int leftX = x * 2;
+                        int leftY = y * 2 + 1;
+                        w.transform.position = new Vector3(leftX, 1.7f, leftY);
+                        w.transform.rotation = Quaternion.Euler(-90, -90, 0);
+                        break;
+                    case HousingSystem.BuildWallDirection.Right:
+                        int rightX = x * 2 + 2;
+                        int rightY = y * 2 + 1;
+                        w.transform.position = new Vector3(rightX, 1.7f, rightY);
+                        w.transform.rotation = Quaternion.Euler(-90, -90, 0);
+                        w.x += 1;
+                        break;
+                    case HousingSystem.BuildWallDirection.Top:
+                        int topX = x * 2 + 1;
+                        int topY = y * 2 + 2;
+                        w.transform.position = new Vector3(topX, 1.7f, topY);
+                        w.y += 1;
+                        break;
+                    case HousingSystem.BuildWallDirection.Bottom:
+                        int botX = x * 2 + 1;
+                        int botY = y * 2;
+                        w.transform.position = new Vector3(botX, 1.7f, botY);
+
+                        break;
+                }
+                GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
+            }
+        }
+
+
+
+          /*  float pointX = point.x;
             float pointY = point.z;
 
             //크기 확인
@@ -78,15 +125,65 @@ public class AssetLoader : MonoBehaviour
             if(disC < min) min = disC;
             if(disD < min) min = disD;
 
-            if(min == disA) Debug.Log("좌측 벽 생성 " + min);    
-      
-            if (min == disB) Debug.Log("우측 벽 생성 " + min);
-      
-            if(min == disC) Debug.Log("아래 벽 생성 " + min);
-      
-            if(min == disD) Debug.Log("윗벽 생성 " + min);
-      
-        }
+            HousingSystem.BuildWallDirection buildWallDirection = HousingSystem.BuildWallDirection.None;
+
+            GameObject w = Instantiate(wall);
+            if (min == disA)
+            {
+                buildWallDirection = HousingSystem.BuildWallDirection.Left;
+                if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
+                {
+                    int posX = x * 2;
+                    int posY = y * 2 + 1;
+                    w.transform.position = new Vector3(posX, 1.7f, posY);
+                    w.transform.rotation = Quaternion.Euler(-90, -90, 0);
+                    Debug.Log("좌측 벽 생성 " + min);
+
+                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
+                }
+            }
+            if (min == disB)
+            {
+                buildWallDirection = HousingSystem.BuildWallDirection.Right;
+                if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
+                {
+                    int posX = x * 2 + 2;
+                    int posY = y * 2 + 1;
+                    w.transform.position = new Vector3(posX, 1.7f, posY);
+                    w.transform.rotation = Quaternion.Euler(-90, -90, 0);
+                    Debug.Log("우측 벽 생성 " + min);
+
+                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
+                }
+            }
+            if (min == disC)
+            {
+                buildWallDirection = HousingSystem.BuildWallDirection.Bottom;
+                if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
+                {
+                    int posX = x * 2 + 1;
+                    int posY = y * 2;
+                    w.transform.position = new Vector3(posX, 1.7f, posY);
+                    Debug.Log("아래 벽 생성 " + min);
+
+                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
+                }
+            }
+            if (min == disD)
+            {
+                buildWallDirection = HousingSystem.BuildWallDirection.Top;
+                if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
+                {
+                    int posX = x * 2 + 1;
+                    int posY = y * 2 + 2;
+                    w.transform.position = new Vector3(posX, 1.7f, posY);
+                    Debug.Log("윗벽 생성 " + min);
+
+                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
+                }
+            }
+*/
+        
     }
 
     public void LoadAsset()
@@ -99,7 +196,8 @@ public class AssetLoader : MonoBehaviour
             }*/
             // 번들에서 에셋을 로드 (예: GameObject)
             floor = bundle.LoadAsset<GameObject>(floor_url);
-
+            wall = bundle.LoadAsset<GameObject>(wall_url);
+            if (wall) Debug.Log("A");
         }
     }
 
