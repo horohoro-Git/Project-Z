@@ -9,4 +9,5 @@ public class Wall : MonoBehaviour
     public int x;
     [NonSerialized] 
     public int y;
+    public bool isDoor;
 }

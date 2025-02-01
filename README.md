@@ -50,3 +50,6 @@ Housing system deugging (wall)
 
 01/31
 Housing system (build and destroy)
+
+02/01
+Housing system (auto roof and door pathfinding)

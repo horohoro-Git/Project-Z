@@ -2238,7 +2238,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floor_url: Assets/Edited/Floor/Floor.prefab
   wall_url: Assets/Edited/wall/wall.prefab
-  wall: {fileID: 0}
+  door_url: Assets/Edited/wall/door.prefab
+  roof_url: Assets/Edited/roof/roof.prefab
 --- !u!114 &1906076319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2252,7 +2253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bundleUrl: http://211.193.2.220:8080/download/home/29a6877fe12873a87216dc4d1fb07c8d_unitybuiltinshaders_c0ee00b845eede8db92944e6af48af37.bundle
-  bundleUrl2: http://211.193.2.220:8080/download/home/home_assets_all_8ec37ef60564671737a89bed58c1afee.bundle
+  bundleUrl2: http://211.193.2.220:8080/download/home/home_assets_all_181cf1054d5ca7d31d3bac7df5b7bbe7.bundle
 --- !u!4 &1906076320
 Transform:
   m_ObjectHideFlags: 0
