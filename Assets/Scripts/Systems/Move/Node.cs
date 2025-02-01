@@ -20,7 +20,7 @@ public class Node : IComparable<Node>
             return costF.Value;
         }
     }
-
+    public bool roof = false;
     public Node parentNode = null;
 
     public void ResetNode()

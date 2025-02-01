@@ -8,18 +8,26 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
 public class AssetLoader : MonoBehaviour
 {
-    
 
-    GameObject root;
+    [NonSerialized]
+    public GameObject root;
     [NonSerialized]
     public AssetBundle bundle;
 
     public string floor_url = "Assets/Edited/Floor/Floor.prefab";
     public string wall_url = "Assets/Edited/wall/wall.prefab";
+    public string door_url = "Assets/Edited/wall/door.prefab";
+    public string roof_url = "Assets/Edited/roof/roof.prefab";
     [NonSerialized]
-    public GameObject floor; 
+    public GameObject floor;
+    [NonSerialized]
+    public GameObject door;
+    [NonSerialized]
     public GameObject wall;
-    
+    [NonSerialized]
+    public GameObject roof;
+
+
     List<GameObject> floor_List = new List<GameObject>();
     public void Awake()
     {
@@ -65,13 +73,15 @@ public class AssetLoader : MonoBehaviour
         }
     }
 
-    public void LoadWall(HousingSystem.BuildWallDirection buildWallDirection, int x, int y)
+    public void LoadWall(HousingSystem.BuildWallDirection buildWallDirection, int x, int y, bool justWall = true)
     {
         if (GameInstance.Instance.housingSystem.CheckFloor(x, y)) // 바닥 확인
         {
             if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
             {
-                GameObject go = Instantiate(wall);
+                GameObject go; 
+                if (justWall) go = Instantiate(wall);
+                else go = Instantiate(door);
                 Wall w = go.GetComponent<Wall>();
                 w.x = x - GameInstance.Instance.housingSystem.minx;
                 w.y = y - GameInstance.Instance.housingSystem.minx;
@@ -197,7 +207,8 @@ public class AssetLoader : MonoBehaviour
             // 번들에서 에셋을 로드 (예: GameObject)
             floor = bundle.LoadAsset<GameObject>(floor_url);
             wall = bundle.LoadAsset<GameObject>(wall_url);
-            if (wall) Debug.Log("A");
+            door = bundle.LoadAsset<GameObject>(door_url);
+            roof = bundle.LoadAsset<GameObject>(roof_url);
         }
     }
 
