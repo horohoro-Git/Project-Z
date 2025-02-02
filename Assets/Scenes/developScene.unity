@@ -563,7 +563,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -1962,10 +1962,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 509f3a53a12e19b4289406e1c7845175, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minX: -15
-  minY: -15
-  maxX: 15
-  maxY: 15
+  minX: -50
+  minY: -50
+  maxX: 50
+  maxY: 50
 --- !u!4 &1277594533
 Transform:
   m_ObjectHideFlags: 0

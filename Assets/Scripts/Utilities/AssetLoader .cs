@@ -115,7 +115,7 @@ public class AssetLoader : MonoBehaviour
 
                         break;
                 }
-                GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
+                GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection, justWall);
             }
         }
 

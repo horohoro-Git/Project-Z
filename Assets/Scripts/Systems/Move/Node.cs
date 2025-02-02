@@ -25,6 +25,7 @@ public class Node : IComparable<Node>
 
     public void ResetNode()
     {
+        roof = false;
         X = 0; Y = 0; H = 0; G = 0;
         costF = null;
         parentNode = null;

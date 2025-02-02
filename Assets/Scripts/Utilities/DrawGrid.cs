@@ -24,7 +24,7 @@ public class DrawGrid : MonoBehaviour
     }
     public void Draw()
     {
-        for (int i = 0; i <= 10; i++)
+        for (int i = 0; i <= 50; i++)
         {
             LineRenderer horizontalRender = GridManager.GetLine();
             horizontalRender.name = string.Format("Horizontal {0}", i); 
@@ -36,8 +36,8 @@ public class DrawGrid : MonoBehaviour
 
 
             Vector3[] points = new Vector3[2];
-            points[0] = new Vector3(-10, 0, i * 2 - 10);
-            points[1] = new Vector3(10 , 0, i * 2 - 10);
+            points[0] = new Vector3(-50, 0, i * 2 - 50);
+            points[1] = new Vector3(50 , 0, i * 2 - 50);
 
             horizontalRender.positionCount = points.Length;
             horizontalRender.SetPositions(points);
@@ -45,7 +45,7 @@ public class DrawGrid : MonoBehaviour
             lines.Add(horizontalRender);
         }
 
-        for (int i = 0; i <= 10; i++)
+        for (int i = 0; i <= 50; i++)
         {
             LineRenderer verticalRenderer = GridManager.GetLine();
             verticalRenderer.name = string.Format("Vertical {0}", i);
@@ -54,8 +54,8 @@ public class DrawGrid : MonoBehaviour
             verticalRenderer.endWidth = 0.05f;
 
             Vector3[] points = new Vector3[2];
-            points[0] = new Vector3(i * 2 -10, 0, -10);  // 시작점
-            points[1] = new Vector3(i * 2 -10, 0, 10);  // 끝점
+            points[0] = new Vector3(i * 2 -50, 0, -50);  // 시작점
+            points[1] = new Vector3(i * 2 -50, 0, 50);  // 끝점
 
             verticalRenderer.positionCount = points.Length;
             verticalRenderer.material = null;
@@ -90,7 +90,7 @@ public class DrawGrid : MonoBehaviour
       //  Debug.Log(x + " " + y); 
         if (currentLineRender!= null) GridManager.RemoveLine(currentLineRender);
 
-        if(x >= 5 || x < -5 || y >= 5 || y< -5)
+        if(x >= 49 || x < -49 || y >= 49 || y< -49)
         {
             currentLineRender = null;
             return;

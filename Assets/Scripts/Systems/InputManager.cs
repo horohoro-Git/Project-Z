@@ -72,7 +72,7 @@ public class InputManager : MonoBehaviour
 
                 }
             }
-            if (!(x >= 5 || x < -5 || y >= 5 || y < -5))
+            if (!(x >= 25 || x < -25 || y >= 25 || y < -25))
             {
                 if (Input.GetMouseButtonDown(0))
                 {
