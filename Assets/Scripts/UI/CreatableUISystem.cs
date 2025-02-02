@@ -89,13 +89,16 @@ public class CreatableUISystem : MonoBehaviour
             GameInstance.Instance.editMode = GameInstance.EditMode.None;
             upgradeGO.gameObject.SetActive(false);
             GameInstance.Instance.drawGrid.Remove();
+            GameInstance.Instance.housingSystem.CheckRoofInWorld();
             GameInstance.Instance.playerController.AddAction();
+
         }
         else
         {
             GameInstance.Instance.editMode = GameInstance.EditMode.CreativeMode;
             upgradeGO.gameObject.SetActive(true);
             GameInstance.Instance.drawGrid.Draw();
+            GameInstance.Instance.housingSystem.RemoveRoofInWorld();
             GameInstance.Instance.playerController.RemoveAction();
             GameInstance.Instance.playerController.Rigid.velocity = Vector3.zero;
           

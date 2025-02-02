@@ -6,7 +6,6 @@ public class NodePool
 {
   
     static Queue<Node> pool = new Queue<Node>(1000);
-
     public static void CreateNodes(int num)
     {
         for(int i= 0; i < num; i++)
@@ -17,7 +16,6 @@ public class NodePool
     }
     public static Node GetNode(int X, int Y)
     {
-       
         if (pool.Count == 0)
         {
             for (int i = 0; i < 10; i++)
