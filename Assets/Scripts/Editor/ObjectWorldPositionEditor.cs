@@ -9,7 +9,12 @@ public class ObjectWorldPositionEditor : EditorWindow
 {
     GameObject selectedObject;
     Vector3[] corners = new Vector3[4];
-
+    int xVal;
+    int yVal;
+    int zVal;
+    int xVal2;
+    int yVal2;
+    int zVal2;
     [MenuItem("Tools/Get Object's World Position")]
     public static void ShowWindow()
     {
@@ -42,7 +47,9 @@ public class ObjectWorldPositionEditor : EditorWindow
                 GUILayout.Label($"Corner {i + 1} : {corners[i]}");
             }
 
+            GUILayout.Label($"X : {xVal}, Y : {yVal}, type : {zVal}");
 
+            GUILayout.Label($"Floor X : {xVal2}, Y : {yVal2}, type : {zVal2}");
         }
 
 
@@ -108,6 +115,60 @@ public class ObjectWorldPositionEditor : EditorWindow
         else
         {
             Debug.LogWarning("Selected object does not have a MeshRenderer component!");
+        }
+
+
+        if(selectedObject)
+        {
+            Vector3 pos = selectedObject.transform.position;
+            int minx = -50 / 2;
+            int miny = -50 / 2;
+
+          
+
+            zVal = selectedObject.transform.rotation.z < 0 ? 0 : 1;
+            if(zVal == 0)
+            {
+                float xx = pos.x % 1;
+                if(xx >0.5f)
+                {
+                    xVal = (int)(pos.x) / 2 - minx + 1;
+                    yVal = (int)(pos.z) / 2 - miny;
+                }
+                else
+                {
+                    xVal = (int)(pos.x) / 2 - minx;
+                    yVal = (int)(pos.z) / 2 - miny;
+                }
+             
+            }
+            else
+            {
+                float yy = pos.z % 1;
+                if (yy > 0.5f)
+                {
+                    xVal = (int)(pos.x) / 2 - minx;
+                    yVal = (int)(pos.z) / 2 - miny + 1;
+                }
+                else
+                {
+                    xVal = (int)(pos.x) / 2 - minx;
+                    yVal = (int)(pos.z) / 2 - miny;
+                }
+            }
+          //  GUILayout.Label($"Corner {i + 1} : {corners[i]}");
+        }
+
+
+        if (selectedObject)
+        {
+            Vector3 pos = selectedObject.transform.position;
+            int minx = -50 / 2;
+            int miny = -50 / 2;
+            xVal2 = (int)(pos.x - 1) / 2 - minx;
+            yVal2 = (int)(pos.z - 1) / 2 - miny;
+            zVal2 = 0;
+         
         }
     }
   
