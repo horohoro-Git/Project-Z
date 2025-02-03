@@ -4,15 +4,29 @@ using UnityEngine;
 
 public class BuildingMaterials : MonoBehaviour
 {
+    static Queue<Roof> roofs = new Queue<Roof>();
     // Start is called before the first frame update
-    void Start()
+  
+    public static void CreateRoofs()
     {
-        
+        for (int i = 0; i < 10000; i++)
+        {
+            GameObject go = Instantiate(GameInstance.Instance.assetLoader.roof);
+
+            roofs.Enqueue(go.GetComponent<Roof>());
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public static Roof GetRoof()
     {
-        
+        if(roofs.Count > 0)
+        {
+            return roofs.Dequeue();
+        }
+        else
+        {
+            GameObject go = Instantiate(GameInstance.Instance.assetLoader.roof);
+            return go.GetComponent<Roof>();
+        }
     }
 }

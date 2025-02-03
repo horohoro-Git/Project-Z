@@ -56,3 +56,6 @@ Housing system (auto roof and door pathfinding)
 
 02/02
 Housing system (add, remove with roofs)
+
+02/03
+Housing system (bug fix, optimization)
