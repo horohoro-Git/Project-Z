@@ -75,7 +75,7 @@ public class DrawGrid : MonoBehaviour
         }
     }
 
-    public void Select(Vector3 selectedCell, ref int x, ref int y)
+    public bool Select(Vector3 selectedCell, ref int x, ref int y)
     {
         // Debug.Log(selectedCell);
 
@@ -84,7 +84,7 @@ public class DrawGrid : MonoBehaviour
         int cellX = Mathf.FloorToInt(selectedCell.x / 2);
         int cellY = Mathf.FloorToInt(selectedCell.z / 2);
 
-        if (x == cellX && y == cellY) return;
+        if (x == cellX && y == cellY) return false;
 
         x= cellX; y= cellY;
       //  Debug.Log(x + " " + y); 
@@ -93,7 +93,7 @@ public class DrawGrid : MonoBehaviour
         if(x >= 49 || x < -49 || y >= 49 || y< -49)
         {
             currentLineRender = null;
-            return;
+            return false;
         }
 
         currentLineRender = GridManager.GetLine();
@@ -118,5 +118,7 @@ public class DrawGrid : MonoBehaviour
 
         currentLineRender.numCapVertices = 10; // 끝부분의 버텍스를 설정하여 선 끝이 부드럽게 처리됨
         currentLineRender.numCornerVertices = 10;
+
+        return true;
     }
 }

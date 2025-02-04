@@ -91,7 +91,11 @@ public class CreatableUISystem : MonoBehaviour
             GameInstance.Instance.drawGrid.Remove();
             GameInstance.Instance.housingSystem.CheckRoofInWorld();
             GameInstance.Instance.playerController.AddAction();
-
+            if(GameInstance.Instance.gameManager.gameMode == GameManager.GameMode.DefaultMode)
+            {
+                //게임 정보 저장
+                SaveLoadSystem.SaveBuildSystem();
+            }
         }
         else
         {

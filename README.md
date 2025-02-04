@@ -59,3 +59,6 @@ Housing system (add, remove with roofs)
 
 02/03
 Housing system (bug fix, optimization)
+
+02/04
+Housing system (preload, save & load)

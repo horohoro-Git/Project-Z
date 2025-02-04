@@ -1532,6 +1532,7 @@ MonoBehaviour:
   player: {fileID: 6110067559661071437, guid: 5795aa3c8a053ed459222637725baa27, type: 3}
   inputManager: {fileID: 7613169056353209988, guid: 08e552a3f1d69e94a9e3ce4c1c6c01f1, type: 3}
   startPosition: {x: 0, y: 1, z: 0}
+  gameMode: 0
 --- !u!4 &795207436
 Transform:
   m_ObjectHideFlags: 0
@@ -2240,6 +2241,10 @@ MonoBehaviour:
   wall_url: Assets/Edited/wall/wall.prefab
   door_url: Assets/Edited/wall/door.prefab
   roof_url: Assets/Edited/roof/roof.prefab
+  preFloor_url: Assets/Edited/Floor/PreloadFloor.prefab
+  preWall_url: Assets/Edited/wall/PreloadWall.prefab
+  preDoor_url: Assets/Edited/wall/PreloadDoor.prefab
+  preLoadedObject: {fileID: 0}
 --- !u!114 &1906076319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2252,8 +2257,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66ab31b225e8f68418b14881e3749aae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bundleUrl: http://211.193.2.220:8080/download/home/29a6877fe12873a87216dc4d1fb07c8d_unitybuiltinshaders_c0ee00b845eede8db92944e6af48af37.bundle
-  bundleUrl2: http://211.193.2.220:8080/download/home/home_assets_all_181cf1054d5ca7d31d3bac7df5b7bbe7.bundle
+  bundleUrl: http://211.193.2.220:8080/download/home/29a6877fe12873a87216dc4d1fb07c8d_unitybuiltinshaders_208f78803f74c68d76add3e7de84edf4.bundle
+  bundleUrl2: http://211.193.2.220:8080/download/home/home_assets_all_42da58e4d42839a694e45782e11f6f63.bundle
 --- !u!4 &1906076320
 Transform:
   m_ObjectHideFlags: 0
