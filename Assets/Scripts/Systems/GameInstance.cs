@@ -24,7 +24,7 @@ public class GameInstance
 
 
     public Vector2 currentDir;
-    public GameManager manager;
+    public GameManager gameManager;
     public InputManager inputManager;
     public PlayerController playerController;
     public App app;
@@ -43,7 +43,7 @@ public class GameInstance
         worldGrids = null;
         players.Clear();
         app = null;
-        manager = null;
+        gameManager = null;
         inputManager = null;
         instance = null;
         drawGrid = null;

@@ -18,6 +18,11 @@ public class AssetLoader : MonoBehaviour
     public string wall_url = "Assets/Edited/wall/wall.prefab";
     public string door_url = "Assets/Edited/wall/door.prefab";
     public string roof_url = "Assets/Edited/roof/roof.prefab";
+    public string preFloor_url = "Assets/Edited/Floor/PreloadFloor.prefab";
+    public string preWall_url = "Assets/Edited/wall/PreloadWall.prefab";
+    public string preDoor_url = "Assets/Edited/wall/PreloadDoor.prefab";
+    public string possibleMat_url = "Assets/Edited/PreLoadMaterial_Possible.mat";
+    public string impossibleMat_url = "Assets/Edited/PreLoadMaterial_Impossible.mat";
     [NonSerialized]
     public GameObject floor;
     [NonSerialized]
@@ -26,6 +31,18 @@ public class AssetLoader : MonoBehaviour
     public GameObject wall;
     [NonSerialized]
     public GameObject roof;
+    [NonSerialized]
+    public GameObject preFloor;
+    [NonSerialized]
+    public GameObject preWall;
+    [NonSerialized]
+    public GameObject preDoor;
+    [NonSerialized]
+    public Material possibleMat;
+    [NonSerialized]
+    public Material impossibleMat;
+    [NonSerialized]
+    public GameObject preLoadedObject;
 
 
     List<GameObject> floor_List = new List<GameObject>();
@@ -62,10 +79,33 @@ public class AssetLoader : MonoBehaviour
 
     }
 
-    public void LoadFloor(int x, int y)
+    public void PreLoadFloor(int x, int y)
     {
+        if (preLoadedObject != null) Destroy(preLoadedObject);
         if (!GameInstance.Instance.housingSystem.CheckFloor(x, y))
         {
+            preLoadedObject = Instantiate(preFloor, root.transform);
+            preLoadedObject.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
+        }
+        else
+        {
+            preLoadedObject = Instantiate(preFloor, root.transform);
+            preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
+            preLoadedObject.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
+        }
+    }
+    public void PreLoadWall(int x, int y, bool wall)
+    {
+        if (preLoadedObject != null) Destroy(preLoadedObject);
+        preLoadedObject = Instantiate(floor, root.transform);
+        preLoadedObject.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
+    }
+
+    public void LoadFloor(int x, int y, bool forcedBuild = false)
+    {
+        if (!GameInstance.Instance.housingSystem.CheckFloor(x, y) || forcedBuild)
+        {
+            if (preLoadedObject != null) Destroy(preLoadedObject);
             GameObject f = Instantiate(floor, root.transform);
             f.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
             floor_List.Add(f);
@@ -73,12 +113,13 @@ public class AssetLoader : MonoBehaviour
         }
     }
 
-    public void LoadWall(HousingSystem.BuildWallDirection buildWallDirection, int x, int y, bool justWall = true)
+    public void LoadWall(HousingSystem.BuildWallDirection buildWallDirection, int x, int y, bool justWall = true, bool forecedBuild = false)
     {
-        if (GameInstance.Instance.housingSystem.CheckFloor(x, y)) // 바닥 확인
+        if (GameInstance.Instance.housingSystem.CheckFloor(x, y) || forecedBuild) // 바닥 확인
         {
-            if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
+            if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection) || forecedBuild)
             {
+                if (preLoadedObject != null) Destroy(preLoadedObject);
                 GameObject go; 
                 if (justWall) go = Instantiate(wall);
                 else go = Instantiate(door);
@@ -118,81 +159,6 @@ public class AssetLoader : MonoBehaviour
                 GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection, justWall);
             }
         }
-
-
-
-          /*  float pointX = point.x;
-            float pointY = point.z;
-
-            //크기 확인
-            float disA = pointX - x * 2;
-            float disB = (x * 2 + 2) - pointX;
-            float disC = pointY - y * 2;
-            float disD = (y * 2 + 2) - pointY;
-            float min = 2;
-            if(disA < min) min = disA;
-            if(disB < min) min = disB;
-            if(disC < min) min = disC;
-            if(disD < min) min = disD;
-
-            HousingSystem.BuildWallDirection buildWallDirection = HousingSystem.BuildWallDirection.None;
-
-            GameObject w = Instantiate(wall);
-            if (min == disA)
-            {
-                buildWallDirection = HousingSystem.BuildWallDirection.Left;
-                if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
-                {
-                    int posX = x * 2;
-                    int posY = y * 2 + 1;
-                    w.transform.position = new Vector3(posX, 1.7f, posY);
-                    w.transform.rotation = Quaternion.Euler(-90, -90, 0);
-                    Debug.Log("좌측 벽 생성 " + min);
-
-                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
-                }
-            }
-            if (min == disB)
-            {
-                buildWallDirection = HousingSystem.BuildWallDirection.Right;
-                if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
-                {
-                    int posX = x * 2 + 2;
-                    int posY = y * 2 + 1;
-                    w.transform.position = new Vector3(posX, 1.7f, posY);
-                    w.transform.rotation = Quaternion.Euler(-90, -90, 0);
-                    Debug.Log("우측 벽 생성 " + min);
-
-                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
-                }
-            }
-            if (min == disC)
-            {
-                buildWallDirection = HousingSystem.BuildWallDirection.Bottom;
-                if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
-                {
-                    int posX = x * 2 + 1;
-                    int posY = y * 2;
-                    w.transform.position = new Vector3(posX, 1.7f, posY);
-                    Debug.Log("아래 벽 생성 " + min);
-
-                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
-                }
-            }
-            if (min == disD)
-            {
-                buildWallDirection = HousingSystem.BuildWallDirection.Top;
-                if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection))
-                {
-                    int posX = x * 2 + 1;
-                    int posY = y * 2 + 2;
-                    w.transform.position = new Vector3(posX, 1.7f, posY);
-                    Debug.Log("윗벽 생성 " + min);
-
-                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection);
-                }
-            }
-*/
         
     }
 
@@ -209,6 +175,12 @@ public class AssetLoader : MonoBehaviour
             wall = bundle.LoadAsset<GameObject>(wall_url);
             door = bundle.LoadAsset<GameObject>(door_url);
             roof = bundle.LoadAsset<GameObject>(roof_url);
+            preFloor = bundle.LoadAsset<GameObject>(preFloor_url);
+            preWall = bundle.LoadAsset<GameObject>(preWall_url);
+            preDoor = bundle.LoadAsset<GameObject>(preDoor_url);
+            possibleMat = bundle.LoadAsset<Material>(possibleMat_url);
+            impossibleMat = bundle.LoadAsset<Material>(impossibleMat_url);
+
         }
     }
 

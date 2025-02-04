@@ -70,8 +70,23 @@ public class InputManager : MonoBehaviour
             {
                 if (GameInstance.Instance.drawGrid)
                 {
-                    GameInstance.Instance.drawGrid.Select(hit.point, ref x, ref y);
-
+                    if(GameInstance.Instance.drawGrid.Select(hit.point, ref x, ref y))
+                    {
+                        switch (structureState)
+                        {
+                            case StructureState.None: break;
+                            case StructureState.Floor:
+                                if (GameInstance.Instance.editMode == GameInstance.EditMode.CreativeMode) GameInstance.Instance.assetLoader.PreLoadFloor(x, y);
+                                break;
+                            case StructureState.Wall:
+                                if (GameInstance.Instance.editMode == GameInstance.EditMode.CreativeMode) GameInstance.Instance.assetLoader.PreLoadFloor(x, y);
+                                break;
+                            case StructureState.Door:
+                                if (GameInstance.Instance.editMode == GameInstance.EditMode.CreativeMode) GameInstance.Instance.assetLoader.PreLoadFloor(x, y);
+                                break;
+                        }
+                    }
+                    
                 }
             }
             if (!(x >= 25 || x < -25 || y >= 25 || y < -25))
@@ -99,6 +114,7 @@ public class InputManager : MonoBehaviour
                     }
 
                 }
+          
             }
         }
     }

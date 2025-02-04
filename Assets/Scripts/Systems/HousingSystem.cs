@@ -4,11 +4,6 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using Unity.VisualScripting;
 using UnityEngine;
-using static InputManager;
-using UnityEngine.InputSystem.HID;
-using static HousingSystem;
-using UnityEditor.Experimental.GraphView;
-
 public class HousingSystem : MonoBehaviour
 {
     struct DoorSturct
@@ -37,8 +32,23 @@ public class HousingSystem : MonoBehaviour
     public int minx = -50 / 2;
     [NonSerialized]
     public int miny = -50 / 2;
+
     GameObject[,] floors = new GameObject[100,100];//0 == -15 
+
+    public GameObject GetFloor(int x, int y) {
+    
+        return floors[x,y];
+    }
+
     Wall[,,] walls = new Wall[100,100,2];
+
+    public Wall GetFloor(int x, int y, int z)
+    {
+
+        return walls[x, y, z];
+    }
+
+
     Roof[,] roofs = new Roof[100, 100];
     int floorCount;
     List<DoorSturct> doors = new List<DoorSturct>();
@@ -51,7 +61,7 @@ public class HousingSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-      Invoke("st", 2);
+        if(GameInstance.Instance.gameManager.gameMode == GameManager.GameMode.TestMode) Invoke("st", 2);
        
     }
 
@@ -161,12 +171,13 @@ public class HousingSystem : MonoBehaviour
             {
                 if (roofs[i, j] != null)// CheckHouse(i, j, true);
                 {
-                    Destroy(roofs[i,j].gameObject);
-                    
+                    Destroy(roofs[i, j].gameObject);
+
                 }
                 roofs[i, j] = null;
             }
         }
+        
     }
 
 
