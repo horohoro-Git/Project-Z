@@ -10,8 +10,6 @@
 
 # Unity generated folders that should be ignored
 /[Pp]ackages/cache/
-/[Pp]ackages/manifest.json
-/[Pp]ackages/package-lock.json
 /[Dd]evelop/
 /[Ll]ibrary/
 /[Tt]emp/
