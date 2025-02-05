@@ -14,14 +14,6 @@ public class GameInstance
             return instance;
         }
     }
-    public enum EditMode
-    {
-        None,
-        CreativeMode,
-        DestroyMode
-    
-    }
-
 
     public Vector2 currentDir;
     public GameManager gameManager;

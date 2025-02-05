@@ -5,13 +5,6 @@ using UnityEngine.InputSystem;
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameMode
-    {
-        DefaultMode,
-        NoSaveMode,
-        TestMode
-    
-    }
 
 
     const string playerName = "Player";
@@ -20,6 +13,7 @@ public class GameManager : MonoBehaviour
     public InputManager inputManager;
     public Vector3 startPosition;
     public GameMode gameMode;
+    public bool loaded;
     private void Awake()
     {
         GameInstance.Instance.gameManager = this;
@@ -33,30 +27,35 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if(gameMode == GameMode.DefaultMode) Invoke("LoadBuilds", 0.5f);
+        Invoke("LoadBuilds", 0.5f);
     }
 
     void LoadBuilds()
     {
-        List<HousingInfo> infos = SaveLoadSystem.LoadBuildSystem();
-
-        int minx = GameInstance.Instance.housingSystem.minx;
-        int miny = GameInstance.Instance.housingSystem.miny;
-        for (int i = 0; i < infos.Count; i++)
+        if (gameMode == GameMode.DefaultMode)
         {
-            HousingInfo info = infos[i];
-            if (info.materialsType == MaterialsType.Floor)
-            {
-                GameInstance.Instance.assetLoader.LoadFloor(info.x + minx, info.y + miny, true);
+            List<HousingInfo> infos = SaveLoadSystem.LoadBuildSystem();
 
-            }
-            else
+            int minx = GameInstance.Instance.housingSystem.minx;
+            int miny = GameInstance.Instance.housingSystem.miny;
+            for (int i = 0; i < infos.Count; i++)
             {
-                HousingSystem.BuildWallDirection buildWallDirection = info.z == 0 ? HousingSystem.BuildWallDirection.Left : HousingSystem.BuildWallDirection.Bottom;
-                GameInstance.Instance.assetLoader.LoadWall(buildWallDirection, info.x + minx, info.y + miny, info.materialsType == MaterialsType.Wall ? true : false, true);
+                HousingInfo info = infos[i];
+                if (info.materialsType == MaterialsType.Floor)
+                {
+                    GameInstance.Instance.assetLoader.LoadFloor(info.x + minx, info.y + miny, true);
+
+                }
+                else
+                {
+                    BuildWallDirection buildWallDirection = info.z == 0 ? BuildWallDirection.Left : BuildWallDirection.Bottom;
+                    GameInstance.Instance.assetLoader.LoadWall(buildWallDirection, info.x + minx, info.y + miny, info.materialsType == MaterialsType.Wall ? true : false, true);
+                }
             }
+
+            GameInstance.Instance.housingSystem.CheckRoofInWorld();
         }
 
-        GameInstance.Instance.housingSystem.CheckRoofInWorld();
+        loaded = true;
     }
 }

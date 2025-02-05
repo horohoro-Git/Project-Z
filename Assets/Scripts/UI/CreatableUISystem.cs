@@ -84,42 +84,45 @@ public class CreatableUISystem : MonoBehaviour
     }
     void ShowGridWithStructure()
     {
-        if (upgradeGO.gameObject.activeSelf)
+        if (GameInstance.Instance.gameManager.loaded)
         {
-            GameInstance.Instance.editMode = GameInstance.EditMode.None;
-            upgradeGO.gameObject.SetActive(false);
-            GameInstance.Instance.drawGrid.Remove();
-            GameInstance.Instance.housingSystem.CheckRoofInWorld();
-            GameInstance.Instance.playerController.AddAction();
-            if(GameInstance.Instance.gameManager.gameMode == GameManager.GameMode.DefaultMode)
+            if (upgradeGO.gameObject.activeSelf)
             {
-                //게임 정보 저장
-                SaveLoadSystem.SaveBuildSystem();
+                GameInstance.Instance.editMode = EditMode.None;
+                upgradeGO.gameObject.SetActive(false);
+                GameInstance.Instance.drawGrid.Remove();
+                GameInstance.Instance.housingSystem.CheckRoofInWorld();
+                GameInstance.Instance.playerController.AddAction();
+                if (GameInstance.Instance.gameManager.gameMode == GameMode.DefaultMode)
+                {
+                    //게임 정보 저장
+                    SaveLoadSystem.SaveBuildSystem();
+                }
             }
-        }
-        else
-        {
-            GameInstance.Instance.editMode = GameInstance.EditMode.CreativeMode;
-            upgradeGO.gameObject.SetActive(true);
-            GameInstance.Instance.drawGrid.Draw();
-            GameInstance.Instance.housingSystem.RemoveRoofInWorld();
-            GameInstance.Instance.playerController.RemoveAction();
-            GameInstance.Instance.playerController.Rigid.velocity = Vector3.zero;
-          
+            else
+            {
+                GameInstance.Instance.editMode = EditMode.CreativeMode;
+                upgradeGO.gameObject.SetActive(true);
+                GameInstance.Instance.drawGrid.Draw();
+                GameInstance.Instance.housingSystem.RemoveRoofInWorld();
+                GameInstance.Instance.playerController.RemoveAction();
+                GameInstance.Instance.playerController.Rigid.velocity = Vector3.zero;
+
+            }
         }
     }
 
     void ChangeMode()
     {
-        if(GameInstance.Instance.editMode == GameInstance.EditMode.CreativeMode)
+        if(GameInstance.Instance.editMode == EditMode.CreativeMode)
         {
             modeImage.sprite = plus;
-            GameInstance.Instance.editMode = GameInstance.EditMode.DestroyMode;
+            GameInstance.Instance.editMode = EditMode.DestroyMode;
         }
-        else if(GameInstance.Instance.editMode == GameInstance.EditMode.DestroyMode)
+        else if(GameInstance.Instance.editMode == EditMode.DestroyMode)
         {
             modeImage.sprite = minus;
-            GameInstance.Instance.editMode = GameInstance.EditMode.CreativeMode;
+            GameInstance.Instance.editMode = EditMode.CreativeMode;
         }
        
     }
