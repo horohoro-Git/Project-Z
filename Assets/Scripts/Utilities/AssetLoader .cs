@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
+using UnityEngine.InputSystem.HID;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -45,7 +46,15 @@ public class AssetLoader : MonoBehaviour
     public GameObject preLoadedObject;
 
 
+    int preLoadX = -100;
+    int preLoadY = -100;
+    BuildWallDirection buildDirection = BuildWallDirection.None;
+    bool isWall = false;
+
     List<GameObject> floor_List = new List<GameObject>();
+
+
+    bool assetLoadSuccessful;
     public void Awake()
     {
         GameInstance.Instance.assetLoader = this;
@@ -71,6 +80,7 @@ public class AssetLoader : MonoBehaviour
             }
             else bundle = AssetBundle.LoadFromMemory(www.downloadHandler.data);
             LoadAsset();
+            assetLoadSuccessful = true;
         }
         else
         {
@@ -78,85 +88,147 @@ public class AssetLoader : MonoBehaviour
         }
 
     }
-
+    public bool CheckAssetLoaded()
+    {
+        if (!assetLoadSuccessful)
+        {
+            Debug.Log("에셋이 로드되지 않음");
+            return false;
+        }
+    
+        return true;
+    }
     public void PreLoadFloor(int x, int y)
     {
-        if (preLoadedObject != null) Destroy(preLoadedObject);
-        if (!GameInstance.Instance.housingSystem.CheckFloor(x, y))
+        if (CheckAssetLoaded())
         {
-            preLoadedObject = Instantiate(preFloor, root.transform);
-            preLoadedObject.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
-        }
-        else
-        {
-            preLoadedObject = Instantiate(preFloor, root.transform);
-            preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
-            preLoadedObject.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
+            if (x != preLoadX || y != preLoadY)
+            {
+                if (preLoadedObject != null) Destroy(preLoadedObject);
+                preLoadedObject = Instantiate(preFloor, root.transform);
+                preLoadX = x; preLoadY = y; 
+            }
+            if (preLoadedObject)
+            {
+                preLoadedObject.transform.position = new Vector3(x * 2 + 1, 0.11f, y * 2 + 1);
+
+
+                if (GameInstance.Instance.editMode == EditMode.DestroyMode)
+                {
+                    if (GameInstance.Instance.housingSystem.CheckFloor(x, y)) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
+                    else preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
+                }
+                else
+                {
+                    if (GameInstance.Instance.housingSystem.CheckFloor(x, y)) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
+                }
+            }
+         
         }
     }
-    public void PreLoadWall(int x, int y, bool wall)
+    public void RemovePreloadObject()
     {
         if (preLoadedObject != null) Destroy(preLoadedObject);
-        preLoadedObject = Instantiate(floor, root.transform);
-        preLoadedObject.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
+    }
+    public void PreLoadWall(Vector3 hit, int x, int y, bool wall)
+    {
+        if (CheckAssetLoaded())
+        {
+            BuildWallDirection buildWallDirection = GameInstance.Instance.housingSystem.GetWallDirection(hit, x, y);
+            if (x != preLoadX || y != preLoadY || buildDirection != buildWallDirection || isWall != wall)
+            {
+                if (preLoadedObject != null) Destroy(preLoadedObject);
+                if (isWall) preLoadedObject = Instantiate(preWall, root.transform);
+                else preLoadedObject = Instantiate(preDoor, root.transform);
+                preLoadX = x; preLoadY = y; buildDirection = buildWallDirection; isWall = wall;
+            }
+            if (preLoadedObject)
+            {
+                int offsetX = 0;
+                int offsetY = 0;
+                int offsetZ = 0;
+                int locX = 0;
+                int locY = 0;
+                BuildDirectionWithOffset buildDirectionWithOffset = Utility.GetWallDirectionWithOffset(buildWallDirection, x, y);
+
+                offsetX = buildDirectionWithOffset.offsetX;
+                offsetY = buildDirectionWithOffset.offsetY;
+                offsetZ = buildDirectionWithOffset.offsetZ;
+                locX = buildDirectionWithOffset.locX;
+                locY = buildDirectionWithOffset.locY;
+
+                preLoadedObject.transform.position = new Vector3(locX, 1.7f, locY);
+                if(offsetZ == 0) preLoadedObject.transform.rotation = Quaternion.Euler(-90, -90, 0);
+                else preLoadedObject.transform.rotation = Quaternion.Euler(-90, 0, 0);
+
+                if (GameInstance.Instance.editMode == EditMode.DestroyMode)
+                {
+                    preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
+
+                    if (GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection)) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
+
+                    if (!(GameInstance.Instance.housingSystem.CheckFloor(x, y) || GameInstance.Instance.housingSystem.CheckFloor(x + offsetX, y + offsetY))) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
+                }
+                else
+                {
+                    if (GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection)) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
+
+                    if (!(GameInstance.Instance.housingSystem.CheckFloor(x, y) || GameInstance.Instance.housingSystem.CheckFloor(x + offsetX, y + offsetY))) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
+                }
+             
+            }
+        }
     }
 
     public void LoadFloor(int x, int y, bool forcedBuild = false)
     {
-        if (!GameInstance.Instance.housingSystem.CheckFloor(x, y) || forcedBuild)
+        if (CheckAssetLoaded()) 
         {
-            if (preLoadedObject != null) Destroy(preLoadedObject);
-            GameObject f = Instantiate(floor, root.transform);
-            f.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
-            floor_List.Add(f);
-            GameInstance.Instance.housingSystem.BuildFloor(x, y,f);
+            if (!GameInstance.Instance.housingSystem.CheckFloor(x, y) || forcedBuild)
+            {
+                if (preLoadedObject != null) Destroy(preLoadedObject);
+                GameObject f = Instantiate(floor, root.transform);
+                f.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
+                floor_List.Add(f);
+                GameInstance.Instance.housingSystem.BuildFloor(x, y, f);
+            }
         }
     }
 
-    public void LoadWall(HousingSystem.BuildWallDirection buildWallDirection, int x, int y, bool justWall = true, bool forecedBuild = false)
+    public void LoadWall(BuildWallDirection buildWallDirection, int x, int y, bool justWall = true, bool forecedBuild = false)
     {
-        if (GameInstance.Instance.housingSystem.CheckFloor(x, y) || forecedBuild) // 바닥 확인
+        if (CheckAssetLoaded())
         {
-            if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection) || forecedBuild)
-            {
-                if (preLoadedObject != null) Destroy(preLoadedObject);
-                GameObject go; 
-                if (justWall) go = Instantiate(wall);
-                else go = Instantiate(door);
-                Wall w = go.GetComponent<Wall>();
-                w.x = x - GameInstance.Instance.housingSystem.minx;
-                w.y = y - GameInstance.Instance.housingSystem.minx;
-                switch (buildWallDirection)
-                {
-                    case HousingSystem.BuildWallDirection.None:
-                         return;
-                    case HousingSystem.BuildWallDirection.Left:
-                        int leftX = x * 2;
-                        int leftY = y * 2 + 1;
-                        w.transform.position = new Vector3(leftX, 1.7f, leftY);
-                        w.transform.rotation = Quaternion.Euler(-90, -90, 0);
-                        break;
-                    case HousingSystem.BuildWallDirection.Right:
-                        int rightX = x * 2 + 2;
-                        int rightY = y * 2 + 1;
-                        w.transform.position = new Vector3(rightX, 1.7f, rightY);
-                        w.transform.rotation = Quaternion.Euler(-90, -90, 0);
-                        w.x += 1;
-                        break;
-                    case HousingSystem.BuildWallDirection.Top:
-                        int topX = x * 2 + 1;
-                        int topY = y * 2 + 2;
-                        w.transform.position = new Vector3(topX, 1.7f, topY);
-                        w.y += 1;
-                        break;
-                    case HousingSystem.BuildWallDirection.Bottom:
-                        int botX = x * 2 + 1;
-                        int botY = y * 2;
-                        w.transform.position = new Vector3(botX, 1.7f, botY);
+            int offsetX = 0;
+            int offsetY = 0;
+            int offsetZ = 0;
+            int locX = 0;
+            int locY = 0;
+            BuildDirectionWithOffset buildDirectionWithOffset = Utility.GetWallDirectionWithOffset(buildWallDirection, x,y);
+            
+            offsetX = buildDirectionWithOffset.offsetX;
+            offsetY = buildDirectionWithOffset.offsetY;
+            offsetZ = buildDirectionWithOffset.offsetZ;
+            locX = buildDirectionWithOffset.locX;
+            locY = buildDirectionWithOffset.locY;
 
-                        break;
+            if(GameInstance.Instance.housingSystem.CheckFloor(x, y) || GameInstance.Instance.housingSystem.CheckFloor(x + offsetX, y + offsetY) || forecedBuild)
+            {
+                if (!GameInstance.Instance.housingSystem.CheckWall(x, y, buildWallDirection) || forecedBuild)
+                {
+                    if (preLoadedObject != null) Destroy(preLoadedObject);
+                    GameObject go;
+                    if (justWall) go = Instantiate(wall, root.transform);
+                    else go = Instantiate(door, root.transform);
+
+                    Wall w = go.GetComponent<Wall>();
+
+                    w.transform.position = new Vector3(locX, 1.7f, locY);
+                    if(offsetZ == 0) w.transform.rotation = Quaternion.Euler(-90, -90, 0);
+                    else w.transform.rotation = Quaternion.Euler(-90, 0, 0);
+
+                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection, justWall);
                 }
-                GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection, justWall);
             }
         }
         
@@ -166,11 +238,6 @@ public class AssetLoader : MonoBehaviour
     {
         if (bundle != null)
         {
-     /*       foreach (string assetName in bundle.GetAllAssetNames())
-            {
-                Debug.Log("번들에 포함된 에셋 이름: " + assetName);
-            }*/
-            // 번들에서 에셋을 로드 (예: GameObject)
             floor = bundle.LoadAsset<GameObject>(floor_url);
             wall = bundle.LoadAsset<GameObject>(wall_url);
             door = bundle.LoadAsset<GameObject>(door_url);

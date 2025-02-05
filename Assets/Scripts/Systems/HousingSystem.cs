@@ -6,28 +6,6 @@ using Unity.VisualScripting;
 using UnityEngine;
 public class HousingSystem : MonoBehaviour
 {
-    struct DoorSturct
-    {
-        public int indexX;
-        public int indexY;
-        public int indexZ;
-        public DoorSturct(int indexX, int indexY, int indexZ)
-        {
-            this.indexX = indexX;
-            this.indexY = indexY;
-            this.indexZ = indexZ;
-        }
-    }
-
-    public enum BuildWallDirection
-    {
-        None,
-        Left,
-        Right,
-        Top,
-        Bottom,
-    }
-
     [NonSerialized]
     public int minx = -50 / 2;
     [NonSerialized]
@@ -52,8 +30,7 @@ public class HousingSystem : MonoBehaviour
     Roof[,] roofs = new Roof[100, 100];
     int floorCount;
     List<DoorSturct> doors = new List<DoorSturct>();
-    bool[,,] visit = new bool[100, 100,2];
-    bool[,] visitCheckHouse = new bool[100, 100];
+    bool[,,] visited = new bool[100, 100,2];
     private void Awake()
     {
         GameInstance.Instance.housingSystem = this;
@@ -61,7 +38,7 @@ public class HousingSystem : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(GameInstance.Instance.gameManager.gameMode == GameManager.GameMode.TestMode) Invoke("st", 2);
+        if(GameInstance.Instance.gameManager.gameMode == GameMode.TestMode) Invoke("st", 2);
        
     }
 
@@ -127,38 +104,69 @@ public class HousingSystem : MonoBehaviour
 
     int a = 0;
 
-    public void CreateAllRoofs()
+
+    void Make(int indexX, int indexY, int indexZ)
     {
-        for (int i = 0; i < doors.Count; i++)
+        MakeHouse(indexX, indexY, false);
+        if (indexZ == 0)
         {
-            int indexX = doors[i].indexX;
-            int indexY = doors[i].indexY;
-            int indexZ = doors[i].indexZ;
-            CheckHouse(indexX, indexY, false);
-            if (indexZ == 0)
-            {
-                if (ValidSize(indexX - 1, indexY))
-                    CheckHouse(indexX - 1, indexY, false);
-            }
-            else
-            {
-                if (ValidSize(indexX, indexY - 1))
-                    CheckHouse(indexX, indexY - 1, false);
-            }
+            if (ValidSize(indexX - 1, indexY))
+                MakeHouse(indexX - 1, indexY, false);
+        }
+        else
+        {
+            if (ValidSize(indexX, indexY - 1))
+                MakeHouse(indexX, indexY - 1, false);
         }
     }
+ 
+    //맵에 있는 건물들에 지붕 생성
     public void CheckRoofInWorld()
     {
-        for (int i = 0; i < doors.Count; i++)
+        List<DoorSturct> DupulicatDoors = doors; //문들의 위치 값 리스트
+        for (int i = 0; i < DupulicatDoors.Count; i++)
         {
-            int indexX = doors[i].indexX;
-            int indexY = doors[i].indexY;
-            int indexZ = doors[i].indexZ;
+            int indexX = DupulicatDoors[i].indexX;  //x축
+            int indexY = DupulicatDoors[i].indexY;  //y축
+            int indexZ = DupulicatDoors[i].indexZ;  //문과 벽의 방향
+            List<DoorSturct> discovered = new List<DoorSturct>();
 
-            if (DoorWithOutSideValidation(indexX, indexY, indexZ))
+            bool checkWithOutSide = DoorWithOutSideValidation(indexX, indexY, indexZ, ref discovered); //문의 외부연결 확인
+
+            if (checkWithOutSide)
             {
-                CreateAllRoofs();
-                return;
+                //해당 위치 부터 지붕 생성
+                Make(indexX, indexY, indexZ);    
+                //탐색 하면서 같이 발견된 문의 지붕 생성
+                for (int j=0; j< discovered.Count; j++) Make(discovered[j].indexX, discovered[j].indexY, discovered[j].indexZ);
+            }
+            //발견한 문 제거
+            for (int j = DupulicatDoors.Count - 1; j > i; j--)
+            {
+                for (int k = 0; k < discovered.Count; k++)
+                {
+                    if (DupulicatDoors[j].indexX == discovered[k].indexX && DupulicatDoors[j].indexY == discovered[k].indexY &&
+                        DupulicatDoors[j].indexZ == discovered[k].indexZ)
+                    {
+                        DupulicatDoors.RemoveAt(j);
+                        break;
+                    }
+                }
+            }
+
+            //방문 인덱스 초기화
+            for (int ii = 0; ii < 100; ii++)
+            {
+                for (int j = 0; j < 100; j++)
+                {
+                    for (int k = 0; k < 2; k++)
+                    {
+                        if (visited[ii, j, k])
+                        {
+                            visited[ii, j, k] = false;
+                        }
+                    }
+                }
             }
 
         }
@@ -217,20 +225,10 @@ public class HousingSystem : MonoBehaviour
         walls[indexX, indexY, indexZ] = wall;
         if (!justWall)
         {
-            {
-                DoorSturct doorSturct = new DoorSturct(indexX, indexY, indexZ);
+            DoorSturct doorSturct = new DoorSturct(indexX, indexY, indexZ);
 
-                doors.Add(doorSturct);
-            }
-            {
-           //     DoorSturct doorSturct = new DoorSturct(indexX + dirX, indexY + dirY, indexZ);
-
-             //   if()     doors.Add(doorSturct);
-            }
+            doors.Add(doorSturct);
         }
-       // if(CheckFloor(x, y)) CheckHouse(x - minx, y - miny);
-       // if(CheckFloor(x + dirX, y + dirY)) CheckHouse(x - minx + dirX, y - miny + dirY);
-      //  CheckRoofInWorld();
     }
 
     int[] moveX = new int[4] { 1, -1,0,0 };
@@ -247,7 +245,7 @@ public class HousingSystem : MonoBehaviour
         }
     }
     
-    bool CheckHouse(int x, int y, bool remove = false)
+    bool MakeHouse(int x, int y, bool remove = false)
     {
         Node  current = NodePool.GetNode(x, y);
       
@@ -341,10 +339,13 @@ public class HousingSystem : MonoBehaviour
 
     int[] toHX = new int[4] { 0, 0, -1, -1 };
     int[] toHY = new int[4] { 0, 1, 0, 1 };
-    bool DoorWithOutSideValidation(int newX, int newY, int type)
+    bool DoorWithOutSideValidation(int newX, int newY, int type, ref List<DoorSturct> door)
     {
         bool returnVal = false;
-        visit[newX, newY, type] = true;
+
+        if (roofs[newX, newY] != null) return true;
+
+        visited[newX, newY, type] = true;
 
         //현재의 반대 방향 4개의 벽
         int t = 1 - type;
@@ -366,11 +367,11 @@ public class HousingSystem : MonoBehaviour
                 checkX += toHX[i];
                 checkY += toHY[i];
             }
-            returnVal = DoorWithOutSideValidationLoop(checkX, checkY, t);
+            returnVal = DoorWithOutSideValidationLoop(checkX, checkY, t, ref door);
             if (returnVal)
             {
-                if (ValidSize(checkX, checkY)) visit[checkX, checkY, t] = false;
-                visit[newX, newY, t] = false;
+       //         visited[newX, newY, type] = false;
+         //       if (ValidSize(checkX, checkY)) visited[checkX, checkY, t] = false;
                 return true;
             }
         }
@@ -390,29 +391,38 @@ public class HousingSystem : MonoBehaviour
                 checkY += offset[i];
             }
 
-            returnVal = DoorWithOutSideValidationLoop(checkX, checkY, type);
+            returnVal = DoorWithOutSideValidationLoop(checkX, checkY, type, ref door);
             if (returnVal)
             {
-                if (ValidSize(checkX, checkY)) visit[checkX, checkY, type] = false;
-                visit[newX, newY, type] = false;
+        //        visited[newX, newY, type] = false;
+       //         if (ValidSize(checkX, checkY)) visited[checkX, checkY, type] = false;
                 return true;
             }
         }
+       // visited[newX, newY, type] = false;
         return returnVal;
     }
-    bool DoorWithOutSideValidationLoop(int newX, int newY, int type)
+    bool DoorWithOutSideValidationLoop(int newX, int newY, int type, ref List<DoorSturct> door)
     {
         bool returnVal = false;
         if (newX >= 0 && newX < 100 && newY >= 0 && newY < 100)
         {
-            if (visit[newX, newY, type] == true) return false;
+            if (visited[newX, newY, type] == true) return false;
 
-
-            if (walls[newX, newY, type] != null && !walls[newX, newY, type].isDoor)
+            if (walls[newX, newY, type] != null)
             {
-                return false;
+                if(!walls[newX, newY, type].isDoor)
+                {
+                    return false;
+                }
+                else
+                {
+                    DoorSturct doorSturct = new DoorSturct(newX, newY, type);
+                    door.Add(doorSturct);
+                }
             }
-            visit[newX, newY, type] = true;
+           
+            visited[newX, newY, type] = true;
 
             int t = 1 - type;
             for (int i = 0; i < 4; i++)
@@ -433,10 +443,10 @@ public class HousingSystem : MonoBehaviour
                     checkX += toHX[i];
                     checkY += toHY[i];
                 }
-                returnVal = DoorWithOutSideValidationLoop(checkX, checkY, t);
+                returnVal = DoorWithOutSideValidationLoop(checkX, checkY, t, ref door);
                 if (returnVal)
                 {
-                    if (ValidSize(checkX, checkY)) visit[checkX, checkY, t] = false;
+                  //  if (ValidSize(checkX, checkY)) visited[checkX, checkY, t] = false;
                     return true;
                 }
             }
@@ -455,10 +465,10 @@ public class HousingSystem : MonoBehaviour
                     checkY += offset[i];
                 }
 
-                returnVal = DoorWithOutSideValidationLoop(checkX, checkY, type);
+                returnVal = DoorWithOutSideValidationLoop(checkX, checkY, type, ref door);
                 if (returnVal)
                 {
-                    if (ValidSize(checkX, checkY)) visit[checkX, checkY, type] = false;
+                //    if (ValidSize(checkX, checkY)) visited[checkX, checkY, type] = false;
                     return true;
                 }
             }
@@ -468,6 +478,7 @@ public class HousingSystem : MonoBehaviour
             return true;
         }
 
+    //    visited[newX, newY, type] = false;
         return returnVal;
     }
 
@@ -476,6 +487,7 @@ public class HousingSystem : MonoBehaviour
     {
         if(CheckFloor(x, y))
         {
+            GameInstance.Instance.assetLoader.RemovePreloadObject();
             //인덱스 위치 조정
             int xx = x - minx;  
             int yy = y - miny;
@@ -496,14 +508,45 @@ public class HousingSystem : MonoBehaviour
     {
         if(CheckWall(x,y, build))
         {
+            GameInstance.Instance.assetLoader.RemovePreloadObject();
             Wall w = GetBuildedWall(x, y, build);
         
-            int indexX = w.x;
-            int indexY = w.y;
+            int indexX = x - minx;
+            int indexY = y - miny;
+            bool isDoor = w.isDoor;
             
-            int indexZ = (int)build <= 2 ? 0 : 1; 
+            int indexZ = (int)build <= 2 ? 0 : 1;
+            switch (build)
+            {
+                case BuildWallDirection.None:
+                    break;
+                case BuildWallDirection.Left:
+                    break;
+                case BuildWallDirection.Right:
+                    indexX += 1;
+                    break;
+                case BuildWallDirection.Top:
+                    indexY += 1; indexZ = 1;
+                    break;
+                case BuildWallDirection.Bottom:
+                    indexZ = 1;
+                    break;
+            }
+                       
             walls[indexX, indexY, indexZ] = null;
             Destroy(w.gameObject);
+            
+            if (isDoor)
+            {
+                for (int i = 0; i < doors.Count; i++)
+                {
+                    if(indexX == doors[i].indexX && indexY == doors[i].indexY && indexZ == doors[i].indexZ)
+                    {
+                        doors.RemoveAt(i);
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -531,19 +574,19 @@ public class HousingSystem : MonoBehaviour
 
         if (min == disA)
         {
-            buildWallDirection = HousingSystem.BuildWallDirection.Left;
+            buildWallDirection = BuildWallDirection.Left;
         }
         if (min == disB)
         {
-            buildWallDirection = HousingSystem.BuildWallDirection.Right;
+            buildWallDirection = BuildWallDirection.Right;
         }
         if (min == disC)
         {
-            buildWallDirection = HousingSystem.BuildWallDirection.Bottom;
+            buildWallDirection = BuildWallDirection.Bottom;
         }
         if (min == disD)
         {
-            buildWallDirection = HousingSystem.BuildWallDirection.Top;
+            buildWallDirection = BuildWallDirection.Top;
         }
         return buildWallDirection;
     }
