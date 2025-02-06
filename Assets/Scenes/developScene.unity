@@ -1532,7 +1532,7 @@ MonoBehaviour:
   player: {fileID: 6110067559661071437, guid: 5795aa3c8a053ed459222637725baa27, type: 3}
   inputManager: {fileID: 7613169056353209988, guid: 08e552a3f1d69e94a9e3ce4c1c6c01f1, type: 3}
   startPosition: {x: 0, y: 1, z: 0}
-  gameMode: 2
+  gameMode: 1
   loaded: 0
 --- !u!4 &795207436
 Transform:

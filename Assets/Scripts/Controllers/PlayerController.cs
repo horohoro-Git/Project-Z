@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -22,6 +23,9 @@ public class PlayerController : Controller
     private InputAction moveAction;  
     private InputAction sprintAction;
 
+    public event Action<Vector3> InteractionEvent;
+    public List<Action<Vector3>> lastHandler = new List<Action<Vector3>>();
+
     int lastGridX = 0; 
     int lastGridY = 0;
    
@@ -30,8 +34,9 @@ public class PlayerController : Controller
         GameInstance.Instance.playerController = this;
         Input.defaultActionMap = "OnMove";
         moveSpeed = 200f;
-      //  moveAction = Input.actions["OnMove"];
-      //  sprintAction = Input.actions["OnSprint"];
+        //  moveAction = Input.actions["OnMove"];
+        //  sprintAction = Input.actions["OnSprint"];
+    
     }
 
     private void OnEnable()
@@ -50,6 +55,7 @@ public class PlayerController : Controller
         Input.actions["WASD"].canceled += MoveStop;
         Input.actions["Run"].performed += Run;
         Input.actions["Run"].canceled += RunStop;
+        Input.actions["Interaction"].performed += Interact;
     }
     public void RemoveAction()
     {
@@ -57,6 +63,7 @@ public class PlayerController : Controller
         Input.actions["WASD"].performed -= MoveStop;
         Input.actions["Run"].performed -= Run;
         Input.actions["Run"].canceled -= RunStop;
+        Input.actions["Interaction"].performed -= Interact;
     }
     // Start is called before the first frame update
     void Start()
@@ -103,5 +110,33 @@ public class PlayerController : Controller
     {
         moveSpeed = 200;
         sprint = false;
+    }
+
+    void Interact(InputAction.CallbackContext callback)
+    {
+        if(lastHandler.Count == 0) return;
+        lastHandler[lastHandler.Count - 1]?.Invoke(Transforms.position);
+    }
+
+    public void RegisterAction(Action<Vector3> action)
+    {
+        InteractionEvent += action;
+        lastHandler.Add(action);
+    }
+
+
+    public void RemoveLastAction(Action<Vector3> action)
+    {
+        if(lastHandler[lastHandler.Count -1] == action)
+        {
+            lastHandler.RemoveAt(lastHandler.Count - 1);
+            InteractionEvent -= action;
+        }
+        else
+        {
+            lastHandler.Remove(action);
+            InteractionEvent -= action;
+        }
+
     }
 }
