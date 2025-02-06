@@ -6,17 +6,34 @@ using UnityEngine;
 public class DoorSwitch : MonoBehaviour
 {
     [SerializeField]
-    GameObject door;
+    Door door;
     Vector3 origin;
     Vector3 current;
     Quaternion originQua;
+
+   
+
+    [SerializeField]
+    AnimationClip openAnimation_Horizontal; 
+    [SerializeField]
+    AnimationClip openAnimation_Vertical;
+
+    bool isOpen = false;
+    bool isWorking = false;
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            current = other.transform.position;
-            Debug.Log("A");
-            StartCoroutine(OpenDoor());
+            PlayerController pc = other.GetComponent<PlayerController>();
+            pc.RegisterAction(DoorInteraction);
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            PlayerController pc = other.GetComponent<PlayerController>();
+            pc.RemoveLastAction(DoorInteraction);
         }
     }
 
@@ -26,14 +43,82 @@ public class DoorSwitch : MonoBehaviour
         origin = door.transform.position;
     }
 
-    IEnumerator OpenDoor()
+    void DoorInteraction(Vector3 pos)
     {
-        Vector3 dir = door.transform.position - current;
+        //if(door.GetAnimation.GetInteger("state") != 0) return;
+        if (isWorking) return;
+        if (isOpen == false)
+        {
+            isOpen = true;
+            OpenDoor(pos);
+        }
+        else
+        {
+            isOpen = false;
+            CloseDoor();
+        }
+    }
+
+    void OpenDoor(Vector3 player)
+    {
+        isWorking = true;
+        door.BoxCol.enabled = false;
+        Vector3 vector3 = player - transform.position;
+        vector3 = vector3.normalized;
+        if (door.isHorizontal)
+        {
+            if (vector3.x > 0)
+            {
+                door.GetAnimation.SetInteger("state", 2);
+             //   Debug.Log("오른쪽");
+            }
+            else
+            {
+                door.GetAnimation.SetInteger("state", 1);
+            //    Debug.Log("왼쪽");
+            }
+        }
+        else
+        {
+            if (vector3.z > 0)
+            {
+                door.GetAnimation.SetInteger("state", 1);
+            //    Debug.Log("위");
+            }
+            else
+            {
+                door.GetAnimation.SetInteger("state", 2);
+            //    Debug.Log("아래");
+            }
+        }
+        Invoke("DoorTimer", 1);
+    }
+
+
+
+    void CloseDoor()
+    {
+        isWorking = true;
+        door.GetAnimation.SetInteger("state", 3);
+        Invoke("DoorTimer", 1);
+    }
+
+
+    void DoorTimer()
+    {
+        Debug.Log("G");
+        isWorking = false;
+    }
+  /*//  IEnumerator OpenDoor()
+    {
+
+     //   door.GetComponent<BoxCollider>().enabled = false;
+   *//*     Vector3 dir = door.transform.position - current;
       //  door.transform.rotation = Quaternion.Euler(-90, 0, 0);
         Quaternion targetQua = Quaternion.Euler(-90, 0, 0);
         float elapsedTime = 0f;
         float openSpeed = 1f;
-        Vector3 targetPosition = origin + new Vector3(0.7f, 0, -0.8f);
+      //  Vector3 targetPosition = origin + new Vector3(0.7f, 0, -0.8f);
 
        // door.transform.Translate(door.transform.position.x + 0.7f, door.transform.position.y - 0.8f, door.transform.position.z, Space.Self);
         while (elapsedTime < openSpeed)
@@ -41,12 +126,12 @@ public class DoorSwitch : MonoBehaviour
             float t = elapsedTime / openSpeed;
 
             elapsedTime += Time.deltaTime;
-            door.transform.position = Vector3.Lerp(origin, targetPosition, t);
+     //       door.transform.position = Vector3.Lerp(origin, targetPosition, t);
             door.transform.rotation = Quaternion.Lerp(originQua, targetQua, t);
 
             yield return null;
         }
-        door.transform.position = targetPosition;
-        door.transform.rotation = targetQua;
-    }
+  //      door.transform.position = targetPosition;
+        door.transform.rotation = targetQua;*//*
+    }*/
 }

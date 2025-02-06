@@ -9,11 +9,22 @@ public class Door : Wall
     public BoxCollider BoxCol
     {
         get {
-                if (boxCollider == null) boxCollider = GetComponent<BoxCollider>();
+                if (boxCollider == null) boxCollider = GetComponentInChildren<BoxCollider>();
          
                 return boxCollider; 
             } 
     }
     [NonSerialized]
     public bool isOpen;
+
+    Animator animator;
+    public Animator GetAnimation
+    {
+        get
+        {
+            if(animator == null) animator = GetComponent<Animator>();
+            return animator;
+        }
+    }
+    public bool isHorizontal = false;
 }

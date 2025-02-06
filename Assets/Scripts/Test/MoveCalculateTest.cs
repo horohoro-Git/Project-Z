@@ -45,7 +45,6 @@ public class MoveCalculateTest : MonoBehaviour
         // moveTrace.Pop();
         while (vector3s.Count > index)
         {
-            Debug.Log("A");
             Vector3 v = vector3s[index];
            
 //            Debug.Log(distance);

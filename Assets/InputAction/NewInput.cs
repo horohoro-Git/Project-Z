@@ -150,6 +150,34 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""OnInteraction"",
+            ""id"": ""e25d8458-efee-462e-b1c1-6662149287ed"",
+            ""actions"": [
+                {
+                    ""name"": ""Interaction"",
+                    ""type"": ""Button"",
+                    ""id"": ""ba59ffbd-2188-43d8-a85a-3f2aa9f9fef5"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""3f290e71-34c0-44e3-8af8-12d27f0720c9"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Interaction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -185,6 +213,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         // OnDebug
         m_OnDebug = asset.FindActionMap("OnDebug", throwIfNotFound: true);
         m_OnDebug_F3 = m_OnDebug.FindAction("F3", throwIfNotFound: true);
+        // OnInteraction
+        m_OnInteraction = asset.FindActionMap("OnInteraction", throwIfNotFound: true);
+        m_OnInteraction_Interaction = m_OnInteraction.FindAction("Interaction", throwIfNotFound: true);
     }
 
     ~@NewInput()
@@ -192,6 +223,7 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_OnMove.enabled, "This will cause a leak and performance issues, NewInput.OnMove.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnSprint.enabled, "This will cause a leak and performance issues, NewInput.OnSprint.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnDebug.enabled, "This will cause a leak and performance issues, NewInput.OnDebug.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnInteraction.enabled, "This will cause a leak and performance issues, NewInput.OnInteraction.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -387,6 +419,52 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         }
     }
     public OnDebugActions @OnDebug => new OnDebugActions(this);
+
+    // OnInteraction
+    private readonly InputActionMap m_OnInteraction;
+    private List<IOnInteractionActions> m_OnInteractionActionsCallbackInterfaces = new List<IOnInteractionActions>();
+    private readonly InputAction m_OnInteraction_Interaction;
+    public struct OnInteractionActions
+    {
+        private @NewInput m_Wrapper;
+        public OnInteractionActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Interaction => m_Wrapper.m_OnInteraction_Interaction;
+        public InputActionMap Get() { return m_Wrapper.m_OnInteraction; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(OnInteractionActions set) { return set.Get(); }
+        public void AddCallbacks(IOnInteractionActions instance)
+        {
+            if (instance == null || m_Wrapper.m_OnInteractionActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnInteractionActionsCallbackInterfaces.Add(instance);
+            @Interaction.started += instance.OnInteraction;
+            @Interaction.performed += instance.OnInteraction;
+            @Interaction.canceled += instance.OnInteraction;
+        }
+
+        private void UnregisterCallbacks(IOnInteractionActions instance)
+        {
+            @Interaction.started -= instance.OnInteraction;
+            @Interaction.performed -= instance.OnInteraction;
+            @Interaction.canceled -= instance.OnInteraction;
+        }
+
+        public void RemoveCallbacks(IOnInteractionActions instance)
+        {
+            if (m_Wrapper.m_OnInteractionActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IOnInteractionActions instance)
+        {
+            foreach (var item in m_Wrapper.m_OnInteractionActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_OnInteractionActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public OnInteractionActions @OnInteraction => new OnInteractionActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -416,5 +494,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     public interface IOnDebugActions
     {
         void OnF3(InputAction.CallbackContext context);
+    }
+    public interface IOnInteractionActions
+    {
+        void OnInteraction(InputAction.CallbackContext context);
     }
 }
