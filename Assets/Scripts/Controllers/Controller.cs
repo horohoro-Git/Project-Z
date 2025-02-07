@@ -31,8 +31,10 @@ public class Controller : MonoBehaviour
 
     public Vector3 moveDir;
     public float moveSpeed;
-    float currentMoveSpeed;
-
+    [NonSerialized] 
+    public float currentMoveSpeed;
+    [NonSerialized]
+    public float currentDir;
     void Start()
     {
         
@@ -46,33 +48,40 @@ public class Controller : MonoBehaviour
     Vector3 viewDir = Vector3.zero;
     public bool turn = false;
     public bool longturn = false;
-    float velocity;
-   // float smoothTime = 0.5f;
+    [NonSerialized]
+    public float velocity;
+    [NonSerialized]
+    public float viewVelocity;
+    // float smoothTime = 0.5f;
     public bool sprint;
     void FixedUpdate()
     {
+        Rotate();
         if (moveDir != Vector3.zero)
         {
             viewDir = moveDir;
 
-            if (turn)
+           /* if (turn)
             {
-                currentMoveSpeed = 0;
+                viewVelocity = 1;
+              //  currentMoveSpeed = 0;
             }
             else
-            {
+            {*/
+                viewVelocity = 0;
                 // moveSpeed에 따른 걷기/뛰기 애니메이션
                 currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.5f);
-                Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
-            }
+                //Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
+                Rigid.velocity = moveDir * Time.fixedDeltaTime * currentMoveSpeed;
+           // }
         }
         else
         {
+            viewVelocity = 0;
             // 감속 되는 애니메이션
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
             Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
         }
-        Rotate();
     }
 
     void Rotate()
@@ -82,15 +91,15 @@ public class Controller : MonoBehaviour
             float dot = Vector3.Dot(Transforms.forward.normalized, viewDir);
             if(dot < -0.1f) turn = true; else turn = false;
             Quaternion targetRotation = Quaternion.LookRotation(viewDir);
-
+            currentDir = dot;
             if (longturn)
             {
-               Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 400 * Time.fixedDeltaTime);
+                Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 400 * Time.fixedDeltaTime);
             }
             if (!longturn)
             {
                if(sprint) Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 300 * Time.fixedDeltaTime);
-               else Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 150 * Time.fixedDeltaTime);
+               else Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 300 * Time.fixedDeltaTime);
             }
         }
     }

@@ -62,6 +62,15 @@ public enum EditMode
 
 }
 
+//플레이어 상태
+public enum PlayerState
+{ 
+    Default,
+    Combat,
+    Dead
+}
+
+
 public class Utility
 {
 

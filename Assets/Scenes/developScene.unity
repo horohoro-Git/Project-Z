@@ -288,7 +288,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1591998788712691088, guid: 9e1f94aa14470d34d880fb82eb4a4b68, type: 3}
       propertyPath: orthographic size
-      value: 8
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2612005418616730449, guid: 9e1f94aa14470d34d880fb82eb4a4b68, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1531,7 +1531,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 6110067559661071437, guid: 5795aa3c8a053ed459222637725baa27, type: 3}
   inputManager: {fileID: 7613169056353209988, guid: 08e552a3f1d69e94a9e3ce4c1c6c01f1, type: 3}
-  startPosition: {x: 0, y: 1, z: 0}
+  startPosition: {x: 0, y: 0, z: 0}
   gameMode: 1
   loaded: 0
 --- !u!4 &795207436
@@ -2345,7 +2345,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floor_url: Assets/Edited/Floor/Floor.prefab
   wall_url: Assets/Edited/wall/wall.prefab
-  door_url: Assets/Edited/wall/door.prefab
+  door_url: Assets/Edited/wall/doorSwitch.prefab
   roof_url: Assets/Edited/roof/roof.prefab
   preFloor_url: Assets/Edited/Floor/PreloadFloor.prefab
   preWall_url: Assets/Edited/wall/PreloadWall.prefab
@@ -2365,7 +2365,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bundleUrl: http://211.193.2.220:8080/download/home/29a6877fe12873a87216dc4d1fb07c8d_unitybuiltinshaders_208f78803f74c68d76add3e7de84edf4.bundle
-  bundleUrl2: http://211.193.2.220:8080/download/home/home_assets_all_42da58e4d42839a694e45782e11f6f63.bundle
+  bundleUrl2: http://211.193.2.220:8080/download/home/home_assets_all_70c1832cea11084136f910006017d67a.bundle
 --- !u!4 &1906076320
 Transform:
   m_ObjectHideFlags: 0

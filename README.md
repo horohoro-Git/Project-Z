@@ -68,3 +68,6 @@ Housing system (buildpreview, bug fix)
 
 02/06
 Add door animation, interaction input system
+
+02/07
+Player asset (animations, player mesh)

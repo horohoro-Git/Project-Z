@@ -178,6 +178,62 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""OnCombatMode"",
+            ""id"": ""25e63f00-0546-489f-90d3-1d9d01a5e1cf"",
+            ""actions"": [
+                {
+                    ""name"": ""Combat"",
+                    ""type"": ""Button"",
+                    ""id"": ""64d0720b-a600-4d73-9867-0a16d38e633b"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""2acaec68-4fc0-4f9c-bb86-ed2ff66a4827"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Combat"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""OnAttack"",
+            ""id"": ""306495e6-9cad-4130-a192-ec0db59b7a09"",
+            ""actions"": [
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""c9e4817d-036f-4d21-bc17-093926a076d4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a8bec943-2985-476e-b8cf-7e7ab8b4bfa5"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -216,6 +272,12 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         // OnInteraction
         m_OnInteraction = asset.FindActionMap("OnInteraction", throwIfNotFound: true);
         m_OnInteraction_Interaction = m_OnInteraction.FindAction("Interaction", throwIfNotFound: true);
+        // OnCombatMode
+        m_OnCombatMode = asset.FindActionMap("OnCombatMode", throwIfNotFound: true);
+        m_OnCombatMode_Combat = m_OnCombatMode.FindAction("Combat", throwIfNotFound: true);
+        // OnAttack
+        m_OnAttack = asset.FindActionMap("OnAttack", throwIfNotFound: true);
+        m_OnAttack_Attack = m_OnAttack.FindAction("Attack", throwIfNotFound: true);
     }
 
     ~@NewInput()
@@ -224,6 +286,8 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_OnSprint.enabled, "This will cause a leak and performance issues, NewInput.OnSprint.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnDebug.enabled, "This will cause a leak and performance issues, NewInput.OnDebug.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnInteraction.enabled, "This will cause a leak and performance issues, NewInput.OnInteraction.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnCombatMode.enabled, "This will cause a leak and performance issues, NewInput.OnCombatMode.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnAttack.enabled, "This will cause a leak and performance issues, NewInput.OnAttack.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -465,6 +529,98 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         }
     }
     public OnInteractionActions @OnInteraction => new OnInteractionActions(this);
+
+    // OnCombatMode
+    private readonly InputActionMap m_OnCombatMode;
+    private List<IOnCombatModeActions> m_OnCombatModeActionsCallbackInterfaces = new List<IOnCombatModeActions>();
+    private readonly InputAction m_OnCombatMode_Combat;
+    public struct OnCombatModeActions
+    {
+        private @NewInput m_Wrapper;
+        public OnCombatModeActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Combat => m_Wrapper.m_OnCombatMode_Combat;
+        public InputActionMap Get() { return m_Wrapper.m_OnCombatMode; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(OnCombatModeActions set) { return set.Get(); }
+        public void AddCallbacks(IOnCombatModeActions instance)
+        {
+            if (instance == null || m_Wrapper.m_OnCombatModeActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnCombatModeActionsCallbackInterfaces.Add(instance);
+            @Combat.started += instance.OnCombat;
+            @Combat.performed += instance.OnCombat;
+            @Combat.canceled += instance.OnCombat;
+        }
+
+        private void UnregisterCallbacks(IOnCombatModeActions instance)
+        {
+            @Combat.started -= instance.OnCombat;
+            @Combat.performed -= instance.OnCombat;
+            @Combat.canceled -= instance.OnCombat;
+        }
+
+        public void RemoveCallbacks(IOnCombatModeActions instance)
+        {
+            if (m_Wrapper.m_OnCombatModeActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IOnCombatModeActions instance)
+        {
+            foreach (var item in m_Wrapper.m_OnCombatModeActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_OnCombatModeActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public OnCombatModeActions @OnCombatMode => new OnCombatModeActions(this);
+
+    // OnAttack
+    private readonly InputActionMap m_OnAttack;
+    private List<IOnAttackActions> m_OnAttackActionsCallbackInterfaces = new List<IOnAttackActions>();
+    private readonly InputAction m_OnAttack_Attack;
+    public struct OnAttackActions
+    {
+        private @NewInput m_Wrapper;
+        public OnAttackActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Attack => m_Wrapper.m_OnAttack_Attack;
+        public InputActionMap Get() { return m_Wrapper.m_OnAttack; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(OnAttackActions set) { return set.Get(); }
+        public void AddCallbacks(IOnAttackActions instance)
+        {
+            if (instance == null || m_Wrapper.m_OnAttackActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnAttackActionsCallbackInterfaces.Add(instance);
+            @Attack.started += instance.OnAttack;
+            @Attack.performed += instance.OnAttack;
+            @Attack.canceled += instance.OnAttack;
+        }
+
+        private void UnregisterCallbacks(IOnAttackActions instance)
+        {
+            @Attack.started -= instance.OnAttack;
+            @Attack.performed -= instance.OnAttack;
+            @Attack.canceled -= instance.OnAttack;
+        }
+
+        public void RemoveCallbacks(IOnAttackActions instance)
+        {
+            if (m_Wrapper.m_OnAttackActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IOnAttackActions instance)
+        {
+            foreach (var item in m_Wrapper.m_OnAttackActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_OnAttackActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public OnAttackActions @OnAttack => new OnAttackActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -498,5 +654,13 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     public interface IOnInteractionActions
     {
         void OnInteraction(InputAction.CallbackContext context);
+    }
+    public interface IOnCombatModeActions
+    {
+        void OnCombat(InputAction.CallbackContext context);
+    }
+    public interface IOnAttackActions
+    {
+        void OnAttack(InputAction.CallbackContext context);
     }
 }
