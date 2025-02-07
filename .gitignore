@@ -20,9 +20,16 @@
 /[Uu]ser[Ss]ettings/
 /[Ss]erverData/
 /[Aa]ssets/[Ee]dited/
+/[Aa]ssets/Edited.meta
 /[Aa]ssets/[Ww]oodsLifestyle/
+/[Aa]ssets/WoodsLifestyle.meta
 /[Aa]ssets/[Aa]ddressableAssetsData.meta
 /[Aa]ssets/[Aa]ddressableAssetsData/
+/[Aa]ssets/[Bb]link/
+/[Aa]ssets/Blink.meta
+/[Aa]ssets/[Ll]ow Poly Nature Pack Lite/
+/[Aa]ssets/Low Poly Nature Pack Lite.meta
+
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

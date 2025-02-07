@@ -39,18 +39,17 @@ public class DoorSwitch : MonoBehaviour
 
     public void Start()
     {
-        originQua = door.transform.rotation;
-        origin = door.transform.position;
+      
     }
 
-    void DoorInteraction(Vector3 pos)
+    void DoorInteraction(PlayerController pc)
     {
         //if(door.GetAnimation.GetInteger("state") != 0) return;
         if (isWorking) return;
         if (isOpen == false)
         {
             isOpen = true;
-            OpenDoor(pos);
+            OpenDoor(pc.Transforms.position);
         }
         else
         {
@@ -106,8 +105,11 @@ public class DoorSwitch : MonoBehaviour
 
     void DoorTimer()
     {
-        Debug.Log("G");
         isWorking = false;
+        if(!isOpen)
+        {
+            door.BoxCol.enabled = true;
+        }
     }
   /*//  IEnumerator OpenDoor()
     {

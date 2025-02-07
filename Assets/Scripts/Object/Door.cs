@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Door : Wall
+public class Door : MonoBehaviour
 {
     BoxCollider boxCollider;
     public BoxCollider BoxCol

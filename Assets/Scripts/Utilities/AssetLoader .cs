@@ -224,8 +224,18 @@ public class AssetLoader : MonoBehaviour
                     Wall w = go.GetComponent<Wall>();
 
                     w.transform.position = new Vector3(locX, 1.7f, locY);
-                    if(offsetZ == 0) w.transform.rotation = Quaternion.Euler(-90, -90, 0);
-                    else w.transform.rotation = Quaternion.Euler(-90, 0, 0);
+                    if (offsetZ == 0)
+                    {
+                        if(w.isDoor) w.GetComponentInChildren<Door>().isHorizontal = true;
+                    
+                        w.transform.rotation = Quaternion.Euler(-90, -90, 0);
+                    }
+                    else
+                    {
+                        if (w.isDoor) w.GetComponentInChildren<Door>().isHorizontal = false;
+                        w.transform.rotation = Quaternion.Euler(-90, 0, 0);
+                    }
+
 
                     GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection, justWall);
                 }

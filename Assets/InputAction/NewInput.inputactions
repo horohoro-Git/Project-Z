@@ -156,6 +156,62 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "OnCombatMode",
+            "id": "25e63f00-0546-489f-90d3-1d9d01a5e1cf",
+            "actions": [
+                {
+                    "name": "Combat",
+                    "type": "Button",
+                    "id": "64d0720b-a600-4d73-9867-0a16d38e633b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "2acaec68-4fc0-4f9c-bb86-ed2ff66a4827",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Combat",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "OnAttack",
+            "id": "306495e6-9cad-4130-a192-ec0db59b7a09",
+            "actions": [
+                {
+                    "name": "Attack",
+                    "type": "Button",
+                    "id": "c9e4817d-036f-4d21-bc17-093926a076d4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a8bec943-2985-476e-b8cf-7e7ab8b4bfa5",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Attack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
