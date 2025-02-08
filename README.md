@@ -1,4 +1,5 @@
-Icon Assets: Used UI icons by Icons8
+Housing system icon: Icons8
+Inventory system icon: Game-icons.net
 
 # Project-Z
 zombie survival game

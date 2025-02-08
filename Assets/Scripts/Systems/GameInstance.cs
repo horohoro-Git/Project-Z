@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using UnityEngine;
 
 public class GameInstance
@@ -23,6 +24,7 @@ public class GameInstance
     public DrawGrid drawGrid;
     public AssetLoader assetLoader;
     public HousingSystem housingSystem;
+    public InventorySystem inventorySystem;
     public EditMode editMode;
     List<PlayerController> players = new List<PlayerController>();
 
@@ -30,6 +32,7 @@ public class GameInstance
     public WorldGrids worldGrids;
     public void Reset()
     {
+        inventorySystem = null;
         housingSystem = null;
         playerController = null;
         worldGrids = null;
