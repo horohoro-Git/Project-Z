@@ -70,6 +70,14 @@ public enum PlayerState
     Dead
 }
 
+//아이템 타입
+public enum ItemType
+{
+    None,
+    Consumerble,
+    Weapon
+}
+
 
 public class Utility
 {

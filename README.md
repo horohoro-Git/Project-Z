@@ -1,4 +1,5 @@
-Icon Assets: Used UI icons by Icons8
+Housing system icon: Icons8
+Inventory system icon: Game-icons.net
 
 # Project-Z
 zombie survival game
@@ -71,3 +72,6 @@ Add door animation, interaction input system
 
 02/07
 Player asset (animations, player mesh)
+
+02/08
+Map setting, inventory system
