@@ -27,9 +27,15 @@ public class RandomSpawner : MonoBehaviour
         terrain = new GameObject();
         terrain.name = "terrain";
 
+        Invoke("LateStart", 0.5f);
+    }
+
+    void LateStart()
+    {
         SpawnTrees();
         SpawnGrasses();
     }
+
 
     void SpawnTrees()
     {
@@ -49,7 +55,7 @@ public class RandomSpawner : MonoBehaviour
             {
                 for (int k = 0; k < 8; k++) grasses[x + sizeCheckX[k], y + sizeCheckY[k]] = true;
                 grasses[x,y] = true;
-                GameObject tree = Instantiate(Tree, terrain.transform);
+                GameObject tree = Instantiate(GameInstance.Instance.assetLoader.tree03, terrain.transform);
                 tree.transform.position = new Vector3(x - 49, 0.1f, y - 49);
             }
 
@@ -81,24 +87,24 @@ public class RandomSpawner : MonoBehaviour
                     int rand = UnityEngine.Random.Range(0, 100);
                     if(rand < 70)
                     {
-                        GameObject grass = Instantiate(miniGrass, terrain.transform);
+                        GameObject grass = Instantiate(GameInstance.Instance.assetLoader.grasses, terrain.transform);
                         grass.transform.position = new Vector3(i - 49f, 0.1f, j - 49f);
                     }
                     else if(rand < 80)
                     {
-                        GameObject flower = Instantiate(flower1, terrain.transform);
+                        GameObject flower = Instantiate(GameInstance.Instance.assetLoader.flowerOrange, terrain.transform);
                         flower.transform.position = new Vector3(i - 49f, 0.1f, j - 49f);
                         flower.transform.rotation = Quaternion.Euler(0, -90, 0);
                     }
                     else if(rand < 90)
                     {
-                        GameObject flower = Instantiate(flower2, terrain.transform);
+                        GameObject flower = Instantiate(GameInstance.Instance.assetLoader.flowerPink, terrain.transform);
                         flower.transform.position = new Vector3(i - 49f, 0.1f, j - 49f);
                         flower.transform.rotation = Quaternion.Euler(0, -90, 0);
                     }
                     else if(rand < 100)
                     {
-                        GameObject flower = Instantiate(flower3, terrain.transform);
+                        GameObject flower = Instantiate(GameInstance.Instance.assetLoader.flowerYellow, terrain.transform);
                         flower.transform.position = new Vector3(i - 49f, 0.1f, j - 49f);
                         flower.transform.rotation = Quaternion.Euler(0, -90, 0);
                     }

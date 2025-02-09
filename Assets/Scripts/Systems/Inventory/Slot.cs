@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,20 +10,36 @@ public class Slot : MonoBehaviour
     Button slotBtn;
     RectTransform self;
     Image image;
-    GameObject info;
+    SlotInfo info;
+    [SerializeField]
     Sprite originImage;
+    Image itemImage;
+
+    public SlotType slotType;
+    ItemStruct item;
+
+    [SerializeField]
+    int slotX;
+    [SerializeField]
+    int slotY;
     private void Awake()
     {
      
         image = GetComponent<Image>();
-        originImage = image.sprite;
+        
         slotBtn = GetComponent<Button>();
         self = GetComponent<RectTransform>();
+        Image[] images = GetComponentsInChildren<Image>(true);
+        foreach (Image i in images)
+        {
+            if(image != i) itemImage = i;
+        }
     }
     // Start is called before the first frame update
     void Start()
     {
-        
+        itemImage.sprite = originImage;
+
         EventTrigger eventTrigger = gameObject.AddComponent<EventTrigger>();
 
         //호버
@@ -36,6 +53,10 @@ public class Slot : MonoBehaviour
         entryExit.eventID = EventTriggerType.PointerExit;
         entryExit.callback.AddListener((eventData) => { OnHoverExit(); });
         eventTrigger.triggers.Add(entryExit);
+
+        if (slotType == SlotType.JustView) return;
+
+        //상호작용 가능 슬롯
 
         //드래그 시작
         EventTrigger.Entry dragStart = new EventTrigger.Entry();
@@ -52,55 +73,55 @@ public class Slot : MonoBehaviour
 
     void OnDragEnter()
     {
-        Debug.Log("A");
+        if (!item.used) return;
         GameInstance.Instance.inventorySystem.draggedItem = Instantiate(GameInstance.Instance.inventorySystem.draggingItem);
-        GameInstance.Instance.inventorySystem.draggedItem.GetComponent<Image>().sprite = image.sprite;
+        GameInstance.Instance.inventorySystem.draggedItem.GetComponent<Image>().sprite = itemImage.sprite;
         GameInstance.Instance.inventorySystem.draggedItem.GetComponent<RectTransform>().SetParent(GameInstance.Instance.inventorySystem.border);
-        image.sprite = originImage;
-
+        //image.sprite = originImage;
+        itemImage.sprite = GameInstance.Instance.inventorySystem.defaultSlot; 
     }
 
     void OnDragExit()
     {
-        if(GameInstance.Instance.inventorySystem.draggedItem != null)
+        if (!item.used || GameInstance.Instance.inventorySystem.draggedItem == null) return;
+
+        itemImage.sprite = GameInstance.Instance.inventorySystem.draggedItem.GetComponent<Image>().sprite;
+        Destroy(GameInstance.Instance.inventorySystem.draggedItem.gameObject);
+
+        PointerEventData pointerData = new PointerEventData(EventSystem.current);
+        pointerData.position = Input.mousePosition;
+
+        List<RaycastResult> raycastResult = new List<RaycastResult>();
+
+        GameInstance.Instance.inventorySystem.graphicRaycaster.Raycast(pointerData, raycastResult);
+
+        if (raycastResult.Count > 0)
         {
-            image.sprite = GameInstance.Instance.inventorySystem.draggedItem.GetComponent<Image>().sprite;
-            Destroy(GameInstance.Instance.inventorySystem.draggedItem.gameObject);
-           
-         
-            PointerEventData pointerData = new PointerEventData(EventSystem.current);
-            pointerData.position = Input.mousePosition;
-
-            // Raycast 결과를 저장할 리스트 생성
-            List<RaycastResult> raycastResult = new List<RaycastResult>();
-
-            // Raycast 수행
-            GameInstance.Instance.inventorySystem.graphicRaycaster.Raycast(pointerData, raycastResult);
-
-            // 레이캐스트 히트된 객체가 있는지 확인
-            if (raycastResult.Count > 0)
+            foreach (RaycastResult r in raycastResult)
             {
-                foreach (RaycastResult r in raycastResult)
-                {
-                    if(r.gameObject.name == "item")
-                    {
-                        Debug.Log("히트된 UI 객체: " + r.gameObject.name);
-                    }
-                }
-         
+                Slot s = r.gameObject.GetComponent<Slot>();
+                if (s.slotType == SlotType.JustView) break;
+                ItemStruct tempStruct = s.item;
+                s.item = item;
+                item = tempStruct;
+
+                UpdateSlot();
+                s.UpdateSlot();
+
+                break;
             }
-            else
-            {
-                Debug.Log("UI 객체에 히트하지 않음.");
-            }
+
         }
+
     }
 
     void OnHoverEnter()
     {
+        if (!item.used) return;
         info = Instantiate(GameInstance.Instance.inventorySystem.info);
         info.GetComponent<RectTransform>().SetParent(GameInstance.Instance.inventorySystem.border);
-
+        info.UpdateSlotInfo(item);
+   //     info
         if(self.position.y - 300 > 200)
         {
             if(self.position.x + 150 > 1600) info.GetComponent<RectTransform>().position = new Vector3(self.position.x - 150, self.position.y - 300, 0);
@@ -117,5 +138,44 @@ public class Slot : MonoBehaviour
     {
         if(info != null) Destroy(info.gameObject);
      //   Debug.Log("호버 종료");
+    }
+
+    public ItemStruct GetItem()
+    {
+        return item;
+    }
+
+    public void AddItem(ItemStruct item)
+    {
+        this.item = item;
+
+        if (!item.used) itemImage.sprite = originImage;
+        else itemImage.sprite = item.image;
+    }
+
+    public void RemoveItem()
+    {
+
+    }
+
+    public void UpdateSlot()
+    {
+
+        if(item.used)
+        itemImage.sprite = item.image;
+        else
+        {
+            itemImage.sprite = originImage;
+        }
+
+        switch (slotType)
+        {
+            case SlotType.None:
+                break;
+            default:
+                GameInstance.Instance.inventorySystem.UpdateEquipSlot(slotType, item);
+                break;
+        }
+
     }
 }

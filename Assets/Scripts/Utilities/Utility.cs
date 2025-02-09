@@ -71,14 +71,35 @@ public enum PlayerState
 }
 
 //아이템 타입
-public enum ItemType
+public enum SlotType
 {
     None,
     Consumerble,
-    Weapon
+    Weapon,
+    Head,
+    Chest,
+    Arm,
+    Leg,
+    Backpack,
+    JustView
+
 }
 
+public struct ItemStruct
+{
+    public Sprite image;
+    public string itemName;
+    public SlotType itemType;
+    public bool used;
 
+    public ItemStruct(Sprite image, string itemName, SlotType itemType)
+    {
+        this.image = image;
+        this.itemName = itemName;
+        this.itemType = itemType;
+        used = true;
+    }
+}
 public class Utility
 {
 
