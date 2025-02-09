@@ -40,11 +40,17 @@ public class PlayerController : Controller
         GameInstance.Instance.playerController = this;
         Input.defaultActionMap = "OnMove";
         moveSpeed = 200f;
-        modelAnimator = GetComponentInChildren<Animator>();
+        /*modelAnimator = GetComponentInChildren<Animator>();
+   */
     }
 
+    public void SetController(GameObject go)
+    {
+        modelAnimator = go.GetComponent<Animator>();
+    }
     private void OnEnable()
     {
+       
         AddAction();
     }
 
@@ -64,7 +70,6 @@ public class PlayerController : Controller
         Input.actions["Combat"].performed += ChangeCombatMode;
         Input.actions["Attack"].performed += Attack;
         Input.actions["Attack"].canceled += EndAttack;
-
     }
     public void RemoveAction()
     {
@@ -138,6 +143,7 @@ public class PlayerController : Controller
 
     void ChangeCombatMode(InputAction.CallbackContext callback)
     {
+        Debug.Log("A");
         if(state == PlayerState.Default)
         {
             modelAnimator.SetBool("combat", true);

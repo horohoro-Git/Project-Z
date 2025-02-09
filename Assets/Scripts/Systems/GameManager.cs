@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,22 +15,34 @@ public class GameManager : MonoBehaviour
     public Vector3 startPosition;
     public GameMode gameMode;
     public bool loaded;
+
     private void Awake()
     {
         GameInstance.Instance.gameManager = this;
-        PlayerController pc = Instantiate(player); //플레이어 생성
-        pc.name = playerName;
-        pc.transform.position = startPosition; 
-        InputManager inputMGR = Instantiate(inputManager);  //입력 시스템 생성
-        inputMGR.name = inputManagerName;
-        inputMGR.Setup(pc.GetComponent<PlayerInput>());
     }
-
     private void Start()
     {
+        Invoke("PlayerSettings", 0.5f);
         Invoke("LoadBuilds", 0.5f);
     }
 
+    void PlayerSettings()
+    {
+        PlayerController pc = Instantiate(player); //플레이어 생성
+        pc.name = playerName;
+        pc.transform.position = startPosition;
+
+        InputManager inputMGR = Instantiate(inputManager);  //입력 시스템 생성
+        inputMGR.name = inputManagerName;
+        inputMGR.Setup(pc.GetComponent<PlayerInput>());
+
+        //캐릭터 추가
+        GameObject human = Instantiate(GameInstance.Instance.assetLoader.human);
+        human.transform.SetParent(pc.Transforms);
+        human.transform.position = startPosition;
+
+        pc.SetController(human);
+    }
     void LoadBuilds()
     {
         if (gameMode == GameMode.DefaultMode)

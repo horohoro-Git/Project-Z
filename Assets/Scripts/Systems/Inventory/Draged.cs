@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Draged : MonoBehaviour
 {
+    public ItemStruct item;
     RectTransform rectTransform;
     private void Start()
     {

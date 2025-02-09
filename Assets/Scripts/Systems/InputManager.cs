@@ -42,6 +42,7 @@ public class InputManager : MonoBehaviour
 
     public void Setup(PlayerInput playerInput)
     {
+      
         this.playerInput = playerInput;
 
         if (debugging == null)

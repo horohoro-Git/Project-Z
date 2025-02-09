@@ -24,6 +24,14 @@ public class AssetLoader : MonoBehaviour
     public string preDoor_url = "Assets/Edited/wall/PreloadDoor.prefab";
     public string possibleMat_url = "Assets/Edited/PreLoadMaterial_Possible.mat";
     public string impossibleMat_url = "Assets/Edited/PreLoadMaterial_Impossible.mat";
+    public string flowerOrange_url = "Assets/Edited/flower/flower_orange.prefab";
+    public string flowerYellow_url = "Assets/Edited/flower/flower_yellow.prefab";
+    public string flowerPink_url = "Assets/Edited/flower/flower_pink.prefab";
+    public string grasses_url = "Assets/Edited/grass/grasses.prefab";
+    public string tree03_url = "Assets/Edited/Tree/Tree_03.prefab";
+    public string human_url = "Assets/Edited/Player/Model/human_male.prefab";
+
+
     [NonSerialized]
     public GameObject floor;
     [NonSerialized]
@@ -44,8 +52,19 @@ public class AssetLoader : MonoBehaviour
     public Material impossibleMat;
     [NonSerialized]
     public GameObject preLoadedObject;
-
-
+    [NonSerialized]
+    public GameObject flowerOrange;
+    [NonSerialized]
+    public GameObject flowerYellow;
+    [NonSerialized]
+    public GameObject flowerPink;
+    [NonSerialized]
+    public GameObject grasses;
+    [NonSerialized]
+    public GameObject tree03; 
+    [NonSerialized]
+    public GameObject human;
+  
     int preLoadX = -100;
     int preLoadY = -100;
     BuildWallDirection buildDirection = BuildWallDirection.None;
@@ -257,6 +276,12 @@ public class AssetLoader : MonoBehaviour
             preDoor = bundle.LoadAsset<GameObject>(preDoor_url);
             possibleMat = bundle.LoadAsset<Material>(possibleMat_url);
             impossibleMat = bundle.LoadAsset<Material>(impossibleMat_url);
+            flowerOrange = bundle.LoadAsset<GameObject>(flowerOrange_url);
+            flowerYellow = bundle.LoadAsset<GameObject>(flowerYellow_url);
+            flowerPink = bundle.LoadAsset<GameObject>(flowerPink_url);
+            grasses = bundle.LoadAsset<GameObject>(grasses_url);
+            tree03 = bundle.LoadAsset<GameObject>(tree03_url);
+            human = bundle.LoadAsset<GameObject>(human_url);
 
         }
     }
