@@ -18,6 +18,7 @@ public class GameInstance
     public Vector2 currentDir;
     public GameManager gameManager;
     public InputManager inputManager;
+    public UIManager uiManager;
     public PlayerController playerController;
     public App app;
     public DrawGrid drawGrid;
@@ -31,6 +32,7 @@ public class GameInstance
     public WorldGrids worldGrids;
     public void Reset()
     {
+        uiManager = null;
         inventorySystem = null;
         housingSystem = null;
         playerController = null;

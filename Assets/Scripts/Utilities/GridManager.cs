@@ -57,8 +57,10 @@ public class GridManager : MonoBehaviour
 
     public static void RemoveLine(LineRenderer lineRenderer)
     {
+        if(lineRenderer == null) return;
         if(lineRenderers.Count < 300)
         {
+
             lineRenderer.gameObject.SetActive(false);
             lineRenderers.Enqueue(lineRenderer);
 

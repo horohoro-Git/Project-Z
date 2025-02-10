@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InventorySystem : MonoBehaviour
+public class InventorySystem : MonoBehaviour, IUIComponent
 {
 
     Slot[,] inventoryArray = new Slot[7, 10];
@@ -40,21 +40,14 @@ public class InventorySystem : MonoBehaviour
     public GraphicRaycaster graphicRaycaster;
     private void Awake()
     {
-        GameInstance.Instance.inventorySystem = this;
+       // GameInstance.Instance.inventorySystem = this;
+       
     }
 
     private void Start()
     {
-        SlotArray slots = GetComponentInChildren<SlotArray>();
-        InventoryExtends(slots);
-
-        for(int i=0; i<5; i++)
-        {
-            SlotArray newSlots = Instantiate(inventoryList);
-            newSlots.GetComponent<RectTransform>().SetParent(list);
-            InventoryExtends(newSlots);
-        }
       
+        //gameObject.SetActive(false);
     }
 
     //인벤토리 확장
@@ -65,6 +58,7 @@ public class InventorySystem : MonoBehaviour
         {
             inventoryArray[slotNum, i] = slots.slots[i];
         }
+        slots.Setup();
         slotNum++;
     }
 
@@ -112,5 +106,25 @@ public class InventorySystem : MonoBehaviour
                 backpack.AddItem(item); 
                 break;
         }
+    }
+
+    public void Setup()
+    {
+        GameInstance.Instance.inventorySystem = this;
+        graphicRaycaster = GameInstance.Instance.uiManager.canvas.GetComponent<GraphicRaycaster>();
+        SlotArray slots = GetComponentInChildren<SlotArray>();
+        InventoryExtends(slots);
+
+        for (int i = 0; i < 5; i++)
+        {
+            SlotArray newSlots = Instantiate(inventoryList);
+            newSlots.GetComponent<RectTransform>().SetParent(list);
+            InventoryExtends(newSlots);
+        }
+        head.Setup();
+        chest.Setup();
+        arm.Setup();
+        leg.Setup();
+        backpack.Setup();
     }
 }
