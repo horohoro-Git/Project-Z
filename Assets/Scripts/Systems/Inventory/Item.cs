@@ -12,13 +12,13 @@ public class Item : MonoBehaviour
     
     void Start()
     {
-        Invoke("LateStart", 0.5f);
+        Invoke("LateStart", 1f);
     }
 
 
     void LateStart()
     {
-      //  GameInstance.Instance.inventorySystem.AddItem(this);
+        GameInstance.Instance.inventorySystem.AddItem(this);
 
     }
 }

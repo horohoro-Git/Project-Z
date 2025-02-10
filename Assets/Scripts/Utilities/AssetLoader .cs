@@ -73,7 +73,8 @@ public class AssetLoader : MonoBehaviour
     List<GameObject> floor_List = new List<GameObject>();
 
 
-    bool assetLoadSuccessful;
+    [NonSerialized]
+    public bool assetLoadSuccessful;
     public void Awake()
     {
         GameInstance.Instance.assetLoader = this;
@@ -282,7 +283,6 @@ public class AssetLoader : MonoBehaviour
             grasses = bundle.LoadAsset<GameObject>(grasses_url);
             tree03 = bundle.LoadAsset<GameObject>(tree03_url);
             human = bundle.LoadAsset<GameObject>(human_url);
-
         }
     }
 

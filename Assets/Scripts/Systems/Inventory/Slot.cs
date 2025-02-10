@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Slot : MonoBehaviour
+public class Slot : MonoBehaviour, IUIComponent
 {
     Button slotBtn;
     RectTransform self;
@@ -25,20 +25,11 @@ public class Slot : MonoBehaviour
     private void Awake()
     {
      
-        image = GetComponent<Image>();
-        
-        slotBtn = GetComponent<Button>();
-        self = GetComponent<RectTransform>();
-        Image[] images = GetComponentsInChildren<Image>(true);
-        foreach (Image i in images)
-        {
-            if(image != i) itemImage = i;
-        }
+       
     }
     // Start is called before the first frame update
     void Start()
     {
-        itemImage.sprite = originImage;
 
         EventTrigger eventTrigger = gameObject.AddComponent<EventTrigger>();
 
@@ -149,8 +140,9 @@ public class Slot : MonoBehaviour
     {
         this.item = item;
 
-        if (!item.used) itemImage.sprite = originImage;
-        else itemImage.sprite = item.image;
+        UpdateSlot();
+    //    if (!item.used) itemImage.sprite = originImage;
+     //   else itemImage.sprite = item.image;
     }
 
     public void RemoveItem()
@@ -177,5 +169,20 @@ public class Slot : MonoBehaviour
                 break;
         }
 
+    }
+
+    public void Setup()
+    {
+        image = GetComponent<Image>();
+
+        slotBtn = GetComponent<Button>();
+        self = GetComponent<RectTransform>();
+        Image[] images = GetComponentsInChildren<Image>(true);
+        foreach (Image i in images)
+        {
+            if (image != i) itemImage = i;
+        }
+
+        itemImage.sprite = originImage;
     }
 }

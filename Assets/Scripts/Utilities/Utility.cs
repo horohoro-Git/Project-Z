@@ -85,6 +85,17 @@ public enum SlotType
 
 }
 
+
+//UI의 상태 값
+public  enum UIType
+{
+    None,
+    Menu,
+    Housing,
+    Inventory
+
+}
+
 public struct ItemStruct
 {
     public Sprite image;
@@ -134,3 +145,7 @@ public class Utility
 
 }
 
+public interface IUIComponent
+{
+    void Setup();
+}

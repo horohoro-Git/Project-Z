@@ -234,6 +234,34 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""OnInventory"",
+            ""id"": ""60223830-9dc2-4ef1-95d5-14db69ad3863"",
+            ""actions"": [
+                {
+                    ""name"": ""OpenInventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""2d268c5c-9089-4138-80ea-20e0021e3cd0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""e02c4fbd-a770-4e27-9eb5-acbabfa0fa9e"",
+                    ""path"": ""<Keyboard>/i"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""OpenInventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -278,6 +306,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         // OnAttack
         m_OnAttack = asset.FindActionMap("OnAttack", throwIfNotFound: true);
         m_OnAttack_Attack = m_OnAttack.FindAction("Attack", throwIfNotFound: true);
+        // OnInventory
+        m_OnInventory = asset.FindActionMap("OnInventory", throwIfNotFound: true);
+        m_OnInventory_OpenInventory = m_OnInventory.FindAction("OpenInventory", throwIfNotFound: true);
     }
 
     ~@NewInput()
@@ -288,6 +319,7 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_OnInteraction.enabled, "This will cause a leak and performance issues, NewInput.OnInteraction.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnCombatMode.enabled, "This will cause a leak and performance issues, NewInput.OnCombatMode.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnAttack.enabled, "This will cause a leak and performance issues, NewInput.OnAttack.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnInventory.enabled, "This will cause a leak and performance issues, NewInput.OnInventory.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -621,6 +653,52 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         }
     }
     public OnAttackActions @OnAttack => new OnAttackActions(this);
+
+    // OnInventory
+    private readonly InputActionMap m_OnInventory;
+    private List<IOnInventoryActions> m_OnInventoryActionsCallbackInterfaces = new List<IOnInventoryActions>();
+    private readonly InputAction m_OnInventory_OpenInventory;
+    public struct OnInventoryActions
+    {
+        private @NewInput m_Wrapper;
+        public OnInventoryActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @OpenInventory => m_Wrapper.m_OnInventory_OpenInventory;
+        public InputActionMap Get() { return m_Wrapper.m_OnInventory; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(OnInventoryActions set) { return set.Get(); }
+        public void AddCallbacks(IOnInventoryActions instance)
+        {
+            if (instance == null || m_Wrapper.m_OnInventoryActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnInventoryActionsCallbackInterfaces.Add(instance);
+            @OpenInventory.started += instance.OnOpenInventory;
+            @OpenInventory.performed += instance.OnOpenInventory;
+            @OpenInventory.canceled += instance.OnOpenInventory;
+        }
+
+        private void UnregisterCallbacks(IOnInventoryActions instance)
+        {
+            @OpenInventory.started -= instance.OnOpenInventory;
+            @OpenInventory.performed -= instance.OnOpenInventory;
+            @OpenInventory.canceled -= instance.OnOpenInventory;
+        }
+
+        public void RemoveCallbacks(IOnInventoryActions instance)
+        {
+            if (m_Wrapper.m_OnInventoryActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IOnInventoryActions instance)
+        {
+            foreach (var item in m_Wrapper.m_OnInventoryActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_OnInventoryActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public OnInventoryActions @OnInventory => new OnInventoryActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -662,5 +740,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     public interface IOnAttackActions
     {
         void OnAttack(InputAction.CallbackContext context);
+    }
+    public interface IOnInventoryActions
+    {
+        void OnOpenInventory(InputAction.CallbackContext context);
     }
 }

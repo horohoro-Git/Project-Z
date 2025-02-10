@@ -3,12 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlotArray : MonoBehaviour
+public class SlotArray : MonoBehaviour, IUIComponent
 {
     public List<Slot> slots;
 
  //   [NonSerialized] 
     public int slotIndex = 0;
+
+    public void Setup()
+    {
+        for (int i = 0; i < slots.Count; i++)
+        {
+            slots[i].Setup();
+        }
+    }
+
     private void Awake()
     {
        

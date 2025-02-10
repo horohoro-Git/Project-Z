@@ -4,10 +4,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CreatableUISystem : MonoBehaviour
+public class CreatableUISystem : MonoBehaviour, IUIComponent
 {
-    public Button upgradeBtn;
-
     public GameObject upgradeGO;
 
     public Button floorBtn;
@@ -28,11 +26,12 @@ public class CreatableUISystem : MonoBehaviour
 
     private void OnEnable()
     {
-        upgradeBtn.onClick.AddListener(() =>
+        if (!(GameInstance.Instance.gameManager.loaded && GameInstance.Instance.assetLoader.assetLoadSuccessful))
         {
-            ShowGridWithStructure();
-        });
-
+            GameInstance.Instance.uiManager.SwitchUI(UIType.Housing);
+            return;
+        }
+    
         floorBtn.onClick.AddListener(() =>
         {
             ChangeSelectionType(InputManager.StructureState.Floor);
@@ -51,14 +50,18 @@ public class CreatableUISystem : MonoBehaviour
         {
             ChangeMode();
         });
+        GameInstance.Instance.editMode = EditMode.CreativeMode;
+        GameInstance.Instance.drawGrid.Draw();
+        GameInstance.Instance.housingSystem.RemoveRoofInWorld();
+        GameInstance.Instance.playerController.RemoveAction();
+        GameInstance.Instance.playerController.Rigid.velocity = Vector3.zero;
+
     }
 
     private void OnDisable()
     {
-        upgradeBtn.onClick.RemoveListener(() =>
-        {
-            ShowGridWithStructure();
-        });
+        if (!(GameInstance.Instance.gameManager.loaded && GameInstance.Instance.assetLoader.assetLoadSuccessful)) return;
+    
         floorBtn.onClick.RemoveListener(() =>
         {
             ChangeSelectionType(InputManager.StructureState.Floor);
@@ -75,6 +78,18 @@ public class CreatableUISystem : MonoBehaviour
         {
             ChangeMode();
         });
+        
+
+       
+        GameInstance.Instance.editMode = EditMode.None;
+        GameInstance.Instance.drawGrid.Remove();
+        GameInstance.Instance.housingSystem.CheckRoofInWorld();
+        GameInstance.Instance.playerController.AddAction();
+        if (GameInstance.Instance.gameManager.gameMode == GameMode.DefaultMode)
+        {
+            //게임 정보 저장
+            SaveLoadSystem.SaveBuildSystem();
+        }
     }
 
     void ChangeSelectionType(InputManager.StructureState structureState)
@@ -82,36 +97,7 @@ public class CreatableUISystem : MonoBehaviour
         if (GameInstance.Instance.inputManager.structureState == structureState) GameInstance.Instance.inputManager.structureState = InputManager.StructureState.None;
         else GameInstance.Instance.inputManager.structureState = structureState;
     }
-    void ShowGridWithStructure()
-    {
-        if (GameInstance.Instance.gameManager.loaded)
-        {
-            if (upgradeGO.gameObject.activeSelf)
-            {
-                GameInstance.Instance.editMode = EditMode.None;
-                upgradeGO.gameObject.SetActive(false);
-                GameInstance.Instance.drawGrid.Remove();
-                GameInstance.Instance.housingSystem.CheckRoofInWorld();
-                GameInstance.Instance.playerController.AddAction();
-                if (GameInstance.Instance.gameManager.gameMode == GameMode.DefaultMode)
-                {
-                    //게임 정보 저장
-                    SaveLoadSystem.SaveBuildSystem();
-                }
-            }
-            else
-            {
-                GameInstance.Instance.editMode = EditMode.CreativeMode;
-                upgradeGO.gameObject.SetActive(true);
-                GameInstance.Instance.drawGrid.Draw();
-                GameInstance.Instance.housingSystem.RemoveRoofInWorld();
-                GameInstance.Instance.playerController.RemoveAction();
-                GameInstance.Instance.playerController.Rigid.velocity = Vector3.zero;
-
-            }
-        }
-    }
-
+ 
     void ChangeMode()
     {
         if(GameInstance.Instance.editMode == EditMode.CreativeMode)
@@ -125,5 +111,9 @@ public class CreatableUISystem : MonoBehaviour
             GameInstance.Instance.editMode = EditMode.CreativeMode;
         }
        
+    }
+
+    public void Setup()
+    {
     }
 }

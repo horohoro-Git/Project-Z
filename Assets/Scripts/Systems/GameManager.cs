@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 public class GameManager : MonoBehaviour
 {
 
-
     const string playerName = "Player";
     const string inputManagerName = "InputManager";
     public PlayerController player;
@@ -15,6 +14,7 @@ public class GameManager : MonoBehaviour
     public Vector3 startPosition;
     public GameMode gameMode;
     public bool loaded;
+   
 
     private void Awake()
     {

@@ -70,6 +70,7 @@ public class PlayerController : Controller
         Input.actions["Combat"].performed += ChangeCombatMode;
         Input.actions["Attack"].performed += Attack;
         Input.actions["Attack"].canceled += EndAttack;
+        Input.actions["OpenInventory"].performed += OpenInventory;
     }
     public void RemoveAction()
     {
@@ -81,6 +82,7 @@ public class PlayerController : Controller
         Input.actions["Combat"].performed -= ChangeCombatMode;
         Input.actions["Attack"].performed -= Attack;
         Input.actions["Attack"].canceled -= EndAttack;
+        Input.actions["OpenInventory"].performed -= OpenInventory;
     }
     // Start is called before the first frame update
     void Start()
@@ -143,7 +145,6 @@ public class PlayerController : Controller
 
     void ChangeCombatMode(InputAction.CallbackContext callback)
     {
-        Debug.Log("A");
         if(state == PlayerState.Default)
         {
             modelAnimator.SetBool("combat", true);
@@ -283,5 +284,14 @@ public class PlayerController : Controller
         {
             InteractionEvent -= action;
         }
+    }
+
+    void OpenInventory(InputAction.CallbackContext callback)
+    {
+        InventorySystem inventorySystem = GameInstance.Instance.inventorySystem;
+        if (inventorySystem == null) return;
+       
+        if(inventorySystem.gameObject.activeSelf) GameInstance.Instance.inventorySystem.gameObject.SetActive(false);
+        else GameInstance.Instance.inventorySystem.gameObject.SetActive(false);
     }
 }
