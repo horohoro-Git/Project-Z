@@ -34,6 +34,8 @@ public class PlayerController : Controller
 
     PlayerState state = PlayerState.Default;
     Coroutine combatMotion;
+
+    bool inputEnabled = false;
    
     private void Awake()
     {
@@ -62,6 +64,9 @@ public class PlayerController : Controller
 
     public void AddAction()
     {
+        if (!Application.isPlaying) return;
+        if (inputEnabled) return;
+        inputEnabled = true;
         Input.actions["WASD"].performed += MoveHandle;
         Input.actions["WASD"].canceled += MoveStop;
         Input.actions["Run"].performed += Run;
@@ -74,6 +79,9 @@ public class PlayerController : Controller
     }
     public void RemoveAction()
     {
+        if (!Application.isPlaying) return;
+        if (!inputEnabled) return;
+        inputEnabled = false;
         Input.actions["WASD"].performed -= MoveHandle;
         Input.actions["WASD"].performed -= MoveStop;
         Input.actions["Run"].performed -= Run;

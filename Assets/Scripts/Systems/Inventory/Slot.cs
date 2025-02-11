@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -22,6 +23,16 @@ public class Slot : MonoBehaviour, IUIComponent
     int slotX;
     [SerializeField]
     int slotY;
+
+    EventTrigger eventTrigger;
+    EventTrigger.Entry entryHover;
+    EventTrigger.Entry entryExit;
+    EventTrigger.Entry dragStart;
+    EventTrigger.Entry dragEnd;
+    UnityAction<BaseEventData> hoverEnter;
+    UnityAction<BaseEventData> hoverExit;
+    UnityAction<BaseEventData> dragEnter;
+    UnityAction<BaseEventData> dragExit;
     private void Awake()
     {
      
@@ -30,19 +41,41 @@ public class Slot : MonoBehaviour, IUIComponent
     // Start is called before the first frame update
     void Start()
     {
+        
+    }
 
-        EventTrigger eventTrigger = gameObject.AddComponent<EventTrigger>();
+    private void OnEnable()
+    {
+        if (eventTrigger == null)
+        {
+            eventTrigger = gameObject.AddComponent<EventTrigger>();
 
+            entryHover = new EventTrigger.Entry();
+            entryHover.eventID = EventTriggerType.PointerEnter;
+            hoverEnter = (eventData) => OnHoverEnter();
+
+            entryExit = new EventTrigger.Entry();
+            entryExit.eventID = EventTriggerType.PointerExit;
+            hoverExit = (eventData) => OnHoverExit();
+
+            if (slotType != SlotType.JustView)
+            {
+                dragStart = new EventTrigger.Entry();
+                dragStart.eventID = EventTriggerType.PointerDown;
+                dragEnter = (eventData) => OnDragEnter();
+
+                dragEnd = new EventTrigger.Entry();
+                dragEnd.eventID = EventTriggerType.PointerUp;
+                dragExit = (eventData) => OnDragExit();
+            }
+        }
         //호버
-        EventTrigger.Entry entryHover = new EventTrigger.Entry();
-        entryHover.eventID = EventTriggerType.PointerEnter;
-        entryHover.callback.AddListener((eventData) => { OnHoverEnter(); });
+        entryHover.callback.AddListener(hoverEnter);
         eventTrigger.triggers.Add(entryHover);
 
         //호버 종료
-        EventTrigger.Entry entryExit = new EventTrigger.Entry();
-        entryExit.eventID = EventTriggerType.PointerExit;
-        entryExit.callback.AddListener((eventData) => { OnHoverExit(); });
+      
+        entryExit.callback.AddListener(hoverExit);
         eventTrigger.triggers.Add(entryExit);
 
         if (slotType == SlotType.JustView) return;
@@ -50,17 +83,37 @@ public class Slot : MonoBehaviour, IUIComponent
         //상호작용 가능 슬롯
 
         //드래그 시작
-        EventTrigger.Entry dragStart = new EventTrigger.Entry();
-        dragStart.eventID = EventTriggerType.PointerDown;
-        dragStart.callback.AddListener((eventData) => { OnDragEnter(); });
+      
+        dragStart.callback.AddListener(dragEnter);
         eventTrigger.triggers.Add(dragStart);
 
         //드래그 종료
-        EventTrigger.Entry dragEnd = new EventTrigger.Entry();
-        dragEnd.eventID = EventTriggerType.PointerUp;
-        dragEnd.callback.AddListener((eventData) => { OnDragExit(); });
+   
+        dragEnd.callback.AddListener(dragExit);
         eventTrigger.triggers.Add(dragEnd);
     }
+
+    private void OnDisable()
+    {
+        if (eventTrigger != null)
+        {
+            entryHover.callback.RemoveListener(hoverEnter);
+            eventTrigger.triggers.Remove(entryHover);
+
+            entryExit.callback.RemoveListener(hoverExit);
+            eventTrigger.triggers.Remove(entryExit);
+
+            if (slotType == SlotType.JustView) return;
+
+
+            dragStart.callback.RemoveListener(dragEnter);
+            eventTrigger.triggers.Remove(dragStart);
+
+            dragEnd.callback.RemoveListener(dragExit);
+            eventTrigger.triggers.Remove(dragEnd);
+        }
+    }
+
 
     void OnDragEnter()
     {
@@ -84,7 +137,7 @@ public class Slot : MonoBehaviour, IUIComponent
 
         List<RaycastResult> raycastResult = new List<RaycastResult>();
 
-        GameInstance.Instance.inventorySystem.graphicRaycaster.Raycast(pointerData, raycastResult);
+        GameInstance.Instance.uiManager.graphicRaycaster.Raycast(pointerData, raycastResult);
 
         if (raycastResult.Count > 0)
         {

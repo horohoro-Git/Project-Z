@@ -73,6 +73,13 @@ public class DrawGrid : MonoBehaviour
             lines.RemoveAt(i);
             GridManager.RemoveLine(lineRenderer);
         }
+        RemoveHighlight();
+    }
+
+    public void RemoveHighlight()
+    {
+        if (currentLineRender != null) GridManager.RemoveLine(currentLineRender);
+        currentLineRender = null;
     }
 
     public bool Select(Vector3 selectedCell, ref int x, ref int y)
@@ -84,7 +91,7 @@ public class DrawGrid : MonoBehaviour
         int cellX = Mathf.FloorToInt(selectedCell.x / 2);
         int cellY = Mathf.FloorToInt(selectedCell.z / 2);
 
-        if (x == cellX && y == cellY) return false;
+        if (x == cellX && y == cellY && currentLineRender != null) return false;
 
         x= cellX; y= cellY;
       //  Debug.Log(x + " " + y); 

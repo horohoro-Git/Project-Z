@@ -96,6 +96,46 @@ public  enum UIType
 
 }
 
+//건축 자재의 타입
+public enum BuildMaterialsType
+{
+    None,
+    Floor,
+    Wall
+}
+
+//하우징에 사용되는 모드
+public enum ChangeInfo
+{
+    Addition,
+    Subtraction
+}
+
+
+//하우징 시스템의 변화 정보
+public struct HousingChangeInfo
+{
+    public int indexX;
+    public int indexY;
+    public int indexZ;
+    public GameObject buildMat;
+    public bool used;
+    public ChangeInfo change;
+    public BuildMaterialsType type;
+    public HousingChangeInfo(GameObject buildMat, int indexX, int indexY, int indexZ, ChangeInfo change, BuildMaterialsType type)
+    {
+        this.buildMat = buildMat;
+        this.indexX = indexX;
+        this.indexY = indexY;
+        this.indexZ = indexZ;
+        this.change = change;
+        this.type = type;
+        this.used = true;
+    }
+}
+
+
+//아이템 정보
 public struct ItemStruct
 {
     public Sprite image;
@@ -145,6 +185,7 @@ public class Utility
 
 }
 
+//UI 인터페이스
 public interface IUIComponent
 {
     void Setup();

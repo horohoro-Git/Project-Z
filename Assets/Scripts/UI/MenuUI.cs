@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -26,54 +27,96 @@ public class MenuUI : MonoBehaviour, IUIComponent
     float scrollY;
 
     float scrollHeight;
-  
+
+    UnityAction menuClick;
+    UnityAction createClick;
+    UnityAction inventoryClick;
+
+    EventTrigger menuTrigger;
+    EventTrigger createTrigger;
+    EventTrigger inventoryTrigger;
+
+    EventTrigger.Entry menuEnterEntry;
+    EventTrigger.Entry menuExitEntry;
+    EventTrigger.Entry createEnterEntry;
+    EventTrigger.Entry createExitEntry;
+    EventTrigger.Entry inventoryEnterEntry;
+    EventTrigger.Entry inventoryExitEntry;
+
     // Start is called before the first frame update
     void Start()
     {
         scrollY = rectTransform.rect.height;
         scrollHeight = rectTransform.localPosition.y;
-
-        menuBtn.onClick.AddListener(() =>
-        {
-            if (isSpread) Fold();
-            else Spread();
-        });
-
-        createBtn.onClick.AddListener(() =>
-        {
-            GameInstance.Instance.uiManager.SwitchUI(UIType.Housing);
-        });
-        inventoryBtn.onClick.AddListener(() =>
-        {
-            GameInstance.Instance.uiManager.SwitchUI(UIType.Inventory);
-        });
-        a3.onClick.AddListener(() =>
-        {
-            Debug.Log("Click A3");
-
-        });
-
-        SetupButtonEvent(menuBtn);
-        SetupButtonEvent(createBtn);
-        SetupButtonEvent(inventoryBtn);
-
     }
 
-    void SetupButtonEvent(Button btn)
+    private void OnEnable()
     {
-        EventTrigger eventTrigger = btn.gameObject.AddComponent<EventTrigger>();
+        //메뉴의 각 버튼 클릭 이벤트
+        menuClick = () => MenuWork();
+        createClick = () => GameInstance.Instance.uiManager.SwitchUI(UIType.Housing);
+        inventoryClick = () => GameInstance.Instance.uiManager.SwitchUI(UIType.Inventory);
 
-        EventTrigger.Entry entryHover = new EventTrigger.Entry();
-        entryHover.eventID = EventTriggerType.PointerEnter;
-        entryHover.callback.AddListener((eventData) => { OnHoverEnter(btn.GetComponent<Image>()); });
-        eventTrigger.triggers.Add(entryHover);
+        menuBtn.onClick.AddListener(menuClick);
+        createBtn.onClick.AddListener(createClick);
+        inventoryBtn.onClick.AddListener(inventoryClick);
+
+        //메뉴 버튼의 호버 기능
+        SetupButtonHoverEvent(menuBtn, ref menuTrigger, ref menuEnterEntry, ref menuExitEntry);
+        SetupButtonHoverEvent(createBtn, ref createTrigger, ref createEnterEntry, ref createExitEntry);
+        SetupButtonHoverEvent(inventoryBtn, ref inventoryTrigger, ref inventoryEnterEntry, ref inventoryExitEntry);
+    }
+
+    private void OnDisable()
+    {
+        //버튼의 이벤트 제거
+        menuBtn.onClick.RemoveListener(menuClick);
+        createBtn.onClick.RemoveListener(createClick);
+        inventoryBtn.onClick.RemoveListener(inventoryClick);
+
+        RemoveButtonHoverEvent(menuBtn, menuTrigger, menuEnterEntry, menuExitEntry);
+        RemoveButtonHoverEvent(createBtn, createTrigger, createEnterEntry, createExitEntry);
+        RemoveButtonHoverEvent(inventoryBtn, inventoryTrigger, inventoryEnterEntry, inventoryExitEntry);
+    }
+
+    void SetupButtonHoverEvent(Button btn, ref EventTrigger eventTrigger, ref EventTrigger.Entry enterEntry, ref EventTrigger.Entry exitEntry)
+    {
+        if(eventTrigger == null) eventTrigger = btn.gameObject.AddComponent<EventTrigger>();
+        //호버 시작
+        if (enterEntry == null) enterEntry = new EventTrigger.Entry();
+        enterEntry.eventID = EventTriggerType.PointerEnter;
+        UnityAction<BaseEventData> enterEvent = (data) => OnHoverEnter(btn.GetComponent<Image>());
+        enterEntry.callback.AddListener(enterEvent);
+        eventTrigger.triggers.Add(enterEntry);
 
         //호버 종료
-        EventTrigger.Entry entryExit = new EventTrigger.Entry();
-        entryExit.eventID = EventTriggerType.PointerExit;
-        entryExit.callback.AddListener((eventData) => { OnHoverExit(btn.GetComponent<Image>()); });
-        eventTrigger.triggers.Add(entryExit);
+        if(exitEntry == null) exitEntry = new EventTrigger.Entry();
+        exitEntry.eventID = EventTriggerType.PointerExit;
+        UnityAction<BaseEventData> exitEvent = (data) => OnHoverExit(btn.GetComponent<Image>());
+        exitEntry.callback.AddListener(exitEvent);
+        eventTrigger.triggers.Add(exitEntry);
     }
+
+   
+    void RemoveButtonHoverEvent(Button btn, EventTrigger eventTrigger, EventTrigger.Entry enterEntry, EventTrigger.Entry exitEntry)
+    {
+        EventTrigger trigger = btn.gameObject.GetComponent<EventTrigger>();
+        if(trigger == null) return;
+
+        //이벤트 트리거의 호버 기능 제거
+        enterEntry.callback.RemoveAllListeners();
+        eventTrigger.triggers.Remove(enterEntry);
+
+        exitEntry.callback.RemoveAllListeners();
+        eventTrigger.triggers.Remove(exitEntry);
+    }
+
+    void MenuWork()
+    {
+        if (isSpread) Fold();
+        else Spread();
+    }
+
 
     void OnHoverEnter(Image image)
     {

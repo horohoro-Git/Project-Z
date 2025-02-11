@@ -37,7 +37,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     [SerializeField]
     Slot backpack;
 
-    public GraphicRaycaster graphicRaycaster;
+   
     private void Awake()
     {
        // GameInstance.Instance.inventorySystem = this;
@@ -111,7 +111,6 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     public void Setup()
     {
         GameInstance.Instance.inventorySystem = this;
-        graphicRaycaster = GameInstance.Instance.uiManager.canvas.GetComponent<GraphicRaycaster>();
         SlotArray slots = GetComponentInChildren<SlotArray>();
         InventoryExtends(slots);
 

@@ -106,7 +106,7 @@ public class SaveLoadSystem
             {
                 for (int k = 0; k < 2; k++)
                 {
-                    Wall wall = GameInstance.Instance.housingSystem.GetFloor(i, j, k);
+                    Wall wall = GameInstance.Instance.housingSystem.GetWall(i, j, k);
 
                     if (wall != null)
                     {
