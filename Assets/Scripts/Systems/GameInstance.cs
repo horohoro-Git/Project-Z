@@ -30,6 +30,7 @@ public class GameInstance
 
     public List<PlayerController> GetPlayers { get { return players; } }
     public WorldGrids worldGrids;
+    public bool quit = false;
     public void Reset()
     {
         uiManager = null;

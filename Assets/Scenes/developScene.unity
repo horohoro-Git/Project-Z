@@ -970,6 +970,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 18cabc7ae2aa89a438d44934d26fe380, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  graphicRaycaster: {fileID: 529984927}
   canvas: {fileID: 529984925}
   menuUI: {fileID: 3639092462658375828, guid: 4980fb24a8a132449be4f2f39f305a88, type: 3}
   housingSystemUI: {fileID: 4547795168140859874, guid: c50d01bb9d5da8f4dbef19a3e5878456, type: 3}

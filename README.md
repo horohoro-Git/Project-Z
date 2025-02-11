@@ -94,3 +94,6 @@ Inventory system (dragging, extension, acquire item)
 
 02/10
 Inventory system integration and add interface
+
+02/11
+UI bug fix / Inventory system (revert, apply, reset)

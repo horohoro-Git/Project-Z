@@ -118,6 +118,11 @@ public class AssetLoader : MonoBehaviour
     
         return true;
     }
+    public void RemovePreview()
+    {
+        if (preLoadedObject != null) Destroy(preLoadedObject);
+        preLoadedObject = null;
+    }
     public void PreLoadFloor(int x, int y)
     {
         if (CheckAssetLoaded())
@@ -146,10 +151,7 @@ public class AssetLoader : MonoBehaviour
          
         }
     }
-    public void RemovePreloadObject()
-    {
-        if (preLoadedObject != null) Destroy(preLoadedObject);
-    }
+
     public void PreLoadWall(Vector3 hit, int x, int y, bool wall)
     {
         if (CheckAssetLoaded())
@@ -210,7 +212,7 @@ public class AssetLoader : MonoBehaviour
                 GameObject f = Instantiate(floor, root.transform);
                 f.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
                 floor_List.Add(f);
-                GameInstance.Instance.housingSystem.BuildFloor(x, y, f);
+                GameInstance.Instance.housingSystem.BuildFloor(x, y, f, forcedBuild);
             }
         }
     }
@@ -257,7 +259,7 @@ public class AssetLoader : MonoBehaviour
                     }
 
 
-                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection, justWall);
+                    GameInstance.Instance.housingSystem.BuildWall(x, y, w, buildWallDirection, justWall, forecedBuild);
                 }
             }
         }

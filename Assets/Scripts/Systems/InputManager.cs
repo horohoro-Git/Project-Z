@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.HID;
+using UnityEngine.UI;
 public class InputManager : MonoBehaviour
 {
     PlayerController pc;
@@ -38,7 +40,8 @@ public class InputManager : MonoBehaviour
 
 
     public const int BuildMaterials = 7;
-
+    PointerEventData eventData = new PointerEventData(EventSystem.current);
+    List<RaycastResult> raycastResults = new List<RaycastResult>();
     public void Setup(PlayerInput playerInput)
     {
       
@@ -59,20 +62,31 @@ public class InputManager : MonoBehaviour
         mainCamera = Camera.main;   
         if(debugging) playerInput.actions[debugAction].performed += DebugOn;
     }
-
+ 
+  
     private void Update()
     {
         if (GameInstance.Instance.editMode != EditMode.None)
         {
+            GraphicRaycaster raycaster = GameInstance.Instance.uiManager.graphicRaycaster;
+            eventData.position = Input.mousePosition;
+            raycastResults.Clear();
+            raycaster.Raycast(eventData, raycastResults);
+            if (raycastResults.Count > 0)
+            {
+                GameInstance.Instance.drawGrid.RemoveHighlight();
+                GameInstance.Instance.assetLoader.RemovePreview();
+                x = int.MaxValue;
+                y = int.MaxValue;
+                return;
+            }
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, int.MaxValue, ~(1 << BuildMaterials)))
             {
                 if (GameInstance.Instance.drawGrid)
                 {
-                    if(GameInstance.Instance.drawGrid.Select(hit.point, ref x, ref y))
-                    {
-                       
-                    }
+                    GameInstance.Instance.drawGrid.Select(hit.point, ref x, ref y);
                     if (!(x >= 24 || x < -24 || y >= 24 || y < -24))
                     {
                         switch (structureState)
@@ -91,7 +105,7 @@ public class InputManager : MonoBehaviour
                     }
                 }
             }
-            if (!(x >= 25 || x < -25 || y >= 25 || y < -25))
+            if (!(x >= 24 || x < -24 || y >= 24 || y < -24))
             {
                 if (Input.GetMouseButtonDown(0))
                 {

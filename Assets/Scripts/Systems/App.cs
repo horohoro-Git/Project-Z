@@ -20,6 +20,7 @@ public class App : MonoBehaviour
     private void SceneManager_sceneLoaded(Scene arg0, LoadSceneMode arg1)
     {
         GameInstance.Instance.app = this;
+        GameInstance.Instance.quit = false;
     }
 
     private void OnApplicationQuit()
@@ -27,6 +28,7 @@ public class App : MonoBehaviour
         SceneManager.sceneUnloaded -= OnSceneUnloaded;
         SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
         GameInstance.Instance.Reset();
+        GameInstance.Instance.quit = true;
     }
     private void OnSceneUnloaded(Scene scene)
     {
