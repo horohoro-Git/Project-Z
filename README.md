@@ -97,3 +97,6 @@ Inventory system integration and add interface
 
 02/11
 UI bug fix / Inventory system (revert, apply, reset)
+
+02/12
+UI positioning adjustments, add screenshot, clear data and open editor
