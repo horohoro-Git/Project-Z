@@ -70,12 +70,10 @@ public enum PlayerState
     Dead
 }
 
-//아이템 타입
+//슬롯 타입
 public enum SlotType
 {
     None,
-    Consumerble,
-    Weapon,
     Head,
     Chest,
     Arm,
@@ -85,6 +83,14 @@ public enum SlotType
 
 }
 
+//아이템 타입
+public enum ItemType
+{
+    None,
+    Consumable,
+    Equipmentable,
+    Installable
+}
 
 //UI의 상태 값
 public  enum UIType
@@ -96,13 +102,17 @@ public  enum UIType
 
 }
 
+
+
 //건축 자재의 타입
-public enum BuildMaterialsType
+public enum StructureState
 {
     None,
     Floor,
-    Wall
+    Wall,
+    Door
 }
+
 
 //하우징에 사용되는 모드
 public enum ChangeInfo
@@ -121,8 +131,8 @@ public struct HousingChangeInfo
     public GameObject buildMat;
     public bool used;
     public ChangeInfo change;
-    public BuildMaterialsType type;
-    public HousingChangeInfo(GameObject buildMat, int indexX, int indexY, int indexZ, ChangeInfo change, BuildMaterialsType type)
+    public StructureState type;
+    public HousingChangeInfo(GameObject buildMat, int indexX, int indexY, int indexZ, ChangeInfo change, StructureState type)
     {
         this.buildMat = buildMat;
         this.indexX = indexX;
@@ -136,18 +146,21 @@ public struct HousingChangeInfo
 
 
 //아이템 정보
+[System.Serializable]
 public struct ItemStruct
 {
     public Sprite image;
     public string itemName;
-    public SlotType itemType;
+    public SlotType slotType;
+    public ItemType ItemType;
     public bool used;
 
-    public ItemStruct(Sprite image, string itemName, SlotType itemType)
+    public ItemStruct(Sprite image, string itemName, SlotType slotType, ItemType itemType)
     {
         this.image = image;
         this.itemName = itemName;
-        this.itemType = itemType;
+        this.slotType = slotType;
+        this.ItemType = itemType;
         used = true;
     }
 }

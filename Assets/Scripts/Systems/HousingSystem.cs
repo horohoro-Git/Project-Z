@@ -110,7 +110,7 @@ public class HousingSystem : MonoBehaviour
         floors[indexX, indexY] = floor;
         if (isLoad) return;
 
-        HousingChangeInfo changeInfo = new HousingChangeInfo(floor, indexX, indexY, 0, ChangeInfo.Addition, BuildMaterialsType.Floor);
+        HousingChangeInfo changeInfo = new HousingChangeInfo(floor, indexX, indexY, 0, ChangeInfo.Addition, StructureState.Floor);
         changeLists.Add(changeInfo);
     }
 
@@ -241,7 +241,7 @@ public class HousingSystem : MonoBehaviour
         if (isLoad) return;
 
        // BuildMaterialsType buildMaterialsType = justWall ? BuildMaterialsType.Wall : BuildMaterialsType.
-        HousingChangeInfo changeInfo = new HousingChangeInfo(wall.gameObject,indexX, indexY, indexZ, ChangeInfo.Addition, BuildMaterialsType.Wall);
+        HousingChangeInfo changeInfo = new HousingChangeInfo(wall.gameObject,indexX, indexY, indexZ, ChangeInfo.Addition, StructureState.Wall);
         changeLists.Add(changeInfo);
     }
 
@@ -515,7 +515,7 @@ public class HousingSystem : MonoBehaviour
             floors[xx, yy].gameObject.SetActive(false);
             removeMaterials.Add(floors[xx, yy].gameObject);
           //  Destroy(floors[xx, yy].gameObject);
-            HousingChangeInfo changeInfo = new HousingChangeInfo(floors[xx, yy].gameObject, xx, yy,0,ChangeInfo.Subtraction, BuildMaterialsType.Floor);
+            HousingChangeInfo changeInfo = new HousingChangeInfo(floors[xx, yy].gameObject, xx, yy,0,ChangeInfo.Subtraction, StructureState.Floor);
             changeLists.Add(changeInfo);
             floors[xx, yy] = null;
 
@@ -557,7 +557,7 @@ public class HousingSystem : MonoBehaviour
             //Destroy(w.gameObject);
             w.gameObject.SetActive(false);
             removeMaterials.Add(w.gameObject);
-            HousingChangeInfo changeInfo = new HousingChangeInfo(w.gameObject, indexX, indexY, indexZ, ChangeInfo.Subtraction, BuildMaterialsType.Wall);
+            HousingChangeInfo changeInfo = new HousingChangeInfo(w.gameObject, indexX, indexY, indexZ, ChangeInfo.Subtraction, StructureState.Wall);
             changeLists.Add(changeInfo);
 
             if (isDoor)
@@ -649,17 +649,17 @@ public class HousingSystem : MonoBehaviour
             if (changeInfo.change == ChangeInfo.Addition)
             {
                 //추가했던 건물 자재를 제거
-                if(changeInfo.type == BuildMaterialsType.Floor)
+                if(changeInfo.type == StructureState.Floor)
                 {
                     GameObject go = floors[indexX, indexY];
                     Destroy(go);
                     floors[indexX, indexY] = null;
                 }
-                else if (changeInfo.type == BuildMaterialsType.Wall)
+                else if (changeInfo.type == StructureState.Wall)
                 {
                     Wall go = walls[indexX, indexY, indexZ];
                     Destroy(go.gameObject);
-                    floors[indexX, indexY] = null;
+                    walls[indexX, indexY, indexZ] = null;
                 }
 
                 //비용 회득
@@ -667,18 +667,10 @@ public class HousingSystem : MonoBehaviour
             else
             {
                 //제거되었던 건물 자재를 추가
-                if (changeInfo.type == BuildMaterialsType.Floor)
-                {
-                    floors[indexX, indexY] = changeInfo.buildMat;
-                    changeInfo.buildMat.SetActive(true);
-                    removeMaterials.RemoveAt(count);
-                }
-                else if (changeInfo.type == BuildMaterialsType.Wall)
-                {
-                    walls[indexX, indexY, indexZ] = changeInfo.buildMat.GetComponent<Wall>();
-                    changeInfo.buildMat.SetActive(true);
-                    removeMaterials.RemoveAt(count);
-                }
+                if (changeInfo.type == StructureState.Floor) floors[indexX, indexY] = changeInfo.buildMat;
+                else if (changeInfo.type == StructureState.Wall) walls[indexX, indexY, indexZ] = changeInfo.buildMat.GetComponent<Wall>();
+                changeInfo.buildMat.SetActive(true);
+                removeMaterials.RemoveAt(removeMaterials.Count - 1);
                 //자재 비용 반납
             }
         }
@@ -687,17 +679,27 @@ public class HousingSystem : MonoBehaviour
     //변경 사항 적용
     public void Apply()
     {
-        changeLists.Clear();
-
-        for (int i = removeMaterials.Count - 1; i >= 0; i--)
+        if (changeLists.Count > 0)
         {
-            GameObject go = removeMaterials[i];
-            if (go != null && !go.activeSelf) Destroy(go);
-            removeMaterials.RemoveAt(i);
-        }
-        removeMaterials.Clear();
+            changeLists.Clear();
 
-        TempStorage();
+            for (int i = removeMaterials.Count - 1; i >= 0; i--)
+            {
+                GameObject go = removeMaterials[i];
+                if (go != null && !go.activeSelf) Destroy(go);
+                removeMaterials.RemoveAt(i);
+            }
+            removeMaterials.Clear();
+
+            TempStorage();
+
+            if (GameInstance.Instance.gameManager.gameMode == GameMode.DefaultMode)
+            {
+                //게임 정보 저장
+                SaveLoadSystem.SaveBuildSystem();
+            }
+
+        }
     }
 
     //초기 상태 저장

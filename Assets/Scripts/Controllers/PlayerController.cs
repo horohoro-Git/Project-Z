@@ -36,7 +36,7 @@ public class PlayerController : Controller
     Coroutine combatMotion;
 
     bool inputEnabled = false;
-   
+    bool destroyed = false;
     private void Awake()
     {
         GameInstance.Instance.playerController = this;
@@ -62,8 +62,13 @@ public class PlayerController : Controller
        // lastHandler.Clear();
     }
 
+    private void OnDestroy()
+    {
+        destroyed = true;
+    }
     public void AddAction()
     {
+        if (destroyed) return;
         if (!Application.isPlaying) return;
         if (inputEnabled) return;
         inputEnabled = true;
@@ -79,7 +84,7 @@ public class PlayerController : Controller
     }
     public void RemoveAction()
     {
-        if (!Application.isPlaying) return;
+        if (destroyed) return;
         if (!inputEnabled) return;
         inputEnabled = false;
         Input.actions["WASD"].performed -= MoveHandle;

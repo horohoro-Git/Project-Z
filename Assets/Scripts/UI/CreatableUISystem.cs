@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -17,6 +18,10 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     public Button applyBtn;
     public Button restBtn;
 
+    const string floorStr = "Floor";
+    const string wallStr = "Wall";
+    const string doorStr = "Door";
+
     [SerializeField]
     Button editModeButton;
     [SerializeField]
@@ -26,6 +31,10 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     Sprite plus;
     [SerializeField]    
     Sprite minus;
+    [SerializeField]
+    TMP_Text labelText;
+    [SerializeField]
+    RectTransform detailsTab;
 
     UnityAction floorBtnListener;
     UnityAction wallBtnListener;
@@ -35,13 +44,27 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     UnityAction applyBtnListener;
     UnityAction resetBtnListener;
 
+    List<InstallableItem> items = new List<InstallableItem>();
+
+    public List<ItemStruct> floors = new List<ItemStruct>();
+    public List<ItemStruct> walls = new List<ItemStruct>();
+    public List<ItemStruct> doors = new List<ItemStruct>();
+
+    [SerializeField]
+    InstallableItem installableItem;
     // Start is called before the first frame update
+
+    private void Awake()
+    {
+       // ItemStruct itemStruct = new ItemStruct(,);
+      //  floors.
+    }
 
     private void OnEnable()
     {
-        floorBtnListener = () => ChangeSelectionType(InputManager.StructureState.Floor);
-        wallBtnListener = () => ChangeSelectionType(InputManager.StructureState.Wall);
-        doorBtnListener = () => ChangeSelectionType(InputManager.StructureState.Door);
+        floorBtnListener = () => ChangeSelectionType(StructureState.Floor);
+        wallBtnListener = () => ChangeSelectionType(StructureState.Wall);
+        doorBtnListener = () => ChangeSelectionType(StructureState.Door);
         editBtnListener = () => ChangeMode();
         backBtnListener = () => GameInstance.Instance.housingSystem.Revert();
         applyBtnListener = () => GameInstance.Instance.housingSystem.Apply();
@@ -88,35 +111,117 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         GameInstance.Instance.housingSystem.ResetMaterials();
         GameInstance.Instance.housingSystem.CheckRoofInWorld();
         GameInstance.Instance.playerController.AddAction();
-        if (GameInstance.Instance.gameManager.gameMode == GameMode.DefaultMode)
-        {
-            //게임 정보 저장
-            SaveLoadSystem.SaveBuildSystem();
-        }
-        
+      
     }
 
-    void ChangeSelectionType(InputManager.StructureState structureState)
+    void ChangeSelectionType(StructureState structureState)
     {
-        if (GameInstance.Instance.inputManager.structureState == structureState) GameInstance.Instance.inputManager.structureState = InputManager.StructureState.None;
-        else GameInstance.Instance.inputManager.structureState = structureState;
+        if (GameInstance.Instance.inputManager.structureState == structureState)
+        {
+            GameInstance.Instance.inputManager.structureState = StructureState.None;
+            tab.SetActive(false);
+            return;
+        }
+        switch (structureState)
+        {
+            case StructureState.None:
+                break;
+            case StructureState.Floor:
+                if(labelText.text == floorStr)
+                {
+                    tab.SetActive(false);
+                    labelText.text = "";
+                    return;
+                }
+                labelText.text = floorStr;
+                tab.SetActive(true);
+                break;
+            case StructureState.Wall:
+                if (labelText.text == wallStr)
+                {
+                    tab.SetActive(false);
+                    labelText.text = "";
+                    return;
+                }
+                labelText.text = wallStr;
+                tab.SetActive(true);
+                break;
+            case StructureState.Door:
+                if (labelText.text == doorStr)
+                {
+                    tab.SetActive(false);
+                    labelText.text = "";
+                    return;
+                }
+                labelText.text = doorStr;
+                tab.SetActive(true);
+                break;
+        }
+
+        LoadInstallableMaterials(structureState);
+    /*    if (GameInstance.Instance.inputManager.structureState == structureState) GameInstance.Instance.inputManager.structureState = InputManager.StructureState.None;
+        else GameInstance.Instance.inputManager.structureState = structureState;*/
     }
  
     void ChangeMode()
     {
         if(GameInstance.Instance.editMode == EditMode.CreativeMode)
         {
-         //   tab.SetActive(false);
+            tab.SetActive(true);
             modeImage.sprite = plus;
             GameInstance.Instance.editMode = EditMode.DestroyMode;
         }
         else if(GameInstance.Instance.editMode == EditMode.DestroyMode)
         {
-         //   tab.SetActive(true);
+            tab.SetActive(false);
             modeImage.sprite = minus;
             GameInstance.Instance.editMode = EditMode.CreativeMode;
         }
        
+    }
+
+    void LoadInstallableMaterials(StructureState structureState)
+    {
+        for (int i = items.Count - 1; i >= 0; i--)
+        {
+            //DestroyImmediate(items[i].gameObject,true);
+            Destroy(items[i].gameObject);
+            items.RemoveAt(i);
+        }
+
+        switch(structureState)
+        {
+            case StructureState.None:
+                break;
+            case StructureState.Floor:
+                for (int i = 0; i < floors.Count; i++)
+                {
+                    InstallableItem spawnItem = Instantiate(installableItem);
+                    spawnItem.Setup();
+                    spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
+                    items.Add(spawnItem);
+                }
+                break;
+            case StructureState.Wall:
+                for (int i = 0; i < walls.Count; i++)
+                {
+                    InstallableItem spawnItem = Instantiate(installableItem);
+                    spawnItem.Setup();
+                    spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
+                    items.Add(spawnItem);
+                }
+                break;
+            case StructureState.Door:
+                for (int i = 0; i < doors.Count; i++)
+                {
+                    InstallableItem spawnItem = Instantiate(installableItem);
+                    spawnItem.Setup();
+                    spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
+                    items.Add(spawnItem);
+                }
+                break;
+        }
+      
     }
 
     public void Setup()

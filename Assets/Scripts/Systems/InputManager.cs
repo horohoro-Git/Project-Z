@@ -19,13 +19,7 @@ public class InputManager : MonoBehaviour
             return pc;
         }
     }
-    public enum StructureState
-    {
-        None,
-        Floor,
-        Wall,
-        Door
-    }
+  
 
     [NonSerialized]
     public StructureState structureState = StructureState.None;

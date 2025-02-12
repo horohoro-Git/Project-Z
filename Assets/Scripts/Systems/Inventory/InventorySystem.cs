@@ -71,7 +71,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
                 if(!inventoryArray[i, j].GetItem().used)
                 {
                     Debug.Log("아이템을 얻음");
-                    ItemStruct itemStruct = new ItemStruct(item.item_Image, item.item_Name, item.item_Type);
+                    ItemStruct itemStruct = new ItemStruct(item.item_Image, item.item_Name, item.item_Slot, item.item_Type);
 
                     inventoryArray[i, j].AddItem(itemStruct);
                     return;
