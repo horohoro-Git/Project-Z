@@ -11,7 +11,7 @@ public class BuildingMaterials : MonoBehaviour
     {
         for (int i = 0; i < 10000; i++)
         {
-            GameObject go = Instantiate(GameInstance.Instance.assetLoader.roof);
+            GameObject go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Roof]);
 
             roofs.Enqueue(go.GetComponent<Roof>());
         }
@@ -25,7 +25,7 @@ public class BuildingMaterials : MonoBehaviour
         }
         else
         {
-            GameObject go = Instantiate(GameInstance.Instance.assetLoader.roof);
+            GameObject go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Roof]);
             return go.GetComponent<Roof>();
         }
     }

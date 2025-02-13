@@ -25,6 +25,7 @@ public class GameInstance
     public AssetLoader assetLoader;
     public HousingSystem housingSystem;
     public InventorySystem inventorySystem;
+    public CreatableUISystem creatableUISystem;
     public EditMode editMode;
     List<PlayerController> players = new List<PlayerController>();
 
@@ -33,6 +34,7 @@ public class GameInstance
     public bool quit = false;
     public void Reset()
     {
+        creatableUISystem = null;
         uiManager = null;
         inventorySystem = null;
         housingSystem = null;

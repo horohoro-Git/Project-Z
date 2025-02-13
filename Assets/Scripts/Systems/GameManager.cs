@@ -37,11 +37,12 @@ public class GameManager : MonoBehaviour
         inputMGR.Setup(pc.GetComponent<PlayerInput>());
 
         //캐릭터 추가
-        GameObject human = Instantiate(GameInstance.Instance.assetLoader.human);
+        GameObject human = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Human_Male]);
         human.transform.SetParent(pc.Transforms);
         human.transform.position = startPosition;
 
         pc.SetController(human);
+
     }
     void LoadBuilds()
     {

@@ -81,7 +81,7 @@ public class InputManager : MonoBehaviour
                 if (GameInstance.Instance.drawGrid)
                 {
                     GameInstance.Instance.drawGrid.Select(hit.point, ref x, ref y);
-                    if (!(x >= 24 || x < -24 || y >= 24 || y < -24))
+                    if (!(x >= 24 || x < -24 || y >= 24 || y < -24) && GameInstance.Instance.editMode == EditMode.CreativeMode)
                     {
                         switch (structureState)
                         {
@@ -96,6 +96,10 @@ public class InputManager : MonoBehaviour
                                 if (GameInstance.Instance.editMode != EditMode.None) GameInstance.Instance.assetLoader.PreLoadWall(hit.point, x, y, false);
                                 break;
                         }
+                    }
+                    else if (!(x >= 24 || x < -24 || y >= 24 || y < -24) && GameInstance.Instance.editMode == EditMode.DestroyMode)
+                    {
+                        GameInstance.Instance.assetLoader.PreviewDestoryObject(hit);
                     }
                 }
             }

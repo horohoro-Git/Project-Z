@@ -100,3 +100,6 @@ UI bug fix / Inventory system (revert, apply, reset)
 
 02/12
 UI positioning adjustments, add screenshot, clear data and open editor
+
+02/13
+Asset load system change 'AssetBundle' to 'Addressable'

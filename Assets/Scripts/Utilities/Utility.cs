@@ -152,7 +152,7 @@ public struct ItemStruct
     public Sprite image;
     public string itemName;
     public SlotType slotType;
-    public ItemType ItemType;
+    public ItemType itemType;
     public bool used;
 
     public ItemStruct(Sprite image, string itemName, SlotType slotType, ItemType itemType)
@@ -160,7 +160,7 @@ public struct ItemStruct
         this.image = image;
         this.itemName = itemName;
         this.slotType = slotType;
-        this.ItemType = itemType;
+        this.itemType = itemType;
         used = true;
     }
 }
@@ -203,3 +203,10 @@ public interface IUIComponent
 {
     void Setup();
 }
+
+//구조물 인터페이스
+public interface IBuildMaterials
+{
+    StructureState structureState { get; set; }
+}
+
