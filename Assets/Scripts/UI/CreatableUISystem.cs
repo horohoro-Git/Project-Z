@@ -10,6 +10,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
 {
     public GameObject upgradeGO;
     public GameObject tab;
+    public GameObject creatableTab;
 
     public Button floorBtn;
     public Button wallBtn;
@@ -56,6 +57,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
 
     private void Awake()
     {
+        GameInstance.Instance.creatableUISystem = this;
        // ItemStruct itemStruct = new ItemStruct(,);
       //  floors.
     }
@@ -119,7 +121,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         if (GameInstance.Instance.inputManager.structureState == structureState)
         {
             GameInstance.Instance.inputManager.structureState = StructureState.None;
-            tab.SetActive(false);
+            tab.SetActive(true);
             return;
         }
         switch (structureState)
@@ -167,13 +169,15 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     {
         if(GameInstance.Instance.editMode == EditMode.CreativeMode)
         {
-            tab.SetActive(true);
+            creatableTab.SetActive(false);
+            tab.SetActive(false);
             modeImage.sprite = plus;
             GameInstance.Instance.editMode = EditMode.DestroyMode;
+            GameInstance.Instance.inputManager.structureState = StructureState.None;
         }
         else if(GameInstance.Instance.editMode == EditMode.DestroyMode)
         {
-            tab.SetActive(false);
+            creatableTab.SetActive(true);
             modeImage.sprite = minus;
             GameInstance.Instance.editMode = EditMode.CreativeMode;
         }
@@ -197,6 +201,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 for (int i = 0; i < floors.Count; i++)
                 {
                     InstallableItem spawnItem = Instantiate(installableItem);
+                    spawnItem.SetItemStruct(floors[i], StructureState.Floor);
                     spawnItem.Setup();
                     spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
                     items.Add(spawnItem);
@@ -206,6 +211,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 for (int i = 0; i < walls.Count; i++)
                 {
                     InstallableItem spawnItem = Instantiate(installableItem);
+                    spawnItem.SetItemStruct(walls[i], StructureState.Wall);
                     spawnItem.Setup();
                     spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
                     items.Add(spawnItem);
@@ -215,6 +221,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 for (int i = 0; i < doors.Count; i++)
                 {
                     InstallableItem spawnItem = Instantiate(installableItem);
+                    spawnItem.SetItemStruct(doors[i], StructureState.Door);
                     spawnItem.Setup();
                     spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
                     items.Add(spawnItem);

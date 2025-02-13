@@ -153,6 +153,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   item_Image: {fileID: 21300000, guid: 2dcd1dbd6dd883947a817b41e9621ec7, type: 3}
   item_Name: Plank
+  item_Slot: 0
   item_Type: 0
 --- !u!4 &43892433
 Transform:
@@ -1173,6 +1174,7 @@ MonoBehaviour:
   grasses_url: Assets/Edited/grass/grasses.prefab
   tree03_url: Assets/Edited/Tree/Tree_03.prefab
   human_url: Assets/Edited/Player/Model/human_male.prefab
+  holoShader: {fileID: 4800000, guid: a166432d860235948b85a5f272237532, type: 3}
 --- !u!114 &1906076319
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -15,7 +15,13 @@ public class SaveLoadSystem
     //하우징 시스템 저장
     public static void SaveBuildSystem()
     {
+        string dir = Path.Combine(path, "Save");
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
         string p = Path.Combine(path, "Save/Housing.dat");
+
         using (MemoryStream ms = new MemoryStream())
         {
             using (BinaryWriter writer = new BinaryWriter(ms))

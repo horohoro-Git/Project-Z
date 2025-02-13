@@ -2,11 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Networking;
-using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
-using UnityEngine.InputSystem.HID;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -31,39 +28,63 @@ public class AssetLoader : MonoBehaviour
     public string tree03_url = "Assets/Edited/Tree/Tree_03.prefab";
     public string human_url = "Assets/Edited/Player/Model/human_male.prefab";
 
+    [NonSerialized]
+    public List<string> assetkeys = new List<string> {
+    "floor", "wall", "door", "roof",
+    "preview_floor", "preview_wall", "preview_door",
+     "flower_orange", "flower_yellow",  "flower_pink", "greasses",
+      "tree", "human_male"
+    };
 
-    [NonSerialized]
-    public GameObject floor;
-    [NonSerialized]
-    public GameObject door;
-    [NonSerialized]
-    public GameObject wall;
-    [NonSerialized]
-    public GameObject roof;
-    [NonSerialized]
-    public GameObject preFloor;
-    [NonSerialized]
-    public GameObject preWall;
-    [NonSerialized]
-    public GameObject preDoor;
-    [NonSerialized]
-    public Material possibleMat;
-    [NonSerialized]
-    public Material impossibleMat;
-    [NonSerialized]
-    public GameObject preLoadedObject;
-    [NonSerialized]
-    public GameObject flowerOrange;
-    [NonSerialized]
-    public GameObject flowerYellow;
-    [NonSerialized]
-    public GameObject flowerPink;
-    [NonSerialized]
-    public GameObject grasses;
-    [NonSerialized]
-    public GameObject tree03; 
-    [NonSerialized]
-    public GameObject human;
+  /*  public const string Floor = "Floor";
+    public const string Wall = "Wall";
+    public const string Door = "Door";
+    public const string Roof = "Roof";
+    public const string PreviewFloor = "PreviewFloor";
+    public const string PreviewWall = "PreviewWall";
+    public const string PreviewDoor = "PreviewDoor";
+    public const string Flower_Orange = "Flower_Orange";
+    public const string Flower_Yellow = "Flower_Yellow";
+    public const string Flower_Pink = "Flower_Pink";
+    public const string Grasses = "Grasses";
+    public const string Tree = "Tree";
+    public const string Human_Male = "Human_Male";*/
+
+    public Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
+
+   // [NonSerialized]
+   // public GameObject floor;
+  //  [NonSerialized]
+  //  public GameObject door;
+   // [NonSerialized]
+   // public GameObject wall;
+ //   [NonSerialized]
+  //  public GameObject roof;
+    //[NonSerialized]
+   // public GameObject preFloor;
+   // [NonSerialized]
+   // public GameObject preWall;
+  //  [NonSerialized]
+  //  public GameObject preDoor;
+//    [NonSerialized]
+  //  public Material possibleMat;
+ //   [NonSerialized]
+  //  public Material impossibleMat;
+  //  [NonSerialized]
+   // public GameObject flowerOrange;
+  //  [NonSerialized]
+  //  public GameObject flowerYellow;
+    //[NonSerialized]
+   // public GameObject flowerPink;
+    //[NonSerialized]
+ //   public GameObject grasses;
+    //[NonSerialized]
+  //  public GameObject tree03; 
+   // [NonSerialized]
+   // public GameObject human;
+
+    [SerializeField]
+    Shader holoShader;
   
     int preLoadX = -100;
     int preLoadY = -100;
@@ -71,7 +92,8 @@ public class AssetLoader : MonoBehaviour
     bool isWall = false;
 
     List<GameObject> floor_List = new List<GameObject>();
-
+    [NonSerialized]
+    public GameObject preLoadedObject;
 
     [NonSerialized]
     public bool assetLoadSuccessful;
@@ -87,27 +109,62 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
+     /*   AsyncOperationHandle<RuntimeAnimatorController> controllerHandle = Addressables.LoadAssetAsync<RuntimeAnimatorController>("PC_Animator");
+        yield return controllerHandle;
+        AsyncOperationHandle<AnimationClip> controllerHandle2 = Addressables.LoadAssetAsync<AnimationClip>("run_foward");
+        yield return controllerHandle2;
+        AsyncOperationHandle<AnimationClip> controllerHandle3 = Addressables.LoadAssetAsync<AnimationClip>("idle_combat");
+        yield return controllerHandle3;
+        AsyncOperationHandle<AnimationClip> controllerHandle4 = Addressables.LoadAssetAsync<AnimationClip>("idle");
+        yield return controllerHandle4;
+        AsyncOperationHandle<AnimationClip> controllerHandle5 = Addressables.LoadAssetAsync<AnimationClip>("punch_right");
+        yield return controllerHandle5;
+        AsyncOperationHandle<AnimationClip> controllerHandle6 = Addressables.LoadAssetAsync<AnimationClip>("punch_left");
+        yield return controllerHandle6;*/
+        /*  UnityWebRequest www = UnityWebRequest.Get(url);
+          yield return www.SendWebRequest();
+        
+          if (www.result == UnityWebRequest.Result.Success)
+          {
+              if (justShader)
+              {
+                  AssetBundle.LoadFromMemory(www.downloadHandler.data);
+                  yield break;
+              }
+              else bundle = AssetBundle.LoadFromMemory(www.downloadHandler.data);
+              LoadAsset();
+              assetLoadSuccessful = true;
+          }
+          else
+          {
+              Debug.LogError("다운로드 실패: " + www.error);
+          }*/
+        AsyncOperationHandle<IList<GameObject>> handle = Addressables.LoadAssetsAsync<GameObject>(
+             assetkeys,
+             asset => { Debug.Log("Loaded: " + asset.name); },
+             Addressables.MergeMode.Union,
+             false); // false: 모든 에셋이 로드될 때까지 기다림
 
-        UnityWebRequest www = UnityWebRequest.Get(url);
-        yield return www.SendWebRequest();
-       
-        if (www.result == UnityWebRequest.Result.Success)
+        yield return handle;
+     
+        if(handle.Status == AsyncOperationStatus.Succeeded)
         {
-            if (justShader)
+            foreach(var asset in handle.Result)
             {
-                AssetBundle.LoadFromMemory(www.downloadHandler.data);
-                yield break;
+                Debug.Log("Loaded " + asset.name);
+                loadedAssets[asset.name] = asset;
             }
-            else bundle = AssetBundle.LoadFromMemory(www.downloadHandler.data);
-            LoadAsset();
+            Debug.LogError("다운로드 성공");
             assetLoadSuccessful = true;
+
         }
-        else
-        {
-            Debug.LogError("다운로드 실패: " + www.error);
-        }
+       // Debug.LogError("다운로드 실패: ");
+     //   Addressables.Release(handle);
+    //    LoadAsset();
 
     }
+
+   
     public bool CheckAssetLoaded()
     {
         if (!assetLoadSuccessful)
@@ -130,7 +187,7 @@ public class AssetLoader : MonoBehaviour
             if (x != preLoadX || y != preLoadY)
             {
                 if (preLoadedObject != null) Destroy(preLoadedObject);
-                preLoadedObject = Instantiate(preFloor, root.transform);
+                preLoadedObject = Instantiate(loadedAssets[LoadURL.PreviewFloor], root.transform);
                 preLoadX = x; preLoadY = y; 
             }
             if (preLoadedObject)
@@ -160,8 +217,8 @@ public class AssetLoader : MonoBehaviour
             if (x != preLoadX || y != preLoadY || buildDirection != buildWallDirection || isWall != wall)
             {
                 if (preLoadedObject != null) Destroy(preLoadedObject);
-                if (isWall) preLoadedObject = Instantiate(preWall, root.transform);
-                else preLoadedObject = Instantiate(preDoor, root.transform);
+                if (isWall) preLoadedObject = Instantiate(loadedAssets[LoadURL.PreviewWall], root.transform);
+                else preLoadedObject = Instantiate(loadedAssets[LoadURL.PreviewDoor], root.transform);
                 preLoadX = x; preLoadY = y; buildDirection = buildWallDirection; isWall = wall;
             }
             if (preLoadedObject)
@@ -202,6 +259,18 @@ public class AssetLoader : MonoBehaviour
         }
     }
 
+    public void PreviewDestoryObject(RaycastHit hit)
+    {
+        if (CheckAssetLoaded())
+        {
+            Renderer renderer = hit.collider.gameObject.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.shader = holoShader;
+            }
+        }
+    }
+
     public void LoadFloor(int x, int y, bool forcedBuild = false)
     {
         if (CheckAssetLoaded()) 
@@ -209,7 +278,7 @@ public class AssetLoader : MonoBehaviour
             if (!GameInstance.Instance.housingSystem.CheckFloor(x, y) || forcedBuild)
             {
                 if (preLoadedObject != null) Destroy(preLoadedObject);
-                GameObject f = Instantiate(floor, root.transform);
+                GameObject f = Instantiate(loadedAssets[LoadURL.Floor], root.transform);
                 f.transform.position = new Vector3(x * 2 + 1, 0.1f, y * 2 + 1);
                 floor_List.Add(f);
                 GameInstance.Instance.housingSystem.BuildFloor(x, y, f, forcedBuild);
@@ -240,8 +309,8 @@ public class AssetLoader : MonoBehaviour
                 {
                     if (preLoadedObject != null) Destroy(preLoadedObject);
                     GameObject go;
-                    if (justWall) go = Instantiate(wall, root.transform);
-                    else go = Instantiate(door, root.transform);
+                    if (justWall) go = Instantiate(loadedAssets[LoadURL.Wall], root.transform);
+                    else go = Instantiate(loadedAssets[LoadURL.Door], root.transform);
 
                     Wall w = go.GetComponent<Wall>();
 
@@ -270,21 +339,21 @@ public class AssetLoader : MonoBehaviour
     {
         if (bundle != null)
         {
-            floor = bundle.LoadAsset<GameObject>(floor_url);
-            wall = bundle.LoadAsset<GameObject>(wall_url);
-            door = bundle.LoadAsset<GameObject>(door_url);
-            roof = bundle.LoadAsset<GameObject>(roof_url);
-            preFloor = bundle.LoadAsset<GameObject>(preFloor_url);
-            preWall = bundle.LoadAsset<GameObject>(preWall_url);
-            preDoor = bundle.LoadAsset<GameObject>(preDoor_url);
-            possibleMat = bundle.LoadAsset<Material>(possibleMat_url);
-            impossibleMat = bundle.LoadAsset<Material>(impossibleMat_url);
-            flowerOrange = bundle.LoadAsset<GameObject>(flowerOrange_url);
-            flowerYellow = bundle.LoadAsset<GameObject>(flowerYellow_url);
-            flowerPink = bundle.LoadAsset<GameObject>(flowerPink_url);
-            grasses = bundle.LoadAsset<GameObject>(grasses_url);
-            tree03 = bundle.LoadAsset<GameObject>(tree03_url);
-            human = bundle.LoadAsset<GameObject>(human_url);
+       //     floor = bundle.LoadAsset<GameObject>(floor_url);
+       //     wall = bundle.LoadAsset<GameObject>(wall_url);
+         //   door = bundle.LoadAsset<GameObject>(door_url);
+         //   roof = bundle.LoadAsset<GameObject>(roof_url);
+      //      preFloor = bundle.LoadAsset<GameObject>(preFloor_url);
+        //    preWall = bundle.LoadAsset<GameObject>(preWall_url);
+       //     preDoor = bundle.LoadAsset<GameObject>(preDoor_url);
+          //  possibleMat = bundle.LoadAsset<Material>(possibleMat_url);
+         //   impossibleMat = bundle.LoadAsset<Material>(impossibleMat_url);
+         //   flowerOrange = bundle.LoadAsset<GameObject>(flowerOrange_url);
+        //    flowerYellow = bundle.LoadAsset<GameObject>(flowerYellow_url);
+           // flowerPink = bundle.LoadAsset<GameObject>(flowerPink_url);
+      //      grasses = bundle.LoadAsset<GameObject>(grasses_url);
+       //     tree03 = bundle.LoadAsset<GameObject>(tree03_url);
+     //       human = bundle.LoadAsset<GameObject>(human_url);
         }
     }
 

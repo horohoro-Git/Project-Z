@@ -104,6 +104,8 @@ public class HousingSystem : MonoBehaviour
     }
     public void BuildFloor(int x, int y, GameObject floor, bool isLoad)
     {
+        IBuildMaterials floorBuild = floor.GetComponent<IBuildMaterials>();
+        floorBuild.structureState = StructureState.Floor;
         int indexX = x - minx;
         int indexY = y - miny;
         floorCount++;
@@ -232,11 +234,18 @@ public class HousingSystem : MonoBehaviour
                 break;
         }
         walls[indexX, indexY, indexZ] = wall;
+        IBuildMaterials wallBuild = wall.GetComponent<IBuildMaterials>();
         if (!justWall)
         {
+            wallBuild.structureState = StructureState.Door;
             DoorSturct doorSturct = new DoorSturct(indexX, indexY, indexZ);
 
             doors.Add(doorSturct);
+        }
+        else
+        {
+
+            wallBuild.structureState = StructureState.Wall;
         }
         if (isLoad) return;
 

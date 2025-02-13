@@ -107,24 +107,24 @@ public class PlayerController : Controller
     // Update is called once per frame
     void Update()
     {
-        if(LastPosition != Transforms.position)
+        if (LastPosition != Transforms.position)
         {
             LastPosition = Transforms.position;
             GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY);
         }
-    
-    //   if(currentDir < 0) modelAnimator.SetFloat("speed", 0.f);
-      // else  modelAnimator.SetFloat("speed", s /200);
-          modelAnimator.SetFloat("speed", currentMoveSpeed / 200);
-          modelAnimator.SetFloat("dir", viewVelocity);
+
+        //   if(currentDir < 0) modelAnimator.SetFloat("speed", 0.f);
+        // else  modelAnimator.SetFloat("speed", s /200);
+        modelAnimator.SetFloat("speed", currentMoveSpeed / 200);
+        modelAnimator.SetFloat("dir", viewVelocity);
         // modelAnimator.speed = velocity;
 
-        if(attack)
+        if (attack)
         {
             Punch();
         }
     }
-    
+
     Vector2 lastVector = Vector2.zero;
     void MoveHandle(InputAction.CallbackContext callback)
     {
