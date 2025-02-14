@@ -6,7 +6,7 @@ public class LoadURL : MonoBehaviour
 {
     public const string Floor = "Floor";
     public const string Wall = "wall";
-    public const string Door = "door";
+    public const string Door = "doorSwitch";
     public const string Roof = "roof";
     public const string PreviewFloor = "PreloadFloor";
     public const string PreviewWall = "PreloadWall";

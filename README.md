@@ -103,3 +103,6 @@ UI positioning adjustments, add screenshot, clear data and open editor
 
 02/13
 Asset load system change 'AssetBundle' to 'Addressable'
+
+02/14
+Housing system remove improvement, edit tree asset 

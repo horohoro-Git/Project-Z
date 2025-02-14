@@ -6,4 +6,6 @@ public class Floor : MonoBehaviour, IBuildMaterials
 {
     public StructureState structureState { get; set; }
 
+    public Renderer GetRenderer;
+    Renderer IBuildMaterials.renderer { get { return GetRenderer; } }
 }

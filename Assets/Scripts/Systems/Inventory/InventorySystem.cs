@@ -46,7 +46,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     private void Start()
     {
-      
+        
         //gameObject.SetActive(false);
     }
 

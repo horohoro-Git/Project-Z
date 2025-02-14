@@ -27,7 +27,7 @@ public class RandomSpawner : MonoBehaviour
         terrain = new GameObject();
         terrain.name = "terrain";
 
-        Invoke("LateStart", 1f);
+        Invoke("LateStart", 0.5f);
     }
 
     void LateStart()

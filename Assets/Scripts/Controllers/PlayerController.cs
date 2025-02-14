@@ -277,7 +277,7 @@ public class PlayerController : Controller
     }
 
 
-    public void RemoveLastAction(Action<PlayerController> action)
+    public void RemoveAction(Action<PlayerController> action)
     {
            InteractionEvent.GetInvocationList();
         InteractionEvent -= action;

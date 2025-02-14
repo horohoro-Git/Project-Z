@@ -97,6 +97,13 @@ public class AssetLoader : MonoBehaviour
 
     [NonSerialized]
     public bool assetLoadSuccessful;
+
+    public GameObject lastSelectedMaterial;
+    Color lastSelectedColor;
+    Shader standard;
+    AsyncOperationHandle<IList<GameObject>> handle;
+    Shader Standard { get { if (standard == null) standard = Shader.Find("Standard"); return standard; } }
+
     public void Awake()
     {
         GameInstance.Instance.assetLoader = this;
@@ -109,38 +116,10 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
-     /*   AsyncOperationHandle<RuntimeAnimatorController> controllerHandle = Addressables.LoadAssetAsync<RuntimeAnimatorController>("PC_Animator");
-        yield return controllerHandle;
-        AsyncOperationHandle<AnimationClip> controllerHandle2 = Addressables.LoadAssetAsync<AnimationClip>("run_foward");
-        yield return controllerHandle2;
-        AsyncOperationHandle<AnimationClip> controllerHandle3 = Addressables.LoadAssetAsync<AnimationClip>("idle_combat");
-        yield return controllerHandle3;
-        AsyncOperationHandle<AnimationClip> controllerHandle4 = Addressables.LoadAssetAsync<AnimationClip>("idle");
-        yield return controllerHandle4;
-        AsyncOperationHandle<AnimationClip> controllerHandle5 = Addressables.LoadAssetAsync<AnimationClip>("punch_right");
-        yield return controllerHandle5;
-        AsyncOperationHandle<AnimationClip> controllerHandle6 = Addressables.LoadAssetAsync<AnimationClip>("punch_left");
-        yield return controllerHandle6;*/
-        /*  UnityWebRequest www = UnityWebRequest.Get(url);
-          yield return www.SendWebRequest();
-        
-          if (www.result == UnityWebRequest.Result.Success)
-          {
-              if (justShader)
-              {
-                  AssetBundle.LoadFromMemory(www.downloadHandler.data);
-                  yield break;
-              }
-              else bundle = AssetBundle.LoadFromMemory(www.downloadHandler.data);
-              LoadAsset();
-              assetLoadSuccessful = true;
-          }
-          else
-          {
-              Debug.LogError("다운로드 실패: " + www.error);
-          }*/
-        AsyncOperationHandle<IList<GameObject>> handle = Addressables.LoadAssetsAsync<GameObject>(
-             assetkeys,
+        //호스팅 서버에 Remote Load Path로 연결 후
+
+        handle = Addressables.LoadAssetsAsync<GameObject>(
+             assetkeys, 
              asset => { Debug.Log("Loaded: " + asset.name); },
              Addressables.MergeMode.Union,
              false); // false: 모든 에셋이 로드될 때까지 기다림
@@ -149,21 +128,20 @@ public class AssetLoader : MonoBehaviour
      
         if(handle.Status == AsyncOperationStatus.Succeeded)
         {
-            foreach(var asset in handle.Result)
+            foreach (var asset in handle.Result)
             {
                 Debug.Log("Loaded " + asset.name);
-                loadedAssets[asset.name] = asset;
+                loadedAssets[asset.name] = asset;   //에셋을 사용할 때에는 해당 에셋의 이름으로 호출
             }
-            Debug.LogError("다운로드 성공");
             assetLoadSuccessful = true;
 
         }
-       // Debug.LogError("다운로드 실패: ");
-     //   Addressables.Release(handle);
-    //    LoadAsset();
-
     }
 
+    public void ClearAsset()
+    {
+        Addressables.Release(handle);
+    }
    
     public bool CheckAssetLoaded()
     {
@@ -259,15 +237,158 @@ public class AssetLoader : MonoBehaviour
         }
     }
 
-    public void PreviewDestoryObject(RaycastHit hit)
+    public void PreviewDestoryObject(BuildWallDirection buildWallDirection, RaycastHit hits, int x, int y)
     {
         if (CheckAssetLoaded())
         {
+          //  if (preLoadX != x && preLoadY != y)
+            {
+                //  preLoadX = x;
+                // preLoadY = y;
+
+               
+                if (x != preLoadX || y != preLoadY || buildDirection != buildWallDirection)
+                {
+                    if (lastSelectedMaterial != null)
+                    {
+                        IBuildMaterials buildMaterials = lastSelectedMaterial.GetComponent<IBuildMaterials>();
+
+                        Renderer render = buildMaterials.renderer;
+                        render.material.shader = Standard;
+                        render.material.color = lastSelectedColor;
+
+                    }
+
+
+                    preLoadX = x;
+                    preLoadY = y;
+                    buildDirection = buildWallDirection;
+
+                    int xx = x + 25;
+                    int yy = y + 25;
+                    int zz = 0;
+                    switch (buildWallDirection)
+                    { 
+                        case BuildWallDirection.Left:
+                            break;
+                        case BuildWallDirection.Right:
+                            xx++;
+                            break;
+                        case BuildWallDirection.Top:
+                            yy++;
+                            zz++;
+                            break;
+                        case BuildWallDirection.Bottom:
+                            zz++;
+                            break;
+                    }
+
+                    if (xx < 100 && yy < 100 && GameInstance.Instance.housingSystem.GetWall(xx,yy,zz) != null)
+                    {
+                        IBuildMaterials buildMaterials = GameInstance.Instance.housingSystem.GetWall(xx, yy, zz).GetComponent<IBuildMaterials>();
+
+                        lastSelectedMaterial = GameInstance.Instance.housingSystem.GetWall(xx, yy, zz).gameObject;
+                        Renderer render = buildMaterials.renderer;
+                        lastSelectedColor = render.material.color;
+                        render.material.color = Color.yellow;
+                        render.material.shader = holoShader;
+                        return;
+                    }
+                    xx = x + 25;
+                    yy = y + 25;
+                    if (GameInstance.Instance.housingSystem.GetWall(xx, yy, 0) != null && xx - 1 >= 0 && GameInstance.Instance.housingSystem.GetFloor(xx - 1, yy) == null) return;
+                    else if (GameInstance.Instance.housingSystem.GetWall(xx, yy, 1) != null && yy - 1 >= 0 && GameInstance.Instance.housingSystem.GetFloor(xx, yy - 1) == null) return;
+                    else if (xx + 1 < 100 && GameInstance.Instance.housingSystem.GetWall(xx + 1, yy, 0) != null && GameInstance.Instance.housingSystem.GetFloor(xx + 1, yy) == null) return;
+                    else if (yy + 1 < 100 && GameInstance.Instance.housingSystem.GetWall(xx, yy + 1, 1) != null && GameInstance.Instance.housingSystem.GetFloor(xx, yy + 1) == null) return;
+
+                    GameObject floor = GameInstance.Instance.housingSystem.GetFloor(xx, yy);
+                    if(floor == null) return;
+                    Renderer renderer = floor.GetComponent<IBuildMaterials>().renderer;
+                    lastSelectedColor = renderer.material.color;
+                    lastSelectedMaterial = floor;
+                    renderer.material.color = Color.yellow;
+                    renderer.material.shader = holoShader;
+                }
+
+
+                   
+            }
+
+          /*  Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out RaycastHit hit))
+            {
+                IBuildMaterials buildMaterials = hit.collider.GetComponent<IBuildMaterials>();  
+                if (buildMaterials != null)
+                {
+                    if(lastSelectedMaterial != hit.collider.gameObject)
+                    {
+                        if (lastSelectedMaterial != null)
+                        {
+                            Renderer render = lastSelectedMaterial.GetComponent<Renderer>();
+                            render.material.shader = Standard;
+                            render.material.color = lastSelectedColor;
+                        }
+
+                        switch (buildMaterials.structureState)
+                        {
+
+                            case StructureState.None:
+                                break;
+                            case StructureState.Floor:
+                                GameObject floor = GameInstance.Instance.housingSystem.GetFloor(x + 25, y + 25).gameObject;
+                                if (floor)
+                                {
+                                    Renderer renderFloor = floor.GetComponent<Renderer>();
+                                    lastSelectedMaterial = floor;
+                                    lastSelectedColor = renderFloor.material.color;
+                                    renderFloor.material.color = Color.yellow;
+                                    renderFloor.material.shader = holoShader;
+                                }
+                                break;
+                        *//*    case StructureState.Wall:
+                                GameObject wall = GameInstance.Instance.housingSystem.GetWall(x + 25, y + 25, (int)buildWallDirection).gameObject;
+                                if (wall)
+                                {
+                                    Renderer renderWall = wall.GetComponent<Renderer>();
+                                    lastSelectedMaterial = wall;
+                                    lastSelectedColor = renderWall.material.color;
+                                    renderWall.material.color = Color.yellow;
+                                    renderWall.material.shader = holoShader;
+                                }
+                                break;*//*
+                        }
+                    }
+                }
+                else
+                {
+                    if (lastSelectedMaterial != null)
+                    {
+                        Renderer render = lastSelectedMaterial.GetComponent<Renderer>();
+                        render.material.shader = Standard;
+                        render.material.color = lastSelectedColor;
+                        lastSelectedMaterial = null;
+
+                    }
+                }
+            }
+            else
+            {
+                if(lastSelectedColor != null)
+                {
+                    Renderer render = lastSelectedMaterial.GetComponent<Renderer>();
+                    render.material.shader = Standard;
+                    render.material.color = lastSelectedColor;
+                    lastSelectedMaterial = null;
+
+                }
+            }*/
+          /*  if(R)
             Renderer renderer = hit.collider.gameObject.GetComponent<Renderer>();
             if (renderer != null)
             {
                 renderer.material.shader = holoShader;
-            }
+            }*/
         }
     }
 

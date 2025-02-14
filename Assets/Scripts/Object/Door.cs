@@ -9,7 +9,7 @@ public class Door : MonoBehaviour
     public BoxCollider BoxCol
     {
         get {
-                if (boxCollider == null) boxCollider = GetComponentInChildren<BoxCollider>();
+                if (boxCollider == null) boxCollider = GetComponent<BoxCollider>();
          
                 return boxCollider; 
             } 
@@ -22,7 +22,7 @@ public class Door : MonoBehaviour
     {
         get
         {
-            if(animator == null) animator = GetComponent<Animator>();
+            if(animator == null) animator = GetComponentInParent<Animator>();
             return animator;
         }
     }

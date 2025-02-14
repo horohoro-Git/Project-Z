@@ -182,6 +182,26 @@ public class HousingSystem : MonoBehaviour
 
         }
     }
+
+    public void RemoveMaterial(BuildWallDirection buildWallDirection, int x, int y)
+    {
+        if(GameInstance.Instance.assetLoader.lastSelectedMaterial != null)
+        {
+            IBuildMaterials removeObject = GameInstance.Instance.assetLoader.lastSelectedMaterial.GetComponent<IBuildMaterials>();
+            switch (removeObject.structureState)
+            {
+                case StructureState.None: break;
+                case StructureState.Floor:
+                    RemoveFloor(x, y);
+                    break;
+                case StructureState.Wall: case StructureState.Door:
+                    RemoveWall(buildWallDirection, x, y);
+                    break;
+            
+            }
+        }
+    }
+
     public void RemoveRoofInWorld()
     {
         for (int i = 0; i < 100; i++)
@@ -198,8 +218,6 @@ public class HousingSystem : MonoBehaviour
         }
         
     }
-
-
     public bool CheckWall(int x, int y, BuildWallDirection build)
     {
         Wall w = GetBuildedWall(x,y,build);
@@ -516,10 +534,10 @@ public class HousingSystem : MonoBehaviour
             int yy = y - miny;
 
             //바닥위에 설치된 벽 확인
-            if (walls[xx, yy, 0] != null) return;   
-            else if (walls[xx, yy, 1] != null) return;
-            else if (xx + 1 < 100 && walls[xx + 1, yy, 0] != null) return;
-            else if (yy + 1 < 100 && walls[xx, yy + 1, 1] != null) return;
+            if (walls[xx, yy, 0] != null && xx - 1 >= 0 && floors[xx - 1, yy] == null) return;
+            else if (walls[xx, yy, 1] != null && yy - 1 >=0 && floors[xx, yy -1] == null) return;
+            else if (xx + 1 < 100 && walls[xx + 1, yy, 0] != null && floors[xx + 1, yy] == null) return;
+            else if (yy + 1 < 100 && walls[xx, yy + 1, 1] != null && floors[xx, yy + 1] == null) return;
 
             floors[xx, yy].gameObject.SetActive(false);
             removeMaterials.Add(floors[xx, yy].gameObject);
