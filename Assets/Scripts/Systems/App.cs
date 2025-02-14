@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
 
 public class App : MonoBehaviour
@@ -27,6 +28,7 @@ public class App : MonoBehaviour
     {
         SceneManager.sceneUnloaded -= OnSceneUnloaded;
         SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
+        GameInstance.Instance.assetLoader.ClearAsset();
         GameInstance.Instance.Reset();
         GameInstance.Instance.quit = true;
     }

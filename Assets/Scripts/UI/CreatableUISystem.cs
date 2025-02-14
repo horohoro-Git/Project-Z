@@ -105,9 +105,11 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         backBtn.onClick.RemoveListener(backBtnListener);
         applyBtn.onClick.RemoveListener(applyBtnListener);
         restBtn.onClick.RemoveListener(resetBtnListener);
-
+        tab.SetActive(false);
+        labelText.text = "";
         if (GameInstance.Instance.quit) return;
         if (!(GameInstance.Instance.gameManager.loaded && GameInstance.Instance.assetLoader.assetLoadSuccessful)) return;
+        GameInstance.Instance.inputManager.structureState = StructureState.None;
         GameInstance.Instance.editMode = EditMode.None;
         GameInstance.Instance.drawGrid.Remove();
         GameInstance.Instance.housingSystem.ResetMaterials();
@@ -124,6 +126,12 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
             tab.SetActive(true);
             return;
         }
+        else if (GameInstance.Instance.inputManager.structureState != StructureState.None)
+        {
+
+            GameInstance.Instance.inputManager.structureState = StructureState.None;
+        }
+
         switch (structureState)
         {
             case StructureState.None:

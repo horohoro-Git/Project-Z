@@ -10,6 +10,7 @@ public class Wall : MonoBehaviour, IBuildMaterials
     [NonSerialized] 
     public int y;
     public bool isDoor;
-
+    public Renderer GetRenderer;
+    Renderer IBuildMaterials.renderer { get { return GetRenderer; } }
     public StructureState structureState { get; set; }
 }

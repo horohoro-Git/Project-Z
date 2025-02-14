@@ -33,7 +33,7 @@ public class DoorSwitch : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerController pc = other.GetComponent<PlayerController>();
-            pc.RemoveLastAction(DoorInteraction);
+            pc.RemoveAction(DoorInteraction);
         }
     }
 

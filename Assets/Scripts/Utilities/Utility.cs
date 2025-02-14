@@ -208,5 +208,6 @@ public interface IUIComponent
 public interface IBuildMaterials
 {
     StructureState structureState { get; set; }
+    public Renderer renderer { get; }
 }
 
