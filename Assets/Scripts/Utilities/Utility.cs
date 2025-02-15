@@ -102,6 +102,19 @@ public  enum UIType
 
 }
 
+//장착 무기 타입
+public enum WeaponType
+{
+    None,
+    Axe,
+    Spear,
+    OneHand,
+    TwoHand,
+    Pistol,
+    Rifle
+
+}
+
 
 
 //건축 자재의 타입

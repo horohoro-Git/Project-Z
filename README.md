@@ -106,3 +106,6 @@ Asset load system change 'AssetBundle' to 'Addressable'
 
 02/14
 Housing system remove improvement, edit tree asset 
+
+02/15
+Weapon attach, acquire item

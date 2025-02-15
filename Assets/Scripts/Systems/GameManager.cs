@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     const string playerName = "Player";
     const string inputManagerName = "InputManager";
     public PlayerController player;
+    public GameObject test;
+    public Weapon testWeapon;
+  
     public InputManager inputManager;
     public Vector3 startPosition;
     public GameMode gameMode;
@@ -37,11 +40,26 @@ public class GameManager : MonoBehaviour
         inputMGR.Setup(pc.GetComponent<PlayerInput>());
 
         //캐릭터 추가
-        GameObject human = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Human_Male]);
+        /* GameObject human = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Human_Male]);
+         human.transform.SetParent(pc.Transforms);
+         human.transform.position = startPosition;
+
+
+
+         pc.SetController(human);*/
+        GameObject human = Instantiate(test);
         human.transform.SetParent(pc.Transforms);
         human.transform.position = startPosition;
-
         pc.SetController(human);
+
+
+        Weapon weapon = Instantiate(testWeapon);
+        AttachItem attachItem = human.GetComponentInChildren<AttachItem>();
+        weapon.transform.SetParent(attachItem.transform);
+
+        weapon.transform.localPosition = new Vector3(0, 0, 0);
+        weapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+        pc.equipWeapon = weapon;
 
     }
     void LoadBuilds()
