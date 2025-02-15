@@ -33,7 +33,7 @@ public class AssetLoader : MonoBehaviour
     "floor", "wall", "door", "roof",
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "greasses",
-      "tree", "human_male"
+      "tree", "human_male", "log"
     };
 
   /*  public const string Floor = "Floor";

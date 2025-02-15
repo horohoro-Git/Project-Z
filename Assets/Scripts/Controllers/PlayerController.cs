@@ -5,12 +5,13 @@ using System.Security.Cryptography;
 using System.Threading;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-
+using UnityEngine.UI;
 public class PlayerController : Controller
 {
     PlayerInput input;
-    PlayerInput Input 
+    PlayerInput Inputs
     {
         get
         {
@@ -37,11 +38,13 @@ public class PlayerController : Controller
 
     bool inputEnabled = false;
     bool destroyed = false;
+    public Weapon equipWeapon;
     private void Awake()
     {
         GameInstance.Instance.playerController = this;
-        Input.defaultActionMap = "OnMove";
+        Inputs.defaultActionMap = "OnMove";
         moveSpeed = 200f;
+        
         /*modelAnimator = GetComponentInChildren<Animator>();
    */
     }
@@ -72,30 +75,30 @@ public class PlayerController : Controller
         if (!Application.isPlaying) return;
         if (inputEnabled) return;
         inputEnabled = true;
-        Input.actions["WASD"].performed += MoveHandle;
-        Input.actions["WASD"].canceled += MoveStop;
-        Input.actions["Run"].performed += Run;
-        Input.actions["Run"].canceled += RunStop;
-        Input.actions["Interaction"].performed += Interact;
-        Input.actions["Combat"].performed += ChangeCombatMode;
-        Input.actions["Attack"].performed += Attack;
-        Input.actions["Attack"].canceled += EndAttack;
-        Input.actions["OpenInventory"].performed += OpenInventory;
+        Inputs.actions["WASD"].performed += MoveHandle;
+        Inputs.actions["WASD"].canceled += MoveStop;
+        Inputs.actions["Run"].performed += Run;
+        Inputs.actions["Run"].canceled += RunStop;
+        Inputs.actions["Interaction"].performed += Interact;
+        Inputs.actions["Combat"].performed += ChangeCombatMode;
+        Inputs.actions["Attack"].performed += Attack;
+        Inputs.actions["Attack"].canceled += EndAttack;
+        Inputs.actions["OpenInventory"].performed += OpenInventory;
     }
     public void RemoveAction()
     {
         if (destroyed) return;
         if (!inputEnabled) return;
         inputEnabled = false;
-        Input.actions["WASD"].performed -= MoveHandle;
-        Input.actions["WASD"].performed -= MoveStop;
-        Input.actions["Run"].performed -= Run;
-        Input.actions["Run"].canceled -= RunStop;
-        Input.actions["Interaction"].performed -= Interact;
-        Input.actions["Combat"].performed -= ChangeCombatMode;
-        Input.actions["Attack"].performed -= Attack;
-        Input.actions["Attack"].canceled -= EndAttack;
-        Input.actions["OpenInventory"].performed -= OpenInventory;
+        Inputs.actions["WASD"].performed -= MoveHandle;
+        Inputs.actions["WASD"].performed -= MoveStop;
+        Inputs.actions["Run"].performed -= Run;
+        Inputs.actions["Run"].canceled -= RunStop;
+        Inputs.actions["Interaction"].performed -= Interact;
+        Inputs.actions["Combat"].performed -= ChangeCombatMode;
+        Inputs.actions["Attack"].performed -= Attack;
+        Inputs.actions["Attack"].canceled -= EndAttack;
+        Inputs.actions["OpenInventory"].performed -= OpenInventory;
     }
     // Start is called before the first frame update
     void Start()
@@ -176,8 +179,7 @@ public class PlayerController : Controller
     IEnumerator ChangeMode(bool on)
     {
         if (on)
-        {
-           
+        {           
             float offset = modelAnimator.GetFloat("combatMotion");
             while (offset < 0.2f)
             {
@@ -207,10 +209,35 @@ public class PlayerController : Controller
 
     bool reinput = false;
     bool attack = false;
+    PointerEventData eventData = new PointerEventData(EventSystem.current);
+    List<RaycastResult> raycastResults = new List<RaycastResult>();
     void Attack(InputAction.CallbackContext callback)
     {
-        attack = true;
-       
+    
+        GraphicRaycaster raycaster = GameInstance.Instance.uiManager.graphicRaycaster;
+        eventData.position = Input.mousePosition;
+        raycastResults.Clear();
+        raycaster.Raycast(eventData, raycastResults);
+        if (raycastResults.Count > 0) return;
+        
+            //attack = true;
+            if (equipWeapon != null)
+        {
+            switch(equipWeapon.type)
+            {
+                case WeaponType.None:
+                    break;
+                case WeaponType.Axe:
+                    equipWeapon.StartAttack();
+                    modelAnimator.SetTrigger("cut");
+                    equipWeapon.GetComponent<Axe>().EndAttack();
+                    break;
+            }
+        }
+        else
+        {
+
+        }
     }
     void EndAttack(InputAction.CallbackContext callback)
     {
@@ -267,6 +294,16 @@ public class PlayerController : Controller
     {
         if (lastAction == null) return;
         lastAction.Invoke(this);
+    }
+
+    public void GetItem_Animation()
+    {
+        Debug.Log("A");
+        modelAnimator.SetTrigger("item");
+    }
+    public void CutTree()
+    {
+        modelAnimator.SetTrigger("cut");
     }
 
     public void RegisterAction(Action<PlayerController> action)

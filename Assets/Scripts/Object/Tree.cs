@@ -11,7 +11,9 @@ public class Tree : MonoBehaviour
     public Transform upper;
     public GameObject spawnRewards;
     public List<GameObject> spawnLocations = new List<GameObject>();
+    int hp = 3;
     Animator animator;
+    bool dead;
     private void Start()
     {
         animator = GetComponent<Animator>();
@@ -38,7 +40,7 @@ public class Tree : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerController pc = other.GetComponent<PlayerController>();
-            pc.RegisterAction(TreeInteraction);
+         //   pc.RegisterAction(TreeInteraction);
         }
     }
 
@@ -47,69 +49,58 @@ public class Tree : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             PlayerController pc = other.GetComponent<PlayerController>();
-            pc.RemoveAction(TreeInteraction);
+       //     pc.RemoveAction(TreeInteraction);
         }
     }
 
 
     void TreeInteraction(PlayerController pc)
     {
+        if(dead) return;
+        pc.CutTree();
+
+        hp--;
+
+
+        Vector3 pcForward = pc.Transforms.forward;
+        Vector3 toTarget = transform.position -  pc.Transforms.position;
+        float dotProduct = Vector3.Dot(pcForward, toTarget);
+        if (dotProduct <= 0) return;    //앞을 보고 있을 때만 동작
+     
         Vector3 dir = transform.position - pc.transform.position;
-
+        Debug.Log(dir);
         float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-        //angle += 180f;
 
-        if (angle >= -22.5f && angle < 22.5f)
-        {
-            Debug.Log("남");
-            animator.SetInteger("state", 1);
-        }
-        else if (angle >= 22.5f && angle < 67.5f)
-        {
-            Debug.Log("남서");
-            animator.SetInteger("state", 2);
-        }
-        else if (angle >= 67.5f && angle < 112.5f)
-        {
-            Debug.Log("서");
-            animator.SetInteger("state", 3);
-        }
-        else if (angle >= 112.5f && angle < 157.5f)
-        {
-            Debug.Log("북서");
-            animator.SetInteger("state", 4);
-        }
-        else if (angle >= 157.5f)
-        {
-            Debug.Log("북");
-            animator.SetInteger("state", 5);
-        }
-        else if (angle < -157.5f)
-        {
-            Debug.Log("북");
-            animator.SetInteger("state", 5);
-        }
-        else if (angle >= -157.5f && angle < -112.5f)
-        {
-            Debug.Log("북동");
-            animator.SetInteger("state", 6);
-        }
-        else if (angle >= -112.5f && angle < -67.5f)
-        {
-            Debug.Log("동");
-            animator.SetInteger("state", 7);
-        }
-        else if (angle >= -67.5f && angle < -22.5f)
-        {
-            Debug.Log("남동");
-            animator.SetInteger("state", 8);
-        }
-
-       
-
+        if (angle >= -45f && angle < 45f) animator.SetInteger("state", 3);
+        else if (angle >= 45f && angle < 135f) animator.SetInteger("state", 4);
+        else if (angle >= 135f) animator.SetInteger("state", 1);
+        else if (angle < -135f) animator.SetInteger("state", 1);
+        else if (angle >= -135f && angle < -45f) animator.SetInteger("state", 2);
+     
         Invoke("AddReward", 1.5f);
     }
 
+    public void ChopDown(Transform transform)
+    {
+        if (dead) return;
+        dead = true;
+        /*Vector3 pcForward = transform.forward;
+        Vector3 toTarget = transform.position - transform.position;
+        float dotProduct = Vector3.Dot(pcForward, toTarget);
+        if (dotProduct <= 0) return;    //앞을 보고 있을 때만 동작
+*/
+        Vector3 dir = transform.position - transform.position;
+        Debug.Log(dir);
+        float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+
+        if (angle >= -45f && angle < 45f) animator.SetInteger("state", 3);
+        else if (angle >= 45f && angle < 135f) animator.SetInteger("state", 4);
+        else if (angle >= 135f) animator.SetInteger("state", 1);
+        else if (angle < -135f) animator.SetInteger("state", 1);
+        else if (angle >= -135f && angle < -45f) animator.SetInteger("state", 2);
+
+        Invoke("AddReward", 1.5f);
+    }
 
     void AddReward()
     {
@@ -134,8 +125,9 @@ public class Tree : MonoBehaviour
 
             for (int i = 0; i < 3; i++)
             {
-                GameObject go = Instantiate(spawnRewards);
+                GameObject go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Log]);
                 go.transform.position = spawnLocations[i].transform.position; //new Vector3(corners[i].x, corners[i].y + 5f, corners[i].z);
+                go.transform.rotation = upper.transform.rotation;
             }
         }
     }

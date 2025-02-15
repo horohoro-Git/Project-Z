@@ -15,9 +15,9 @@ public class LoadURL : MonoBehaviour
     public const string Flower_Yellow = "flower_yellow";
     public const string Flower_Pink = "flower_pink";
     public const string Grasses = "grasses";
-    public const string Tree = "Tree_03";
+    public const string Tree = "Tree";
     public const string Human_Male = "human_male";
-
+    public const string Log = "log";
 
     public string bundleUrl;
     public string bundleUrl2;
