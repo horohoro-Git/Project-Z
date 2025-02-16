@@ -14,6 +14,9 @@ public class SlotArray : MonoBehaviour, IUIComponent
     {
         for (int i = 0; i < slots.Count; i++)
         {
+
+            slots[i].slotX = GameInstance.Instance.inventorySystem.slotNum;
+            slots[i].slotY = i;
             slots[i].Setup();
         }
     }

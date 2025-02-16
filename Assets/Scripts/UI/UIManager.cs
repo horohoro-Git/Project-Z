@@ -14,6 +14,10 @@ public class UIManager : MonoBehaviour
     GameObject housingSystemUI;
     [SerializeField]
     GameObject inventoryUI;
+    [SerializeField]
+    GameObject quickSlotUI;
+   
+    public GameObject acceptanceUI;
 
     UIType uiType = UIType.None;
 
@@ -28,7 +32,8 @@ public class UIManager : MonoBehaviour
         CreateUI(housingSystemUI, rectTransform, UIType.Housing);
         CreateUI(inventoryUI, rectTransform, UIType.Inventory);
         CreateUI(menuUI, rectTransform, UIType.Menu);
-        SwitchUI(UIType.Menu, true);
+        CreateUI(quickSlotUI, rectTransform, UIType.QuickSlot);
+        SwitchUI(UIType.QuickSlot, true);
     }
 
     void CreateUI(GameObject ui, RectTransform target, UIType type)
@@ -50,7 +55,7 @@ public class UIManager : MonoBehaviour
         if (!(GameInstance.Instance.gameManager.loaded && GameInstance.Instance.assetLoader.assetLoadSuccessful) && !forcedUpdate) return;
         if (uiType == type && type != UIType.Menu)
         {
-            SwitchUI(UIType.Menu);
+            SwitchUI(UIType.QuickSlot);
             return;
         }
         uiType = type;

@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 public class PlayerController : Controller
 {
     PlayerInput input;
@@ -25,6 +26,8 @@ public class PlayerController : Controller
     private InputAction moveAction;  
     private InputAction sprintAction;
 
+    private Action<InputAction.CallbackContext>[] slotHandlers;
+
     public event Action<PlayerController> InteractionEvent;
     Action<PlayerController> lastAction;
     int lastGridX = 0; 
@@ -38,13 +41,22 @@ public class PlayerController : Controller
 
     bool inputEnabled = false;
     bool destroyed = false;
+    [NonSerialized]
     public Weapon equipWeapon;
+    [NonSerialized]
+    public int equipSlotIndex = -1;
     private void Awake()
     {
         GameInstance.Instance.playerController = this;
         Inputs.defaultActionMap = "OnMove";
         moveSpeed = 200f;
-        
+        slotHandlers = new Action<InputAction.CallbackContext>[10];
+        for (int i = 0; i < 10; i++)
+        {
+            int index = i;
+            int slotNumber = i + 1;
+            slotHandlers[i] = ctx => SelectInventorySlot(index);
+        }
         /*modelAnimator = GetComponentInChildren<Animator>();
    */
     }
@@ -75,6 +87,12 @@ public class PlayerController : Controller
         if (!Application.isPlaying) return;
         if (inputEnabled) return;
         inputEnabled = true;
+
+        for (int i = 0; i < 10; i++)
+        {
+            int slotNumber = i + 1;
+            Inputs.actions[$"Item{slotNumber}"].performed += slotHandlers[i];
+        }
         Inputs.actions["WASD"].performed += MoveHandle;
         Inputs.actions["WASD"].canceled += MoveStop;
         Inputs.actions["Run"].performed += Run;
@@ -99,6 +117,11 @@ public class PlayerController : Controller
         Inputs.actions["Attack"].performed -= Attack;
         Inputs.actions["Attack"].canceled -= EndAttack;
         Inputs.actions["OpenInventory"].performed -= OpenInventory;
+        for (int i = 0; i < 10; i++)
+        {
+            int slotNumber = i + 1;
+            Inputs.actions[$"Item{slotNumber}"].performed -= slotHandlers[i];
+        }
     }
     // Start is called before the first frame update
     void Start()
@@ -316,7 +339,7 @@ public class PlayerController : Controller
 
     public void RemoveAction(Action<PlayerController> action)
     {
-           InteractionEvent.GetInvocationList();
+        InteractionEvent.GetInvocationList();
         InteractionEvent -= action;
         if (lastAction == action)
         {
@@ -343,5 +366,35 @@ public class PlayerController : Controller
        
         if(inventorySystem.gameObject.activeSelf) GameInstance.Instance.inventorySystem.gameObject.SetActive(false);
         else GameInstance.Instance.inventorySystem.gameObject.SetActive(false);
+    }
+
+    void SelectInventorySlot(int index)
+    {
+        GameInstance.Instance.inventorySystem.UseItem(this ,index);
+    }
+
+    public void Equipment(ItemStruct equipItem, int index)
+    {
+        if (equipItem.itemType == ItemType.Equipmentable)
+        {
+            equipSlotIndex = index;
+            equipWeapon = Instantiate(equipItem.itemGO).GetComponent<Weapon>();
+            AttachItem attachItem = GetComponentInChildren<AttachItem>();
+            equipWeapon.transform.SetParent(attachItem.transform);
+
+            equipWeapon.transform.localPosition = new Vector3(0, 0, 0);
+            equipWeapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+        }
+        else
+        {
+
+        }
+    }
+
+    public void Unequipment()
+    {
+        if(equipWeapon != null) Destroy(equipWeapon.gameObject);
+        ItemStruct item = GameInstance.Instance.quickSlotUI.slots[equipSlotIndex].item;
+        Equipment(item, equipSlotIndex);
     }
 }

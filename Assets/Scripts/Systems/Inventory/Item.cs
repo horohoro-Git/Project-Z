@@ -8,7 +8,7 @@ public class Item : MonoBehaviour
     public string item_Name;
     public SlotType item_Slot;
     public ItemType item_Type;
-
+    public GameObject item_GO;
     
     void Start()
     {

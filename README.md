@@ -109,3 +109,6 @@ Housing system remove improvement, edit tree asset
 
 02/15
 Weapon attach, acquire item
+
+02/15
+Item quick slot, inventory system(remove item)

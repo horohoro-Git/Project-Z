@@ -26,6 +26,7 @@ public class GameInstance
     public HousingSystem housingSystem;
     public InventorySystem inventorySystem;
     public CreatableUISystem creatableUISystem;
+    public QuickSlotUI quickSlotUI;
     public EditMode editMode;
     List<PlayerController> players = new List<PlayerController>();
 
@@ -47,6 +48,7 @@ public class GameInstance
         instance = null;
         drawGrid = null;
         assetLoader = null;
+        quickSlotUI = null;
     }
 
     public void AddPlayer(PlayerController pc)
