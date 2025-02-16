@@ -53,13 +53,13 @@ public class GameManager : MonoBehaviour
         pc.SetController(human);
 
 
-        Weapon weapon = Instantiate(testWeapon);
+      /*  Weapon weapon = Instantiate(testWeapon);
         AttachItem attachItem = human.GetComponentInChildren<AttachItem>();
         weapon.transform.SetParent(attachItem.transform);
 
         weapon.transform.localPosition = new Vector3(0, 0, 0);
         weapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
-        pc.equipWeapon = weapon;
+        pc.equipWeapon = weapon;*/
 
     }
     void LoadBuilds()

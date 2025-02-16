@@ -262,6 +262,214 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""OnUseItem"",
+            ""id"": ""82330d6e-0eb5-4560-8a33-ce9e0eb14601"",
+            ""actions"": [
+                {
+                    ""name"": ""Item1"",
+                    ""type"": ""Button"",
+                    ""id"": ""76a47a35-c1ac-478b-bc74-e934726e0fb6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Item2"",
+                    ""type"": ""Button"",
+                    ""id"": ""7016b6fa-8955-4dc0-a87d-0bfa2bdc5068"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Item3"",
+                    ""type"": ""Button"",
+                    ""id"": ""6086efd1-fd19-444c-a9fc-b505d3f75b75"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Item4"",
+                    ""type"": ""Button"",
+                    ""id"": ""289647ac-6b11-46fc-bcaf-1c5794b4b296"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Item5"",
+                    ""type"": ""Button"",
+                    ""id"": ""a5d38b98-3e50-448d-84b7-ac363d238ba8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Item6"",
+                    ""type"": ""Button"",
+                    ""id"": ""d292a056-68c6-40e8-96b2-67d3375fb851"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Item7"",
+                    ""type"": ""Button"",
+                    ""id"": ""f1908292-1b07-4778-b424-07e9dc0c39c6"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Item8"",
+                    ""type"": ""Button"",
+                    ""id"": ""90b01e8b-ed55-4fc9-b536-5e6450d131b1"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Item9"",
+                    ""type"": ""Button"",
+                    ""id"": ""82053152-e21d-4845-be1b-630f457afa2c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Item10"",
+                    ""type"": ""Button"",
+                    ""id"": ""b758b6ad-d157-4431-bfcd-90b4d3eac9e4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""28275003-612e-412f-854a-a76f8aa1d1a7"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1c08a490-00e5-4069-872d-cba116c53718"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b446d7ef-c232-4b4f-be61-5d465ea07991"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4fad6a5a-cb99-4008-92cd-fd58aa23beac"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""942b2ade-624b-4ae4-bbca-8c179099a559"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b5a5cacd-389a-4dfa-9077-9e03b2186f12"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item6"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ec797f3f-4069-446f-96ad-6ac7829f845c"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item7"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c86df0f5-00c8-46f9-a2e0-42dd10327675"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item8"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""29f01ea1-eba3-4aeb-a515-abcd5438a3eb"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item9"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""77d0a7d7-760f-4607-942f-be3e1b9bf161"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Item10"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -309,6 +517,18 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         // OnInventory
         m_OnInventory = asset.FindActionMap("OnInventory", throwIfNotFound: true);
         m_OnInventory_OpenInventory = m_OnInventory.FindAction("OpenInventory", throwIfNotFound: true);
+        // OnUseItem
+        m_OnUseItem = asset.FindActionMap("OnUseItem", throwIfNotFound: true);
+        m_OnUseItem_Item1 = m_OnUseItem.FindAction("Item1", throwIfNotFound: true);
+        m_OnUseItem_Item2 = m_OnUseItem.FindAction("Item2", throwIfNotFound: true);
+        m_OnUseItem_Item3 = m_OnUseItem.FindAction("Item3", throwIfNotFound: true);
+        m_OnUseItem_Item4 = m_OnUseItem.FindAction("Item4", throwIfNotFound: true);
+        m_OnUseItem_Item5 = m_OnUseItem.FindAction("Item5", throwIfNotFound: true);
+        m_OnUseItem_Item6 = m_OnUseItem.FindAction("Item6", throwIfNotFound: true);
+        m_OnUseItem_Item7 = m_OnUseItem.FindAction("Item7", throwIfNotFound: true);
+        m_OnUseItem_Item8 = m_OnUseItem.FindAction("Item8", throwIfNotFound: true);
+        m_OnUseItem_Item9 = m_OnUseItem.FindAction("Item9", throwIfNotFound: true);
+        m_OnUseItem_Item10 = m_OnUseItem.FindAction("Item10", throwIfNotFound: true);
     }
 
     ~@NewInput()
@@ -320,6 +540,7 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_OnCombatMode.enabled, "This will cause a leak and performance issues, NewInput.OnCombatMode.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnAttack.enabled, "This will cause a leak and performance issues, NewInput.OnAttack.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnInventory.enabled, "This will cause a leak and performance issues, NewInput.OnInventory.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnUseItem.enabled, "This will cause a leak and performance issues, NewInput.OnUseItem.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -699,6 +920,124 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         }
     }
     public OnInventoryActions @OnInventory => new OnInventoryActions(this);
+
+    // OnUseItem
+    private readonly InputActionMap m_OnUseItem;
+    private List<IOnUseItemActions> m_OnUseItemActionsCallbackInterfaces = new List<IOnUseItemActions>();
+    private readonly InputAction m_OnUseItem_Item1;
+    private readonly InputAction m_OnUseItem_Item2;
+    private readonly InputAction m_OnUseItem_Item3;
+    private readonly InputAction m_OnUseItem_Item4;
+    private readonly InputAction m_OnUseItem_Item5;
+    private readonly InputAction m_OnUseItem_Item6;
+    private readonly InputAction m_OnUseItem_Item7;
+    private readonly InputAction m_OnUseItem_Item8;
+    private readonly InputAction m_OnUseItem_Item9;
+    private readonly InputAction m_OnUseItem_Item10;
+    public struct OnUseItemActions
+    {
+        private @NewInput m_Wrapper;
+        public OnUseItemActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Item1 => m_Wrapper.m_OnUseItem_Item1;
+        public InputAction @Item2 => m_Wrapper.m_OnUseItem_Item2;
+        public InputAction @Item3 => m_Wrapper.m_OnUseItem_Item3;
+        public InputAction @Item4 => m_Wrapper.m_OnUseItem_Item4;
+        public InputAction @Item5 => m_Wrapper.m_OnUseItem_Item5;
+        public InputAction @Item6 => m_Wrapper.m_OnUseItem_Item6;
+        public InputAction @Item7 => m_Wrapper.m_OnUseItem_Item7;
+        public InputAction @Item8 => m_Wrapper.m_OnUseItem_Item8;
+        public InputAction @Item9 => m_Wrapper.m_OnUseItem_Item9;
+        public InputAction @Item10 => m_Wrapper.m_OnUseItem_Item10;
+        public InputActionMap Get() { return m_Wrapper.m_OnUseItem; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(OnUseItemActions set) { return set.Get(); }
+        public void AddCallbacks(IOnUseItemActions instance)
+        {
+            if (instance == null || m_Wrapper.m_OnUseItemActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnUseItemActionsCallbackInterfaces.Add(instance);
+            @Item1.started += instance.OnItem1;
+            @Item1.performed += instance.OnItem1;
+            @Item1.canceled += instance.OnItem1;
+            @Item2.started += instance.OnItem2;
+            @Item2.performed += instance.OnItem2;
+            @Item2.canceled += instance.OnItem2;
+            @Item3.started += instance.OnItem3;
+            @Item3.performed += instance.OnItem3;
+            @Item3.canceled += instance.OnItem3;
+            @Item4.started += instance.OnItem4;
+            @Item4.performed += instance.OnItem4;
+            @Item4.canceled += instance.OnItem4;
+            @Item5.started += instance.OnItem5;
+            @Item5.performed += instance.OnItem5;
+            @Item5.canceled += instance.OnItem5;
+            @Item6.started += instance.OnItem6;
+            @Item6.performed += instance.OnItem6;
+            @Item6.canceled += instance.OnItem6;
+            @Item7.started += instance.OnItem7;
+            @Item7.performed += instance.OnItem7;
+            @Item7.canceled += instance.OnItem7;
+            @Item8.started += instance.OnItem8;
+            @Item8.performed += instance.OnItem8;
+            @Item8.canceled += instance.OnItem8;
+            @Item9.started += instance.OnItem9;
+            @Item9.performed += instance.OnItem9;
+            @Item9.canceled += instance.OnItem9;
+            @Item10.started += instance.OnItem10;
+            @Item10.performed += instance.OnItem10;
+            @Item10.canceled += instance.OnItem10;
+        }
+
+        private void UnregisterCallbacks(IOnUseItemActions instance)
+        {
+            @Item1.started -= instance.OnItem1;
+            @Item1.performed -= instance.OnItem1;
+            @Item1.canceled -= instance.OnItem1;
+            @Item2.started -= instance.OnItem2;
+            @Item2.performed -= instance.OnItem2;
+            @Item2.canceled -= instance.OnItem2;
+            @Item3.started -= instance.OnItem3;
+            @Item3.performed -= instance.OnItem3;
+            @Item3.canceled -= instance.OnItem3;
+            @Item4.started -= instance.OnItem4;
+            @Item4.performed -= instance.OnItem4;
+            @Item4.canceled -= instance.OnItem4;
+            @Item5.started -= instance.OnItem5;
+            @Item5.performed -= instance.OnItem5;
+            @Item5.canceled -= instance.OnItem5;
+            @Item6.started -= instance.OnItem6;
+            @Item6.performed -= instance.OnItem6;
+            @Item6.canceled -= instance.OnItem6;
+            @Item7.started -= instance.OnItem7;
+            @Item7.performed -= instance.OnItem7;
+            @Item7.canceled -= instance.OnItem7;
+            @Item8.started -= instance.OnItem8;
+            @Item8.performed -= instance.OnItem8;
+            @Item8.canceled -= instance.OnItem8;
+            @Item9.started -= instance.OnItem9;
+            @Item9.performed -= instance.OnItem9;
+            @Item9.canceled -= instance.OnItem9;
+            @Item10.started -= instance.OnItem10;
+            @Item10.performed -= instance.OnItem10;
+            @Item10.canceled -= instance.OnItem10;
+        }
+
+        public void RemoveCallbacks(IOnUseItemActions instance)
+        {
+            if (m_Wrapper.m_OnUseItemActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IOnUseItemActions instance)
+        {
+            foreach (var item in m_Wrapper.m_OnUseItemActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_OnUseItemActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public OnUseItemActions @OnUseItem => new OnUseItemActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -744,5 +1083,18 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     public interface IOnInventoryActions
     {
         void OnOpenInventory(InputAction.CallbackContext context);
+    }
+    public interface IOnUseItemActions
+    {
+        void OnItem1(InputAction.CallbackContext context);
+        void OnItem2(InputAction.CallbackContext context);
+        void OnItem3(InputAction.CallbackContext context);
+        void OnItem4(InputAction.CallbackContext context);
+        void OnItem5(InputAction.CallbackContext context);
+        void OnItem6(InputAction.CallbackContext context);
+        void OnItem7(InputAction.CallbackContext context);
+        void OnItem8(InputAction.CallbackContext context);
+        void OnItem9(InputAction.CallbackContext context);
+        void OnItem10(InputAction.CallbackContext context);
     }
 }

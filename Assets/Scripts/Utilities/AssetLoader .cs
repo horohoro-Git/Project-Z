@@ -120,7 +120,7 @@ public class AssetLoader : MonoBehaviour
 
         handle = Addressables.LoadAssetsAsync<GameObject>(
              assetkeys, 
-             asset => { Debug.Log("Loaded: " + asset.name); },
+             asset => { /*Debug.Log("Loaded: " + asset.name);*/ },
              Addressables.MergeMode.Union,
              false); // false: 모든 에셋이 로드될 때까지 기다림
 
@@ -130,7 +130,7 @@ public class AssetLoader : MonoBehaviour
         {
             foreach (var asset in handle.Result)
             {
-                Debug.Log("Loaded " + asset.name);
+            //    Debug.Log("Loaded " + asset.name);
                 loadedAssets[asset.name] = asset;   //에셋을 사용할 때에는 해당 에셋의 이름으로 호출
             }
             assetLoadSuccessful = true;

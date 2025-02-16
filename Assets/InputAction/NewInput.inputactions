@@ -240,6 +240,214 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "OnUseItem",
+            "id": "82330d6e-0eb5-4560-8a33-ce9e0eb14601",
+            "actions": [
+                {
+                    "name": "Item1",
+                    "type": "Button",
+                    "id": "76a47a35-c1ac-478b-bc74-e934726e0fb6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Item2",
+                    "type": "Button",
+                    "id": "7016b6fa-8955-4dc0-a87d-0bfa2bdc5068",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Item3",
+                    "type": "Button",
+                    "id": "6086efd1-fd19-444c-a9fc-b505d3f75b75",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Item4",
+                    "type": "Button",
+                    "id": "289647ac-6b11-46fc-bcaf-1c5794b4b296",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Item5",
+                    "type": "Button",
+                    "id": "a5d38b98-3e50-448d-84b7-ac363d238ba8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Item6",
+                    "type": "Button",
+                    "id": "d292a056-68c6-40e8-96b2-67d3375fb851",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Item7",
+                    "type": "Button",
+                    "id": "f1908292-1b07-4778-b424-07e9dc0c39c6",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Item8",
+                    "type": "Button",
+                    "id": "90b01e8b-ed55-4fc9-b536-5e6450d131b1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Item9",
+                    "type": "Button",
+                    "id": "82053152-e21d-4845-be1b-630f457afa2c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Item10",
+                    "type": "Button",
+                    "id": "b758b6ad-d157-4431-bfcd-90b4d3eac9e4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "28275003-612e-412f-854a-a76f8aa1d1a7",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1c08a490-00e5-4069-872d-cba116c53718",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item2",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b446d7ef-c232-4b4f-be61-5d465ea07991",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4fad6a5a-cb99-4008-92cd-fd58aa23beac",
+                    "path": "<Keyboard>/4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "942b2ade-624b-4ae4-bbca-8c179099a559",
+                    "path": "<Keyboard>/5",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item5",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b5a5cacd-389a-4dfa-9077-9e03b2186f12",
+                    "path": "<Keyboard>/6",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item6",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ec797f3f-4069-446f-96ad-6ac7829f845c",
+                    "path": "<Keyboard>/7",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item7",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c86df0f5-00c8-46f9-a2e0-42dd10327675",
+                    "path": "<Keyboard>/8",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item8",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "29f01ea1-eba3-4aeb-a515-abcd5438a3eb",
+                    "path": "<Keyboard>/9",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item9",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "77d0a7d7-760f-4607-942f-be3e1b9bf161",
+                    "path": "<Keyboard>/0",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Item10",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [

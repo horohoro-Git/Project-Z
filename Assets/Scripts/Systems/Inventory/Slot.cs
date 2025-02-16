@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class Slot : MonoBehaviour, IUIComponent
 {
@@ -17,12 +18,12 @@ public class Slot : MonoBehaviour, IUIComponent
     Image itemImage;
 
     public SlotType slotType;
-    ItemStruct item;
+    public ItemStruct item = new ItemStruct();
 
-    [SerializeField]
-    int slotX;
-    [SerializeField]
-    int slotY;
+    //SerializeField]
+    public int slotX;
+    //[SerializeField]
+    public int slotY;
 
     EventTrigger eventTrigger;
     EventTrigger.Entry entryHover;
@@ -33,16 +34,6 @@ public class Slot : MonoBehaviour, IUIComponent
     UnityAction<BaseEventData> hoverExit;
     UnityAction<BaseEventData> dragEnter;
     UnityAction<BaseEventData> dragExit;
-    private void Awake()
-    {
-     
-       
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
     private void OnEnable()
     {
@@ -122,7 +113,9 @@ public class Slot : MonoBehaviour, IUIComponent
         GameInstance.Instance.inventorySystem.draggedItem.GetComponent<Image>().sprite = itemImage.sprite;
         GameInstance.Instance.inventorySystem.draggedItem.GetComponent<RectTransform>().SetParent(GameInstance.Instance.inventorySystem.border);
         //image.sprite = originImage;
-        itemImage.sprite = GameInstance.Instance.inventorySystem.defaultSlot; 
+        itemImage.sprite = GameInstance.Instance.inventorySystem.defaultSlot;
+
+        GameInstance.Instance.inventorySystem.SetPlayerView(false);
     }
 
     void OnDragExit()
@@ -144,19 +137,56 @@ public class Slot : MonoBehaviour, IUIComponent
             foreach (RaycastResult r in raycastResult)
             {
                 Slot s = r.gameObject.GetComponent<Slot>();
-                if (s.slotType == SlotType.JustView) break;
-                ItemStruct tempStruct = s.item;
-                s.item = item;
-                item = tempStruct;
+                if (s != null)  //다른 슬롯으로 아이템 이동
+                {
+                    if (s.slotType == SlotType.JustView) break;
+                    ItemStruct tempStruct = s.item;
+                    s.item = item;
+                    item = tempStruct;
 
-                UpdateSlot();
-                s.UpdateSlot();
+                    UpdateSlot();
+                    s.UpdateSlot();
 
+                    PlayerController pc = GameInstance.Instance.GetPlayers[0];
+                    if (slotX == 0 )
+                    {
+                        GameInstance.Instance.quickSlotUI.UpdateSlot(item, slotY);
+                        if(slotY == pc.equipSlotIndex)
+                        {
+                            pc.Unequipment();
+                        }
+                    }
+
+                    if (s.slotX == 0)
+                    {
+                        GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.slotY);
+                        if (slotY == pc.equipSlotIndex)
+                        {
+                            pc.Unequipment();
+                        }
+                    }
+                }
+                else // 아이템 버리기
+                {
+                    AcceptanceUI acceptanceUI = Instantiate(GameInstance.Instance.uiManager.acceptanceUI).GetComponent<AcceptanceUI>();
+                    RectTransform rect = GameInstance.Instance.uiManager.canvas.GetComponent<RectTransform>();  
+                    RectTransform uiRect = acceptanceUI.GetComponent<RectTransform>();
+                    uiRect.SetParent(rect);
+                    uiRect.anchorMin = new Vector2(0.5f, 0.5f);
+                    uiRect.anchorMax = new Vector2(0.5f, 0.5f);
+                    uiRect.anchoredPosition = Vector2.zero;
+                    uiRect.sizeDelta = new Vector2(rect.rect.width, rect.rect.height);
+                    UnityAction action = () => RemoveItem();
+                    acceptanceUI.GetAction(action);
+                    //RemoveItem();
+
+
+                }
                 break;
             }
 
         }
-
+        GameInstance.Instance.inventorySystem.SetPlayerView(true);
     }
 
     void OnHoverEnter()
@@ -200,7 +230,22 @@ public class Slot : MonoBehaviour, IUIComponent
 
     public void RemoveItem()
     {
+        ItemStruct itemS = new ItemStruct();
+        item = itemS;
 
+        if(slotX == 0)
+        {
+            GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, slotY);
+            PlayerController pc = GameInstance.Instance.GetPlayers[0];
+            if (pc != null)
+            {
+                if(pc.equipSlotIndex == slotY)
+                {
+                    pc.Unequipment();
+                }
+            }
+        }
+        UpdateSlot();
     }
 
     public void UpdateSlot()

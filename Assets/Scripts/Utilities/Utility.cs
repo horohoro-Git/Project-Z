@@ -98,7 +98,8 @@ public  enum UIType
     None,
     Menu,
     Housing,
-    Inventory
+    Inventory,
+    QuickSlot
 
 }
 
@@ -167,14 +168,16 @@ public struct ItemStruct
     public SlotType slotType;
     public ItemType itemType;
     public bool used;
+    public GameObject itemGO;
 
-    public ItemStruct(Sprite image, string itemName, SlotType slotType, ItemType itemType)
+    public ItemStruct(Sprite image, string itemName, SlotType slotType, ItemType itemType, GameObject itemGO)
     {
         this.image = image;
         this.itemName = itemName;
         this.slotType = slotType;
         this.itemType = itemType;
         used = true;
+        this.itemGO = itemGO;
     }
 }
 public class Utility

@@ -8,7 +8,8 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 {
 
     Slot[,] inventoryArray = new Slot[7, 10];
-    int slotNum = 0;
+    [NonSerialized]
+    public int slotNum = 0;
     [NonSerialized]
     public int inventorySize = 0;
     public SlotInfo info;
@@ -37,7 +38,14 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     [SerializeField]
     Slot backpack;
 
-   
+
+    [SerializeField]
+    Image playerView;
+    [SerializeField]
+    Sprite trashcan;
+
+
+    int currentSlotIndex = -1;
     private void Awake()
     {
        // GameInstance.Instance.inventorySystem = this;
@@ -57,6 +65,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         for(int i = 0; i< 10; i++)
         {
             inventoryArray[slotNum, i] = slots.slots[i];
+            //Debug.Log(inventoryArray[slotNum, i]);
         }
         slots.Setup();
         slotNum++;
@@ -71,9 +80,15 @@ public class InventorySystem : MonoBehaviour, IUIComponent
                 if(!inventoryArray[i, j].GetItem().used)
                 {
                     Debug.Log("아이템을 얻음");
-                    ItemStruct itemStruct = new ItemStruct(item.item_Image, item.item_Name, item.item_Slot, item.item_Type);
+                    ItemStruct itemStruct = new ItemStruct(item.item_Image, item.item_Name, item.item_Slot, item.item_Type, item.item_GO);
 
                     inventoryArray[i, j].AddItem(itemStruct);
+
+                    if(i == 0)
+                    {
+                        GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, j);
+                    }
+
                     return;
                 }
             }
@@ -82,6 +97,28 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     }
 
+    public void UseItem(PlayerController pc ,int index)
+    {
+        if (currentSlotIndex == index)
+        {
+            currentSlotIndex = -1;
+        }
+        else
+        {
+            currentSlotIndex = index;
+            ItemStruct item = inventoryArray[0, index].GetItem();
+            if (item.used)
+            {
+                switch (item.itemType)
+                {
+                    case ItemType.Equipmentable:
+                        pc.Equipment(item, index);
+                        break;
+                }
+
+            }
+        }
+    }
 
 
     public void UpdateEquipSlot(SlotType slotType, ItemStruct item)
@@ -108,6 +145,11 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         }
     }
 
+    public void SetPlayerView(bool on)
+    {
+        if(on) playerView.sprite = null;
+        else playerView.sprite = trashcan;
+    }
     public void Setup()
     {
         GameInstance.Instance.inventorySystem = this;
