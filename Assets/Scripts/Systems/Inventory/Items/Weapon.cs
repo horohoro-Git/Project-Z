@@ -7,14 +7,23 @@ public class Weapon : Item
     public WeaponType type;
     public bool attack;
 
-
+    public Collider weaponColider;
+    public void Attack(float start, float end)
+    {
+        Invoke("StartAttack", start);
+        Invoke("StopAttack", end);
+    }
     public void StartAttack()
     {
-        attack = true;
+        weaponColider.enabled = true;
+    /*    Debug.Log("Start");
+        attack = true;*/
     }
 
     public void StopAttack()
     {
-        attack = false;
+        weaponColider.enabled = false;
+      /*  Debug.Log("Stop");
+        attack = false;*/
     }
 }

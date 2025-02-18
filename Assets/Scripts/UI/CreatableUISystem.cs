@@ -112,6 +112,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         GameInstance.Instance.inputManager.structureState = StructureState.None;
         GameInstance.Instance.editMode = EditMode.None;
         GameInstance.Instance.drawGrid.Remove();
+        GameInstance.Instance.assetLoader.RemovePreview();
         GameInstance.Instance.housingSystem.ResetMaterials();
         GameInstance.Instance.housingSystem.CheckRoofInWorld();
         GameInstance.Instance.playerController.AddAction();
