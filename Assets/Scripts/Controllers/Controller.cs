@@ -35,16 +35,6 @@ public class Controller : MonoBehaviour
     public float currentMoveSpeed;
     [NonSerialized]
     public float currentDir;
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
     Vector3 viewDir = Vector3.zero;
     public bool turn = false;
     public bool longturn = false;
@@ -54,9 +44,22 @@ public class Controller : MonoBehaviour
     public float viewVelocity;
     // float smoothTime = 0.5f;
     public bool sprint;
+
+    [NonSerialized]
+    public bool canMove = true;
+
+    
     void FixedUpdate()
     {
         Rotate();
+        if (!canMove)
+        {
+
+            currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
+            Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
+            return;
+        }
+       
         if (moveDir != Vector3.zero)
         {
             viewDir = moveDir;

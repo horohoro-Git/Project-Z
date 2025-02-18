@@ -112,3 +112,6 @@ Weapon attach, acquire item
 
 02/15
 Item quick slot, inventory system(remove item)
+
+02/16
+Player animation improvement

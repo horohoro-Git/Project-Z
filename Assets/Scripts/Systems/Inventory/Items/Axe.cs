@@ -8,19 +8,21 @@ public class Axe : Weapon
     {
         if(other.gameObject.CompareTag("Tree"))
         {
-            if (attack)
+           // if (attack)
             {
                 other.gameObject.GetComponent<Tree>().ChopDown(transform);
-
-
-                Debug.Log("Attack");
             }
         }
         
     }
-
-    public void EndAttack()
+ /*   private void OnTriggerStay(Collider other)
     {
-        Invoke("StopAttack", 2.4f);
-    }
+        if (other.gameObject.CompareTag("Tree"))
+        {
+        //    if (attack)
+            {
+                other.gameObject.GetComponent<Tree>().ChopDown(transform);
+            }
+        }
+    }*/
 }

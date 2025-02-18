@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -32,19 +33,23 @@ public class PlayerController : Controller
     Action<PlayerController> lastAction;
     int lastGridX = 0; 
     int lastGridY = 0;
+    float motion;
 
     [NonSerialized]
     Animator modelAnimator;
 
     PlayerState state = PlayerState.Default;
+    float combatTimer;
     Coroutine combatMotion;
 
     bool inputEnabled = false;
     bool destroyed = false;
+    bool animationWorking = false;
     [NonSerialized]
     public Weapon equipWeapon;
     [NonSerialized]
     public int equipSlotIndex = -1;
+    Action<PlayerController> getItemAction;
     private void Awake()
     {
         GameInstance.Instance.playerController = this;
@@ -69,12 +74,14 @@ public class PlayerController : Controller
     {
        
         AddAction();
+        Inputs.actions["OpenInventory"].performed += OpenInventory;
     }
 
     private void OnDisable()
     {
         RemoveAction();
-       // lastHandler.Clear();
+        Inputs.actions["OpenInventory"].performed -= OpenInventory;
+        // lastHandler.Clear();
     }
 
     private void OnDestroy()
@@ -101,7 +108,6 @@ public class PlayerController : Controller
         Inputs.actions["Combat"].performed += ChangeCombatMode;
         Inputs.actions["Attack"].performed += Attack;
         Inputs.actions["Attack"].canceled += EndAttack;
-        Inputs.actions["OpenInventory"].performed += OpenInventory;
     }
     public void RemoveAction()
     {
@@ -116,7 +122,6 @@ public class PlayerController : Controller
         Inputs.actions["Combat"].performed -= ChangeCombatMode;
         Inputs.actions["Attack"].performed -= Attack;
         Inputs.actions["Attack"].canceled -= EndAttack;
-        Inputs.actions["OpenInventory"].performed -= OpenInventory;
         for (int i = 0; i < 10; i++)
         {
             int slotNumber = i + 1;
@@ -127,7 +132,8 @@ public class PlayerController : Controller
     void Start()
     {
         GameInstance.Instance.AddPlayer(this);
-       
+        ItemStruct item = GameInstance.Instance.quickSlotUI.slots[0].item;
+        Equipment(item, 0);
     }
 
     // Update is called once per frame
@@ -139,15 +145,27 @@ public class PlayerController : Controller
             GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY);
         }
 
+        if(combatTimer < Time.time)
+        {
+            state = PlayerState.Default;  
+            
+        }
+
         //   if(currentDir < 0) modelAnimator.SetFloat("speed", 0.f);
         // else  modelAnimator.SetFloat("speed", s /200);
         modelAnimator.SetFloat("speed", currentMoveSpeed / 200);
         modelAnimator.SetFloat("dir", viewVelocity);
-        // modelAnimator.speed = velocity;
-
-        if (attack)
+        if (state == PlayerState.Combat)
         {
-            Punch();
+            motion += Time.deltaTime;
+            motion = motion > 1 ? 1 : motion;
+            modelAnimator.SetFloat("combatMotion", motion);
+        }
+        else if(state == PlayerState.Default)
+        {
+            motion -= Time.deltaTime;
+            motion = motion < 0 ? 0 : motion;
+            modelAnimator.SetFloat("combatMotion", motion);
         }
     }
 
@@ -236,31 +254,35 @@ public class PlayerController : Controller
     List<RaycastResult> raycastResults = new List<RaycastResult>();
     void Attack(InputAction.CallbackContext callback)
     {
-    
+        if (animationWorking) return;
         GraphicRaycaster raycaster = GameInstance.Instance.uiManager.graphicRaycaster;
         eventData.position = Input.mousePosition;
         raycastResults.Clear();
         raycaster.Raycast(eventData, raycastResults);
         if (raycastResults.Count > 0) return;
         
-            //attack = true;
-            if (equipWeapon != null)
+        //attack = true;
+        if (equipWeapon != null)    //무기로 공격
         {
             switch(equipWeapon.type)
             {
                 case WeaponType.None:
                     break;
                 case WeaponType.Axe:
-                    equipWeapon.StartAttack();
-                    modelAnimator.SetTrigger("cut");
-                    equipWeapon.GetComponent<Axe>().EndAttack();
+                    StartAnimation("cut", 1);
+                    equipWeapon.Attack(0.35f, 0.6f);
+                /*    equipWeapon.GetComponent<Axe>().EndAttack();*/
                     break;
             }
         }
-        else
+        else //주먹으로 공격
         {
-
+            Punch();
+            CancelInvoke("StopMotion");
+            Invoke("StopMotion", 1);
         }
+        combatTimer = Time.time + 5f;
+        state = PlayerState.Combat;
     }
     void EndAttack(InputAction.CallbackContext callback)
     {
@@ -269,23 +291,9 @@ public class PlayerController : Controller
 
     void Punch()
     {
-        if (state == PlayerState.Combat)
-        {
-            reinput = false;
-            int i = UnityEngine.Random.Range(0, 2);
-            modelAnimator.SetTrigger("a");
-            modelAnimator.SetInteger("type", i);
-            Invoke("AttackTimer", 1f);
-            Invoke("InputTimer", 0.5f);
-            modelAnimator.SetFloat("combatMotion", 0);
-            state = PlayerState.Default;
-        }
-        else if (reinput)
-        {
-            reinput = false;
-            attackAgain = true;
-        }
-
+        int r = UnityEngine.Random.Range(0, 2);
+        if (r == 1) StartAnimation("punchLeft", 0.8f);
+        else StartAnimation("punchRight", 0.8f);
     }
 
     void InputTimer()
@@ -293,36 +301,25 @@ public class PlayerController : Controller
         reinput = true;
     }
     bool attackAgain;
-    void AttackTimer()
-    {
-        if (!attackAgain)
-        {
-            modelAnimator.SetBool("attack", false);
-            if (combatMotion != null) StopCoroutine(combatMotion);
-            combatMotion = StartCoroutine(ChangeMode(true));
-        }
-        else
-        {
-            attackAgain = false;
-            int i = UnityEngine.Random.Range(0, 2);
-            modelAnimator.SetTrigger("a");
-            modelAnimator.SetInteger("type", i);
-            Invoke("AttackTimer", 1f);
-            Invoke("InputTimer", 0.5f);
-            modelAnimator.SetFloat("combatMotion", 0);
-            state = PlayerState.Default;
-        }
-    }
+ 
     void Interact(InputAction.CallbackContext callback)
     {
         if (lastAction == null) return;
         lastAction.Invoke(this);
     }
 
-    public void GetItem_Animation()
+    public void GetItem_Animation(Action<PlayerController> action)
     {
-        Debug.Log("A");
-        modelAnimator.SetTrigger("item");
+        if (animationWorking) return;
+
+        getItemAction = action;
+        StartAnimation("item", 0.8f);
+        Invoke("StopMotion", 1.117f);
+        Invoke("GetItem_Callback", 0.2f);
+    }
+    void GetItem_Callback()
+    {
+        getItemAction?.Invoke(this);
     }
     public void CutTree()
     {
@@ -363,9 +360,9 @@ public class PlayerController : Controller
     {
         InventorySystem inventorySystem = GameInstance.Instance.inventorySystem;
         if (inventorySystem == null) return;
-       
-        if(inventorySystem.gameObject.activeSelf) GameInstance.Instance.inventorySystem.gameObject.SetActive(false);
-        else GameInstance.Instance.inventorySystem.gameObject.SetActive(false);
+
+
+        GameInstance.Instance.uiManager.SwitchUI(UIType.Inventory, false);
     }
 
     void SelectInventorySlot(int index)
@@ -384,10 +381,15 @@ public class PlayerController : Controller
 
             equipWeapon.transform.localPosition = new Vector3(0, 0, 0);
             equipWeapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+            modelAnimator.SetFloat("equip", 1);
         }
         else
         {
-
+        
+            equipSlotIndex = index;
+            if(equipWeapon != null) Destroy(equipWeapon.gameObject);
+            equipWeapon = null;
+            modelAnimator.SetFloat("equip", 0);
         }
     }
 
@@ -396,5 +398,27 @@ public class PlayerController : Controller
         if(equipWeapon != null) Destroy(equipWeapon.gameObject);
         ItemStruct item = GameInstance.Instance.quickSlotUI.slots[equipSlotIndex].item;
         Equipment(item, equipSlotIndex);
+    }
+
+
+
+    void StartAnimation(string animationName, float timer)
+    {
+        if (animationWorking) return;
+        animationWorking = true;
+        modelAnimator.SetTrigger(animationName);
+       
+        canMove = false;
+        Invoke("StopAnimation", timer);
+    }
+
+    void StopAnimation()
+    {
+        canMove = true;
+        animationWorking = false;
+    }
+    void StopMotion()
+    {
+        motion = 0;
     }
 }

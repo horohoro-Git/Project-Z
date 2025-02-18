@@ -99,25 +99,28 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     public void UseItem(PlayerController pc ,int index)
     {
-        if (currentSlotIndex == index)
-        {
-            currentSlotIndex = -1;
-        }
-        else
-        {
-            currentSlotIndex = index;
-            ItemStruct item = inventoryArray[0, index].GetItem();
-            if (item.used)
-            {
-                switch (item.itemType)
-                {
-                    case ItemType.Equipmentable:
-                        pc.Equipment(item, index);
-                        break;
-                }
+        currentSlotIndex = index;
+        ItemStruct item = inventoryArray[0, index].GetItem();
+        pc.Equipment(item, index);
+        /*  if (currentSlotIndex == index)
+          {
+              currentSlotIndex = -1;
+          }
+          else
+          {
+              currentSlotIndex = index;
+              ItemStruct item = inventoryArray[0, index].GetItem();
+              if (item.used)
+              {
+                  switch (item.itemType)
+                  {
+                      case ItemType.Equipmentable:
+                          pc.Equipment(item, index);
+                          break;
+                  }
 
-            }
-        }
+              }
+          }*/
     }
 
 

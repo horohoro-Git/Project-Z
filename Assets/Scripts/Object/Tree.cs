@@ -80,7 +80,7 @@ public class Tree : MonoBehaviour
         Invoke("AddReward", 1.5f);
     }
 
-    public void ChopDown(Transform transform)
+    public void ChopDown(Transform transforms)
     {
         if (dead) return;
         dead = true;
@@ -89,7 +89,7 @@ public class Tree : MonoBehaviour
         float dotProduct = Vector3.Dot(pcForward, toTarget);
         if (dotProduct <= 0) return;    //앞을 보고 있을 때만 동작
 */
-        Vector3 dir = transform.position - transform.position;
+        Vector3 dir = transform.position - transforms.position;
         Debug.Log(dir);
         float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
 
