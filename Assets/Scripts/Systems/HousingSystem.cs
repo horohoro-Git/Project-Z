@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 public class HousingSystem : MonoBehaviour
@@ -37,6 +38,7 @@ public class HousingSystem : MonoBehaviour
 
     List<HousingChangeInfo> changeLists = new List<HousingChangeInfo>();
     List<GameObject> removeMaterials = new List<GameObject>();
+    List<RemoveEnvironmentList> removeEnvironments = new List<RemoveEnvironmentList>();
     private void Awake()
     {
         GameInstance.Instance.housingSystem = this;
@@ -111,6 +113,26 @@ public class HousingSystem : MonoBehaviour
         floorCount++;
         floors[indexX, indexY] = floor;
         if (isLoad) return;
+
+        MeshRenderer meshRender = floor.GetComponent<MeshRenderer>();
+        Vector3 size = meshRender.bounds.size;
+        Collider[] colliders = Physics.OverlapBox(floor.transform.position, size / 2, Quaternion.identity);
+
+        List<EnvironmentObject> list = new List<EnvironmentObject>();
+        foreach (Collider collider in colliders)
+        {
+            if (collider.TryGetComponent<EnvironmentObject>(out EnvironmentObject environment))
+            {
+                if(environment.environmentType >= EnvironmentType.Grasses && environment.environmentType<= EnvironmentType.Flower_Orange)
+                {
+                    Debug.Log(collider.gameObject.name);
+                    environment.gameObject.SetActive(false);
+                    list.Add(environment);
+                }
+            }
+        }
+        RemoveEnvironmentList removeEnvironmentList = new RemoveEnvironmentList(list);
+        removeEnvironments.Add(removeEnvironmentList);
 
         HousingChangeInfo changeInfo = new HousingChangeInfo(floor, indexX, indexY, 0, ChangeInfo.Addition, StructureState.Floor);
         changeLists.Add(changeInfo);
@@ -681,6 +703,13 @@ public class HousingSystem : MonoBehaviour
                     GameObject go = floors[indexX, indexY];
                     Destroy(go);
                     floors[indexX, indexY] = null;
+                    RemoveEnvironmentList list = removeEnvironments[removeEnvironments.Count - 1];
+                    Debug.Log(list.environmentObjects.Count);
+                    for (int i = 0; i < list.environmentObjects.Count; i++)
+                    {
+                        list.environmentObjects[i].gameObject.SetActive(true);
+                    }
+                    removeEnvironments.RemoveAt(removeEnvironments.Count - 1);
                 }
                 else if (changeInfo.type == StructureState.Wall)
                 {
@@ -698,6 +727,7 @@ public class HousingSystem : MonoBehaviour
                 else if (changeInfo.type == StructureState.Wall) walls[indexX, indexY, indexZ] = changeInfo.buildMat.GetComponent<Wall>();
                 changeInfo.buildMat.SetActive(true);
                 removeMaterials.RemoveAt(removeMaterials.Count - 1);
+
                 //자재 비용 반납
             }
         }
@@ -720,10 +750,25 @@ public class HousingSystem : MonoBehaviour
 
             TempStorage();
 
+
+            //환경 꾸밈 제거
+            
+            for(int i= removeEnvironments.Count - 1;i >= 0;i--)
+            {
+                for(int j = removeEnvironments[i].environmentObjects.Count - 1;j >= 0;j--)
+                {
+                    EnvironmentObject environmentObject = removeEnvironments[i].environmentObjects[j];
+                    GameInstance.Instance.environmentSpawner.RemoveObject(environmentObject);
+                    removeEnvironments[i].environmentObjects.RemoveAt(j);
+                }
+            }
+
+
             if (GameInstance.Instance.gameManager.gameMode == GameMode.DefaultMode)
             {
                 //게임 정보 저장
                 SaveLoadSystem.SaveBuildSystem();
+                SaveLoadSystem.SaveEnviromentData();
             }
 
         }
@@ -780,6 +825,17 @@ public class HousingSystem : MonoBehaviour
                 }
             }
         }
+        for (int i = removeEnvironments.Count - 1; i >= 0; i--)
+        {
+            for (int j = removeEnvironments[i].environmentObjects.Count - 1; j >= 0; j--)
+            {
+                EnvironmentObject environmentObject = removeEnvironments[i].environmentObjects[j];
+                environmentObject.gameObject.SetActive(true);
+                removeEnvironments[i].environmentObjects.RemoveAt(j);
+            }
+        }
+
+        removeEnvironments.Clear();
         removeMaterials.Clear();
         changeLists.Clear();
     }

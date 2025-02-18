@@ -29,4 +29,13 @@ public class BuildingMaterials : MonoBehaviour
             return go.GetComponent<Roof>();
         }
     }
+
+    private void OnApplicationQuit()
+    {
+        while (roofs.Count > 0)
+        {
+            Roof roof = roofs.Dequeue();
+            Destroy(roof.gameObject);
+        }
+    }
 }

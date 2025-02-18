@@ -9,7 +9,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 public class PlayerController : Controller
 {
     PlayerInput input;
@@ -336,7 +335,7 @@ public class PlayerController : Controller
 
     public void RemoveAction(Action<PlayerController> action)
     {
-        InteractionEvent.GetInvocationList();
+       // InteractionEvent.GetInvocationList();
         InteractionEvent -= action;
         if (lastAction == action)
         {
@@ -372,8 +371,14 @@ public class PlayerController : Controller
 
     public void Equipment(ItemStruct equipItem, int index)
     {
+        if (animationWorking) return;
         if (equipItem.itemType == ItemType.Equipmentable)
         {
+            if (equipWeapon != null)
+            {
+                Destroy(equipWeapon.gameObject);
+                equipWeapon = null;
+            }
             equipSlotIndex = index;
             equipWeapon = Instantiate(equipItem.itemGO).GetComponent<Weapon>();
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
@@ -395,12 +400,15 @@ public class PlayerController : Controller
 
     public void Unequipment()
     {
-        if(equipWeapon != null) Destroy(equipWeapon.gameObject);
+        if (equipWeapon != null)
+        {
+            Destroy(equipWeapon.gameObject);
+            equipWeapon = null;
+        }
         ItemStruct item = GameInstance.Instance.quickSlotUI.slots[equipSlotIndex].item;
         Equipment(item, equipSlotIndex);
+        
     }
-
-
 
     void StartAnimation(string animationName, float timer)
     {

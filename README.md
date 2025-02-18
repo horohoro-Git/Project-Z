@@ -110,8 +110,11 @@ Housing system remove improvement, edit tree asset
 02/15
 Weapon attach, acquire item
 
-02/15
+02/16
 Item quick slot, inventory system(remove item)
 
-02/16
+02/17
 Player animation improvement
+
+02/18
+Decorative environment system with save & load

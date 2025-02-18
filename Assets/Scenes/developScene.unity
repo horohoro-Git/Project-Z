@@ -505,11 +505,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c35353daf58d2a946869432f43421ea2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  miniGrass: {fileID: 1200989071921433933, guid: 5f816bc2b40208441ab3384d79a72e06, type: 3}
-  flower1: {fileID: 3406036955391354507, guid: aa578a5c198e9874881d32e23d3f7abf, type: 3}
-  flower2: {fileID: 1940876004768499960, guid: 70daccc2501804f4fa12a6ecf2c1f4a1, type: 3}
-  flower3: {fileID: 26184173243125479, guid: 77dfd9a6fcc3eff4db0ff1ba40274406, type: 3}
-  Tree: {fileID: 2222111361404534124, guid: 88f2fd29f58b9734683512546acec310, type: 3}
   treeNum: 20
 --- !u!1 &365781706
 GameObject:
@@ -831,7 +826,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7413484751832463627, guid: 35bafba45f200e44ba92b3993e3a9831, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.23
       objectReference: {fileID: 0}
     - target: {fileID: 7413484751832463627, guid: 35bafba45f200e44ba92b3993e3a9831, type: 3}
       propertyPath: m_LocalPosition.z
