@@ -83,6 +83,45 @@ public enum SlotType
 
 }
 
+//환경 오브젝트 타입
+public enum EnvironmentType
+{
+    None,
+    Grasses,
+    Flower_Pink,
+    Flower_Yellow,
+    Flower_Orange,
+    Tree
+}
+
+//환경 오브젝트 정보
+public struct EnvironmentObjectInfo
+{
+    public EnvironmentType type;
+    public int X;
+    public int Y;
+    public bool Z;  //각도
+
+    public EnvironmentObjectInfo(EnvironmentType type, int X, int Y, bool Z)
+    {
+        this.type = type;
+        this.X = X; 
+        this.Y = Y;
+        this.Z = Z;
+    }
+}
+
+//제거할 환경 오브젝트 모음
+public struct RemoveEnvironmentList
+{
+    public List<EnvironmentObject> environmentObjects;
+
+    public RemoveEnvironmentList(List<EnvironmentObject> environmentObjects)
+    {
+        this.environmentObjects = environmentObjects;
+    }
+}
+
 //아이템 타입
 public enum ItemType
 {

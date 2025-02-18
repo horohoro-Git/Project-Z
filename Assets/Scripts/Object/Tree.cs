@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using static UnityEngine.UI.GridLayoutGroup;
 
-public class Tree : MonoBehaviour
+public class Tree : EnvironmentObject
 {
     public Plane cuttingPlane;
     public Transform upper;

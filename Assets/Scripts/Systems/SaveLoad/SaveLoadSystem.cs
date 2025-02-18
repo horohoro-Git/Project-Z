@@ -1,16 +1,91 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Serialization;
 using UnityEngine;
 
 public class SaveLoadSystem
 {
 
     static string path = Application.persistentDataPath;
-   /* public void Awake()
+
+    //게임 맵 데이터 저장
+    public static void SaveEnviromentData()
     {
-      
-    }*/
+        //필드의 환경 오브젝트
+        string dir = Path.Combine(path, "Save");
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        string p = Path.Combine(path, "Save/Environment.dat");
+
+        EnvironmentObject[,] environmentObjects = GameInstance.Instance.environmentSpawner.environmentObjects;
+        using (MemoryStream ms = new MemoryStream())
+        {
+            using (BinaryWriter writer = new BinaryWriter(ms))
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    for (int j = 0; j < 100; j++)
+                    {
+                        if (environmentObjects[i, j] != null)
+                        {
+                            writer.Write((int)environmentObjects[i, j].environmentType); //환경 오브젝트 타입
+                            writer.Write(i);    // x 위치
+                            writer.Write(j);    // y 위치
+                            writer.Write(environmentObjects[i, j].rotated);
+                        }
+                    }
+                }
+            }
+            File.WriteAllBytes(p, ms.ToArray());
+        }
+    }
+
+    //게임 맵 데이터 로드
+    public static bool LoadEnvironmentData()
+    {
+        List<EnvironmentObjectInfo> housingInfos = new List<EnvironmentObjectInfo>();
+        byte[] data;
+        string p = Path.Combine(path, "Save/Environment.dat");
+        if (File.Exists(p))
+        {
+            using (FileStream fs = new FileStream(p, FileMode.Open))
+            {
+                data = new byte[fs.Length];
+                fs.Read(data, 0, data.Length);
+                if (data.Length > 0)
+                {
+                    using (BinaryReader reader = new BinaryReader(new MemoryStream(data)))
+                    {
+                        while (reader.BaseStream.Position < reader.BaseStream.Length)
+                        {
+                            EnvironmentType environmentType = (EnvironmentType)reader.ReadInt32();
+                            int posX = reader.ReadInt32();
+                            int posY = reader.ReadInt32();
+                            bool objectRotated = reader.ReadBoolean();
+
+                            EnvironmentObjectInfo environmentObjectInfo = new EnvironmentObjectInfo(environmentType, posX, posY, objectRotated);
+                            GameInstance.Instance.environmentSpawner.LoadObject(environmentObjectInfo);
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
+    //플레이어 데이터 저장
+    public static void SavePlayerData()
+    {
+
+    }
 
     //하우징 시스템 저장
     public static void SaveBuildSystem()

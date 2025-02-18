@@ -27,6 +27,7 @@ public class GameManager : MonoBehaviour
     {
         Invoke("PlayerSettings", 0.5f);
         Invoke("LoadBuilds", 0.5f);
+        Invoke("LoadEnvironments",0.5f);
     }
 
     void PlayerSettings()
@@ -89,5 +90,16 @@ public class GameManager : MonoBehaviour
         }
 
         loaded = true;
+    }
+
+
+    void LoadEnvironments()
+    {
+        if(!SaveLoadSystem.LoadEnvironmentData())
+        {
+            //저장된 파일이 없음
+            GameInstance.Instance.environmentSpawner.NewEnvironment();
+            SaveLoadSystem.SaveEnviromentData();
+        }
     }
 }
