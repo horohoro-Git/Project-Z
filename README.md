@@ -118,3 +118,6 @@ Player animation improvement
 
 02/18
 Decorative environment system with save & load
+
+02/19
+Add zombie character and animations

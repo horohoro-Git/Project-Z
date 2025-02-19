@@ -29,9 +29,15 @@ public class EnemyController : Controller
     EnemyType enemyType= EnemyType.Roaming;
     Coroutine coroutine;
     List<Vector3> destinations = new List<Vector3>();
+
+    Animator modelAnimator;
+    int animationWorking;
+    public Collider attackColider;
+
     private void Awake()
     {
      //   if (theta) MoveCalculator.SetBlockArea();
+        modelAnimator = GetComponentInChildren<Animator>();
         moveSpeed = 100;
       //  agent.speed = moveSpeed;
     }
@@ -48,6 +54,8 @@ public class EnemyController : Controller
         {
        //     LastPosition = Transforms.position;
             DetectPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms));
+            //Debug.Log(agent.velocity.magnitude);
+            modelAnimator.SetFloat("speed", agent.velocity.magnitude);
         }
        /* if (GameInstance.Instance.player)
         {
@@ -61,19 +69,10 @@ public class EnemyController : Controller
       */
     }
 
-
-    private void FixedUpdate()
-    {
-        if(enemyDir != Vector3.zero)
-        {
-            Rigid.velocity = enemyDir * moveSpeed * Time.fixedDeltaTime;
-
-        }
-    }
-
     //탐색한 플레이어들 중 최적의 플레이어를 찾고 추적
     void DetectPlayer(List<PlayerController> players, bool skipAngle = false)
     {
+        if (animationWorking > 0) return;
         int index = 0;
         while (players.Count > index)
         {
@@ -103,7 +102,12 @@ public class EnemyController : Controller
         if(target != null)
         {
             float distance = Vector3.Distance(target.Transforms.position, Transforms.position);
-            if(distance < 10)
+            if (distance <= 1.5f)
+            {
+                StartAnimation("scratch", 2);
+                agent.isStopped = true;
+            }
+            else if(distance < 6)
             {
                 agent.isStopped = false;
                 agent.SetDestination(target.Transforms.position);
@@ -135,8 +139,6 @@ public class EnemyController : Controller
             float distance = dir.magnitude;
             dir = Vector3.Normalize(dir);
             
-
-
              pos = elemnet;
         /*    if(!Physics.BoxCast(start, size, dir, Quaternion.identity, distance, 1 << 6))
             {
@@ -151,14 +153,40 @@ public class EnemyController : Controller
         return pos;
     }
 
+    void StartAnimation(string animationName, float timer)
+    {
+        if (animationWorking > 0) return;
+        animationWorking++;
+        modelAnimator.SetTrigger(animationName);
+
+        canMove--;
+        Invoke("StopAnimation", timer);
+    }
+    void StopAnimation()
+    {
+        canMove++;
+        animationWorking--;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Player"))
+        {
+            PlayerController player = other.GetComponent<PlayerController>();
+            player.GetDamage();
+            Debug.Log("Attack Hit");
+        }
+    }
     private void OnDrawGizmos()
     {
         
         if(!hunting) Gizmos.color = Color.yellow;
         else Gizmos.color = Color.red;
-
+        Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(Transforms.position, 6);
-
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(Transforms.position, 1.5f);
+        Gizmos.color = Color.yellow;
         Vector3 leftBoundary = Quaternion.Euler(0, -110 / 2, 0) * Transforms.forward * 110;
         Vector3 rightBoundary = Quaternion.Euler(0, 110 / 2, 0) * Transforms.forward * 110;
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
+using System.Timers;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -43,7 +44,7 @@ public class PlayerController : Controller
 
     bool inputEnabled = false;
     bool destroyed = false;
-    bool animationWorking = false;
+    int animationWorking;
     [NonSerialized]
     public Weapon equipWeapon;
     [NonSerialized]
@@ -253,7 +254,7 @@ public class PlayerController : Controller
     List<RaycastResult> raycastResults = new List<RaycastResult>();
     void Attack(InputAction.CallbackContext callback)
     {
-        if (animationWorking) return;
+        if (animationWorking > 0) return;
         GraphicRaycaster raycaster = GameInstance.Instance.uiManager.graphicRaycaster;
         eventData.position = Input.mousePosition;
         raycastResults.Clear();
@@ -309,7 +310,7 @@ public class PlayerController : Controller
 
     public void GetItem_Animation(Action<PlayerController> action)
     {
-        if (animationWorking) return;
+        if (animationWorking > 0) return;
 
         getItemAction = action;
         StartAnimation("item", 0.8f);
@@ -371,7 +372,7 @@ public class PlayerController : Controller
 
     public void Equipment(ItemStruct equipItem, int index)
     {
-        if (animationWorking) return;
+        if (animationWorking > 0) return;
         if (equipItem.itemType == ItemType.Equipmentable)
         {
             if (equipWeapon != null)
@@ -412,18 +413,27 @@ public class PlayerController : Controller
 
     void StartAnimation(string animationName, float timer)
     {
-        if (animationWorking) return;
-        animationWorking = true;
+        if (animationWorking > 0) return;
+        animationWorking++;
         modelAnimator.SetTrigger(animationName);
        
-        canMove = false;
+        canMove++;
         Invoke("StopAnimation", timer);
     }
 
     void StopAnimation()
     {
-        canMove = true;
-        animationWorking = false;
+        canMove--;
+        animationWorking--;
+    }
+
+    public void GetDamage()
+    {
+        canMove++;
+        modelAnimator.SetTrigger("hit");
+        animationWorking++;
+        Invoke("StopAnimation", 0.5f);
+        Invoke("StopMotion", 0.667f);
     }
     void StopMotion()
     {
