@@ -46,13 +46,13 @@ public class Controller : MonoBehaviour
     public bool sprint;
 
     [NonSerialized]
-    public bool canMove = true;
+    public int canMove;
 
     
     void FixedUpdate()
     {
         Rotate();
-        if (!canMove)
+        if (canMove > 0)
         {
 
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
