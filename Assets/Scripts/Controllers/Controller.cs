@@ -48,6 +48,8 @@ public class Controller : MonoBehaviour
     [NonSerialized]
     public int canMove;
 
+    [NonSerialized]
+    public int hp;
     
     void FixedUpdate()
     {

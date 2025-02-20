@@ -121,3 +121,6 @@ Decorative environment system with save & load
 
 02/19
 Add zombie character and animations
+
+02/20
+Addressable load improvements, player zombification

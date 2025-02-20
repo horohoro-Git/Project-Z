@@ -44,8 +44,15 @@ public class EnvironmentSpawner : MonoBehaviour
 */
     public void NewEnvironment()
     {
-        SpawnTrees();
-        SpawnGrasses();
+        if (GameInstance.Instance.assetLoader.assetLoadSuccessful)
+        {
+            SpawnTrees();
+            SpawnGrasses();
+        }
+        else
+        {
+            Invoke("NewEnvironment", 0.5f);
+        }
     }
 
     void SpawnTrees()
