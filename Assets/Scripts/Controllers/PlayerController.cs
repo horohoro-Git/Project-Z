@@ -50,6 +50,8 @@ public class PlayerController : Controller
     [NonSerialized]
     public int equipSlotIndex = -1;
     Action<PlayerController> getItemAction;
+
+    public Animator zombieAnimator;
     private void Awake()
     {
         GameInstance.Instance.playerController = this;
@@ -139,6 +141,8 @@ public class PlayerController : Controller
     // Update is called once per frame
     void Update()
     {
+        if (state == PlayerState.Dead) return;
+
         if (LastPosition != Transforms.position)
         {
             LastPosition = Transforms.position;
@@ -429,11 +433,32 @@ public class PlayerController : Controller
 
     public void GetDamage()
     {
+        if (state == PlayerState.Dead) return;
+        Debug.Log("A");
+        if(hp <= 0)
+        {
+            modelAnimator.SetTrigger("dead");
+            state = PlayerState.Dead;
+
+            Invoke("Infected",2f);
+        }
+        else
+        {
+            modelAnimator.SetTrigger("hit");
+            Invoke("StopAnimation", 0.5f);
+            Invoke("StopMotion", 0.667f);
+        }
         canMove++;
-        modelAnimator.SetTrigger("hit");
         animationWorking++;
-        Invoke("StopAnimation", 0.5f);
-        Invoke("StopMotion", 0.667f);
+    }
+
+    void Infected()
+    {
+        //감염되어 일어나는 애니메이션
+        modelAnimator.SetTrigger("infected");
+        
+
+        //일정시간 이후 기본 레이어 끄기, 좀비 애니메이션 레이어 설정
     }
     void StopMotion()
     {

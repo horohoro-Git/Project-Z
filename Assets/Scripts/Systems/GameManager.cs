@@ -25,9 +25,19 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        Invoke("GameLoad", 0.2f);
+    }
+
+    void GameLoad()
+    {
+        if (!GameInstance.Instance.assetLoader.assetLoadSuccessful)
+        {
+            Invoke("GameLoad", 0.5f);
+            return;
+        }
         Invoke("PlayerSettings", 0.5f);
         Invoke("LoadBuilds", 0.5f);
-        Invoke("LoadEnvironments",0.5f);
+        Invoke("LoadEnvironments", 0.5f);
     }
 
     void PlayerSettings()
