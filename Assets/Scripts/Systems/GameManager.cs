@@ -25,14 +25,14 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        Invoke("GameLoad", 0.2f);
+        Invoke("GameLoad", 1f);
     }
 
     void GameLoad()
     {
         if (!GameInstance.Instance.assetLoader.assetLoadSuccessful)
         {
-            Invoke("GameLoad", 0.5f);
+            Invoke("GameLoad", 1f);
             return;
         }
         Invoke("PlayerSettings", 0.5f);
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
         Invoke("LoadEnvironments", 0.5f);
     }
 
-    void PlayerSettings()
+    public void PlayerSettings()
     {
         PlayerController pc = Instantiate(player); //플레이어 생성
         pc.name = playerName;
@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
         human.transform.SetParent(pc.Transforms);
         human.transform.position = startPosition;
         pc.SetController(human);
-
+        
 
       /*  Weapon weapon = Instantiate(testWeapon);
         AttachItem attachItem = human.GetComponentInChildren<AttachItem>();

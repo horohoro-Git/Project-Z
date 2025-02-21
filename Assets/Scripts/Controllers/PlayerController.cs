@@ -7,6 +7,7 @@ using System.Timers;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -52,6 +53,7 @@ public class PlayerController : Controller
     Action<PlayerController> getItemAction;
 
     public Animator zombieAnimator;
+    public GameObject model;
     private void Awake()
     {
         GameInstance.Instance.playerController = this;
@@ -71,6 +73,7 @@ public class PlayerController : Controller
     public void SetController(GameObject go)
     {
         modelAnimator = go.GetComponent<Animator>();
+        model = go;
     }
     private void OnEnable()
     {
@@ -456,10 +459,56 @@ public class PlayerController : Controller
     {
         //감염되어 일어나는 애니메이션
         modelAnimator.SetTrigger("infected");
-        
 
         //일정시간 이후 기본 레이어 끄기, 좀비 애니메이션 레이어 설정
+        Invoke("BecomeToZombie", 7);
     }
+
+    void BecomeToZombie()
+    {
+       // model.transform.localPosition = new Vector3(0, 0,0);
+      //  modelAnimator.SetLayerWeight(1, 0);
+     //   modelAnimator.SetLayerWeight(2, 0);
+      //  modelAnimator.SetLayerWeight(3, 0);
+     //   modelAnimator.SetLayerWeight(4, 1);
+      //  modelAnimator.SetLayerWeight(0, 0);
+
+        StartCoroutine(ZombieUpdate());
+    }
+
+    IEnumerator ZombieUpdate()    
+    {
+        Vector3 vector3 = model.transform.localPosition;
+        Vector3 target = new Vector3(0, 0, 0);
+        float timer = 0;
+        while(timer < 1)
+        {
+            timer += Time.deltaTime;
+            model.transform.localPosition = Vector3.Lerp(vector3, target, timer / 1);
+            modelAnimator.SetFloat("zombieTimer", timer);
+            yield return null;
+        }
+        model.transform.localPosition = target;
+        modelAnimator.SetTrigger("standup");
+
+        modelAnimator.SetLayerWeight(1, 0);
+        modelAnimator.SetLayerWeight(2, 0);
+
+        gameObject.tag = "Enemy";
+        Destroy(GetComponent<PlayerInput>());
+
+        gameObject.AddComponent<NavMeshAgent>();
+        gameObject.AddComponent<EnemyController>();
+
+        
+
+        RemoveAction();
+        Inputs.actions["OpenInventory"].performed -= OpenInventory;
+        GameInstance.Instance.gameManager.PlayerSettings();
+        Destroy(this);
+    }
+
+
     void StopMotion()
     {
         motion = 0;

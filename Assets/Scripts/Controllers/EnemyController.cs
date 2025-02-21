@@ -37,13 +37,19 @@ public class EnemyController : Controller
     private void Awake()
     {
      //   if (theta) MoveCalculator.SetBlockArea();
+        agent = GetComponent<NavMeshAgent>();
         modelAnimator = GetComponentInChildren<Animator>();
         moveSpeed = 100;
       //  agent.speed = moveSpeed;
     }
-    // Start is called before the first frame update
-    void Start()
+
+    private void Start()
     {
+<<<<<<< HEAD
+=======
+        agent.speed = 1.5f;
+        agent.angularSpeed = 500f;
+>>>>>>> develop
     }
 
     // Update is called once per frame
