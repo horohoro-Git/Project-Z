@@ -124,3 +124,6 @@ Add zombie character and animations
 
 02/20
 Addressable load improvements, player zombification
+
+02/21
+Reassigning respawned player controllers, change the port of the asset loader

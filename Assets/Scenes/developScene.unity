@@ -690,6 +690,7 @@ MonoBehaviour:
   sprint: 0
   theta: 0
   agent: {fileID: 413314384}
+  attackColider: {fileID: 0}
 --- !u!65 &413314387
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -830,7 +831,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7413484751832463627, guid: 35bafba45f200e44ba92b3993e3a9831, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -4.74
       objectReference: {fileID: 0}
     - target: {fileID: 7413484751832463627, guid: 35bafba45f200e44ba92b3993e3a9831, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1229,6 +1230,10 @@ PrefabInstance:
     - target: {fileID: 2986802419531390001, guid: b249998197c7e7d4f945977b8290cc5c, type: 3}
       propertyPath: m_Name
       value: EnemyZombie
+      objectReference: {fileID: 0}
+    - target: {fileID: 2986802419531390001, guid: b249998197c7e7d4f945977b8290cc5c, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 3126694267242634264, guid: b249998197c7e7d4f945977b8290cc5c, type: 3}
       propertyPath: m_LocalPosition.x

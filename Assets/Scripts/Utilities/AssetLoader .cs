@@ -116,6 +116,7 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
+        Debug.Log("Loading");
         //호스팅 서버에 Remote Load Path로 연결 후
 
         handle = Addressables.LoadAssetsAsync<GameObject>(
