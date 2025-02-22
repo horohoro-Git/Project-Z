@@ -84,7 +84,82 @@ public class SaveLoadSystem
     //플레이어 데이터 저장
     public static void SavePlayerData()
     {
+     
+    }
 
+    //인벤토리 데이터 저장
+    public static void SaveInventoryData()
+    {
+        string dir = Path.Combine(path, "Save");
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        string p = Path.Combine(path, "Save/Inventory.dat");
+
+        Slot[,] inventorySlots = GameInstance.Instance.inventorySystem.inventoryArray;
+        using (MemoryStream ms = new MemoryStream())
+        {
+            using(BinaryWriter writer = new BinaryWriter(ms))
+            {
+                for(int i=0; i<7;i++)
+                {
+                    for(int j=0; j<10; j++)
+                    {
+                        Slot slot = inventorySlots[i, j];
+                        if (slot != null)
+                        {
+                            
+                            ItemStruct item = slot.item;
+                            if (item.itemIndex == 0) continue; 
+                            writer.Write(slot.slotX);
+                            writer.Write(slot.slotY);
+                            writer.Write(item.itemIndex);
+                        }
+                    }
+                }
+            }
+            File.WriteAllBytes(p, ms.ToArray());
+        }
+
+    }
+
+
+    //인벤토리 데이터 로드
+    public static bool LoadInventoryData()
+    {
+        List<HousingInfo> housingInfos = new List<HousingInfo>();
+        byte[] data;
+        string p = Path.Combine(path, "Save/Inventory.dat");
+
+        if (File.Exists(p))
+        {
+            using (FileStream fs = new FileStream(p, FileMode.Open))
+            {
+                data = new byte[fs.Length];
+                fs.Read(data, 0, data.Length);
+                if (data.Length > 0)
+                {
+                    using (BinaryReader reader = new BinaryReader(new MemoryStream(data)))
+                    {
+                        while (reader.BaseStream.Position < reader.BaseStream.Length)
+                        {
+                            int X = reader.ReadInt32();
+                            int Y = reader.ReadInt32();
+                            int index = reader.ReadInt32();
+
+                            GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, index);
+
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     //하우징 시스템 저장

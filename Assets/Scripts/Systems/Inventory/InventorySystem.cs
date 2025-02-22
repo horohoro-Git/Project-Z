@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class InventorySystem : MonoBehaviour, IUIComponent
 {
-
-    Slot[,] inventoryArray = new Slot[7, 10];
+    [NonSerialized]
+    public Slot[,] inventoryArray = new Slot[7, 10];
     [NonSerialized]
     public int slotNum = 0;
     [NonSerialized]
@@ -79,8 +79,8 @@ public class InventorySystem : MonoBehaviour, IUIComponent
             {
                 if(!inventoryArray[i, j].GetItem().used)
                 {
-                    Debug.Log("아이템을 얻음");
-                    ItemStruct itemStruct = new ItemStruct(item.item_Image, item.item_Name, item.item_Slot, item.item_Type, item.item_GO);
+                    Debug.Log("아이템을 얻음" + item.itemIndex);
+                    ItemStruct itemStruct = new ItemStruct(item.itemIndex, item.item_Image, item.item_Name, item.item_Slot, item.item_Type, item.item_GO);
 
                     inventoryArray[i, j].AddItem(itemStruct);
 
@@ -89,10 +89,12 @@ public class InventorySystem : MonoBehaviour, IUIComponent
                         GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, j);
                     }
 
+                    SaveLoadSystem.SaveInventoryData();
                     return;
                 }
             }
         }
+
         Debug.Log("인벤토리 공간이 없음");
 
     }
@@ -170,5 +172,13 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         arm.Setup();
         leg.Setup();
         backpack.Setup();
+    }
+
+    public void LoadInvetory(int x, int y, int index)
+    {
+        Debug.Log(x + " " + y + " " + index);
+        inventoryArray[x, y].AddItem(ItemData.GetItem(index));
+
+
     }
 }

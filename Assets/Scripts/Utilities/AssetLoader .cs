@@ -36,52 +36,18 @@ public class AssetLoader : MonoBehaviour
       "tree", "human_male", "log"
     };
 
-  /*  public const string Floor = "Floor";
-    public const string Wall = "Wall";
-    public const string Door = "Door";
-    public const string Roof = "Roof";
-    public const string PreviewFloor = "PreviewFloor";
-    public const string PreviewWall = "PreviewWall";
-    public const string PreviewDoor = "PreviewDoor";
-    public const string Flower_Orange = "Flower_Orange";
-    public const string Flower_Yellow = "Flower_Yellow";
-    public const string Flower_Pink = "Flower_Pink";
-    public const string Grasses = "Grasses";
-    public const string Tree = "Tree";
-    public const string Human_Male = "Human_Male";*/
+    [NonSerialized]
+    public List<string> itemAssetkeys = new List<string> {
+    "log"
+    };
+
+    [NonSerialized]
+    public List<string> spriteAssetkeys = new List<string> {
+    "log_Sprite"
+    };
 
     public Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
-
-   // [NonSerialized]
-   // public GameObject floor;
-  //  [NonSerialized]
-  //  public GameObject door;
-   // [NonSerialized]
-   // public GameObject wall;
- //   [NonSerialized]
-  //  public GameObject roof;
-    //[NonSerialized]
-   // public GameObject preFloor;
-   // [NonSerialized]
-   // public GameObject preWall;
-  //  [NonSerialized]
-  //  public GameObject preDoor;
-//    [NonSerialized]
-  //  public Material possibleMat;
- //   [NonSerialized]
-  //  public Material impossibleMat;
-  //  [NonSerialized]
-   // public GameObject flowerOrange;
-  //  [NonSerialized]
-  //  public GameObject flowerYellow;
-    //[NonSerialized]
-   // public GameObject flowerPink;
-    //[NonSerialized]
- //   public GameObject grasses;
-    //[NonSerialized]
-  //  public GameObject tree03; 
-   // [NonSerialized]
-   // public GameObject human;
+    public Dictionary<string, Sprite> loadedSprites = new Dictionary<string, Sprite>();
 
     [SerializeField]
     Shader holoShader;
@@ -102,6 +68,14 @@ public class AssetLoader : MonoBehaviour
     Color lastSelectedColor;
     Shader standard;
     AsyncOperationHandle<IList<GameObject>> handle;
+    AsyncOperationHandle<IList<Sprite>> spritehandle;
+
+    [NonSerialized]
+    public List<ItemStruct> items = new List<ItemStruct>()
+    {
+       new ItemStruct(1, null, "log", SlotType.None, ItemType.None, null)
+    };
+  
     Shader Standard { get { if (standard == null) standard = Shader.Find("Standard"); return standard; } }
 
     public void Awake()
@@ -116,6 +90,7 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
+        int loadNum = 0;
         Debug.Log("Loading");
         //호스팅 서버에 Remote Load Path로 연결 후
 
@@ -134,13 +109,41 @@ public class AssetLoader : MonoBehaviour
             //    Debug.Log("Loaded " + asset.name);
                 loadedAssets[asset.name] = asset;   //에셋을 사용할 때에는 해당 에셋의 이름으로 호출
             }
-            assetLoadSuccessful = true;
-
+            loadNum++;
         }
         else
         {
             Debug.Log("error");
         }
+
+
+        spritehandle = Addressables.LoadAssetsAsync<Sprite>(spriteAssetkeys,
+            spriteAsset => { Debug.Log("Loaded: " + spriteAsset.name); },
+            Addressables.MergeMode.Union,
+            false);
+
+        yield return spritehandle;
+
+        if(spritehandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            foreach(var asset in spritehandle.Result)
+            {
+                loadedSprites[asset.name] = asset;
+            }
+            loadNum++;
+        }
+        else
+        {
+            Debug.Log("error");
+        }
+
+        if (loadNum == 2)
+        {
+            assetLoadSuccessful = true;
+        }
+
+        ItemData.ItemDatabaseSetup();
+
     }
 
     public void ClearAsset()

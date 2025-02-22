@@ -202,6 +202,7 @@ public struct HousingChangeInfo
 [System.Serializable]
 public struct ItemStruct
 {
+    public int itemIndex;
     public Sprite image;
     public string itemName;
     public SlotType slotType;
@@ -209,8 +210,9 @@ public struct ItemStruct
     public bool used;
     public GameObject itemGO;
 
-    public ItemStruct(Sprite image, string itemName, SlotType slotType, ItemType itemType, GameObject itemGO)
+    public ItemStruct(int itemIndex, Sprite image, string itemName, SlotType slotType, ItemType itemType, GameObject itemGO)
     {
+        this.itemIndex = itemIndex;
         this.image = image;
         this.itemName = itemName;
         this.slotType = slotType;

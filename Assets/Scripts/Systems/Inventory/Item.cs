@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
+    public int itemIndex;
     public Sprite item_Image;
     public string item_Name;
     public SlotType item_Slot;

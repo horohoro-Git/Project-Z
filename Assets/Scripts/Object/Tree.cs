@@ -128,6 +128,7 @@ public class Tree : EnvironmentObject
                 GameObject go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Log]);
                 go.transform.position = spawnLocations[i].transform.position; //new Vector3(corners[i].x, corners[i].y + 5f, corners[i].z);
                 go.transform.rotation = upper.transform.rotation;
+                go.GetComponent<Item>().itemIndex = 1;
             }
         }
     }
