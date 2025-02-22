@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
         Invoke("PlayerSettings", 0.5f);
         Invoke("LoadBuilds", 0.5f);
         Invoke("LoadEnvironments", 0.5f);
+        Invoke("LoadInventory", 0.5f);
     }
 
     public void PlayerSettings()
@@ -102,6 +103,13 @@ public class GameManager : MonoBehaviour
         loaded = true;
     }
 
+    void LoadInventory()
+    {
+        if(!SaveLoadSystem.LoadInventoryData())
+        {
+            SaveLoadSystem.SaveInventoryData();
+        }
+    }
 
     void LoadEnvironments()
     {
