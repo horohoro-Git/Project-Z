@@ -127,3 +127,6 @@ Addressable load improvements, player zombification
 
 02/21
 Reassigning respawned player controllers, change the port of the asset loader
+
+02/22
+Inventory save & load, item system
