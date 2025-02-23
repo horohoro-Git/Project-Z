@@ -11,7 +11,8 @@ public class Slot : MonoBehaviour, IUIComponent
 {
     Button slotBtn;
     RectTransform self;
-    Image image;
+    [NonSerialized]
+    public Image image;
     SlotInfo info;
     [SerializeField]
     Sprite originImage;

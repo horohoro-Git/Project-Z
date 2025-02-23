@@ -34,8 +34,11 @@ public class EnemyController : Controller
     int animationWorking;
     public Collider attackColider;
 
+    int attackDamage;
+
     private void Awake()
     {
+        attackDamage = 50;
      //   if (theta) MoveCalculator.SetBlockArea();
         agent = GetComponent<NavMeshAgent>();
         modelAnimator = GetComponentInChildren<Animator>();
@@ -175,7 +178,7 @@ public class EnemyController : Controller
         if(other.gameObject.CompareTag("Player"))
         {
             PlayerController player = other.GetComponent<PlayerController>();
-            player.GetDamage();
+            player.GetDamage(attackDamage);
             Debug.Log("Attack Hit");
         }
     }
