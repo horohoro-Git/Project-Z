@@ -26,8 +26,10 @@ public class App : MonoBehaviour
         SceneManager.sceneUnloaded -= OnSceneUnloaded;
         SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
         GameInstance.Instance.assetLoader.ClearAsset();
+     
         GameInstance.Instance.Reset();
         GameInstance.Instance.quit = true;
+
     }
     private void OnSceneUnloaded(Scene scene)
     {

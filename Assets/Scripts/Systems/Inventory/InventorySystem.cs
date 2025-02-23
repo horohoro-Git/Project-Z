@@ -17,6 +17,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     public RectTransform list;
     public GameObject draggingItem;
     public Sprite defaultSlot;
+    public Sprite highLightSlot;
     [NonSerialized]
     public GameObject draggedItem;
 
@@ -45,7 +46,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     Sprite trashcan;
 
 
-    int currentSlotIndex = -1;
+    int currentSlotIndex = 0;
     private void Awake()
     {
        // GameInstance.Instance.inventorySystem = this;
@@ -101,31 +102,17 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     public void UseItem(PlayerController pc ,int index)
     {
+        inventoryArray[0, currentSlotIndex].image.sprite = defaultSlot;
+        GameInstance.Instance.quickSlotUI.slots[currentSlotIndex].image.sprite = defaultSlot;
+
         currentSlotIndex = index;
         ItemStruct item = inventoryArray[0, index].GetItem();
         pc.Equipment(item, index);
-        /*  if (currentSlotIndex == index)
-          {
-              currentSlotIndex = -1;
-          }
-          else
-          {
-              currentSlotIndex = index;
-              ItemStruct item = inventoryArray[0, index].GetItem();
-              if (item.used)
-              {
-                  switch (item.itemType)
-                  {
-                      case ItemType.Equipmentable:
-                          pc.Equipment(item, index);
-                          break;
-                  }
-
-              }
-          }*/
+        inventoryArray[0, index].image.sprite = highLightSlot;
+        GameInstance.Instance.quickSlotUI.slots[index].image.sprite = highLightSlot;
     }
 
-
+  
     public void UpdateEquipSlot(SlotType slotType, ItemStruct item)
     {
         switch (slotType)
@@ -176,9 +163,11 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     public void LoadInvetory(int x, int y, int index)
     {
-        Debug.Log(x + " " + y + " " + index);
-        inventoryArray[x, y].AddItem(ItemData.GetItem(index));
-
-
+        ItemStruct item = ItemData.GetItem(index);
+        if(x == 0)
+        {
+            GameInstance.Instance.quickSlotUI.UpdateSlot(item, y);
+        }
+        inventoryArray[x, y].AddItem(item);
     }
 }

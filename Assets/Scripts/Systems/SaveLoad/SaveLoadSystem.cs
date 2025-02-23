@@ -82,10 +82,93 @@ public class SaveLoadSystem
 
 
     //플레이어 데이터 저장
-    public static void SavePlayerData()
+    public static void SavePlayerData(PlayerController pc)
     {
-     
+        string dir = Path.Combine(path, "Save");
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        string p = Path.Combine(path, "Save/Player.dat");
+        using (MemoryStream ms = new MemoryStream())
+        {
+            using (BinaryWriter writer = new BinaryWriter(ms))
+            {
+                //플레이어 위치
+                float x = pc.Transforms.position.x;
+                float y = pc.Transforms.position.y;
+                float z = pc.Transforms.position.z;
+                writer.Write(x);
+                writer.Write(y);
+                writer.Write(z);
+
+                //플레이어 방향
+                float rx = pc.Transforms.rotation.x;
+                float ry = pc.Transforms.rotation.y;
+                float rz = pc.Transforms.rotation.z;
+                float rw = pc.Transforms.rotation.w;
+                writer.Write(rx);
+                writer.Write(ry);
+                writer.Write(rz);
+                writer.Write(rw);
+  
+                //플레이어 능력치
+                int hp = pc.hp;
+                writer.Write(hp);
+
+            }
+            File.WriteAllBytes(p, ms.ToArray());
+        }
     }
+
+    //플레이어 데이터 로드
+    public static bool LoadPlayerData(PlayerController pc)
+    {
+        List<HousingInfo> housingInfos = new List<HousingInfo>();
+        byte[] data;
+        string p = Path.Combine(path, "Save/Player.dat");
+
+        if (File.Exists(p))
+        {
+            using (FileStream fs = new FileStream(p, FileMode.Open))
+            {
+                data = new byte[fs.Length];
+                fs.Read(data, 0, data.Length);
+                if (data.Length > 0)
+                {
+                    using (BinaryReader reader = new BinaryReader(new MemoryStream(data)))
+                    {  
+                        //플레이어 위치
+                        float x = reader.ReadSingle();
+                        float y = reader.ReadSingle();
+                        float z = reader.ReadSingle();
+
+                        //플레이어 방향
+                        float rx = reader.ReadSingle();
+                        float ry = reader.ReadSingle();
+                        float rz = reader.ReadSingle();
+                        float rw = reader.ReadSingle(); 
+
+                        Quaternion rot = new Quaternion(rx, ry, rz, rw);
+                        //플레이어 능력치
+                        int hp = reader.ReadInt32();
+
+                        Vector3 pos = new Vector3(x, y, z);
+
+                        pc.SetPlayerData(pos, rot, hp);
+                    }
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            
+            return false;
+        }
+    }
+
 
     //인벤토리 데이터 저장
     public static void SaveInventoryData()

@@ -59,6 +59,7 @@ public class PlayerController : Controller
         GameInstance.Instance.playerController = this;
         Inputs.defaultActionMap = "OnMove";
         moveSpeed = 200f;
+        hp = 100;
         slotHandlers = new Action<InputAction.CallbackContext>[10];
         for (int i = 0; i < 10; i++)
         {
@@ -74,7 +75,18 @@ public class PlayerController : Controller
     {
         modelAnimator = go.GetComponent<Animator>();
         model = go;
+
+        SaveLoadSystem.LoadPlayerData(this);
     }
+
+    public void SetPlayerData(Vector3 pos, Quaternion rot, int hp)
+    {
+        Transforms.position = pos;
+        Transforms.rotation = rot;
+        Debug.Log(rot);
+        this.hp = hp;
+    }
+
     private void OnEnable()
     {
        
@@ -434,10 +446,10 @@ public class PlayerController : Controller
         animationWorking--;
     }
 
-    public void GetDamage()
+    public void GetDamage(int damage)
     {
         if (state == PlayerState.Dead) return;
-        Debug.Log("A");
+        hp -= damage;
         if(hp <= 0)
         {
             modelAnimator.SetTrigger("dead");
@@ -512,5 +524,10 @@ public class PlayerController : Controller
     void StopMotion()
     {
         motion = 0;
+    }
+
+    private void OnApplicationQuit()
+    {
+        SaveLoadSystem.SavePlayerData(this);
     }
 }
