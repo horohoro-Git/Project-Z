@@ -133,3 +133,6 @@ Inventory save & load, item system
 
 02/23
 Added player hp stat, player data save & load
+
+02/24
+Camera smooth movement

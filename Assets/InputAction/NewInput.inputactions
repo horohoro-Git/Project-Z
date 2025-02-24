@@ -158,34 +158,6 @@
             ]
         },
         {
-            "name": "OnCombatMode",
-            "id": "25e63f00-0546-489f-90d3-1d9d01a5e1cf",
-            "actions": [
-                {
-                    "name": "Combat",
-                    "type": "Button",
-                    "id": "64d0720b-a600-4d73-9867-0a16d38e633b",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "2acaec68-4fc0-4f9c-bb86-ed2ff66a4827",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": ";keyboard;touch",
-                    "action": "Combat",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
-        },
-        {
             "name": "OnAttack",
             "id": "306495e6-9cad-4130-a192-ec0db59b7a09",
             "actions": [
@@ -444,6 +416,34 @@
                     "processors": "",
                     "groups": ";keyboard;touch",
                     "action": "Item10",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "OnViewAround",
+            "id": "c1dbcc8c-932d-4019-a333-41c4f994ce9d",
+            "actions": [
+                {
+                    "name": "Viewaround",
+                    "type": "Button",
+                    "id": "a242bef1-ec01-4300-9355-f3bf4d25cb62",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "5ba460b8-bc3a-4e5c-bda8-6e72a646a7b9",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";keyboard;touch",
+                    "action": "Viewaround",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

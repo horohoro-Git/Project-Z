@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c9f3493e0e4a864da7465506712cdfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemIndex: 0
   item_Image: {fileID: 21300000, guid: 2dcd1dbd6dd883947a817b41e9621ec7, type: 3}
   item_Name: Plank
   item_Slot: 0
@@ -179,10 +180,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1591998788712691088, guid: 9e1f94aa14470d34d880fb82eb4a4b68, type: 3}
-      propertyPath: orthographic size
-      value: 4
-      objectReference: {fileID: 0}
     - target: {fileID: 2612005418616730449, guid: 9e1f94aa14470d34d880fb82eb4a4b68, type: 3}
       propertyPath: m_LocalPosition.x
       value: -40

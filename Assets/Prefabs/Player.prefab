@@ -52,6 +52,8 @@ MonoBehaviour:
   turn: 0
   longturn: 0
   sprint: 0
+  zombieAnimator: {fileID: 0}
+  model: {fileID: 0}
 --- !u!54 &569124538565408289
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -76,7 +78,7 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!114 &461609278970733820

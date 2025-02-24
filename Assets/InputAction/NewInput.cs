@@ -180,34 +180,6 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""OnCombatMode"",
-            ""id"": ""25e63f00-0546-489f-90d3-1d9d01a5e1cf"",
-            ""actions"": [
-                {
-                    ""name"": ""Combat"",
-                    ""type"": ""Button"",
-                    ""id"": ""64d0720b-a600-4d73-9867-0a16d38e633b"",
-                    ""expectedControlType"": """",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""2acaec68-4fc0-4f9c-bb86-ed2ff66a4827"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": "";keyboard;touch"",
-                    ""action"": ""Combat"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
-        },
-        {
             ""name"": ""OnAttack"",
             ""id"": ""306495e6-9cad-4130-a192-ec0db59b7a09"",
             ""actions"": [
@@ -470,6 +442,34 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""OnViewAround"",
+            ""id"": ""c1dbcc8c-932d-4019-a333-41c4f994ce9d"",
+            ""actions"": [
+                {
+                    ""name"": ""Viewaround"",
+                    ""type"": ""Button"",
+                    ""id"": ""a242bef1-ec01-4300-9355-f3bf4d25cb62"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""5ba460b8-bc3a-4e5c-bda8-6e72a646a7b9"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";keyboard;touch"",
+                    ""action"": ""Viewaround"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -508,9 +508,6 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         // OnInteraction
         m_OnInteraction = asset.FindActionMap("OnInteraction", throwIfNotFound: true);
         m_OnInteraction_Interaction = m_OnInteraction.FindAction("Interaction", throwIfNotFound: true);
-        // OnCombatMode
-        m_OnCombatMode = asset.FindActionMap("OnCombatMode", throwIfNotFound: true);
-        m_OnCombatMode_Combat = m_OnCombatMode.FindAction("Combat", throwIfNotFound: true);
         // OnAttack
         m_OnAttack = asset.FindActionMap("OnAttack", throwIfNotFound: true);
         m_OnAttack_Attack = m_OnAttack.FindAction("Attack", throwIfNotFound: true);
@@ -529,6 +526,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         m_OnUseItem_Item8 = m_OnUseItem.FindAction("Item8", throwIfNotFound: true);
         m_OnUseItem_Item9 = m_OnUseItem.FindAction("Item9", throwIfNotFound: true);
         m_OnUseItem_Item10 = m_OnUseItem.FindAction("Item10", throwIfNotFound: true);
+        // OnViewAround
+        m_OnViewAround = asset.FindActionMap("OnViewAround", throwIfNotFound: true);
+        m_OnViewAround_Viewaround = m_OnViewAround.FindAction("Viewaround", throwIfNotFound: true);
     }
 
     ~@NewInput()
@@ -537,10 +537,10 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_OnSprint.enabled, "This will cause a leak and performance issues, NewInput.OnSprint.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnDebug.enabled, "This will cause a leak and performance issues, NewInput.OnDebug.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnInteraction.enabled, "This will cause a leak and performance issues, NewInput.OnInteraction.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_OnCombatMode.enabled, "This will cause a leak and performance issues, NewInput.OnCombatMode.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnAttack.enabled, "This will cause a leak and performance issues, NewInput.OnAttack.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnInventory.enabled, "This will cause a leak and performance issues, NewInput.OnInventory.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnUseItem.enabled, "This will cause a leak and performance issues, NewInput.OnUseItem.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnViewAround.enabled, "This will cause a leak and performance issues, NewInput.OnViewAround.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -783,52 +783,6 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     }
     public OnInteractionActions @OnInteraction => new OnInteractionActions(this);
 
-    // OnCombatMode
-    private readonly InputActionMap m_OnCombatMode;
-    private List<IOnCombatModeActions> m_OnCombatModeActionsCallbackInterfaces = new List<IOnCombatModeActions>();
-    private readonly InputAction m_OnCombatMode_Combat;
-    public struct OnCombatModeActions
-    {
-        private @NewInput m_Wrapper;
-        public OnCombatModeActions(@NewInput wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Combat => m_Wrapper.m_OnCombatMode_Combat;
-        public InputActionMap Get() { return m_Wrapper.m_OnCombatMode; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(OnCombatModeActions set) { return set.Get(); }
-        public void AddCallbacks(IOnCombatModeActions instance)
-        {
-            if (instance == null || m_Wrapper.m_OnCombatModeActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_OnCombatModeActionsCallbackInterfaces.Add(instance);
-            @Combat.started += instance.OnCombat;
-            @Combat.performed += instance.OnCombat;
-            @Combat.canceled += instance.OnCombat;
-        }
-
-        private void UnregisterCallbacks(IOnCombatModeActions instance)
-        {
-            @Combat.started -= instance.OnCombat;
-            @Combat.performed -= instance.OnCombat;
-            @Combat.canceled -= instance.OnCombat;
-        }
-
-        public void RemoveCallbacks(IOnCombatModeActions instance)
-        {
-            if (m_Wrapper.m_OnCombatModeActionsCallbackInterfaces.Remove(instance))
-                UnregisterCallbacks(instance);
-        }
-
-        public void SetCallbacks(IOnCombatModeActions instance)
-        {
-            foreach (var item in m_Wrapper.m_OnCombatModeActionsCallbackInterfaces)
-                UnregisterCallbacks(item);
-            m_Wrapper.m_OnCombatModeActionsCallbackInterfaces.Clear();
-            AddCallbacks(instance);
-        }
-    }
-    public OnCombatModeActions @OnCombatMode => new OnCombatModeActions(this);
-
     // OnAttack
     private readonly InputActionMap m_OnAttack;
     private List<IOnAttackActions> m_OnAttackActionsCallbackInterfaces = new List<IOnAttackActions>();
@@ -1038,6 +992,52 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         }
     }
     public OnUseItemActions @OnUseItem => new OnUseItemActions(this);
+
+    // OnViewAround
+    private readonly InputActionMap m_OnViewAround;
+    private List<IOnViewAroundActions> m_OnViewAroundActionsCallbackInterfaces = new List<IOnViewAroundActions>();
+    private readonly InputAction m_OnViewAround_Viewaround;
+    public struct OnViewAroundActions
+    {
+        private @NewInput m_Wrapper;
+        public OnViewAroundActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Viewaround => m_Wrapper.m_OnViewAround_Viewaround;
+        public InputActionMap Get() { return m_Wrapper.m_OnViewAround; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(OnViewAroundActions set) { return set.Get(); }
+        public void AddCallbacks(IOnViewAroundActions instance)
+        {
+            if (instance == null || m_Wrapper.m_OnViewAroundActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnViewAroundActionsCallbackInterfaces.Add(instance);
+            @Viewaround.started += instance.OnViewaround;
+            @Viewaround.performed += instance.OnViewaround;
+            @Viewaround.canceled += instance.OnViewaround;
+        }
+
+        private void UnregisterCallbacks(IOnViewAroundActions instance)
+        {
+            @Viewaround.started -= instance.OnViewaround;
+            @Viewaround.performed -= instance.OnViewaround;
+            @Viewaround.canceled -= instance.OnViewaround;
+        }
+
+        public void RemoveCallbacks(IOnViewAroundActions instance)
+        {
+            if (m_Wrapper.m_OnViewAroundActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IOnViewAroundActions instance)
+        {
+            foreach (var item in m_Wrapper.m_OnViewAroundActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_OnViewAroundActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public OnViewAroundActions @OnViewAround => new OnViewAroundActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -1072,10 +1072,6 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     {
         void OnInteraction(InputAction.CallbackContext context);
     }
-    public interface IOnCombatModeActions
-    {
-        void OnCombat(InputAction.CallbackContext context);
-    }
     public interface IOnAttackActions
     {
         void OnAttack(InputAction.CallbackContext context);
@@ -1096,5 +1092,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         void OnItem8(InputAction.CallbackContext context);
         void OnItem9(InputAction.CallbackContext context);
         void OnItem10(InputAction.CallbackContext context);
+    }
+    public interface IOnViewAroundActions
+    {
+        void OnViewaround(InputAction.CallbackContext context);
     }
 }

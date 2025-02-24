@@ -24,6 +24,7 @@ public class InputManager : MonoBehaviour
     public StructureState structureState = StructureState.None;
 
     const string debugAction = "F3";
+    const string aroundAction = "Viewaround";
     Camera mainCamera;
     PlayerInput playerInput;
     Debugging debugging;
@@ -42,7 +43,7 @@ public class InputManager : MonoBehaviour
         this.playerInput = playerInput;
         if (debugging == null)
         {
-            if (GameInstance.Instance.app != null)
+            if (GameInstance.Instance.app != null && GameInstance.Instance.app.debugging != null)
             {
                 debugging = GameInstance.Instance.app.debugging;
                 debugging.gameObject.SetActive(false);
@@ -52,9 +53,12 @@ public class InputManager : MonoBehaviour
 
     private void Start()
     {
+       
         GameInstance.Instance.inputManager = this;
         mainCamera = Camera.main;   
         if(debugging) playerInput.actions[debugAction].performed += DebugOn;
+        playerInput.actions[aroundAction].performed += StartAround;
+        playerInput.actions[aroundAction].canceled += EndAround;
     }
  
   
@@ -145,9 +149,11 @@ public class InputManager : MonoBehaviour
 
     private void OnDisable()
     {
-        if (playerInput != null && debugging)
+        if (playerInput != null)
         {
-            playerInput.actions[debugAction].performed -= DebugOn;
+           if(debugging) playerInput.actions[debugAction].performed -= DebugOn;
+            playerInput.actions[aroundAction].performed -= StartAround;
+            playerInput.actions[aroundAction].canceled -= EndAround;
         }
     }
 
@@ -157,4 +163,35 @@ public class InputManager : MonoBehaviour
         else debugging.gameObject.SetActive(true);
     }
  
+
+    void StartAround(InputAction.CallbackContext callback)
+    {
+        if (GameInstance.Instance.GetPlayers.Count > 0)
+        {
+            PlayerController pc = GameInstance.Instance.GetPlayers[0];
+            if (pc != null)
+            {
+                PlayerCamera camera = pc.camera;
+                if (camera != null)
+                {
+                    camera.lookAround = true;
+                }
+            }
+        }
+    }
+    void EndAround(InputAction.CallbackContext callback)
+    {
+        if (GameInstance.Instance.GetPlayers.Count > 0)
+        {
+            PlayerController pc = GameInstance.Instance.GetPlayers[0];
+            if (pc != null)
+            {
+                PlayerCamera camera = pc.camera;
+                if (camera != null)
+                {
+                    camera.lookAround = false;
+                }
+            }
+        }
+    }
 }
