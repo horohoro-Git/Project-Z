@@ -115,7 +115,6 @@ public class SaveLoadSystem
                 //플레이어 능력치
                 int hp = pc.hp;
                 writer.Write(hp);
-
             }
             File.WriteAllBytes(p, ms.ToArray());
         }

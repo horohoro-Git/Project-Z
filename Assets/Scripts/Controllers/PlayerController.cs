@@ -54,6 +54,9 @@ public class PlayerController : Controller
 
     public Animator zombieAnimator;
     public GameObject model;
+
+    [NonSerialized]
+    public PlayerCamera camera;
     private void Awake()
     {
         GameInstance.Instance.playerController = this;
@@ -71,19 +74,25 @@ public class PlayerController : Controller
    */
     }
 
-    public void SetController(GameObject go)
+    public void SetController(GameObject go, bool load)
     {
         modelAnimator = go.GetComponent<Animator>();
         model = go;
 
-        SaveLoadSystem.LoadPlayerData(this);
+        if(load) SaveLoadSystem.LoadPlayerData(this);
+        else
+        {
+            //플레이어 초기 값
+            hp = 100;
+        }
     }
 
     public void SetPlayerData(Vector3 pos, Quaternion rot, int hp)
     {
-        Transforms.position = pos;
-        Transforms.rotation = rot;
-        Debug.Log(rot);
+   //     Transforms.position = pos;
+    //    Transforms.rotation = rot;
+        Rigid.MovePosition(pos);
+        Rigid.MoveRotation(rot);
         this.hp = hp;
     }
 
@@ -122,7 +131,6 @@ public class PlayerController : Controller
         Inputs.actions["Run"].performed += Run;
         Inputs.actions["Run"].canceled += RunStop;
         Inputs.actions["Interaction"].performed += Interact;
-        Inputs.actions["Combat"].performed += ChangeCombatMode;
         Inputs.actions["Attack"].performed += Attack;
         Inputs.actions["Attack"].canceled += EndAttack;
     }
@@ -136,7 +144,6 @@ public class PlayerController : Controller
         Inputs.actions["Run"].performed -= Run;
         Inputs.actions["Run"].canceled -= RunStop;
         Inputs.actions["Interaction"].performed -= Interact;
-        Inputs.actions["Combat"].performed -= ChangeCombatMode;
         Inputs.actions["Attack"].performed -= Attack;
         Inputs.actions["Attack"].canceled -= EndAttack;
         for (int i = 0; i < 10; i++)
@@ -148,7 +155,8 @@ public class PlayerController : Controller
     // Start is called before the first frame update
     void Start()
     {
-        GameInstance.Instance.AddPlayer(this);
+        if (GameInstance.Instance.GetPlayers.Count == 0) GameInstance.Instance.AddPlayer(this);
+        else GameInstance.Instance.GetPlayers[0] = this;
         ItemStruct item = GameInstance.Instance.quickSlotUI.slots[0].item;
         Equipment(item, 0);
     }
@@ -217,23 +225,6 @@ public class PlayerController : Controller
     {
         moveSpeed = 200;
         sprint = false;
-    }
-
-    void ChangeCombatMode(InputAction.CallbackContext callback)
-    {
-        if(state == PlayerState.Default)
-        {
-            modelAnimator.SetBool("combat", true);
-            
-            if (combatMotion != null) StopCoroutine(combatMotion);
-            combatMotion = StartCoroutine(ChangeMode(true));
-        }
-        else if(state == PlayerState.Combat)
-        {
-          
-            if (combatMotion != null) StopCoroutine(combatMotion);
-            combatMotion = StartCoroutine(ChangeMode(false));
-        }
     }
 
     IEnumerator ChangeMode(bool on)
@@ -516,7 +507,7 @@ public class PlayerController : Controller
 
         RemoveAction();
         Inputs.actions["OpenInventory"].performed -= OpenInventory;
-        GameInstance.Instance.gameManager.PlayerSettings();
+        GameInstance.Instance.gameManager.PlayerSettings(false);
         Destroy(this);
     }
 
