@@ -174,6 +174,7 @@ public class InputManager : MonoBehaviour
                 PlayerCamera camera = pc.camera;
                 if (camera != null)
                 {
+                    pc.lookAround = true;
                     camera.lookAround = true;
                 }
             }
@@ -189,6 +190,7 @@ public class InputManager : MonoBehaviour
                 PlayerCamera camera = pc.camera;
                 if (camera != null)
                 {
+                    pc.lookAround = false;
                     camera.lookAround = false;
                 }
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -29,6 +30,9 @@ public class Controller : MonoBehaviour
         }
     }
 
+    [NonSerialized]
+    public bool lookAround;
+
     public Vector3 moveDir;
     public float moveSpeed;
     [NonSerialized] 
@@ -50,13 +54,16 @@ public class Controller : MonoBehaviour
 
     [NonSerialized]
     public int hp;
-    
+
     void FixedUpdate()
     {
-        Rotate();
+        if(!lookAround) Rotate();
+        else
+        {
+            LookAround();
+        }
         if (canMove > 0)
         {
-
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
             Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
             return;
@@ -66,26 +73,19 @@ public class Controller : MonoBehaviour
         {
             viewDir = moveDir;
 
-           /* if (turn)
-            {
-                viewVelocity = 1;
-              //  currentMoveSpeed = 0;
-            }
-            else
-            {*/
-                viewVelocity = 0;
-                // moveSpeed에 따른 걷기/뛰기 애니메이션
-                currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.5f);
-                //Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
-                Rigid.velocity = moveDir * Time.fixedDeltaTime * currentMoveSpeed;
-           // }
+            viewVelocity = 0;
+
+            currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.5f);
+            //Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
+            Rigid.velocity = moveDir * Time.fixedDeltaTime * currentMoveSpeed;
+            // }
         }
         else
         {
             viewVelocity = 0;
             // 감속 되는 애니메이션
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
-            Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
+            Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
         }
     }
 
@@ -109,5 +109,18 @@ public class Controller : MonoBehaviour
         }
     }
 
-    
+    void LookAround()
+    {
+        Vector3 mousePosition = Input.mousePosition;
+        Ray ray = Camera.main.ScreenPointToRay(mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hitInfo))
+        {
+            Vector3 worldMousePosition = hitInfo.point;
+            Vector3 direction = worldMousePosition - Transforms.position;
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            targetRotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0);
+            Transforms.rotation = Quaternion.Slerp(Transforms.rotation, targetRotation, 5 * Time.deltaTime);
+        }
+ 
+    }
 }

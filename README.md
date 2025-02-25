@@ -136,3 +136,6 @@ Added player hp stat, player data save & load
 
 02/24
 Camera smooth movement
+
+02/25
+Character rotate to based mouse point, camera movement limit
