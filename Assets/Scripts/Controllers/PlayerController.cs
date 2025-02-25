@@ -101,12 +101,16 @@ public class PlayerController : Controller
        
         AddAction();
         Inputs.actions["OpenInventory"].performed += OpenInventory;
+        Inputs.actions["ZoomIn"].performed += ZoomIn;
+        Inputs.actions["ZoomOut"].performed += ZoomOut;
     }
 
     private void OnDisable()
     {
         RemoveAction();
         Inputs.actions["OpenInventory"].performed -= OpenInventory;
+        Inputs.actions["ZoomIn"].performed -= ZoomIn;
+        Inputs.actions["ZoomOut"].performed -= ZoomOut;
         // lastHandler.Clear();
     }
 
@@ -133,6 +137,7 @@ public class PlayerController : Controller
         Inputs.actions["Interaction"].performed += Interact;
         Inputs.actions["Attack"].performed += Attack;
         Inputs.actions["Attack"].canceled += EndAttack;
+       
     }
     public void RemoveAction()
     {
@@ -517,6 +522,31 @@ public class PlayerController : Controller
         motion = 0;
     }
 
+    void ZoomIn(InputAction.CallbackContext callback)
+    {
+        if(lookAround)
+        {
+            Camera cam = camera.GetComponentInChildren<Camera>();
+            if (cam != null)
+            {
+                cam.orthographicSize -= 0.5f;
+                if (cam.orthographicSize < 4) cam.orthographicSize = 4;
+            }
+        }
+    }
+
+    void ZoomOut(InputAction.CallbackContext callback)
+    {
+        if (lookAround)
+        {
+            Camera cam = camera.GetComponentInChildren<Camera>();
+            if (cam != null)
+            {
+                cam.orthographicSize += 0.5f;
+                if (cam.orthographicSize > 10) cam.orthographicSize = 10;
+            }
+        }
+    }
     private void OnApplicationQuit()
     {
         SaveLoadSystem.SavePlayerData(this);

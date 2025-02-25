@@ -470,6 +470,54 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""OnZoomInOut"",
+            ""id"": ""d7b8338e-69c4-4f1b-a233-e048e19eb1ce"",
+            ""actions"": [
+                {
+                    ""name"": ""ZoomIn"",
+                    ""type"": ""Value"",
+                    ""id"": ""a2a63185-b8ba-49d9-9e99-eca5fa145a06"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ZoomOut"",
+                    ""type"": ""Value"",
+                    ""id"": ""3ae554dd-55aa-40d9-9714-98bc2d3f5f96"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d8c1c947-a63c-4cd5-acc1-c2e2e372795d"",
+                    ""path"": ""<Mouse>/scroll/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ZoomIn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d3eaed76-27a5-495a-968b-ba4c473753be"",
+                    ""path"": ""<Mouse>/scroll/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ZoomOut"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -529,6 +577,10 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         // OnViewAround
         m_OnViewAround = asset.FindActionMap("OnViewAround", throwIfNotFound: true);
         m_OnViewAround_Viewaround = m_OnViewAround.FindAction("Viewaround", throwIfNotFound: true);
+        // OnZoomInOut
+        m_OnZoomInOut = asset.FindActionMap("OnZoomInOut", throwIfNotFound: true);
+        m_OnZoomInOut_ZoomIn = m_OnZoomInOut.FindAction("ZoomIn", throwIfNotFound: true);
+        m_OnZoomInOut_ZoomOut = m_OnZoomInOut.FindAction("ZoomOut", throwIfNotFound: true);
     }
 
     ~@NewInput()
@@ -541,6 +593,7 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_OnInventory.enabled, "This will cause a leak and performance issues, NewInput.OnInventory.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnUseItem.enabled, "This will cause a leak and performance issues, NewInput.OnUseItem.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_OnViewAround.enabled, "This will cause a leak and performance issues, NewInput.OnViewAround.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_OnZoomInOut.enabled, "This will cause a leak and performance issues, NewInput.OnZoomInOut.Disable() has not been called.");
     }
 
     public void Dispose()
@@ -1038,6 +1091,60 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         }
     }
     public OnViewAroundActions @OnViewAround => new OnViewAroundActions(this);
+
+    // OnZoomInOut
+    private readonly InputActionMap m_OnZoomInOut;
+    private List<IOnZoomInOutActions> m_OnZoomInOutActionsCallbackInterfaces = new List<IOnZoomInOutActions>();
+    private readonly InputAction m_OnZoomInOut_ZoomIn;
+    private readonly InputAction m_OnZoomInOut_ZoomOut;
+    public struct OnZoomInOutActions
+    {
+        private @NewInput m_Wrapper;
+        public OnZoomInOutActions(@NewInput wrapper) { m_Wrapper = wrapper; }
+        public InputAction @ZoomIn => m_Wrapper.m_OnZoomInOut_ZoomIn;
+        public InputAction @ZoomOut => m_Wrapper.m_OnZoomInOut_ZoomOut;
+        public InputActionMap Get() { return m_Wrapper.m_OnZoomInOut; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(OnZoomInOutActions set) { return set.Get(); }
+        public void AddCallbacks(IOnZoomInOutActions instance)
+        {
+            if (instance == null || m_Wrapper.m_OnZoomInOutActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_OnZoomInOutActionsCallbackInterfaces.Add(instance);
+            @ZoomIn.started += instance.OnZoomIn;
+            @ZoomIn.performed += instance.OnZoomIn;
+            @ZoomIn.canceled += instance.OnZoomIn;
+            @ZoomOut.started += instance.OnZoomOut;
+            @ZoomOut.performed += instance.OnZoomOut;
+            @ZoomOut.canceled += instance.OnZoomOut;
+        }
+
+        private void UnregisterCallbacks(IOnZoomInOutActions instance)
+        {
+            @ZoomIn.started -= instance.OnZoomIn;
+            @ZoomIn.performed -= instance.OnZoomIn;
+            @ZoomIn.canceled -= instance.OnZoomIn;
+            @ZoomOut.started -= instance.OnZoomOut;
+            @ZoomOut.performed -= instance.OnZoomOut;
+            @ZoomOut.canceled -= instance.OnZoomOut;
+        }
+
+        public void RemoveCallbacks(IOnZoomInOutActions instance)
+        {
+            if (m_Wrapper.m_OnZoomInOutActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IOnZoomInOutActions instance)
+        {
+            foreach (var item in m_Wrapper.m_OnZoomInOutActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_OnZoomInOutActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public OnZoomInOutActions @OnZoomInOut => new OnZoomInOutActions(this);
     private int m_keyboardSchemeIndex = -1;
     public InputControlScheme keyboardScheme
     {
@@ -1096,5 +1203,10 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     public interface IOnViewAroundActions
     {
         void OnViewaround(InputAction.CallbackContext context);
+    }
+    public interface IOnZoomInOutActions
+    {
+        void OnZoomIn(InputAction.CallbackContext context);
+        void OnZoomOut(InputAction.CallbackContext context);
     }
 }

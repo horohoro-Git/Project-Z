@@ -1,3 +1,4 @@
+using Autodesk.Fbx;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,6 +7,8 @@ using UnityEngine;
 
 public class PlayerCamera : MonoBehaviour
 {
+
+    public GameObject camera;
     Transform transforms;
     PlayerController pc;
 
@@ -50,9 +53,16 @@ public class PlayerCamera : MonoBehaviour
         if (lookAround)
         {
             Vector3 pos = Camera.main.ScreenToViewportPoint(Input.mousePosition - lastPos);
-            Vector3 move = new Vector3(pos.x * 20, 0, pos.y * 20); // y축은 0으로 고정
-            move = Quaternion.Euler(0, 45, 0) * move;
-            targetPos += move;
+            Vector3 preMove = new Vector3(pos.x * 20, 0, pos.y * 20);
+            Vector3 move = Quaternion.Euler(0, 45, 0) * preMove;
+
+            Vector3 checkPosition = Quaternion.Euler(0,-45,0) * (targetPos + move);
+            if(checkPosition.x <= 6f && checkPosition.x >= -6f && checkPosition.z >= -4f && checkPosition.z <= 2.5f)
+            {
+                targetPos += move;
+            }
+
+        //    Debug.Log(checkPosition);
         }
 
     }
@@ -63,17 +73,21 @@ public class PlayerCamera : MonoBehaviour
        
         if (PC)
         {
-            if (!lookAround)
+            //if (!lookAround)
             {
-                targetPos = Transforms.position;
+                if (!lookAround) targetPos = camera.transform.localPosition;
                 Vector3 target = PC.Transforms.position;
                // Transforms.position =
                 Vector3 targetLoc = new Vector3(target.x - 40, 100, target.z - 40);
-                Transforms.position = Vector3.SmoothDamp(Transforms.position, targetLoc, ref velocity, 0.3f);
+
+                 Transforms.position = targetLoc;
+                //Transforms.position = Vector3.SmoothDamp(Transforms.position, targetLoc, ref velocity, 0.3f);
+                if(lookAround) camera.transform.localPosition = Vector3.SmoothDamp(camera.transform.localPosition, targetPos, ref velocity, 0.3f);
+                else camera.transform.localPosition = Vector3.SmoothDamp(camera.transform.localPosition, Vector3.zero, ref velocity, 0.3f);
             }
-            else
+           // else
             {
-                Transforms.position = Vector3.SmoothDamp(Transforms.position, targetPos, ref velocity, 0.3f);
+          //      camera.transform.localPosition = Vector3.SmoothDamp(camera.transform.localPosition, targetPos, ref velocity, 0.3f);
             }
         }
         lastPos = Input.mousePosition;

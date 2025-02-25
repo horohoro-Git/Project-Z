@@ -448,6 +448,54 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "OnZoomInOut",
+            "id": "d7b8338e-69c4-4f1b-a233-e048e19eb1ce",
+            "actions": [
+                {
+                    "name": "ZoomIn",
+                    "type": "Value",
+                    "id": "a2a63185-b8ba-49d9-9e99-eca5fa145a06",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "ZoomOut",
+                    "type": "Value",
+                    "id": "3ae554dd-55aa-40d9-9714-98bc2d3f5f96",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d8c1c947-a63c-4cd5-acc1-c2e2e372795d",
+                    "path": "<Mouse>/scroll/up",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ZoomIn",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d3eaed76-27a5-495a-968b-ba4c473753be",
+                    "path": "<Mouse>/scroll/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ZoomOut",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
