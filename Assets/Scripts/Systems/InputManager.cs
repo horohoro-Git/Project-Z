@@ -60,7 +60,7 @@ public class InputManager : MonoBehaviour
         mainCamera = Camera.main;   
         if(debugging) playerInput.actions[debugAction].performed += DebugOn;
         playerInput.actions[aroundAction].performed += StartAround;
-        playerInput.actions[aroundAction].canceled += EndAround;
+    //    playerInput.actions[aroundAction].canceled += EndAround;
     }
  
   
@@ -155,7 +155,7 @@ public class InputManager : MonoBehaviour
         {
            if(debugging) playerInput.actions[debugAction].performed -= DebugOn;
             playerInput.actions[aroundAction].performed -= StartAround;
-            playerInput.actions[aroundAction].canceled -= EndAround;
+           // playerInput.actions[aroundAction].canceled -= EndAround;
         }
     }
 
@@ -176,8 +176,16 @@ public class InputManager : MonoBehaviour
                 PlayerCamera camera = pc.camera;
                 if (camera != null)
                 {
-                    pc.lookAround = true;
-                    camera.lookAround = true;
+                    if (pc.lookAround)
+                    {
+                        pc.lookAround = false;
+                        camera.lookAround = false;
+                    }
+                    else
+                    {
+                        pc.lookAround = true;
+                        camera.lookAround = true;
+                    }
                 }
             }
         }

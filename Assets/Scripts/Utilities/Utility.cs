@@ -221,6 +221,19 @@ public struct ItemStruct
         this.itemGO = itemGO;
     }
 }
+
+
+//플레이어의 정보
+public struct PlayerStruct
+{
+    public int hp;
+    public float exp;
+    public float requireEXP;
+    public int level;
+    public int attackDamage;
+    public int skillPoint;
+}
+
 public class Utility
 {
 

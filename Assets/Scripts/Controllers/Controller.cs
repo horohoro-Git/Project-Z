@@ -51,10 +51,13 @@ public class Controller : MonoBehaviour
 
     [NonSerialized]
     public int canMove;
-
     [NonSerialized]
-    public int hp;
+    public float viewSpeed;
 
+    float lastDot;
+    Vector3 lastVectors;
+    [NonSerialized]
+    public float around;
     void FixedUpdate()
     {
         if(!lookAround) Rotate();
@@ -66,27 +69,110 @@ public class Controller : MonoBehaviour
         {
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
             Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
+            viewSpeed = currentMoveSpeed;
             return;
         }
-       
-        if (moveDir != Vector3.zero)
+        if (moveDir.magnitude > 0)
         {
             viewDir = moveDir;
-
-            viewVelocity = 0;
-
+            viewSpeed = currentMoveSpeed;
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.5f);
-            //Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
-            Rigid.velocity = moveDir * Time.fixedDeltaTime * currentMoveSpeed;
-            // }
+            Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
+
         }
         else
         {
             viewVelocity = 0;
-            // 감속 되는 애니메이션
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
             Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
+            viewSpeed = currentMoveSpeed;
         }
+
+       /* if (canMove > 0)
+        {
+            currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
+            Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
+            viewSpeed = currentMoveSpeed;
+            return;
+        }
+
+        if (lookAround)
+        {
+            if (moveDir != Vector3.zero)
+            {
+               // Transforms.rotation
+                viewDir = moveDir;
+
+                viewVelocity = 0;
+                currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.5f);
+                Rigid.velocity = moveDir * Time.fixedDeltaTime * currentMoveSpeed;
+
+                float dot = Vector3.Dot(Transforms.forward, moveDir);
+                float cross = Vector3.Cross(Transforms.forward, moveDir).y;
+
+                viewSpeed = currentMoveSpeed;
+                if (dot > 0)
+                {
+                    Debug.Log("앞");
+                }
+                else if(dot < 0 )
+                {
+                    viewSpeed *= -1;
+                    Debug.Log(" 뒤");
+                }
+                Debug.Log(currentMoveSpeed);
+                float angle = Vector3.Angle(Transforms.forward, moveDir);
+                float directionValue = Mathf.Clamp01(1 - angle / 100f) * 2f - 1;
+                //Debug.Log(dot + " " + cross);
+            }
+            else
+            {
+                viewVelocity = 0;
+                // 감속 되는 애니메이션
+                currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
+                Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
+                float dot = Vector3.Dot(Transforms.forward, viewDir);
+                float cross = Vector3.Cross(Transforms.forward, viewDir).y;
+
+                viewSpeed = currentMoveSpeed;
+                if (dot > 0)
+                {
+                    Debug.Log("앞");
+                }
+                else if (dot < 0)
+                {
+                    viewSpeed *= -1;
+                    Debug.Log(" 뒤");
+                }
+
+                float angle = Vector3.Angle(Transforms.forward, viewDir);
+                float directionValue = Mathf.Clamp01(1 - angle / 100f) * 2f - 1;
+                Debug.Log(dot + " " + cross);
+            }
+        }
+        else
+        {
+            if (moveDir != Vector3.zero)
+            {
+                viewDir = moveDir;
+
+                viewVelocity = 0;
+
+                currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.5f);
+                viewSpeed = currentMoveSpeed;
+                //Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
+                Rigid.velocity = moveDir * Time.fixedDeltaTime * currentMoveSpeed;
+                // }
+            }
+            else
+            {
+                viewVelocity = 0;
+                // 감속 되는 애니메이션
+                currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
+                Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
+                viewSpeed = currentMoveSpeed;
+            }
+        }*/
     }
 
     void Rotate()
@@ -120,7 +206,8 @@ public class Controller : MonoBehaviour
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             targetRotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0);
             Transforms.rotation = Quaternion.Slerp(Transforms.rotation, targetRotation, 5 * Time.deltaTime);
+
+
         }
- 
     }
 }

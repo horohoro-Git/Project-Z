@@ -22,6 +22,11 @@ public class PlayerController : Controller
             return input;
         }
     }
+    Player player;
+    public Player GetPlayer
+    {
+        get { if(player == null) player = GetComponent<Player>(); return player;}
+    }
     
     //public delegate void PlayerAction();
   //  public event PlayerAction Runs;
@@ -62,7 +67,6 @@ public class PlayerController : Controller
         GameInstance.Instance.playerController = this;
         Inputs.defaultActionMap = "OnMove";
         moveSpeed = 200f;
-        hp = 100;
         slotHandlers = new Action<InputAction.CallbackContext>[10];
         for (int i = 0; i < 10; i++)
         {
@@ -83,7 +87,7 @@ public class PlayerController : Controller
         else
         {
             //플레이어 초기 값
-            hp = 100;
+            GetPlayer.playerStruct.hp = 100;
         }
     }
 
@@ -93,7 +97,7 @@ public class PlayerController : Controller
     //    Transforms.rotation = rot;
         Rigid.MovePosition(pos);
         Rigid.MoveRotation(rot);
-        this.hp = hp;
+        GetPlayer.playerStruct.hp = hp;
     }
 
     private void OnEnable()
@@ -183,10 +187,30 @@ public class PlayerController : Controller
             
         }
 
-        //   if(currentDir < 0) modelAnimator.SetFloat("speed", 0.f);
-        // else  modelAnimator.SetFloat("speed", s /200);
-        modelAnimator.SetFloat("speed", currentMoveSpeed / 200);
-        modelAnimator.SetFloat("dir", viewVelocity);
+        if(lookAround)
+        {
+            float dot = Vector3.Dot(transform.forward, moveDir);
+            Vector3 cross = Vector3.Cross(transform.forward, moveDir);
+            float side = cross.y;
+            if (dot > -0.5f)
+            {
+                //앞
+                modelAnimator.SetFloat("speed", viewSpeed / 200, 0.1f, Time.deltaTime);
+            }
+            else
+            {
+                // 뒤
+                modelAnimator.SetFloat("speed", -viewSpeed / 200, 0.1f, Time.deltaTime);
+            }
+            modelAnimator.SetFloat("lookAround", side, 0.1f, Time.deltaTime);
+        }
+        else
+        {
+            modelAnimator.SetFloat("lookAround", around);
+            modelAnimator.SetFloat("speed", viewSpeed / 200);
+            modelAnimator.SetFloat("dir", viewVelocity);
+        }
+     
         if (state == PlayerState.Combat)
         {
             motion += Time.deltaTime;
@@ -445,8 +469,9 @@ public class PlayerController : Controller
     public void GetDamage(int damage)
     {
         if (state == PlayerState.Dead) return;
-        hp -= damage;
-        if(hp <= 0)
+        //GetPlayer.playerStruct.hp -= damage;
+        GetPlayer.GetDamage(damage);
+        if (GetPlayer.playerStruct.hp <= 0)
         {
             modelAnimator.SetTrigger("dead");
             state = PlayerState.Dead;
