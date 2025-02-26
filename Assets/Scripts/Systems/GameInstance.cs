@@ -27,6 +27,7 @@ public class GameInstance
     public InventorySystem inventorySystem;
     public CreatableUISystem creatableUISystem;
     public QuickSlotUI quickSlotUI;
+    public PlayerStatusUI playerStatusUI;
     public EnvironmentSpawner environmentSpawner;
     public EditMode editMode;
     List<PlayerController> players = new List<PlayerController>();
@@ -36,6 +37,7 @@ public class GameInstance
     public bool quit = false;
     public void Reset()
     {
+        playerStatusUI = null;
         environmentSpawner = null;
         creatableUISystem = null;
         uiManager = null;

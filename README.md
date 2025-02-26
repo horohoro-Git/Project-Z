@@ -139,3 +139,6 @@ Camera smooth movement
 
 02/25
 Character rotate to based mouse point, camera movement limit
+
+02/26
+Add player lookaround animations, player status  
