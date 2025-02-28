@@ -111,10 +111,29 @@ public class SaveLoadSystem
                 writer.Write(ry);
                 writer.Write(rz);
                 writer.Write(rw);
-  
+
+
+                PlayerStruct player = pc.GetPlayer.playerStruct;
                 //플레이어 능력치
-                int hp = pc.GetPlayer.playerStruct.hp;
+                int hp = player.hp;
+                int maxHP = player.maxHP;
+                int energy = player.energy;
+                int maxEnergy = player.maxEnergy;
+                int exp = player.exp;
+                int requireEXP = player.requireEXP;
+                int level = player.level;
+                int attackDamage = player.attackDamage;
+                int skillPoint = player.skillPoint;
+
                 writer.Write(hp);
+                writer.Write(maxHP);
+                writer.Write(energy);
+                writer.Write(maxEnergy);
+                writer.Write(exp);
+                writer.Write(requireEXP);
+                writer.Write(level);
+                writer.Write(attackDamage);
+                writer.Write(skillPoint);
             }
             File.WriteAllBytes(p, ms.ToArray());
         }
@@ -149,16 +168,25 @@ public class SaveLoadSystem
                         float rw = reader.ReadSingle(); 
 
                         Quaternion rot = new Quaternion(rx, ry, rz, rw);
-                        //플레이어 능력치
-                        int hp = reader.ReadInt32();
-
                         Vector3 pos = new Vector3(x, y, z);
 
-                        pc.SetPlayerData(pos, rot, hp);
+                        //플레이어 능력치
+                        int hp = reader.ReadInt32();
+                        int maxHP = reader.ReadInt32();
+                        int energy = reader.ReadInt32();
+                        int maxEnergy = reader.ReadInt32();
+                        int exp = reader.ReadInt32();
+                        int requireEXP = reader.ReadInt32();
+                        int level = reader.ReadInt32();
+                        int attackDamage = reader.ReadInt32();
+                        int skillPoint = reader.ReadInt32();
+
+                        PlayerStruct playerStruct = new PlayerStruct(hp, maxHP, energy, maxEnergy, exp, requireEXP, level, attackDamage, skillPoint);
+
+                        pc.SetPlayerData(pos, rot, playerStruct);
                     }
                 }
             }
-
             return true;
         }
         else

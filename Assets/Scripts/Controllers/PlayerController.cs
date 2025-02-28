@@ -83,21 +83,36 @@ public class PlayerController : Controller
         modelAnimator = go.GetComponent<Animator>();
         model = go;
 
-        if(load) SaveLoadSystem.LoadPlayerData(this);
+        if (load)
+        {
+            if(!SaveLoadSystem.LoadPlayerData(this))
+            {
+                //플레이어 초기 값
+
+                PlayerStruct playerStruct = new PlayerStruct(100,100,100,100,0,100,1,0,0);
+
+                GetPlayer.playerStruct = playerStruct;
+                GetPlayer.UpdatePlayer();
+            }
+        }
         else
         {
             //플레이어 초기 값
-            GetPlayer.playerStruct.hp = 100;
+            PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0, 100, 1, 0, 0);
+
+            GetPlayer.playerStruct = playerStruct;
+            GetPlayer.UpdatePlayer();
         }
     }
 
-    public void SetPlayerData(Vector3 pos, Quaternion rot, int hp)
+    public void SetPlayerData(Vector3 pos, Quaternion rot, PlayerStruct playerStruct)
     {
    //     Transforms.position = pos;
     //    Transforms.rotation = rot;
         Rigid.MovePosition(pos);
         Rigid.MoveRotation(rot);
-        GetPlayer.playerStruct.hp = hp;
+        GetPlayer.playerStruct = playerStruct;
+        GetPlayer.UpdatePlayer();
     }
 
     private void OnEnable()
@@ -192,7 +207,7 @@ public class PlayerController : Controller
             float dot = Vector3.Dot(transform.forward, moveDir);
             Vector3 cross = Vector3.Cross(transform.forward, moveDir);
             float side = cross.y;
-            if (dot > -0.5f)
+            if (dot > -0.2f)
             {
                 //앞
                 modelAnimator.SetFloat("speed", viewSpeed / 200, 0.1f, Time.deltaTime);
@@ -421,6 +436,7 @@ public class PlayerController : Controller
             }
             equipSlotIndex = index;
             equipWeapon = Instantiate(equipItem.itemGO).GetComponent<Weapon>();
+            equipWeapon.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
             equipWeapon.transform.SetParent(attachItem.transform);
 

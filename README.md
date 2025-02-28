@@ -142,3 +142,6 @@ Character rotate to based mouse point, camera movement limit
 
 02/26
 Add player lookaround animations, player status  
+
+02/27
+Add player stat ui, data encrypting tool

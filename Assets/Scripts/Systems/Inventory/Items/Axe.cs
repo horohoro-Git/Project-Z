@@ -10,7 +10,7 @@ public class Axe : Weapon
         {
            // if (attack)
             {
-                other.gameObject.GetComponent<Tree>().ChopDown(transform);
+                other.gameObject.GetComponent<Tree>().ChopDown(transform, equippedPlayer);
             }
         }
         
