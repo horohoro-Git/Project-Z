@@ -9,8 +9,6 @@ using System.IO;
 public class GetBundleNameEditor : EditorWindow
 {
     string selectedFileName = "Home";
- 
-
     private string[] fileNames = { "Home", "Map1", "Map2" };
 
 
@@ -37,7 +35,6 @@ public class GetBundleNameEditor : EditorWindow
                     Debug.Log(fileName);
                 }
             }
-
         }
     }
 

@@ -227,11 +227,28 @@ public struct ItemStruct
 public struct PlayerStruct
 {
     public int hp;
-    public float exp;
-    public float requireEXP;
+    public int maxHP;
+    public int energy;
+    public int maxEnergy;
+    public int exp;
+    public int requireEXP;
     public int level;
     public int attackDamage;
     public int skillPoint;
+
+    public PlayerStruct(int hp, int maxHP, int energy, int maxEnergy, int exp, int requireEXP, int level, int attackDamage, int skillPoint)
+    {
+        this.hp = hp;
+        this.maxHP = maxHP;
+        this.energy = energy;
+        this.maxEnergy = maxEnergy;
+        this.exp = exp;
+        this.requireEXP = requireEXP;
+        this.level = level;
+        this.attackDamage = attackDamage;
+        this.skillPoint = skillPoint;
+    }
+
 }
 
 public class Utility

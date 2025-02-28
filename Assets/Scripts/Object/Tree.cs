@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -14,8 +15,14 @@ public class Tree : EnvironmentObject
     int hp = 3;
     Animator animator;
     bool dead;
+    [NonSerialized]
+    public int exp;
+
+    [NonSerialized]
+    public Player rewardsPlayer;
     private void Start()
     {
+        exp = 1;
         animator = GetComponent<Animator>();
         cuttingPlane = new Plane(Vector3.right, transform.position);
     }
@@ -80,15 +87,12 @@ public class Tree : EnvironmentObject
         Invoke("AddReward", 1.5f);
     }
 
-    public void ChopDown(Transform transforms)
+    public void ChopDown(Transform transforms, Player player)
     {
         if (dead) return;
         dead = true;
-        /*Vector3 pcForward = transform.forward;
-        Vector3 toTarget = transform.position - transform.position;
-        float dotProduct = Vector3.Dot(pcForward, toTarget);
-        if (dotProduct <= 0) return;    //앞을 보고 있을 때만 동작
-*/
+        rewardsPlayer = player;
+
         Vector3 dir = transform.position - transforms.position;
         Debug.Log(dir);
         float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
@@ -130,6 +134,8 @@ public class Tree : EnvironmentObject
                 go.transform.rotation = upper.transform.rotation;
                 go.GetComponent<Item>().itemIndex = 1;
             }
+
+            rewardsPlayer.GetExperience(exp);
         }
     }
 }
