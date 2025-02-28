@@ -28,7 +28,7 @@ public class DataEncryptionEditor : EditorWindow
         key = EditorGUILayout.TextField("AES Key", key);
         string dirPath = Path.Combine(Application.persistentDataPath, "PlayData");
        
-        if(GUILayout.Button("Data Encrypt") && dataName.Length > 0 && encryptName.Length > 0 && key.Length == 16)
+        if(GUILayout.Button("Data Encrypt") && dataName.Length > 0 && encryptName.Length > 0 && key.Length > 0)
         {
             //string path = Path.Combine(dirPath, dataName);
 
@@ -42,26 +42,29 @@ public class DataEncryptionEditor : EditorWindow
         string p = Path.Combine(path, name);
         string data = File.ReadAllText(p);
 
+        byte[] plainBytes;
 
         string returnData = "";
         using (Aes aes = Aes.Create())
         {
-            aes.Key = Encoding.UTF8.GetBytes(key);
+            aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32));
             aes.GenerateIV();
 
-            ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+            plainBytes = Encoding.UTF8.GetBytes(data);
 
-            using (MemoryStream ms = new MemoryStream())
+            using (var encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
+            using (var ms = new MemoryStream())
+            using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
             {
-                using (CryptoStream cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-                {
-                    using (StreamWriter sw = new StreamWriter(cs))
-                    {
-                        sw.Write(data);
-                    }
-                }
+                cs.Write(plainBytes, 0, plainBytes.Length);
+                cs.FlushFinalBlock();
+                byte[] encryptedBytes = ms.ToArray();
 
-                returnData = Convert.ToBase64String(ms.ToArray());
+                byte[] ivAndCipherText = new byte[aes.IV.Length + encryptedBytes.Length];
+                Array.Copy(aes.IV, 0, ivAndCipherText, 0, aes.IV.Length);
+                Array.Copy(encryptedBytes, 0, ivAndCipherText, aes.IV.Length, encryptedBytes.Length);
+
+                returnData = Convert.ToBase64String(ivAndCipherText);
             }
         }
 

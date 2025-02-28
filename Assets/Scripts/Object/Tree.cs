@@ -93,6 +93,8 @@ public class Tree : EnvironmentObject
         dead = true;
         rewardsPlayer = player;
 
+        rewardsPlayer.SpendEnergy(1);
+
         Vector3 dir = transform.position - transforms.position;
         Debug.Log(dir);
         float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
@@ -102,6 +104,7 @@ public class Tree : EnvironmentObject
         else if (angle >= 135f) animator.SetInteger("state", 1);
         else if (angle < -135f) animator.SetInteger("state", 1);
         else if (angle >= -135f && angle < -45f) animator.SetInteger("state", 2);
+        rewardsPlayer.GetExperience(exp);
 
         Invoke("AddReward", 1.5f);
     }
@@ -135,7 +138,7 @@ public class Tree : EnvironmentObject
                 go.GetComponent<Item>().itemIndex = 1;
             }
 
-            rewardsPlayer.GetExperience(exp);
+          
         }
     }
 }

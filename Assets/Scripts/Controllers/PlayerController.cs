@@ -76,6 +76,8 @@ public class PlayerController : Controller
         }
         /*modelAnimator = GetComponentInChildren<Animator>();
    */
+
+       
     }
 
     public void SetController(GameObject go, bool load)

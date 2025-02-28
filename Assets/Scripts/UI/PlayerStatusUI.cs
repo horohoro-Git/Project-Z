@@ -19,6 +19,7 @@ public class PlayerStatusUI : MonoBehaviour
     int maxEnergy = 0;
     float exp = 0;
     float maxEXP = 0;
+    int level;
 
     float targetHP = 0;
     float targetEnergy = 0;
@@ -47,6 +48,8 @@ public class PlayerStatusUI : MonoBehaviour
 
         this.exp = playerStruct.exp;
         this.maxEXP = playerStruct.requireEXP;
+
+        expPrograss.fillAmount = (float)this.exp / this.maxEXP;
 
         level_Text.text = playerStruct.level.ToString();
 
@@ -101,19 +104,25 @@ public class PlayerStatusUI : MonoBehaviour
         hpProgress.fillAmount = targetHP;
     }
 
-    public void GetEXP(float exp)
+    public void GetEXP(int exp)
     {
         if (this.exp < exp)
         {
-            targetEXP = exp;
+            this.exp = exp;
+            targetEXP = (float)this.exp / this.maxEXP;
+
             if (expCoroutine != null) StopCoroutine(expCoroutine); 
             expCoroutine = StartCoroutine(SmoothEXP());
         } 
     }
 
-    public void LevelUp()
+    public void LevelUp(int level, int exp, int requireExp)
     {
-
+        this.level = level;
+        level_Text.text = this.level.ToString();
+        this.exp = exp;
+        this.maxEXP = requireExp;
+        expPrograss.fillAmount = (float)this.exp / this.maxEXP;
     }
 
     IEnumerator SmoothEXP()
