@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -78,6 +79,16 @@ public class SaveLoadSystem
         {
             return false;
         }
+    }
+
+    public static List<LevelData> GetLevelData()
+    {
+        string p = Path.Combine(path, "PlayData/Exp.dat");
+        string content = File.ReadAllText(p);
+
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+
+        return JsonConvert.DeserializeObject<List<LevelData>>(data);
     }
 
 

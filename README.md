@@ -145,3 +145,6 @@ Add player lookaround animations, player status
 
 02/27
 Add player stat ui, data encrypting tool
+
+02/28
+Implementation of player HP, energy, and experience points
