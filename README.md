@@ -148,3 +148,6 @@ Add player stat ui, data encrypting tool
 
 02/28
 Implementation of player HP, energy, and experience points
+
+03/01
+Ability menu ui
