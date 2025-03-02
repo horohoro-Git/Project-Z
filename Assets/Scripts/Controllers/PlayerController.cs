@@ -91,7 +91,7 @@ public class PlayerController : Controller
             {
                 //플레이어 초기 값
 
-                PlayerStruct playerStruct = new PlayerStruct(100,100,100,100,0,100,1,0,0);
+                PlayerStruct playerStruct = new PlayerStruct(100,100,100,100,0,100,1,0,0, 1, 1, 1);
 
                 GetPlayer.playerStruct = playerStruct;
                 GetPlayer.UpdatePlayer();
@@ -100,7 +100,7 @@ public class PlayerController : Controller
         else
         {
             //플레이어 초기 값
-            PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0, 100, 1, 0, 0);
+            PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0, 100, 1, 0, 0, 1, 1, 1);
 
             GetPlayer.playerStruct = playerStruct;
             GetPlayer.UpdatePlayer();

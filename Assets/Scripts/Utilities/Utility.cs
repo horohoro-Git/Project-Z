@@ -236,8 +236,11 @@ public struct PlayerStruct
     public int level;
     public int attackDamage;
     public int skillPoint;
+    public int hpLevel;
+    public int energyLevel;
+    public int weightLevel;
 
-    public PlayerStruct(int hp, int maxHP, int energy, int maxEnergy, int exp, int requireEXP, int level, int attackDamage, int skillPoint)
+    public PlayerStruct(int hp, int maxHP, int energy, int maxEnergy, int exp, int requireEXP, int level, int attackDamage, int skillPoint, int hpLevel, int energyLevel, int weightLevel)
     {
         this.hp = hp;
         this.maxHP = maxHP;
@@ -248,6 +251,9 @@ public struct PlayerStruct
         this.level = level;
         this.attackDamage = attackDamage;
         this.skillPoint = skillPoint;
+        this.hpLevel = hpLevel;
+        this.energyLevel = energyLevel;
+        this.weightLevel = weightLevel;
     }
 
 }
