@@ -135,6 +135,9 @@ public class SaveLoadSystem
                 int level = player.level;
                 int attackDamage = player.attackDamage;
                 int skillPoint = player.skillPoint;
+                int hpLevel = player.hpLevel;
+                int energyLevel = player.energyLevel;
+                int weightLevel = player.weightLevel;
 
                 writer.Write(hp);
                 writer.Write(maxHP);
@@ -145,6 +148,9 @@ public class SaveLoadSystem
                 writer.Write(level);
                 writer.Write(attackDamage);
                 writer.Write(skillPoint);
+                writer.Write(hpLevel);
+                writer.Write(energyLevel);
+                writer.Write(weightLevel);
             }
             File.WriteAllBytes(p, ms.ToArray());
         }
@@ -191,8 +197,12 @@ public class SaveLoadSystem
                         int level = reader.ReadInt32();
                         int attackDamage = reader.ReadInt32();
                         int skillPoint = reader.ReadInt32();
+                        int hpLevel = reader.ReadInt32();
+                        int energyLevel = reader.ReadInt32();
+                        int weightLevel = reader.ReadInt32();
 
-                        PlayerStruct playerStruct = new PlayerStruct(hp, maxHP, energy, maxEnergy, exp, requireEXP, level, attackDamage, skillPoint);
+
+                        PlayerStruct playerStruct = new PlayerStruct(hp, maxHP, energy, maxEnergy, exp, requireEXP, level, attackDamage, skillPoint, hpLevel, energyLevel, weightLevel);
 
                         pc.SetPlayerData(pos, rot, playerStruct);
                     }

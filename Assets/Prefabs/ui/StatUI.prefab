@@ -4028,6 +4028,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 350ac7309247f9f48bc4d3ac32309dc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pointText: {fileID: 1961292159350268461}
+  healthUpgradeBefore: {fileID: 8377373058461491805}
+  healthUpgradeAfter: {fileID: 578135967207388034}
+  energyUpgradeBefore: {fileID: 3026736027779721009}
+  energyUpgradeAfter: {fileID: 3819105296183225880}
+  weightUpgradeBefore: {fileID: 4206445032440139506}
+  weightUpgradeAfter: {fileID: 8181438597638107023}
+  healthChangeBefore: {fileID: 1221552314430367540}
+  healthChangeAfter: {fileID: 1620891589199704866}
+  energyChangeBefore: {fileID: 7108432936663667195}
+  energyChangeAfter: {fileID: 6627737777782399423}
+  weightChangeBefore: {fileID: 7726784773464265254}
+  weightChangeAfter: {fileID: 8082967774322335227}
+  healthPlusBtn: {fileID: 9146382893744668802}
+  healthMinusBtn: {fileID: 8573823743761649837}
+  energyPlusBtn: {fileID: 5709354967566768352}
+  energyMinusBtn: {fileID: 4860424408933484083}
+  weightPlusBtn: {fileID: 6478024798572369561}
+  weightMinusBtn: {fileID: 4109667922541169402}
+  applyBtn: {fileID: 8788540501160266399}
 --- !u!1 &5582942388520306173
 GameObject:
   m_ObjectHideFlags: 0

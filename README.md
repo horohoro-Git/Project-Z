@@ -151,3 +151,6 @@ Implementation of player HP, energy, and experience points
 
 03/01
 Ability menu ui
+
+03/02
+Energy and weight stats added to level data, ability menu ui function implementation
