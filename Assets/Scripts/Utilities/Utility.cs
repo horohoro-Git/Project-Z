@@ -138,6 +138,7 @@ public  enum UIType
     Menu,
     Housing,
     Inventory,
+    AbilityMenu,
     QuickSlot
 
 }

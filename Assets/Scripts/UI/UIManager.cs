@@ -16,7 +16,9 @@ public class UIManager : MonoBehaviour
     GameObject inventoryUI;
     [SerializeField]
     GameObject quickSlotUI;
-   
+    [SerializeField]
+    GameObject abilityMenuUI;
+
     public GameObject acceptanceUI;
 
     UIType uiType = UIType.None;
@@ -31,8 +33,9 @@ public class UIManager : MonoBehaviour
         RectTransform rectTransform = canvas.GetComponent<RectTransform>();
         CreateUI(housingSystemUI, rectTransform, UIType.Housing);
         CreateUI(inventoryUI, rectTransform, UIType.Inventory);
-        CreateUI(menuUI, rectTransform, UIType.Menu);
+        CreateUI(abilityMenuUI, rectTransform, UIType.AbilityMenu);
         CreateUI(quickSlotUI, rectTransform, UIType.QuickSlot);
+        CreateUI(menuUI, rectTransform, UIType.Menu);
         SwitchUI(UIType.QuickSlot, true);
     }
 
