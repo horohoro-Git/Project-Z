@@ -19,6 +19,8 @@ public class LoadURL : MonoBehaviour
     public const string Human_Male = "human_male";
     public const string Log = "log";
 
+    
+
     public string bundleUrl;
     public string bundleUrl2;
 

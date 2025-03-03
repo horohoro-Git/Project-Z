@@ -2,10 +2,21 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
     public PlayerStruct playerStruct;
+
+    Transform transforms;
+    public Transform Transforms
+    {
+        get
+        {
+            if (transforms == null) transforms = transform;
+            return transforms;
+        }
+    }
 
     [NonSerialized]
     public List<LevelData> levelData = new List<LevelData>();
@@ -45,7 +56,7 @@ public class Player : MonoBehaviour
     {
         levelData = SaveLoadSystem.GetLevelData();
         playerStruct.requireEXP = levelData[playerStruct.level - 1].exp;
-        playerStruct.skillPoint += 10;
+      //  playerStruct.skillPoint += 10;
         GameInstance.Instance.playerStatusUI.UpdateUI(playerStruct);
         GameInstance.Instance.abilityMenuUI.GetPoint(playerStruct.skillPoint);
         GameInstance.Instance.abilityMenuUI.ShowChanges(this);

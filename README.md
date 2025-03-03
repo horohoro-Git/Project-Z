@@ -154,3 +154,6 @@ Ability menu ui
 
 03/02
 Energy and weight stats added to level data, ability menu ui function implementation
+
+03/03
+Add consumtion type item and eating animation
