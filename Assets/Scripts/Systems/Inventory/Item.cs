@@ -10,16 +10,7 @@ public class Item : MonoBehaviour
     public SlotType item_Slot;
     public ItemType item_Type;
     public GameObject item_GO;
-    
-    void Start()
-    {
-      //  Invoke("LateStart", 1f);
-    }
 
 
-    void LateStart()
-    {
-    //    GameInstance.Instance.inventorySystem.AddItem(this);
-
-    }
+    public Player equippedPlayer;
 }

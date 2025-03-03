@@ -50,12 +50,6 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
         weightPlusBtn.onClick.AddListener(() => { UpgradeWeight(true); });
         weightMinusBtn.onClick.AddListener(() => { UpgradeWeight(false); });
         applyBtn.onClick.AddListener(() => { ApplyData(); });
- /*       healthMinusBtn;
-    public Button energyPlusBtn;
-    public Button energyMinusBtn;
-    public Button weightPlusBtn;
-    public Button weightMinusBtn;
-    public Button applyBtn;*/
     }
 
     private void OnDisable()
@@ -86,32 +80,6 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
         ChangeBefore();
         ChangeAfter();
 
-        //레벨 변화 정보
-        //healthUpgradeBefore.text = playerStruct.hpLevel.ToString();
-     /*   if (playerStruct.hpLevel + 1 <= 20) healthUpgradeAfter.text = (playerStruct.hpLevel + 1).ToString();
-        else healthUpgradeAfter.text = playerStruct.hpLevel.ToString();*/
-
-      //  energyUpgradeBefore.text = playerStruct.energyLevel.ToString();
-      /*  if (playerStruct.energyLevel + 1 <= 20) energyUpgradeAfter.text = (playerStruct.energyLevel + 1).ToString();
-        else energyUpgradeAfter.text = playerStruct.energyLevel.ToString();*/
-
-       // weightUpgradeBefore.text = playerStruct.weightLevel.ToString();
-       /* if (playerStruct.weightLevel + 1 <= 20) weightUpgradeAfter.text = (playerStruct.weightLevel + 1).ToString();
-        else weightUpgradeAfter.text = playerStruct.weightLevel.ToString();*/
-
-
-        //플레이어 스텟 변화 정보
-        //healthChangeBefore.text = levelData[playerStruct.hpLevel - 1].heal.ToString();
-      /*  if (playerStruct.hpLevel + 1 <= 20) healthChangeAfter.text = levelData[playerStruct.hpLevel].heal.ToString();
-        else healthChangeAfter.text = levelData[playerStruct.hpLevel - 1].heal.ToString();*/
-
-      //  energyChangeBefore.text = levelData[playerStruct.energyLevel - 1].energy_regain.ToString();
-      /*  if (playerStruct.energyLevel + 1 <= 20) energyChangeAfter.text = levelData[playerStruct.energyLevel].energy_regain.ToString();
-        else energyChangeAfter.text = levelData[playerStruct.energyLevel - 1].energy_regain.ToString();*/
-
-       // weightChangeBefore.text = levelData[playerStruct.weightLevel - 1].weight.ToString();
-       /* if (playerStruct.weightLevel + 1 <= 20) weightChangeAfter.text = levelData[playerStruct.weightLevel].weight.ToString();
-        else weightChangeAfter.text = levelData[playerStruct.weightLevel - 1].weight.ToString();*/
     }
 
     void ChangeBefore()
@@ -122,8 +90,8 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
         weightUpgradeBefore.text = playerStruct.weightLevel.ToString();
 
         //플레이어 스텟 변화 정보
-        healthChangeBefore.text = levelData[playerStruct.hpLevel - 1].heal.ToString();
-        energyChangeBefore.text = levelData[playerStruct.energyLevel - 1].energy_regain.ToString();
+        healthChangeBefore.text = levelData[playerStruct.hpLevel - 1].heal.ToString() + "%";
+        energyChangeBefore.text = levelData[playerStruct.energyLevel - 1].energy_regain.ToString() + "%";
         weightChangeBefore.text = levelData[playerStruct.weightLevel - 1].weight.ToString();
     }
 
@@ -140,10 +108,10 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
         //  else weightUpgradeAfter.text = currentStruct.weightLevel.ToString();
 
         //플레이어 스텟 변화 정보
-        if (currentStruct.hpLevel <= 20) healthChangeAfter.text = levelData[currentStruct.hpLevel - 1].heal.ToString();
+        if (currentStruct.hpLevel <= 20) healthChangeAfter.text = levelData[currentStruct.hpLevel - 1].heal.ToString() + "%";
         //  else healthChangeAfter.text = levelData[currentStruct.hpLevel - 1].heal.ToString();
 
-        if (currentStruct.energyLevel <= 20) energyChangeAfter.text = levelData[currentStruct.energyLevel - 1].energy_regain.ToString();
+        if (currentStruct.energyLevel <= 20) energyChangeAfter.text = levelData[currentStruct.energyLevel - 1].energy_regain.ToString() + "%";
         //     else energyChangeAfter.text = levelData[currentStruct.energyLevel - 1].energy_regain.ToString();
 
         if (currentStruct.weightLevel <= 20) weightChangeAfter.text = levelData[currentStruct.weightLevel - 1].weight.ToString();
@@ -227,5 +195,7 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
 
         player.playerStruct = playerStruct;
         ChangeBefore();
+
+        SaveLoadSystem.SavePlayerData(player);
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
+using UnityEngine.ResourceManagement.ResourceLocations;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -33,17 +34,25 @@ public class AssetLoader : MonoBehaviour
     "floor", "wall", "door", "roof",
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "greasses",
-      "tree", "human_male", "log"
+      "tree", "human_male", "log", "wooden Axe", "apple"
     };
 
     [NonSerialized]
-    public List<string> itemAssetkeys = new List<string> {
-    "log"
+    public static List<string> itemAssetkeys = new List<string> {
+    "log", "wooden Axe", "apple"
     };
 
     [NonSerialized]
-    public List<string> spriteAssetkeys = new List<string> {
-    "log_Sprite"
+    public static List<string> spriteAssetkeys = new List<string> {
+    "log_Sprite", "axe_Sprite", "apple_Sprite"
+    };
+
+
+    [NonSerialized]
+    public List<ItemStruct> items = new List<ItemStruct>()
+    {
+       new ItemStruct(1, null, "log", SlotType.None, ItemType.None, null),
+       new ItemStruct(2, null, "axe", SlotType.None, ItemType.Equipmentable, null)
     };
 
     public Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
@@ -70,11 +79,6 @@ public class AssetLoader : MonoBehaviour
     AsyncOperationHandle<IList<GameObject>> handle;
     AsyncOperationHandle<IList<Sprite>> spritehandle;
 
-    [NonSerialized]
-    public List<ItemStruct> items = new List<ItemStruct>()
-    {
-       new ItemStruct(1, null, "log", SlotType.None, ItemType.None, null)
-    };
   
     Shader Standard { get { if (standard == null) standard = Shader.Find("Standard"); return standard; } }
 
@@ -90,6 +94,39 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
+      /*  var assetNames = new List<string>();
+
+        // 모든 리소스 로케이터 가져오기
+        var resourceLocators = Addressables.ResourceLocators;
+
+        foreach (var locator in resourceLocators)
+        {
+            // 특정 그룹의 키(Key) 목록 가져오기
+            foreach (var key in locator.Keys)
+            {
+                if (locator.Locate(key, typeof(object), out var locations))
+                {
+                    foreach (var location in locations)
+                    {
+                        // InternalId에서 그룹 이름 확인
+                        if (location.InternalId.Contains("Home"))
+                        {
+                            assetNames.Add(key.ToString());
+                        }
+                    }
+                }
+            }
+        }
+
+        Debug.Log($"그룹 'Home'에 포함된 에셋 목록:");
+        foreach (var name in assetNames)
+        {
+            Debug.Log(name);
+        }
+
+        yield return null;*/
+    
+
         int loadNum = 0;
         Debug.Log("Loading");
         //호스팅 서버에 Remote Load Path로 연결 후
@@ -106,7 +143,7 @@ public class AssetLoader : MonoBehaviour
         {
             foreach (var asset in handle.Result)
             {
-            //    Debug.Log("Loaded " + asset.name);
+                Debug.Log("Loaded " + asset.name);
                 loadedAssets[asset.name] = asset;   //에셋을 사용할 때에는 해당 에셋의 이름으로 호출
             }
             loadNum++;
@@ -124,10 +161,11 @@ public class AssetLoader : MonoBehaviour
 
         yield return spritehandle;
 
-        if(spritehandle.Status == AsyncOperationStatus.Succeeded)
+        if (spritehandle.Status == AsyncOperationStatus.Succeeded)
         {
-            foreach(var asset in spritehandle.Result)
+            foreach (var asset in spritehandle.Result)
             {
+                Debug.Log(asset.name);
                 loadedSprites[asset.name] = asset;
             }
             loadNum++;

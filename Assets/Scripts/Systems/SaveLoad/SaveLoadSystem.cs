@@ -93,7 +93,7 @@ public class SaveLoadSystem
 
 
     //플레이어 데이터 저장
-    public static void SavePlayerData(PlayerController pc)
+    public static void SavePlayerData(Player player)
     {
         string dir = Path.Combine(path, "Save");
         if (!Directory.Exists(dir))
@@ -106,38 +106,38 @@ public class SaveLoadSystem
             using (BinaryWriter writer = new BinaryWriter(ms))
             {
                 //플레이어 위치
-                float x = pc.Transforms.position.x;
-                float y = pc.Transforms.position.y;
-                float z = pc.Transforms.position.z;
+                float x = player.Transforms.position.x;
+                float y = player.Transforms.position.y;
+                float z = player.Transforms.position.z;
                 writer.Write(x);
                 writer.Write(y);
                 writer.Write(z);
 
                 //플레이어 방향
-                float rx = pc.Transforms.rotation.x;
-                float ry = pc.Transforms.rotation.y;
-                float rz = pc.Transforms.rotation.z;
-                float rw = pc.Transforms.rotation.w;
+                float rx = player.Transforms.rotation.x;
+                float ry = player.Transforms.rotation.y;
+                float rz = player.Transforms.rotation.z;
+                float rw = player.Transforms.rotation.w;
                 writer.Write(rx);
                 writer.Write(ry);
                 writer.Write(rz);
                 writer.Write(rw);
 
 
-                PlayerStruct player = pc.GetPlayer.playerStruct;
+                PlayerStruct ps = player.playerStruct;
                 //플레이어 능력치
-                int hp = player.hp;
-                int maxHP = player.maxHP;
-                int energy = player.energy;
-                int maxEnergy = player.maxEnergy;
-                int exp = player.exp;
-                int requireEXP = player.requireEXP;
-                int level = player.level;
-                int attackDamage = player.attackDamage;
-                int skillPoint = player.skillPoint;
-                int hpLevel = player.hpLevel;
-                int energyLevel = player.energyLevel;
-                int weightLevel = player.weightLevel;
+                int hp = ps.hp;
+                int maxHP = ps.maxHP;
+                int energy = ps.energy;
+                int maxEnergy = ps.maxEnergy;
+                int exp = ps.exp;
+                int requireEXP = ps.requireEXP;
+                int level = ps.level;
+                int attackDamage = ps.attackDamage;
+                int skillPoint = ps.skillPoint;
+                int hpLevel = ps.hpLevel;
+                int energyLevel = ps.energyLevel;
+                int weightLevel = ps.weightLevel;
 
                 writer.Write(hp);
                 writer.Write(maxHP);
@@ -203,7 +203,6 @@ public class SaveLoadSystem
 
 
                         PlayerStruct playerStruct = new PlayerStruct(hp, maxHP, energy, maxEnergy, exp, requireEXP, level, attackDamage, skillPoint, hpLevel, energyLevel, weightLevel);
-
                         pc.SetPlayerData(pos, rot, playerStruct);
                     }
                 }

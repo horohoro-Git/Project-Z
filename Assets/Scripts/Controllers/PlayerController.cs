@@ -54,6 +54,8 @@ public class PlayerController : Controller
     [NonSerialized]
     public Weapon equipWeapon;
     [NonSerialized]
+    public Item equipItem;
+    [NonSerialized]
     public int equipSlotIndex = -1;
     Action<PlayerController> getItemAction;
 
@@ -316,19 +318,27 @@ public class PlayerController : Controller
         raycastResults.Clear();
         raycaster.Raycast(eventData, raycastResults);
         if (raycastResults.Count > 0) return;
-        
-        //attack = true;
-        if (equipWeapon != null)    //무기로 공격
+        if (equipItem != null)
         {
-            switch(equipWeapon.type)
+            if (equipItem.item_Type == ItemType.Equipmentable)  //무기
             {
-                case WeaponType.None:
-                    break;
-                case WeaponType.Axe:
-                    StartAnimation("cut", 1);
-                    equipWeapon.Attack(0.35f, 0.6f);
-                /*    equipWeapon.GetComponent<Axe>().EndAttack();*/
-                    break;
+                Weapon weapon = equipItem.GetComponent<Weapon>();
+
+                switch (weapon.type)
+                {
+                    case WeaponType.None:
+                        break;
+                    case WeaponType.Axe:
+                        StartAnimation("cut", 1);
+                        weapon.Attack(0.35f, 0.6f);
+                        /*    equipWeapon.GetComponent<Axe>().EndAttack();*/
+                        break;
+                }
+            }
+            else if(equipItem.item_Type == ItemType.Consumable) //음식 소모
+            {
+                Debug.Log("Work");
+                StartAnimation("eating", 8);
             }
         }
         else //주먹으로 공격
@@ -337,6 +347,26 @@ public class PlayerController : Controller
             CancelInvoke("StopMotion");
             Invoke("StopMotion", 1);
         }
+        //attack = true;
+     /*   if (equipWeapon != null)    //무기로 공격
+        {
+            switch(equipWeapon.type)
+            {
+                case WeaponType.None:
+                    break;
+                case WeaponType.Axe:
+                    StartAnimation("cut", 1);
+                    equipWeapon.Attack(0.35f, 0.6f);
+                *//*    equipWeapon.GetComponent<Axe>().EndAttack();*//*
+                    break;
+            }
+        }
+        else //주먹으로 공격
+        {
+            Punch();
+            CancelInvoke("StopMotion");
+            Invoke("StopMotion", 1);
+        }*/
         combatTimer = Time.time + 5f;
         state = PlayerState.Combat;
     }
@@ -429,30 +459,66 @@ public class PlayerController : Controller
     public void Equipment(ItemStruct equipItem, int index)
     {
         if (animationWorking > 0) return;
+
+        AssetLoader loader = GameInstance.Instance.assetLoader;
+        //무기
         if (equipItem.itemType == ItemType.Equipmentable)
         {
-            if (equipWeapon != null)
+            if(this.equipItem != null)
             {
-                Destroy(equipWeapon.gameObject);
-                equipWeapon = null;
+                Destroy(this.equipItem.gameObject);
+                this.equipItem = null;
             }
             equipSlotIndex = index;
-            equipWeapon = Instantiate(equipItem.itemGO).GetComponent<Weapon>();
-            equipWeapon.equippedPlayer = GetPlayer;
+            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.itemIndex]]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
+            this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
-            equipWeapon.transform.SetParent(attachItem.transform);
+            this.equipItem.transform.SetParent(attachItem.transform);
 
-            equipWeapon.transform.localPosition = new Vector3(0, 0, 0);
-            equipWeapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+            this.equipItem.transform.localPosition = Vector3.zero;
+            this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
             modelAnimator.SetFloat("equip", 1);
+
+            /*   if (equipWeapon != null)
+               {
+                   Destroy(equipWeapon.gameObject);
+                   equipWeapon = null;
+               }
+               equipSlotIndex = index;
+               equipWeapon = Instantiate(equipItem.itemGO).GetComponent<Weapon>();
+               equipWeapon.equippedPlayer = GetPlayer;
+               AttachItem attachItem = GetComponentInChildren<AttachItem>();
+               equipWeapon.transform.SetParent(attachItem.transform);
+
+               equipWeapon.transform.localPosition = new Vector3(0, 0, 0);
+               equipWeapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+               modelAnimator.SetFloat("equip", 1);*/
+        }
+        else if (equipItem.itemType == ItemType.Consumable)     //음식을 손에 듬
+        {
+            if (this.equipItem != null)
+            {
+                Destroy(this.equipItem.gameObject);
+                this.equipItem = null;
+            }
+            equipSlotIndex = index;
+            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.itemIndex]]).GetComponent<Item>();
+            this.equipItem.equippedPlayer = GetPlayer;
+            AttachItem attachItem = GetComponentInChildren<AttachItem>();
+            this.equipItem.transform.SetParent(attachItem.transform);
+
+            this.equipItem.transform.localPosition = Vector3.zero;
+            this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+            modelAnimator.SetFloat("equip", 0);
         }
         else
         {
-        
+            if (this.equipItem != null)
+            {
+                Destroy(this.equipItem.gameObject);
+                this.equipItem = null;
+            }
             equipSlotIndex = index;
-            if(equipWeapon != null) Destroy(equipWeapon.gameObject);
-            equipWeapon = null;
-            modelAnimator.SetFloat("equip", 0);
         }
     }
 
@@ -592,6 +658,6 @@ public class PlayerController : Controller
     }
     private void OnApplicationQuit()
     {
-        SaveLoadSystem.SavePlayerData(this);
+        SaveLoadSystem.SavePlayerData(GetPlayer);
     }
 }

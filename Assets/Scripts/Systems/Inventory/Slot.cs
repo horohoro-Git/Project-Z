@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Experimental.Rendering;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
@@ -251,9 +252,9 @@ public class Slot : MonoBehaviour, IUIComponent
 
     public void UpdateSlot()
     {
-
+     //   GameInstance.Instance.assetLoader.loadedSprites[GameInstance.Instance.assetLoader.spriteAssetkeys[item.itemIndex]];
         if(item.used)
-        itemImage.sprite = item.image;
+        itemImage.sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[item.itemIndex]];
         else
         {
             itemImage.sprite = originImage;

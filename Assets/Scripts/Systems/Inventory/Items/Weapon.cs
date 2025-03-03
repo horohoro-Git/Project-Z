@@ -5,7 +5,7 @@ using UnityEngine;
 public class Weapon : Item
 {
 
-    public Player equippedPlayer;
+  //  public Player equippedPlayer;
     public WeaponType type;
     public bool attack;
 
