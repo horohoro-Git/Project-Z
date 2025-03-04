@@ -338,7 +338,8 @@ public class PlayerController : Controller
             else if(equipItem.item_Type == ItemType.Consumable) //음식 소모
             {
                 Debug.Log("Work");
-                StartAnimation("eating", 8);
+                Invoke("Consumtion", 1.7f);
+                StartAnimation("eating", 1.8f);
             }
         }
         else //주먹으로 공격
@@ -411,6 +412,17 @@ public class PlayerController : Controller
     {
         modelAnimator.SetTrigger("cut");
     }
+
+    public void Consumption()
+    {
+        ConsumptionItem item = equipItem.GetComponent<ConsumptionItem>();
+        if (item != null)
+        {
+            item.Consumption();
+        }
+        //equipItem.
+    }
+
 
     public void RegisterAction(Action<PlayerController> action)
     {

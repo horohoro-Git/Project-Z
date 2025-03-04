@@ -20,6 +20,24 @@ public class Player : MonoBehaviour
 
     [NonSerialized]
     public List<LevelData> levelData = new List<LevelData>();
+    GameObject healBuff;
+    GameObject levelupBuff;
+    Coroutine healCoroutine;
+    Coroutine levelupCoroutine;
+
+    BuffStruct buffStruct = new BuffStruct(true);
+    float healBuffTimer;
+
+    private void Update()
+    {
+        if (healBuffTimer < Time.time)
+        {
+            if(playerStruct.hp > playerStruct.maxHP)
+            {
+                playerStruct.hp = playerStruct.maxHP;
+            }
+        }
+    }
     public void GetDamage(int damage)
     {
         playerStruct.hp -= damage;
@@ -47,6 +65,8 @@ public class Player : MonoBehaviour
             playerStruct.requireEXP = levelData[playerStruct.level - 1].exp;
 
             GameInstance.Instance.playerStatusUI.LevelUp(playerStruct.level, playerStruct.exp, playerStruct.requireEXP);
+            buffStruct.levelupNums++;
+            if (levelupCoroutine == null) levelupCoroutine = StartCoroutine(LevelupEffect());
         }
 
         GameInstance.Instance.playerStatusUI.GetEXP(playerStruct.exp);
@@ -56,9 +76,99 @@ public class Player : MonoBehaviour
     {
         levelData = SaveLoadSystem.GetLevelData();
         playerStruct.requireEXP = levelData[playerStruct.level - 1].exp;
-      //  playerStruct.skillPoint += 10;
+
+        //Èú ¹öÇÁ ÀÌÆåÆ®
+        CreateBuff(ref healBuff, LoadURL.Heal);
+
+        //·¹º§ ¾÷ ÀÌÆåÆ®
+        CreateBuff(ref levelupBuff, LoadURL.LevelUp);
+       
+        //  playerStruct.skillPoint += 10;
         GameInstance.Instance.playerStatusUI.UpdateUI(playerStruct);
         GameInstance.Instance.abilityMenuUI.GetPoint(playerStruct.skillPoint);
         GameInstance.Instance.abilityMenuUI.ShowChanges(this);
+    }
+
+
+    void CreateBuff(ref GameObject go, string name)
+    {
+        go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[name]);
+        go.transform.SetParent(Transforms);
+        go.transform.localPosition = Vector3.zero;
+        go.SetActive(false);
+    }
+
+    public void GetBuff(ConsumptionItem item)
+    {
+        Debug.Log(item.consumtionType);
+        switch(item.consumtionType)
+        {
+            case ConsumptionType.None:
+                break;
+            case ConsumptionType.Heal:
+                buffStruct.healBuff.Enqueue(item.consumtionStruct);
+                if(healCoroutine == null) healCoroutine = StartCoroutine(HPRecovery(item.consumtionStruct.duration, item.consumtionStruct.hpRevoveryAmount));
+                break;
+
+            case ConsumptionType.EnergyRegain:
+                break;
+
+        }
+       
+    }
+
+    IEnumerator HPRecovery(float duration, int recoveryAmount)
+    {
+        healBuff.SetActive(true);
+        float currentTimer = 0;
+        float timer = 0;
+        while (currentTimer / duration < 1f)
+        {
+            while (timer < 1)
+            {
+                timer += Time.deltaTime;
+                yield return null;
+            }
+            currentTimer += timer;
+            timer = 0;
+         
+            playerStruct.hp += (int)(recoveryAmount / duration);
+            if(playerStruct.hp > playerStruct.maxHP)
+            {
+                playerStruct.hp = playerStruct.maxHP;
+                healBuffTimer = Time.time + 10f;
+            }
+            GameInstance.Instance.playerStatusUI.ChangeHP(playerStruct.hp);
+        }
+
+        buffStruct.healBuff.Dequeue();
+
+        if(buffStruct.healBuff.Count > 0)
+        {
+            ConsumptionStruct consumtionStruct = buffStruct.healBuff.Peek();
+            healCoroutine = StartCoroutine(HPRecovery(consumtionStruct.duration, consumtionStruct.hpRevoveryAmount));
+        }
+
+        healBuff.SetActive(false);
+        healCoroutine = null;
+    }
+
+    IEnumerator LevelupEffect()
+    {
+        levelupBuff.SetActive(true);
+        float timer = 0;
+        while (timer < 2)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        buffStruct.levelupNums--;
+
+        if(buffStruct.levelupNums > 0)
+        {
+            levelupCoroutine = StartCoroutine(LevelupEffect());
+        }
+        levelupBuff.SetActive(false);
+        levelupBuff = null;
     }
 }

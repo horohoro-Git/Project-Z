@@ -157,3 +157,6 @@ Energy and weight stats added to level data, ability menu ui function implementa
 
 03/03
 Add consumtion type item and eating animation
+
+03/04
+Use consumption type item, add (recovery, level up) effect 
