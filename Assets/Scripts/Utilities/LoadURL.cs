@@ -18,8 +18,10 @@ public class LoadURL : MonoBehaviour
     public const string Tree = "Tree";
     public const string Human_Male = "human_male";
     public const string Log = "log";
+    public const string Heal = "heal";
+    public const string LevelUp = "levelup";
 
-    
+
 
     public string bundleUrl;
     public string bundleUrl2;

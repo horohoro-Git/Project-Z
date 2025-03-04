@@ -223,6 +223,38 @@ public struct ItemStruct
     }
 }
 
+//소비 아이템 타입
+public enum ConsumptionType
+{
+    None,
+    Heal,
+    EnergyRegain
+}
+
+//소비 아이템의 정보
+[System.Serializable]
+public struct ConsumptionStruct
+{
+    public float duration;
+    public int hpRevoveryAmount;
+    public int energyRevoveryAmount;
+}
+
+//버프 정보
+public struct BuffStruct
+{
+    public Queue<ConsumptionStruct> healBuff;
+    public Queue<ConsumptionStruct> energyBuff;
+    public int levelupNums;
+
+    public BuffStruct(bool renew)
+    {
+        healBuff = new Queue<ConsumptionStruct>();
+        energyBuff = new Queue<ConsumptionStruct>();
+        levelupNums = 0;
+    }
+}
+
 
 //플레이어의 정보
 public struct PlayerStruct

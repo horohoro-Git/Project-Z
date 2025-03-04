@@ -34,7 +34,7 @@ public class AssetLoader : MonoBehaviour
     "floor", "wall", "door", "roof",
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "greasses",
-      "tree", "human_male", "log", "wooden Axe", "apple"
+      "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup"
     };
 
     [NonSerialized]
