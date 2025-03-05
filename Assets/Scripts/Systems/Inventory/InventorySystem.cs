@@ -161,13 +161,17 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         backpack.Setup();
     }
 
-    public void LoadInvetory(int x, int y, int index)
+    public void LoadInvetory(int x, int y, ItemStruct itemStruct)
     {
-        ItemStruct item = ItemData.GetItem(index);
+        ItemStruct item = ItemData.GetItem(itemStruct.itemIndex - 1);
+
+        itemStruct.itemGO = item.itemGO;
+        itemStruct.image = item.image;
+        itemStruct.used = true;
         if(x == 0)
         {
-            GameInstance.Instance.quickSlotUI.UpdateSlot(item, y);
+            GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, y);
         }
-        inventoryArray[x, y].AddItem(item);
+        inventoryArray[x, y].AddItem(itemStruct);
     }
 }

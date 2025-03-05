@@ -337,3 +337,10 @@ public interface IBuildMaterials
     public Renderer renderer { get; }
 }
 
+//객체 인터페이스
+public interface IIdentifiable
+{
+    public string ID { get; set; }
+   
+}
+

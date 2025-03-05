@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,8 @@ public class WorldGrids : MonoBehaviour
     List<PlayerController>[,] players;
     int[] findX = new int[9] {0, 1, 1, 0,-1,-1,-1,0,1 };
     int[] findY = new int[9] {0, 0, -1, -1,-1, 0, 1, 1, 1 };
+
+    Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();    
     private void Awake()
     {
         GameInstance.Instance.worldGrids = this;
@@ -38,17 +41,7 @@ public class WorldGrids : MonoBehaviour
         }
         //    players = new List<PlayerController>[index]
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  
 
     //플레이어의 위치를 기록
     public void UpdatePlayerInGrid(PlayerController pc, ref int refX, ref int refY)
@@ -102,5 +95,41 @@ public class WorldGrids : MonoBehaviour
      
         return x >= 0 && x < sizeX && y >=0 && y < sizeY;
 
+    }
+    string ConvertBinaryToString(byte[] binary)
+    {
+        return BitConverter.ToString(binary).Replace("-", "").ToLower();
+    }
+    public void AddObjects(GameObject ob)
+    {
+        while (true)
+        {
+            byte[] random = Guid.NewGuid().ToByteArray();
+            string key = ConvertBinaryToString(random);
+
+            if(!objects.ContainsKey(key))
+            {
+                IIdentifiable identifiable = ob.GetComponent<IIdentifiable>();
+                identifiable.ID = key;
+                objects[key] = ob;
+                break;
+            }
+        }
+    }
+
+    public void RemoveObjects(IIdentifiable ob)
+    {
+        objects.Remove(ob.ID);
+    }
+
+    public List<GameObject> ReturnObjects()
+    {
+        List<GameObject> returnObjects = new List<GameObject>();
+        foreach (var obj in objects)
+        {
+            returnObjects.Add(obj.Value);
+        }
+
+        return returnObjects;
     }
 }

@@ -2716,7 +2716,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.47058824}
   m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2745,6 +2745,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2057d41bfa8ca2479da20310c5fcfd7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 993917662294294274}
+  player: {fileID: 1499131816419712418, guid: ece08c558abcb6343b65b967c68ff917, type: 3}
+  item: {fileID: 1499131816419712418, guid: 23a5e3f172f953a4abd5390cb6d8eaf4, type: 3}
+  enemy: {fileID: 0}
 --- !u!1 &5603390708119439941
 GameObject:
   m_ObjectHideFlags: 0

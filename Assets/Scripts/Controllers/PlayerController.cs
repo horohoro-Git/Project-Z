@@ -338,7 +338,7 @@ public class PlayerController : Controller
             else if(equipItem.item_Type == ItemType.Consumable) //음식 소모
             {
                 Debug.Log("Work");
-                Invoke("Consumtion", 1.7f);
+                Invoke("Consumption", 1.7f);
                 StartAnimation("eating", 1.8f);
             }
         }
@@ -482,7 +482,7 @@ public class PlayerController : Controller
                 this.equipItem = null;
             }
             equipSlotIndex = index;
-            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.itemIndex]]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
+            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.itemIndex - 1]]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
             this.equipItem.transform.SetParent(attachItem.transform);
@@ -513,8 +513,9 @@ public class PlayerController : Controller
                 Destroy(this.equipItem.gameObject);
                 this.equipItem = null;
             }
+            Debug.Log(equipItem.itemIndex);
             equipSlotIndex = index;
-            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.itemIndex]]).GetComponent<Item>();
+            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.itemIndex - 1]]).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
             this.equipItem.transform.SetParent(attachItem.transform);
