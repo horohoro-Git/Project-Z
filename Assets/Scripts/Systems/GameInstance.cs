@@ -29,6 +29,7 @@ public class GameInstance
     public QuickSlotUI quickSlotUI;
     public PlayerStatusUI playerStatusUI;
     public AbilityMenuUI abilityMenuUI;
+    public MinimapUI minimapUI;
     public EnvironmentSpawner environmentSpawner;
     public EditMode editMode;
     List<PlayerController> players = new List<PlayerController>();
@@ -39,6 +40,7 @@ public class GameInstance
     public void Reset()
     {
         abilityMenuUI = null;
+        minimapUI = null;
         playerStatusUI = null;
         environmentSpawner = null;
         creatableUISystem = null;

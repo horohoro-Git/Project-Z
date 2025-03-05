@@ -5,7 +5,7 @@ using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyController : Controller
+public class EnemyController : Controller, IIdentifiable
 {
 
     enum EnemyType
@@ -35,6 +35,8 @@ public class EnemyController : Controller
     public Collider attackColider;
 
     int attackDamage;
+
+    public string ID { get; set; }
 
     private void Awake()
     {

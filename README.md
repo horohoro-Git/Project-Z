@@ -160,3 +160,6 @@ Add consumtion type item and eating animation
 
 03/04
 Use consumption type item, add (recovery, level up) effect 
+
+03/05
+Add minimap ui with icons

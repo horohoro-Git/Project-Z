@@ -13,6 +13,6 @@ public class SlotInfo : MonoBehaviour
     public void UpdateSlotInfo(ItemStruct itemStruct)
     {
         text.text = itemStruct.itemName;
-        image.sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[itemStruct.itemIndex]];
+        image.sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[itemStruct.itemIndex - 1]];
     }
 }

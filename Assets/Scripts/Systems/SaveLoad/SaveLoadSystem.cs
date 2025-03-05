@@ -245,6 +245,9 @@ public class SaveLoadSystem
                             writer.Write(slot.slotX);
                             writer.Write(slot.slotY);
                             writer.Write(item.itemIndex);
+                            writer.Write(item.itemName);
+                            writer.Write((int)item.slotType);
+                            writer.Write((int)item.itemType);
                         }
                     }
                 }
@@ -277,8 +280,12 @@ public class SaveLoadSystem
                             int X = reader.ReadInt32();
                             int Y = reader.ReadInt32();
                             int index = reader.ReadInt32();
+                            string name = reader.ReadString();
+                            int slotType = reader.ReadInt32();
+                            int itemType = reader.ReadInt32();
 
-                            GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, index);
+                            ItemStruct item = new ItemStruct(index, null, name, (SlotType)slotType, (ItemType)itemType, null);
+                            GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, item);
 
                         }
                     }

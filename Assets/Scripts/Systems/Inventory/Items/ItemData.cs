@@ -20,7 +20,6 @@ public class ItemData : MonoBehaviour
             Sprite sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[i]];
             GameObject go = GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[i]];
             ItemStruct item = items[i];
-
             item.image = sprite;
             item.itemGO = go;
             items.Add(item);
