@@ -18,7 +18,7 @@ public class EnemyController : Controller, IIdentifiable
     
     }
     public bool theta;
-
+    
     Vector3 enemyDir = Vector3.zero;
     [SerializeField]
     NavMeshAgent agent;
@@ -29,17 +29,21 @@ public class EnemyController : Controller, IIdentifiable
     EnemyType enemyType= EnemyType.Roaming;
     Coroutine coroutine;
     List<Vector3> destinations = new List<Vector3>();
-
+    [SerializeField]
+    CapsuleCollider capsuleCollider;
     Animator modelAnimator;
     int animationWorking;
     public Collider attackColider;
 
+    bool bDead;
     int attackDamage;
-
+    int hp;
     public string ID { get; set; }
 
     private void Awake()
     {
+        bDead = false;
+        hp = 100;
         attackDamage = 50;
      //   if (theta) MoveCalculator.SetBlockArea();
         agent = GetComponent<NavMeshAgent>();
@@ -54,12 +58,22 @@ public class EnemyController : Controller, IIdentifiable
 =======
         agent.speed = 1.5f;
         agent.angularSpeed = 500f;
+<<<<<<< HEAD
+>>>>>>> develop
+=======
+
+        Invoke("S", 0.5f);
 >>>>>>> develop
     }
 
+    void S()
+    {
+        GameInstance.Instance.worldGrids.AddLives(this.gameObject);
+    }
     // Update is called once per frame
     void Update()
     {
+        if(bDead) return;
      //   if (LastPosition != Transforms.position)
         {
        //     LastPosition = Transforms.position;
@@ -164,6 +178,27 @@ public class EnemyController : Controller, IIdentifiable
         return pos;
     }
 
+    public void BeAttacked(int damage)
+    {
+        if(bDead) return;
+
+        Debug.Log($"Damaged {damage}");
+        modelAnimator.SetTrigger("damaged");
+        hp -= damage;
+        if(hp <= 0)
+        {
+            hp = 0;
+            bDead = true;
+
+            agent.isStopped = true;
+
+            capsuleCollider.excludeLayers = 0b1000;
+         //   Destroy(Rigid);
+            modelAnimator.SetTrigger("dead");
+
+        }
+    }
+
     void StartAnimation(string animationName, float timer)
     {
         if (animationWorking > 0) return;
@@ -181,6 +216,7 @@ public class EnemyController : Controller, IIdentifiable
 
     private void OnTriggerEnter(Collider other)
     {
+        if (bDead) return;
         if(other.gameObject.CompareTag("Player"))
         {
             PlayerController player = other.GetComponent<PlayerController>();

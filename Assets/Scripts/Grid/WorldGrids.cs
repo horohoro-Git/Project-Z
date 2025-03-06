@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class WorldGrids : MonoBehaviour
 {
@@ -20,7 +22,8 @@ public class WorldGrids : MonoBehaviour
     int[] findX = new int[9] {0, 1, 1, 0,-1,-1,-1,0,1 };
     int[] findY = new int[9] {0, 0, -1, -1,-1, 0, 1, 1, 1 };
 
-    Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();    
+    Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();   
+    Dictionary<string, GameObject> lives = new Dictionary<string, GameObject>();
     private void Awake()
     {
         GameInstance.Instance.worldGrids = this;
@@ -119,6 +122,7 @@ public class WorldGrids : MonoBehaviour
 
     public void RemoveObjects(IIdentifiable ob)
     {
+      //  ob.ID = null;
         objects.Remove(ob.ID);
     }
 
@@ -128,6 +132,67 @@ public class WorldGrids : MonoBehaviour
         foreach (var obj in objects)
         {
             returnObjects.Add(obj.Value);
+        }
+
+        return returnObjects;
+    }
+
+
+    public void AddLives(GameObject livingObject)
+    {
+        IIdentifiable identifiable = livingObject.GetComponent<IIdentifiable>();
+        if(identifiable.ID == null)
+        {
+            while (true)
+            {
+                //아이디 갖고 있지 않음
+                byte[] random = Guid.NewGuid().ToByteArray();
+                string key = ConvertBinaryToString(random);
+                if (!lives.ContainsKey(key))
+                {
+                    identifiable.ID = key;
+                    lives[key] = livingObject;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            if (!lives.ContainsKey(identifiable.ID))
+            {
+                //아이디를 갖고 있고 사용 가능
+                lives[identifiable.ID] = livingObject;
+            }
+            else //갖고있던 아이디 뺏김
+            {
+                while (true)
+                {
+                    byte[] random = Guid.NewGuid().ToByteArray();
+                    string key = ConvertBinaryToString(random);
+                    if (!lives.ContainsKey(key))
+                    {
+                        identifiable.ID = key;
+                        lives[key] = livingObject;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+
+    public void RemoveLives(string ID)
+    {
+        lives.Remove(ID);
+    }
+
+
+    public List<GameObject> ReturnLives()
+    {
+        List<GameObject> returnObjects = new List<GameObject>();
+        foreach (var livingObject in lives)
+        {
+            returnObjects.Add(livingObject.Value);
         }
 
         return returnObjects;

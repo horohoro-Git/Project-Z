@@ -5,12 +5,15 @@ using UnityEngine.UI;
 
 public class MinimapUI : MonoBehaviour
 {
-    public RectTransform rectTransform;
+    public RectTransform playerRectTransform;
+    public RectTransform enemyRectTransform;
+    public RectTransform objectRectTransform;
     Camera camera;
     public Image player;
     public Image item;
     public Image enemy;
     List<Image> images = new List<Image>();
+
     // Start is called before the first frame update
     private void Awake()
     {
@@ -29,7 +32,7 @@ public class MinimapUI : MonoBehaviour
         {
             Transform transforms = GameInstance.Instance.GetPlayers[0].Transforms;
             Image playerIcon = Instantiate(player);
-            playerIcon.rectTransform.SetParent(rectTransform);
+            playerIcon.rectTransform.SetParent(playerRectTransform);
             playerIcon.rectTransform.localPosition = Vector3.zero; //플레이어 위치 중앙 기준
             playerIcon.rectTransform.localRotation = Quaternion.Euler(0, 0,  -(transforms.eulerAngles.y - 45) + 180); //플레이어 방향
             images.Add(playerIcon);
@@ -41,23 +44,37 @@ public class MinimapUI : MonoBehaviour
                 for (int i = 0; i < gameObjects.Count; i++)
                 {
                     Vector3 pos = gameObjects[i].transform.position - transforms.position;
-
-
                     float rotationAngle = 45f;
                     Quaternion rotation = Quaternion.Euler(0, 0, rotationAngle);
                     Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
-
                     if(rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
                     {
                         Image itemIcon = Instantiate(item);
-                        itemIcon.rectTransform.SetParent(rectTransform);
+                        itemIcon.rectTransform.SetParent(objectRectTransform);
                         itemIcon.rectTransform.localPosition = rotatedPosition;
                         images.Add(itemIcon);
                     }
                 }
 
+                List<GameObject> lives = GameInstance.Instance.worldGrids.ReturnLives();
 
+                for(int i = 0;i < lives.Count;i++)
+                {
+                    Transform livesTransform = lives[i].transform;
+                    Vector3 pos = livesTransform.position - transforms.position;
 
+                    float rotationAngle = 45f;
+                    Quaternion rotation = Quaternion.Euler(0, 0, rotationAngle);
+                    Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
+                    if (rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
+                    {
+                        Image enemyIcon = Instantiate(enemy);
+                        enemyIcon.rectTransform.SetParent(enemyRectTransform);
+                        enemyIcon.rectTransform.localPosition = rotatedPosition;
+                        enemyIcon.rectTransform.localRotation = Quaternion.Euler(0, 0, -(livesTransform.eulerAngles.y - 45) + 180);
+                        images.Add(enemyIcon);
+                    }
+                }
             }
         }
     }

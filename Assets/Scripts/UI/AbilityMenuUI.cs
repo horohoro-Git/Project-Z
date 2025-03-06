@@ -72,7 +72,7 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
     {
         this.player = player;
         playerStruct = player.playerStruct;
-        if(levelData.Count ==0) levelData = player.levelData;
+        if(levelData.Count ==0) levelData = GameInstance.Instance.assetLoader.levelData;
 
         currentStruct = playerStruct;
 

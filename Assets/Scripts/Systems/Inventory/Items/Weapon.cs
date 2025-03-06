@@ -6,10 +6,29 @@ public class Weapon : Item
 {
 
   //  public Player equippedPlayer;
-    public WeaponType type;
+
+    public WeaponStruct weaponStruct;
     public bool attack;
 
     public Collider weaponColider;
+
+    private void Start()
+    {
+        Invoke("ItemLoad", 0.2f);
+    }
+
+    void ItemLoad()
+    {
+        if(!GameInstance.Instance.assetLoader.assetLoadSuccessful)
+        {
+            Invoke("ItemLoad", 0.2f);
+
+            return;
+        }
+
+        weaponStruct = GameInstance.Instance.assetLoader.weapons[itemIndex];
+    }
+
     public void Attack(float start, float end)
     {
         Invoke("StartAttack", start);

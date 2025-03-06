@@ -18,8 +18,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    [NonSerialized]
-    public List<LevelData> levelData = new List<LevelData>();
+  
     GameObject healBuff;
     GameObject levelupBuff;
     Coroutine healCoroutine;
@@ -62,7 +61,7 @@ public class Player : MonoBehaviour
 
             playerStruct.level++;
             playerStruct.skillPoint++;
-            playerStruct.requireEXP = levelData[playerStruct.level - 1].exp;
+            playerStruct.requireEXP = GameInstance.Instance.assetLoader.levelData[playerStruct.level - 1].exp;
 
             GameInstance.Instance.playerStatusUI.LevelUp(playerStruct.level, playerStruct.exp, playerStruct.requireEXP);
             buffStruct.levelupNums++;
@@ -74,8 +73,8 @@ public class Player : MonoBehaviour
 
     public void UpdatePlayer()
     {
-        levelData = SaveLoadSystem.GetLevelData();
-        playerStruct.requireEXP = levelData[playerStruct.level - 1].exp;
+
+        playerStruct.requireEXP = GameInstance.Instance.assetLoader.levelData[playerStruct.level - 1].exp;
 
         //Èú ¹öÇÁ ÀÌÆåÆ®
         CreateBuff(ref healBuff, LoadURL.Heal);
@@ -107,7 +106,7 @@ public class Player : MonoBehaviour
                 break;
             case ConsumptionType.Heal:
                 buffStruct.healBuff.Enqueue(item.consumtionStruct);
-                if(healCoroutine == null) healCoroutine = StartCoroutine(HPRecovery(item.consumtionStruct.duration, item.consumtionStruct.hpRevoveryAmount));
+                if(healCoroutine == null) healCoroutine = StartCoroutine(HPRecovery(item.consumtionStruct.duration, item.consumtionStruct.heal_amount));
                 break;
 
             case ConsumptionType.EnergyRegain:
@@ -146,7 +145,7 @@ public class Player : MonoBehaviour
         if(buffStruct.healBuff.Count > 0)
         {
             ConsumptionStruct consumtionStruct = buffStruct.healBuff.Peek();
-            healCoroutine = StartCoroutine(HPRecovery(consumtionStruct.duration, consumtionStruct.hpRevoveryAmount));
+            healCoroutine = StartCoroutine(HPRecovery(consumtionStruct.duration, consumtionStruct.heal_amount));
         }
 
         healBuff.SetActive(false);

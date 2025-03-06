@@ -324,7 +324,7 @@ public class PlayerController : Controller
             {
                 Weapon weapon = equipItem.GetComponent<Weapon>();
 
-                switch (weapon.type)
+                switch (weapon.weaponStruct.weapon_type)
                 {
                     case WeaponType.None:
                         break;
@@ -474,7 +474,7 @@ public class PlayerController : Controller
 
         AssetLoader loader = GameInstance.Instance.assetLoader;
         //무기
-        if (equipItem.itemType == ItemType.Equipmentable)
+        if (equipItem.item_type == ItemType.Equipmentable)
         {
             if(this.equipItem != null)
             {
@@ -482,7 +482,7 @@ public class PlayerController : Controller
                 this.equipItem = null;
             }
             equipSlotIndex = index;
-            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.itemIndex - 1]]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
+            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item_index - 1]]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
             this.equipItem.transform.SetParent(attachItem.transform);
@@ -506,16 +506,16 @@ public class PlayerController : Controller
                equipWeapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
                modelAnimator.SetFloat("equip", 1);*/
         }
-        else if (equipItem.itemType == ItemType.Consumable)     //음식을 손에 듬
+        else if (equipItem.item_type == ItemType.Consumable)     //음식을 손에 듬
         {
             if (this.equipItem != null)
             {
                 Destroy(this.equipItem.gameObject);
                 this.equipItem = null;
             }
-            Debug.Log(equipItem.itemIndex);
+            Debug.Log(equipItem.item_index);
             equipSlotIndex = index;
-            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.itemIndex - 1]]).GetComponent<Item>();
+            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item_index - 1]]).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
             this.equipItem.transform.SetParent(attachItem.transform);
