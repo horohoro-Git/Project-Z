@@ -768,6 +768,7 @@ MonoBehaviour:
   sprint: 0
   theta: 0
   agent: {fileID: 413314384}
+  capsuleCollider: {fileID: 0}
   attackColider: {fileID: 0}
 --- !u!65 &413314387
 BoxCollider:
@@ -1384,6 +1385,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4063795909802890412, guid: b249998197c7e7d4f945977b8290cc5c, type: 3}
+      propertyPath: capsuleCollider
+      value: 
+      objectReference: {fileID: 2002107181}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1522,6 +1527,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 862a9772cfe27d44ba4c194bd68f48c8, type: 3}
+--- !u!136 &2002107181 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 1139950615472417298, guid: b249998197c7e7d4f945977b8290cc5c, type: 3}
+  m_PrefabInstance: {fileID: 1279927389}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2122266772
 GameObject:
   m_ObjectHideFlags: 0

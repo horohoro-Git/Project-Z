@@ -156,6 +156,15 @@ public enum WeaponType
 
 }
 
+//소비 타입
+public enum ConsumptionType
+{
+    None,
+    Heal,
+    EnergyRegain,
+    HealAndEnergy
+}
+
 
 
 //건축 자재의 타입
@@ -203,41 +212,46 @@ public struct HousingChangeInfo
 [System.Serializable]
 public struct ItemStruct
 {
-    public int itemIndex;
+    public int item_index;
     public Sprite image;
-    public string itemName;
-    public SlotType slotType;
-    public ItemType itemType;
+    public string item_name;
+    public SlotType slot_type;
+    public ItemType item_type;
     public bool used;
     public GameObject itemGO;
 
     public ItemStruct(int itemIndex, Sprite image, string itemName, SlotType slotType, ItemType itemType, GameObject itemGO)
     {
-        this.itemIndex = itemIndex;
+        this.item_index = itemIndex;
         this.image = image;
-        this.itemName = itemName;
-        this.slotType = slotType;
-        this.itemType = itemType;
+        this.item_name = itemName;
+        this.slot_type = slotType;
+        this.item_type = itemType;
         used = true;
         this.itemGO = itemGO;
     }
-}
-
-//소비 아이템 타입
-public enum ConsumptionType
-{
-    None,
-    Heal,
-    EnergyRegain
 }
 
 //소비 아이템의 정보
 [System.Serializable]
 public struct ConsumptionStruct
 {
+    public int item_index;
+    public ConsumptionType consumption_type;
+    public int heal_amount;
+    public int energy_amount;
     public float duration;
-    public int hpRevoveryAmount;
-    public int energyRevoveryAmount;
+}
+
+//무기 아이템 정보
+public struct WeaponStruct
+{
+    public int item_index;
+    public WeaponType weapon_type;
+    public int attack_damage;
+    public float attack_speed;
+    public int max_ammo;
+    public int durability;
 }
 
 //버프 정보

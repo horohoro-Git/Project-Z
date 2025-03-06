@@ -163,7 +163,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     public void LoadInvetory(int x, int y, ItemStruct itemStruct)
     {
-        ItemStruct item = ItemData.GetItem(itemStruct.itemIndex - 1);
+        ItemStruct item = ItemData.GetItem(itemStruct.item_index - 1);
 
         itemStruct.itemGO = item.itemGO;
         itemStruct.image = item.image;

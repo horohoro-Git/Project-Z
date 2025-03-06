@@ -32,9 +32,9 @@ public class InstallableItem : Item, IUIComponent
     public void SetItemStruct(ItemStruct itemStruct, StructureState structureType)
     {
         item_Image = itemStruct.image;
-        item_Name = itemStruct.itemName;
-        item_Slot = itemStruct.slotType;
-        item_Type = itemStruct.itemType;
+        item_Name = itemStruct.item_name;
+        item_Slot = itemStruct.slot_type;
+        item_Type = itemStruct.item_type;
         type = structureType;
     }
 

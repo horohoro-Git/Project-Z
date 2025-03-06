@@ -81,14 +81,40 @@ public class SaveLoadSystem
         }
     }
 
-    public static List<LevelData> GetLevelData()
+    //레벨 데이터 테이블 불러오기
+    public static List<LevelData> GetLevelData(string content)
     {
-        string p = Path.Combine(path, "PlayData/Exp.dat");
-        string content = File.ReadAllText(p);
+      //  string p = Path.Combine(path, "PlayData/Level.dat");
+       // string content = File.ReadAllText(p);
 
         string data = EncryptorDecryptor.Decyptor(content, "AAA");
 
         return JsonConvert.DeserializeObject<List<LevelData>>(data);
+    }
+
+    //아이템 데이터 테이블 불러오기
+    public static List<ItemStruct> GetItemData(string content)
+    {
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+
+        return JsonConvert.DeserializeObject<List<ItemStruct>>(data);
+
+    }
+
+    //무기 데이터 불러오기
+    public static List<WeaponStruct> GetWeaponData(string content)
+    {
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+
+        return JsonConvert.DeserializeObject<List<WeaponStruct>>(data);
+    }
+
+    //소비 아이템 불러오기
+    public static List<ConsumptionStruct> GetConsumptionData(string content)
+    {
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+
+        return JsonConvert.DeserializeObject<List<ConsumptionStruct>>(data);
     }
 
 
@@ -241,13 +267,13 @@ public class SaveLoadSystem
                         {
                             
                             ItemStruct item = slot.item;
-                            if (item.itemIndex == 0) continue; 
+                            if (item.item_index == 0) continue; 
                             writer.Write(slot.slotX);
                             writer.Write(slot.slotY);
-                            writer.Write(item.itemIndex);
-                            writer.Write(item.itemName);
-                            writer.Write((int)item.slotType);
-                            writer.Write((int)item.itemType);
+                            writer.Write(item.item_index);
+                            writer.Write(item.item_name);
+                            writer.Write((int)item.slot_type);
+                            writer.Write((int)item.item_type);
                         }
                     }
                 }

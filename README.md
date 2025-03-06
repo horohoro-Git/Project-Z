@@ -163,3 +163,6 @@ Use consumption type item, add (recovery, level up) effect
 
 03/05
 Add minimap ui with icons
+
+03/06
+Add data table to addressable, can kill zombies

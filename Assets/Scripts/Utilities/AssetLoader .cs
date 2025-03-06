@@ -5,6 +5,7 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
 using UnityEngine.ResourceManagement.ResourceLocations;
+using System.Net;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -47,13 +48,16 @@ public class AssetLoader : MonoBehaviour
     "log_Sprite", "axe_Sprite", "apple_Sprite"
     };
 
+    [NonSerialized]
+    public List<LevelData> levelData;
+    [NonSerialized]
+    public List<ItemStruct> items;
 
     [NonSerialized]
-    public List<ItemStruct> items = new List<ItemStruct>()
-    {
-       new ItemStruct(1, null, "log", SlotType.None, ItemType.None, null),
-       new ItemStruct(2, null, "axe", SlotType.None, ItemType.Equipmentable, null)
-    };
+    public Dictionary<int, WeaponStruct> weapons = new Dictionary<int, WeaponStruct>(); //List<WeaponStruct> weapons;
+
+    [NonSerialized]
+    public Dictionary<int, ConsumptionStruct> consumptions = new Dictionary<int, ConsumptionStruct>(); //List<ConsumptionStruct> consumptions;
 
     public Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
     public Dictionary<string, Sprite> loadedSprites = new Dictionary<string, Sprite>();
@@ -82,6 +86,15 @@ public class AssetLoader : MonoBehaviour
   
     Shader Standard { get { if (standard == null) standard = Shader.Find("Standard"); return standard; } }
 
+    [NonSerialized]
+    public string levelContent;
+    [NonSerialized] 
+    public string itemContent;
+    [NonSerialized]
+    public string weaponContent;
+    [NonSerialized]
+    public string consumptionContent;
+
     public void Awake()
     {
         GameInstance.Instance.assetLoader = this;
@@ -94,38 +107,40 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
-      /*  var assetNames = new List<string>();
-
-        // 모든 리소스 로케이터 가져오기
-        var resourceLocators = Addressables.ResourceLocators;
-
-        foreach (var locator in resourceLocators)
+        //데이터 테이블
+        AsyncOperationHandle<TextAsset> lvlHandle = Addressables.LoadAssetAsync<TextAsset>("level");
+        yield return lvlHandle;
+        if(lvlHandle.Status == AsyncOperationStatus.Succeeded)
         {
-            // 특정 그룹의 키(Key) 목록 가져오기
-            foreach (var key in locator.Keys)
-            {
-                if (locator.Locate(key, typeof(object), out var locations))
-                {
-                    foreach (var location in locations)
-                    {
-                        // InternalId에서 그룹 이름 확인
-                        if (location.InternalId.Contains("Home"))
-                        {
-                            assetNames.Add(key.ToString());
-                        }
-                    }
-                }
-            }
+            TextAsset textAsset = lvlHandle.Result;
+            levelContent = textAsset.text;
+        }
+        AsyncOperationHandle<TextAsset> itemHandle = Addressables.LoadAssetAsync<TextAsset>("item");
+        yield return itemHandle;
+        if (itemHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            TextAsset textAsset = itemHandle.Result;
+            itemContent = textAsset.text;
+        }
+        AsyncOperationHandle<TextAsset> weaponHandle = Addressables.LoadAssetAsync<TextAsset>("weapon");
+        yield return weaponHandle;
+        if (weaponHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            TextAsset textAsset = weaponHandle.Result;
+            weaponContent = textAsset.text;
+        }
+        AsyncOperationHandle<TextAsset> consumptionHandle = Addressables.LoadAssetAsync<TextAsset>("consumption");
+        yield return consumptionHandle;
+        if (consumptionHandle.Status == AsyncOperationStatus.Succeeded)
+        {
+            TextAsset textAsset = consumptionHandle.Result;
+            consumptionContent = textAsset.text;
         }
 
-        Debug.Log($"그룹 'Home'에 포함된 에셋 목록:");
-        foreach (var name in assetNames)
-        {
-            Debug.Log(name);
-        }
 
-        yield return null;*/
-    
+
+
+
 
         int loadNum = 0;
         Debug.Log("Loading");
@@ -179,6 +194,15 @@ public class AssetLoader : MonoBehaviour
         {
             assetLoadSuccessful = true;
         }
+        levelData = SaveLoadSystem.GetLevelData(levelContent);
+        items = SaveLoadSystem.GetItemData(itemContent);
+        List<WeaponStruct> weaponTable = SaveLoadSystem.GetWeaponData(weaponContent);
+        List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
+
+        Debug.Log(weaponTable[0].attack_damage);
+        for(int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
+        for(int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
+    
 
         ItemData.ItemDatabaseSetup();
 

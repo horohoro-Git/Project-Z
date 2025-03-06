@@ -13,6 +13,11 @@ public class Axe : Weapon
                 other.gameObject.GetComponent<Tree>().ChopDown(transform, equippedPlayer);
             }
         }
+
+        if(other.gameObject.CompareTag("Enemy"))
+        {
+            other.gameObject.GetComponent<EnemyController>().BeAttacked(weaponStruct.attack_damage);
+        }
         
     }
  /*   private void OnTriggerStay(Collider other)
