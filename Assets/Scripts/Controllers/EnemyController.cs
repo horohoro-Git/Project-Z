@@ -54,16 +54,10 @@ public class EnemyController : Controller, IIdentifiable
 
     private void Start()
     {
-<<<<<<< HEAD
-=======
         agent.speed = 1.5f;
         agent.angularSpeed = 500f;
-<<<<<<< HEAD
->>>>>>> develop
-=======
 
         Invoke("S", 0.5f);
->>>>>>> develop
     }
 
     void S()
