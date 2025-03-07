@@ -6,6 +6,8 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
 using UnityEngine.ResourceManagement.ResourceLocations;
 using System.Net;
+using UnityEngine.Networking;
+using UnityEditor.PackageManager.Requests;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -107,40 +109,94 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
-        //데이터 테이블
-        AsyncOperationHandle<TextAsset> lvlHandle = Addressables.LoadAssetAsync<TextAsset>("level");
-        yield return lvlHandle;
-        if(lvlHandle.Status == AsyncOperationStatus.Succeeded)
+        /*   //데이터 테이블
+           AsyncOperationHandle<TextAsset> lvlHandle = Addressables.LoadAssetAsync<TextAsset>("level");
+           yield return lvlHandle;
+           if(lvlHandle.Status == AsyncOperationStatus.Succeeded)
+           {
+               TextAsset textAsset = lvlHandle.Result;
+               levelContent = textAsset.text;
+           }
+           AsyncOperationHandle<TextAsset> itemHandle = Addressables.LoadAssetAsync<TextAsset>("item");
+           yield return itemHandle;
+           if (itemHandle.Status == AsyncOperationStatus.Succeeded)
+           {
+               TextAsset textAsset = itemHandle.Result;
+               itemContent = textAsset.text;
+           }
+           AsyncOperationHandle<TextAsset> weaponHandle = Addressables.LoadAssetAsync<TextAsset>("weapon");
+           yield return weaponHandle;
+           if (weaponHandle.Status == AsyncOperationStatus.Succeeded)
+           {
+               TextAsset textAsset = weaponHandle.Result;
+               weaponContent = textAsset.text;
+           }
+           AsyncOperationHandle<TextAsset> consumptionHandle = Addressables.LoadAssetAsync<TextAsset>("consumption");
+           yield return consumptionHandle;
+           if (consumptionHandle.Status == AsyncOperationStatus.Succeeded)
+           {
+               TextAsset textAsset = consumptionHandle.Result;
+               consumptionContent = textAsset.text;
+           }*/
+        // AssetBundle.Load
+        string homeUrl = "http://211.193.2.220:8079/uploads/home/home";
+
+        UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(homeUrl);
+        yield return www.SendWebRequest();
+
+        if (www.result == UnityWebRequest.Result.Success)
         {
-            TextAsset textAsset = lvlHandle.Result;
-            levelContent = textAsset.text;
+            AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(www);
+            yield return bundle;
+
+            if (!bundle.isStreamedSceneAssetBundle)
+            {
+                AssetBundleRequest request = bundle.LoadAssetAsync<TextAsset>("level");
+
+                yield return request;
+
+                if (request != null)
+                {
+                    TextAsset levelTextAsset = (TextAsset)request.asset;
+                    levelContent = levelTextAsset.text;
+                }
+
+                AssetBundleRequest request1 = bundle.LoadAssetAsync<TextAsset>("item");
+
+                yield return request1;
+
+                if (request1 != null)
+                {
+                    TextAsset itemTextAsset = (TextAsset)request1.asset;
+                    itemContent = itemTextAsset.text;
+                }
+                AssetBundleRequest request2 = bundle.LoadAssetAsync<TextAsset>("weapon");
+
+                yield return request2;
+
+                if (request2 != null)
+                {
+                    TextAsset weaponTextAsset = (TextAsset)request2.asset;
+                    weaponContent = weaponTextAsset.text;
+                }
+                AssetBundleRequest request3 = bundle.LoadAssetAsync<TextAsset>("consumption");
+
+                yield return request3;
+
+                if (request3 != null)
+                {
+                    TextAsset consumptionTextAsset = (TextAsset)request3.asset;
+                    consumptionContent = consumptionTextAsset.text;
+                }
+            }
+           
         }
-        AsyncOperationHandle<TextAsset> itemHandle = Addressables.LoadAssetAsync<TextAsset>("item");
-        yield return itemHandle;
-        if (itemHandle.Status == AsyncOperationStatus.Succeeded)
+        else
         {
-            TextAsset textAsset = itemHandle.Result;
-            itemContent = textAsset.text;
-        }
-        AsyncOperationHandle<TextAsset> weaponHandle = Addressables.LoadAssetAsync<TextAsset>("weapon");
-        yield return weaponHandle;
-        if (weaponHandle.Status == AsyncOperationStatus.Succeeded)
-        {
-            TextAsset textAsset = weaponHandle.Result;
-            weaponContent = textAsset.text;
-        }
-        AsyncOperationHandle<TextAsset> consumptionHandle = Addressables.LoadAssetAsync<TextAsset>("consumption");
-        yield return consumptionHandle;
-        if (consumptionHandle.Status == AsyncOperationStatus.Succeeded)
-        {
-            TextAsset textAsset = consumptionHandle.Result;
-            consumptionContent = textAsset.text;
+            Debug.Log("Error"); 
         }
 
-
-
-
-
+        Debug.Log(levelContent);
 
         int loadNum = 0;
         Debug.Log("Loading");
