@@ -20,6 +20,5 @@ public class AssetBundleBuildEditor : EditorWindow
         BuildPipeline.BuildAssetBundles(directory, BuildAssetBundleOptions.None, BuildTarget.StandaloneWindows);
 
         EditorUtility.DisplayDialog("Asset Bundle Build", "Build Complete", "Succeeded");
-        //GetWindow<AssetBundleBuildEditor>("Create Asset Bundle");
     }
 }

@@ -117,6 +117,20 @@ public class SaveLoadSystem
         return JsonConvert.DeserializeObject<List<ConsumptionStruct>>(data);
     }
 
+    //서버 불러오기
+    public static string LoadServerURL()
+    {
+        string path = Path.Combine(Application.streamingAssetsPath, "servercommunication.bytes");
+        
+        string content = File.ReadAllText(path);
+        string decryptedData = EncryptorDecryptor.Decyptor(content, "AAA");
+        Dictionary<string, object> data = JsonConvert.DeserializeObject<Dictionary<string, object>>(decryptedData);
+
+        string returnURL = data["server"].ToString();
+
+        return returnURL;
+
+    }
 
     //플레이어 데이터 저장
     public static void SavePlayerData(Player player)

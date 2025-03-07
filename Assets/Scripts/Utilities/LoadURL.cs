@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class LoadURL : MonoBehaviour
 {
-    public const string Floor = "Floor";
+    public const string Floor = "floor";
     public const string Wall = "wall";
-    public const string Door = "doorSwitch";
+    public const string Door = "door";
     public const string Roof = "roof";
     public const string PreviewFloor = "PreloadFloor";
     public const string PreviewWall = "PreloadWall";
@@ -15,7 +15,7 @@ public class LoadURL : MonoBehaviour
     public const string Flower_Yellow = "flower_yellow";
     public const string Flower_Pink = "flower_pink";
     public const string Grasses = "grasses";
-    public const string Tree = "Tree";
+    public const string Tree = "tree";
     public const string Human_Male = "human_male";
     public const string Log = "log";
     public const string Heal = "heal";
