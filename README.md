@@ -166,3 +166,6 @@ Add minimap ui with icons
 
 03/06
 Add data table to addressable, can kill zombies
+
+03/07
+load normalization
