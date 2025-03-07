@@ -22,6 +22,7 @@
 /[Uu]ser[Ss]ettings/
 /[Ss]erverData/
 /[Bb]undle/
+**/[Bb]undle/
 /[Aa]ssets/[Ee]dited/
 /[Aa]ssets/Edited.meta
 /[Aa]ssets/[Dd]ata/

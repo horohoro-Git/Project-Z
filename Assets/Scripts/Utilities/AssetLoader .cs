@@ -8,6 +8,7 @@ using UnityEngine.ResourceManagement.ResourceLocations;
 using System.Net;
 using UnityEngine.Networking;
 using UnityEditor.PackageManager.Requests;
+using System.IO;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -36,7 +37,7 @@ public class AssetLoader : MonoBehaviour
     public List<string> assetkeys = new List<string> {
     "floor", "wall", "door", "roof",
     "preview_floor", "preview_wall", "preview_door",
-     "flower_orange", "flower_yellow",  "flower_pink", "greasses",
+     "flower_orange", "flower_yellow",  "flower_pink", "grasses",
       "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup"
     };
 
@@ -109,6 +110,7 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
+        int unloadNum = 0;
         /*   //데이터 테이블
            AsyncOperationHandle<TextAsset> lvlHandle = Addressables.LoadAssetAsync<TextAsset>("level");
            yield return lvlHandle;
@@ -139,7 +141,7 @@ public class AssetLoader : MonoBehaviour
                consumptionContent = textAsset.text;
            }*/
         // AssetBundle.Load
-        string homeUrl = "http://211.193.2.220:8079/uploads/home/home";
+        string homeUrl = Path.Combine(SaveLoadSystem.LoadServerURL(), "home");
 
         UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(homeUrl);
         yield return www.SendWebRequest();
@@ -151,54 +153,85 @@ public class AssetLoader : MonoBehaviour
 
             if (!bundle.isStreamedSceneAssetBundle)
             {
-                AssetBundleRequest request = bundle.LoadAssetAsync<TextAsset>("level");
+                //데이터 테이블 로드
+                AssetBundleRequest levelrequest = bundle.LoadAssetAsync<TextAsset>("level");
+                yield return levelrequest;
 
-                yield return request;
-
-                if (request != null)
+                if (levelrequest != null)
                 {
-                    TextAsset levelTextAsset = (TextAsset)request.asset;
+                    TextAsset levelTextAsset = (TextAsset)levelrequest.asset;
                     levelContent = levelTextAsset.text;
                 }
 
-                AssetBundleRequest request1 = bundle.LoadAssetAsync<TextAsset>("item");
+                AssetBundleRequest itemrequest = bundle.LoadAssetAsync<TextAsset>("item");
+                yield return itemrequest;
 
-                yield return request1;
-
-                if (request1 != null)
+                if (itemrequest != null)
                 {
-                    TextAsset itemTextAsset = (TextAsset)request1.asset;
+                    TextAsset itemTextAsset = (TextAsset)itemrequest.asset;
                     itemContent = itemTextAsset.text;
                 }
-                AssetBundleRequest request2 = bundle.LoadAssetAsync<TextAsset>("weapon");
+                AssetBundleRequest weaponrequest = bundle.LoadAssetAsync<TextAsset>("weapon");
 
-                yield return request2;
+                yield return weaponrequest;
 
-                if (request2 != null)
+                if (weaponrequest != null)
                 {
-                    TextAsset weaponTextAsset = (TextAsset)request2.asset;
+                    TextAsset weaponTextAsset = (TextAsset)weaponrequest.asset;
                     weaponContent = weaponTextAsset.text;
                 }
-                AssetBundleRequest request3 = bundle.LoadAssetAsync<TextAsset>("consumption");
+                AssetBundleRequest consumptionrequest = bundle.LoadAssetAsync<TextAsset>("consumption");
 
-                yield return request3;
+                yield return consumptionrequest;
 
-                if (request3 != null)
+                if (consumptionrequest != null)
                 {
-                    TextAsset consumptionTextAsset = (TextAsset)request3.asset;
+                    TextAsset consumptionTextAsset = (TextAsset)consumptionrequest.asset;
                     consumptionContent = consumptionTextAsset.text;
                 }
+
+                //프리팹 에셋 로드
+                foreach(string key in assetkeys)
+                {
+                    GameObject asset = bundle.LoadAsset<GameObject>(key);
+                    if(asset != null)
+                    {
+                        loadedAssets[key] = asset;
+                        Debug.Log(key + " loaded");
+                    }
+                    else
+                    {
+                        Debug.Log(key + " loaded fail");
+                        unloadNum++;
+                    }
+                }
+
+                //이미지 에셋 로드
+                foreach (string key in spriteAssetkeys)
+                {
+                    Sprite asset = bundle.LoadAsset<Sprite>(key);
+                    if (asset != null)
+                    {
+                        loadedSprites[key] = asset;
+                        Debug.Log(key + " loaded");
+                    }
+                    else
+                    {
+                        Debug.Log(key + " loaded fail");
+                        unloadNum++;
+                    }
+                }
             }
-           
+
+            bundle.Unload(false);
         }
         else
         {
             Debug.Log("Error"); 
         }
 
-        Debug.Log(levelContent);
+    /*    Debug.Log(levelContent);
 
-        int loadNum = 0;
         Debug.Log("Loading");
         //호스팅 서버에 Remote Load Path로 연결 후
 
@@ -244,9 +277,9 @@ public class AssetLoader : MonoBehaviour
         else
         {
             Debug.Log("error");
-        }
+        }*/
 
-        if (loadNum == 2)
+        if (unloadNum == 0)
         {
             assetLoadSuccessful = true;
         }
