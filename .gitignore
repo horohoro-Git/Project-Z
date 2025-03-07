@@ -9,6 +9,7 @@
 !/[Pp]ackages/
 !/[Aa]ssets/[Aa]ddressableAssetsData/[Ww]indows/
 !/[Aa]ssets/[Aa]ddressableAssetsData/Windows.meta
+!/[Aa]ssets/[Ss]treamingAssets/
 
 # Unity generated folders that should be ignored
 /[Pp]ackages/cache/
