@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Home
+  m_EditorClassIdentifier: 
+  m_GroupName: Home
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 73144774a1cf7c142808ea0cbb6a66bf
+  m_SerializeEntries:
+  - m_GUID: 02c4ba5a368a6e74cbf4baf0358ccfa2
+    m_Address: log
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1a32966d78935bb4399796aa4105a82f
+    m_Address: item
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2208e1a30a8941948a20126c0b8389c6
+    m_Address: door
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 224f5d2fb3bf06b4ca83f3a2ab404fb7
+    m_Address: apple_Sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 23c0affbceabf2641b15a275603dfab7
+    m_Address: axe_Sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2dcd1dbd6dd883947a817b41e9621ec7
+    m_Address: log_Sprite
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 35bafba45f200e44ba92b3993e3a9831
+    m_Address: tree
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 389acd1e1edac7b4aa4617842153c79d
+    m_Address: roof
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 43e3589e78242d74d80b9314f5c4e59d
+    m_Address: preview_door
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 445d88f269b833546aef6eade8d742e5
+    m_Address: consumption
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d2aecd47b0a1b44dae2374ef6440faf
+    m_Address: preview_floor
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5cf6cdea45eaf2549bbf2a7a4d07e103
+    m_Address: wall
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5f816bc2b40208441ab3384d79a72e06
+    m_Address: greasses
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5fcb2db2d98516e4cb2810ee37d4bc6f
+    m_Address: level
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 70daccc2501804f4fa12a6ecf2c1f4a1
+    m_Address: flower_pink
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 77037c2ba4da31d4893ab57fd706ed5c
+    m_Address: levelup
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 77dfd9a6fcc3eff4db0ff1ba40274406
+    m_Address: flower_yellow
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 79ad9c370040e7946820c1662fa55c41
+    m_Address: human_male
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d87ec1bb6355da4681ae623e1097729
+    m_Address: weapon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9cafaaf35996fa54d9a539e68a69eb92
+    m_Address: floor
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a8fcb925083ba4e4e8f6f3dee84e9b2f
+    m_Address: preview_wall
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa578a5c198e9874881d32e23d3f7abf
+    m_Address: flower_orange
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b56770b8bbef21b4c939a5e443289084
+    m_Address: heal
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0e023263d2c1674094011fee7dd62d1
+    m_Address: wooden Axe
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df4e8cc284076084cb8e3fff380cfdd3
+    m_Address: apple
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Home
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 509510caebfcbf24d95ecb5cdd3179eb, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ea27bbf38ce0c4642b22d77624ca178d, type: 2}
+    - {fileID: 11400000, guid: b300026a27fe2624088d01545ea8c3aa, type: 2}
