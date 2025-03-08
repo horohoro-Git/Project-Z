@@ -304,6 +304,37 @@ public struct PlayerStruct
 
 }
 
+//적의 정보
+public struct EnemyStruct
+{
+    public int id;
+    public string enemy_name;
+    public int health;
+    public int attack;
+    public string drop_item;
+    
+    public List<DropStruct> dropStruct;
+    public EnemyStruct(int id, string enemy_name, int health, int attack, string drop_item, List<DropStruct> dropStructs)
+    {
+        this.id = id;
+        this.enemy_name = enemy_name;
+        this.health = health;
+        this.attack = attack;
+        this.drop_item = drop_item;
+        this.dropStruct = dropStructs;
+    }
+
+   
+}
+
+//적의 드랍 정보
+public struct DropStruct
+{
+    public int item_index;
+    public int item_chance;
+}
+
+
 public class Utility
 {
 

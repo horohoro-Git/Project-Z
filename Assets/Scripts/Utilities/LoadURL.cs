@@ -8,9 +8,9 @@ public class LoadURL : MonoBehaviour
     public const string Wall = "wall";
     public const string Door = "door";
     public const string Roof = "roof";
-    public const string PreviewFloor = "PreloadFloor";
-    public const string PreviewWall = "PreloadWall";
-    public const string PreviewDoor = "PreloadDoor";
+    public const string PreviewFloor = "preview_floor";
+    public const string PreviewWall = "preview_wall";
+    public const string PreviewDoor = "preview_door";
     public const string Flower_Orange = "flower_orange";
     public const string Flower_Yellow = "flower_yellow";
     public const string Flower_Pink = "flower_pink";

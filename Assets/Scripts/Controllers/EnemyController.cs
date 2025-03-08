@@ -35,16 +35,16 @@ public class EnemyController : Controller, IIdentifiable
     int animationWorking;
     public Collider attackColider;
 
+    public EnemyStruct enemyStruct;
+
     bool bDead;
-    int attackDamage;
-    int hp;
+ //   int attackDamage;
+  //  int hp;
     public string ID { get; set; }
 
     private void Awake()
     {
         bDead = false;
-        hp = 100;
-        attackDamage = 50;
      //   if (theta) MoveCalculator.SetBlockArea();
         agent = GetComponent<NavMeshAgent>();
         modelAnimator = GetComponentInChildren<Animator>();
@@ -62,7 +62,9 @@ public class EnemyController : Controller, IIdentifiable
 
     void S()
     {
+        
         GameInstance.Instance.worldGrids.AddLives(this.gameObject);
+        enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
     }
     // Update is called once per frame
     void Update()
@@ -178,10 +180,10 @@ public class EnemyController : Controller, IIdentifiable
 
         Debug.Log($"Damaged {damage}");
         modelAnimator.SetTrigger("damaged");
-        hp -= damage;
-        if(hp <= 0)
+        enemyStruct.health -= damage;
+        if(enemyStruct.health <= 0)
         {
-            hp = 0;
+            enemyStruct.health = 0;
             bDead = true;
 
             agent.isStopped = true;
@@ -189,8 +191,24 @@ public class EnemyController : Controller, IIdentifiable
             capsuleCollider.excludeLayers = 0b1000;
          //   Destroy(Rigid);
             modelAnimator.SetTrigger("dead");
+            Reward();
+        }
+    }
+
+    void Reward()
+    {
+        for (int i = 0; i < enemyStruct.dropStruct.Count; i++)
+        {
+            int random = Random.Range(1, 101);
+            if(random <= enemyStruct.dropStruct[i].item_chance)
+            {
+                int index = enemyStruct.dropStruct[i].item_index - 1;
+                GameObject item = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[index]]);
+                item.transform.position = Transforms.position;
+            }
 
         }
+      
     }
 
     void StartAnimation(string animationName, float timer)
@@ -214,7 +232,7 @@ public class EnemyController : Controller, IIdentifiable
         if(other.gameObject.CompareTag("Player"))
         {
             PlayerController player = other.GetComponent<PlayerController>();
-            player.GetDamage(attackDamage);
+            player.GetDamage(enemyStruct.attack);
             Debug.Log("Attack Hit");
         }
     }

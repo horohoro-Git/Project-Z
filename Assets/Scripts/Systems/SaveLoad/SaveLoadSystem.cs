@@ -84,9 +84,6 @@ public class SaveLoadSystem
     //레벨 데이터 테이블 불러오기
     public static List<LevelData> GetLevelData(string content)
     {
-      //  string p = Path.Combine(path, "PlayData/Level.dat");
-       // string content = File.ReadAllText(p);
-
         string data = EncryptorDecryptor.Decyptor(content, "AAA");
 
         return JsonConvert.DeserializeObject<List<LevelData>>(data);
@@ -131,6 +128,49 @@ public class SaveLoadSystem
         return returnURL;
 
     }
+
+    //적의 정보 데이터 테이블
+    public static List<EnemyStruct> LoadEnemyData(string content)
+    {
+        //받아온 데이터 복호화
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+
+        //적 테이블 역직렬화
+        List<EnemyStruct> enemyStruct = JsonConvert.DeserializeObject<List<EnemyStruct>>(data);
+
+        for(int i = 0; i < enemyStruct.Count; i++)
+        {
+            string itemData = enemyStruct[i].drop_item;
+
+            //임시 변수로 복사 후 수정
+            EnemyStruct enemy = enemyStruct[i];
+            enemy.dropStruct = LoadDropData(itemData);
+            enemyStruct[i] = enemy;
+        }
+       
+        return enemyStruct;
+    }
+
+
+    //드랍 테이블
+    public static List<DropStruct> LoadDropData(string content)
+    { 
+        List<DropStruct> dropStructs = new List<DropStruct>();
+        string data = content;
+
+        //json 형식으로 보정
+        string item_index = "\"item_index\"";
+        string item_chance = "\"item_chance\"";
+
+        data = data.Replace("item_index", item_index);
+        data = data.Replace("item_chance", item_chance);
+
+        //보정된 형식으로 역직렬화
+        dropStructs = JsonConvert.DeserializeObject<List<DropStruct>>(data);
+
+        return dropStructs;
+    }
+
 
     //플레이어 데이터 저장
     public static void SavePlayerData(Player player)
