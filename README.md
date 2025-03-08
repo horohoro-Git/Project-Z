@@ -165,7 +165,10 @@ Use consumption type item, add (recovery, level up) effect
 Add minimap ui with icons
 
 03/06
-Add data table to addressable, can kill zombies
+Add data table to addressable, killable zombies
 
 03/07
 load normalization
+
+03/08
+Add enemies drop table, drop item when enemy died

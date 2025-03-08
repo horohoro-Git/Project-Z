@@ -4,10 +4,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
-using UnityEngine.ResourceManagement.ResourceLocations;
-using System.Net;
 using UnityEngine.Networking;
-using UnityEditor.PackageManager.Requests;
 using System.IO;
 public class AssetLoader : MonoBehaviour
 {
@@ -55,6 +52,8 @@ public class AssetLoader : MonoBehaviour
     public List<LevelData> levelData;
     [NonSerialized]
     public List<ItemStruct> items;
+    
+    public List<EnemyStruct> enemies;
 
     [NonSerialized]
     public Dictionary<int, WeaponStruct> weapons = new Dictionary<int, WeaponStruct>(); //List<WeaponStruct> weapons;
@@ -89,6 +88,7 @@ public class AssetLoader : MonoBehaviour
   
     Shader Standard { get { if (standard == null) standard = Shader.Find("Standard"); return standard; } }
 
+    //데이터 테이블 문자열
     [NonSerialized]
     public string levelContent;
     [NonSerialized] 
@@ -97,6 +97,8 @@ public class AssetLoader : MonoBehaviour
     public string weaponContent;
     [NonSerialized]
     public string consumptionContent;
+    [NonSerialized]
+    public string enemyContent;
 
     public void Awake()
     {
@@ -188,6 +190,14 @@ public class AssetLoader : MonoBehaviour
                 {
                     TextAsset consumptionTextAsset = (TextAsset)consumptionrequest.asset;
                     consumptionContent = consumptionTextAsset.text;
+                }
+
+                AssetBundleRequest enemyrequest = bundle.LoadAssetAsync<TextAsset>("enemy");
+                yield return enemyrequest;
+                if (enemyrequest != null)
+                {
+                    TextAsset enemyTextAsset = (TextAsset)enemyrequest.asset;
+                    enemyContent = enemyTextAsset.text;
                 }
 
                 //프리팹 에셋 로드
@@ -287,6 +297,7 @@ public class AssetLoader : MonoBehaviour
         items = SaveLoadSystem.GetItemData(itemContent);
         List<WeaponStruct> weaponTable = SaveLoadSystem.GetWeaponData(weaponContent);
         List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
+        enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
 
         Debug.Log(weaponTable[0].attack_damage);
         for(int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
