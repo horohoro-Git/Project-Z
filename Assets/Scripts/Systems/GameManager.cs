@@ -39,6 +39,22 @@ public class GameManager : MonoBehaviour
         Invoke("LoadBuilds", 0.5f);
         Invoke("LoadEnvironments", 0.5f);
         Invoke("LoadInventory", 0.5f);
+        Invoke("LoadEnemies", 0.5f);
+        Invoke("TestItem", 0.5f);
+    }
+
+    void TestItem()
+    {
+        Item go =  Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[1]]).GetComponent<Item>();
+   //     go.itemStruct = ItemData.GetItem(1);
+        go.transform.position = Vector3.zero;
+
+        GettableItem gettable = go.AddComponent<GettableItem>();
+        go.AddComponent<Rigidbody>();
+        go.GetComponent<BoxCollider>().enabled = true;
+     
+        gettable.itemStruct = ItemData.GetItem(2);
+        Destroy(go);
     }
 
     void PlayerSetting()
@@ -126,5 +142,16 @@ public class GameManager : MonoBehaviour
             GameInstance.Instance.environmentSpawner.NewEnvironment();
             SaveLoadSystem.SaveEnviromentData();
         }
+    }
+
+    void LoadEnemies()
+    {
+        if(!SaveLoadSystem.LoadEnemyInfo())
+        { 
+            //저장된 파일이 없음
+            GameInstance.Instance.enemySpawner.SpawnEnemies();
+            SaveLoadSystem.SaveEnemyInfo();
+        }
+        GameInstance.Instance.enemySpawner.Setup();
     }
 }

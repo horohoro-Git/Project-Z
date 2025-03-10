@@ -17,9 +17,9 @@ TagManager:
   - BuildMaterials
   - Item
   - Tree
-  - 
-  - 
-  - 
+  - Enemy
+  - Plane
+  - Environment
   - 
   - 
   - 

@@ -11,8 +11,17 @@ using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-public class PlayerController : Controller
+public class PlayerController : Controller, IDamageable
 {
+
+    RightHand rightHand;
+
+    RightHand GetRightHand { get { if (rightHand == null) rightHand = GetComponentInChildren<RightHand>(); return rightHand; } }
+
+    LeftHand leftHand;
+
+    LeftHand GetLeftHand { get { if (leftHand == null) leftHand = GetComponentInChildren<LeftHand>(); return leftHand; } }
+
     PlayerInput input;
     PlayerInput Inputs
     {
@@ -86,7 +95,14 @@ public class PlayerController : Controller
     {
         modelAnimator = go.GetComponent<Animator>();
         model = go;
+        model.tag = "Player";
+        model.layer = 0b0011;
 
+
+        ChangeTagLayer(model.transform, "Player", 0b0011);
+
+        GetRightHand.boxCollider.excludeLayers = 0b1000;
+        GetLeftHand.boxCollider.excludeLayers = 0b1000;
         if (load)
         {
             if(!SaveLoadSystem.LoadPlayerData(this))
@@ -109,6 +125,22 @@ public class PlayerController : Controller
         }
     }
 
+    void ChangeTagLayer(Transform parent, string newTag, int layerName)
+    {
+        if (parent != null)
+        { 
+            foreach (Transform child in parent)
+            {
+                if (child != null)
+                {
+                    child.gameObject.tag = newTag;
+                    child.gameObject.layer = layerName;
+                    ChangeTagLayer(child, newTag, layerName);
+                }
+            }
+        }
+    }
+
     public void SetPlayerData(Vector3 pos, Quaternion rot, PlayerStruct playerStruct)
     {
    //     Transforms.position = pos;
@@ -126,6 +158,9 @@ public class PlayerController : Controller
         Inputs.actions["OpenInventory"].performed += OpenInventory;
         Inputs.actions["ZoomIn"].performed += ZoomIn;
         Inputs.actions["ZoomOut"].performed += ZoomOut;
+
+        //테스트
+        Inputs.actions["TestInventory"].performed += JustTest;
     }
 
     private void OnDisable()
@@ -134,6 +169,7 @@ public class PlayerController : Controller
         Inputs.actions["OpenInventory"].performed -= OpenInventory;
         Inputs.actions["ZoomIn"].performed -= ZoomIn;
         Inputs.actions["ZoomOut"].performed -= ZoomOut;
+        Inputs.actions["TestInventory"].performed -= JustTest;
         // lastHandler.Clear();
     }
 
@@ -320,7 +356,7 @@ public class PlayerController : Controller
         if (raycastResults.Count > 0) return;
         if (equipItem != null)
         {
-            if (equipItem.item_Type == ItemType.Equipmentable)  //무기
+            if (equipItem.itemStruct.item_type == ItemType.Equipmentable)  //무기
             {
                 Weapon weapon = equipItem.GetComponent<Weapon>();
 
@@ -335,7 +371,7 @@ public class PlayerController : Controller
                         break;
                 }
             }
-            else if(equipItem.item_Type == ItemType.Consumable) //음식 소모
+            else if(equipItem.itemStruct.item_type == ItemType.Consumable) //음식 소모
             {
                 Debug.Log("Work");
                 Invoke("Consumption", 1.7f);
@@ -379,8 +415,16 @@ public class PlayerController : Controller
     void Punch()
     {
         int r = UnityEngine.Random.Range(0, 2);
-        if (r == 1) StartAnimation("punchLeft", 0.8f);
-        else StartAnimation("punchRight", 0.8f);
+        if (r == 1)
+        {
+            GetLeftHand.Attack(0.8f, GetPlayer.playerStruct.attackDamage);
+            StartAnimation("punchLeft", 0.8f);
+        }
+        else
+        {
+            GetRightHand.GetComponentInChildren<RightHand>().Attack(0.8f, GetPlayer.playerStruct.attackDamage);
+            StartAnimation("punchRight", 0.8f);
+        }
     }
 
     void InputTimer()
@@ -572,6 +616,40 @@ public class PlayerController : Controller
         {
             modelAnimator.SetTrigger("dead");
             state = PlayerState.Dead;
+            gameObject.tag = "Enemy";
+            gameObject.layer = 0b1010;
+            Rigid.excludeLayers = 0;
+            ChangeTagLayer(Transforms, "Enemy", 0b1010);
+            GetComponent<CapsuleCollider>().excludeLayers = 0;
+            GetLeftHand.boxCollider.excludeLayers = 0b10000000000;
+            GetRightHand.boxCollider.excludeLayers = 0b10000000000;
+            //죽은 시체에 인벤토리의 아이템 적용
+            gameObject.AddComponent<NavMeshAgent>();
+            EnemyController enemyController = gameObject.AddComponent<EnemyController>();
+            enemyController.capsuleCollider = GetComponent<CapsuleCollider>();
+            enemyController.bDead = true;
+
+            for (int i = 0; i < GameInstance.Instance.inventorySystem.slotNum; i++)
+            {
+                for(int j= 0; j<10; j++)
+                {
+                    ItemStruct itemStruct = GameInstance.Instance.inventorySystem.inventoryArray[i, j].item;
+                    if (itemStruct.item_index == 0) continue;
+
+                    enemyController.itemStructs.Add(itemStruct);
+                }
+            }
+            GameInstance.Instance.worldGrids.AddLives(enemyController.gameObject);
+            //인벤토리 초기화
+            GameInstance.Instance.inventorySystem.ResetInventory();
+
+
+            //인벤토리와 적 데이터 저장
+            SaveLoadSystem.SaveEnemyInfo();
+            SaveLoadSystem.SaveInventoryData();
+
+           // GameInstance.Instance.enemySpawner.enemies.Add(enemyController);
+
 
             Invoke("Infected",2f);
         }
@@ -624,11 +702,13 @@ public class PlayerController : Controller
         modelAnimator.SetLayerWeight(1, 0);
         modelAnimator.SetLayerWeight(2, 0);
 
-        gameObject.tag = "Enemy";
+       
+        GetComponent<EnemyController>().bDead = false;
+
         Destroy(GetComponent<PlayerInput>());
 
-        gameObject.AddComponent<NavMeshAgent>();
-        gameObject.AddComponent<EnemyController>();
+      //  gameObject.AddComponent<NavMeshAgent>();
+     
 
         
 
@@ -669,8 +749,18 @@ public class PlayerController : Controller
             }
         }
     }
+
+    void JustTest(InputAction.CallbackContext callback)
+    {
+        GameInstance.Instance.uiManager.SwitchUI(UIType.BoxInventory, false);
+    }
     private void OnApplicationQuit()
     {
         SaveLoadSystem.SavePlayerData(GetPlayer);
+    }
+
+    public void Damaged(int damage)
+    {
+        GetDamage(damage);
     }
 }

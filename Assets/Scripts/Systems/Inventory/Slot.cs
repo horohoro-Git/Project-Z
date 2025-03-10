@@ -104,6 +104,8 @@ public class Slot : MonoBehaviour, IUIComponent
 
             dragEnd.callback.RemoveListener(dragExit);
             eventTrigger.triggers.Remove(dragEnd);
+
+            if (info != null) Destroy(info.gameObject);
         }
     }
 
@@ -113,7 +115,15 @@ public class Slot : MonoBehaviour, IUIComponent
         if (!item.used) return;
         GameInstance.Instance.inventorySystem.draggedItem = Instantiate(GameInstance.Instance.inventorySystem.draggingItem);
         GameInstance.Instance.inventorySystem.draggedItem.GetComponent<Image>().sprite = itemImage.sprite;
-        GameInstance.Instance.inventorySystem.draggedItem.GetComponent<RectTransform>().SetParent(GameInstance.Instance.inventorySystem.border);
+
+        if(GetComponentInParent<InventorySystem>())
+        {
+            GameInstance.Instance.inventorySystem.draggedItem.GetComponent<RectTransform>().SetParent(GameInstance.Instance.inventorySystem.border);
+        }
+        else if(GetComponentInParent<BoxInventorySystem>())
+        {
+            GameInstance.Instance.inventorySystem.draggedItem.GetComponent<RectTransform>().SetParent(GameInstance.Instance.boxInventorySystem.border2);
+        }
         //image.sprite = originImage;
         itemImage.sprite = GameInstance.Instance.inventorySystem.defaultSlot;
 
@@ -167,6 +177,28 @@ public class Slot : MonoBehaviour, IUIComponent
                             pc.Unequipment();
                         }
                     }
+
+                    if(GetComponentInParent<InventorySystem>())
+                    {
+                        GameInstance.Instance.boxInventorySystem.UpdateSlot(item, slotX, slotY);
+                        GameInstance.Instance.boxInventorySystem.UpdateSlot(s.item, s.slotX, s.slotY);
+                    }
+
+                    if(GetComponentInParent<BoxInventorySystem>())
+                    {
+                        if (transform.parent.parent == GameInstance.Instance.boxInventorySystem.list && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2)
+                        {
+                            GameInstance.Instance.inventorySystem.RemoveSlot(slotX, slotY);
+                        }
+                        else
+                        {
+                            GameInstance.Instance.inventorySystem.UpdateSlot(item, slotX, slotY);
+                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.slotX, s.slotY);
+
+                        }
+                    }
+                 
+
                 }
                 else // 아이템 버리기
                 {
@@ -194,20 +226,59 @@ public class Slot : MonoBehaviour, IUIComponent
     void OnHoverEnter()
     {
         if (!item.used) return;
+
         info = Instantiate(GameInstance.Instance.inventorySystem.info);
-        info.GetComponent<RectTransform>().SetParent(GameInstance.Instance.inventorySystem.border);
+        if(GetComponentInParent<InventorySystem>())
+        {
+            info.GetComponent<RectTransform>().SetParent(GameInstance.Instance.inventorySystem.border);
+
+            if (self.position.y - 300 > 200)
+            {
+                if (self.position.x + 150 > 1600) info.GetComponent<RectTransform>().position = new Vector3(self.position.x - 150, self.position.y - 300, 0);
+                else info.GetComponent<RectTransform>().position = new Vector3(self.position.x + 150, self.position.y - 300, 0);
+            }
+            else
+            {
+                if (self.position.x + 150 > 1600) info.GetComponent<RectTransform>().position = new Vector3(self.position.x - 150, self.position.y + 300, 0);
+                else info.GetComponent<RectTransform>().position = new Vector3(self.position.x + 150, self.position.y + 300, 0);
+            }
+        }
+        if (GetComponentInParent<BoxInventorySystem>())
+        {
+            if (transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
+            {
+                info.GetComponent<RectTransform>().SetParent(GameInstance.Instance.boxInventorySystem.border1);
+                if (self.position.y - 300 > 200)
+                {
+                    if (self.position.x + 150 > 700) info.GetComponent<RectTransform>().position = new Vector3(self.position.x - 150, self.position.y - 300, 0);
+                    else info.GetComponent<RectTransform>().position = new Vector3(self.position.x + 150, self.position.y - 300, 0);
+                }
+                else
+                {
+                    if (self.position.x + 150 > 700) info.GetComponent<RectTransform>().position = new Vector3(self.position.x - 150, self.position.y + 300, 0);
+                    else info.GetComponent<RectTransform>().position = new Vector3(self.position.x + 150, self.position.y + 300, 0);
+                }
+            }
+            else if(transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2)
+            {
+                info.GetComponent<RectTransform>().SetParent(GameInstance.Instance.boxInventorySystem.border2);
+                if (self.position.y - 300 > 200)
+                {
+                    if (self.position.x + 150 > 1600) info.GetComponent<RectTransform>().position = new Vector3(self.position.x - 150, self.position.y - 300, 0);
+                    else info.GetComponent<RectTransform>().position = new Vector3(self.position.x + 150, self.position.y - 300, 0);
+                }
+                else
+                {
+                    if (self.position.x + 150 > 1600) info.GetComponent<RectTransform>().position = new Vector3(self.position.x - 150, self.position.y + 300, 0);
+                    else info.GetComponent<RectTransform>().position = new Vector3(self.position.x + 150, self.position.y + 300, 0);
+                }
+            }
+        }
+
         info.UpdateSlotInfo(item);
-   //     info
-        if(self.position.y - 300 > 200)
-        {
-            if(self.position.x + 150 > 1600) info.GetComponent<RectTransform>().position = new Vector3(self.position.x - 150, self.position.y - 300, 0);
-            else info.GetComponent<RectTransform>().position = new Vector3(self.position.x + 150, self.position.y - 300, 0);
-        }
-        else
-        {
-            if (self.position.x + 150 > 1600) info.GetComponent<RectTransform>().position = new Vector3(self.position.x - 150, self.position.y + 300, 0);
-            else info.GetComponent<RectTransform>().position = new Vector3(self.position.x + 150, self.position.y + 300, 0);
-        }
+        SaveLoadSystem.SaveInventoryData();
+        //     info
+
     }
 
     void OnHoverExit()
@@ -234,10 +305,11 @@ public class Slot : MonoBehaviour, IUIComponent
     {
         ItemStruct itemS = new ItemStruct();
         item = itemS;
-
-        if(slotX == 0)
+        GameInstance.Instance.boxInventorySystem.UpdateSlot(itemS, slotX, slotY);
+        if (slotX == 0)
         {
             GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, slotY);
+           
             PlayerController pc = GameInstance.Instance.GetPlayers[0];
             if (pc != null)
             {

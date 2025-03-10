@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -5,8 +6,12 @@ using System.Xml.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyController : Controller, IIdentifiable
+public class EnemyController : Controller, IIdentifiable, IDamageable
 {
+    RightHand rightHand;
+
+    RightHand GetRightHand { get { if (rightHand == null) rightHand = GetComponentInChildren<RightHand>(); return rightHand; } }
+
 
     enum EnemyType
     {
@@ -29,15 +34,20 @@ public class EnemyController : Controller, IIdentifiable
     EnemyType enemyType= EnemyType.Roaming;
     Coroutine coroutine;
     List<Vector3> destinations = new List<Vector3>();
-    [SerializeField]
-    CapsuleCollider capsuleCollider;
+    public CapsuleCollider capsuleCollider;
     Animator modelAnimator;
     int animationWorking;
     public Collider attackColider;
 
     public EnemyStruct enemyStruct;
 
-    bool bDead;
+    [NonSerialized]
+    public bool bDead;
+
+    //플레이어기반 전용
+    [NonSerialized]
+    public List<ItemStruct> itemStructs = new List<ItemStruct>();
+
  //   int attackDamage;
   //  int hp;
     public string ID { get; set; }
@@ -57,15 +67,8 @@ public class EnemyController : Controller, IIdentifiable
         agent.speed = 1.5f;
         agent.angularSpeed = 500f;
 
-        Invoke("S", 0.5f);
     }
 
-    void S()
-    {
-        
-        GameInstance.Instance.worldGrids.AddLives(this.gameObject);
-        enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
-    }
     // Update is called once per frame
     void Update()
     {
@@ -89,6 +92,26 @@ public class EnemyController : Controller, IIdentifiable
       */
     }
 
+    public void Setup()
+    {
+        gameObject.layer = 0b1010;
+        ChangeTagLayer(Transforms, "Enemy", 0b1010);
+    }
+    void ChangeTagLayer(Transform parent, string newTag, int layerName)
+    {
+        if (parent != null)
+        {
+            foreach (Transform child in parent)
+            {
+                if (child != null)
+                {
+                    child.gameObject.tag = newTag;
+                    child.gameObject.layer = layerName;
+                    ChangeTagLayer(child, newTag, layerName);
+                }
+            }
+        }
+    }
     //탐색한 플레이어들 중 최적의 플레이어를 찾고 추적
     void DetectPlayer(List<PlayerController> players, bool skipAngle = false)
     {
@@ -125,6 +148,7 @@ public class EnemyController : Controller, IIdentifiable
             if (distance <= 1.5f)
             {
                 StartAnimation("scratch", 2);
+                GetRightHand.Attack(2, enemyStruct.attack);
                 agent.isStopped = true;
             }
             else if(distance < 6)
@@ -187,7 +211,11 @@ public class EnemyController : Controller, IIdentifiable
 
             agent.isStopped = true;
 
-            capsuleCollider.excludeLayers = 0b1000;
+            if (itemStructs.Count > 0)
+            {
+                capsuleCollider.isTrigger = true;
+            }
+            else capsuleCollider.excludeLayers = 0b1000;
          //   Destroy(Rigid);
             modelAnimator.SetTrigger("dead");
             Reward();
@@ -198,16 +226,19 @@ public class EnemyController : Controller, IIdentifiable
     {
         for (int i = 0; i < enemyStruct.dropStruct.Count; i++)
         {
-            int random = Random.Range(1, 101);
+            int random = UnityEngine.Random.Range(1, 101);
             if(random <= enemyStruct.dropStruct[i].item_chance)
             {
                 int index = enemyStruct.dropStruct[i].item_index - 1;
                 GameObject item = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[index]]);
-                item.transform.position = Transforms.position;
-            }
+                item.transform.position = new Vector3(Transforms.position.x, Transforms.position.y + 1, Transforms.position.z);
+                GettableItem gettableItem = item.AddComponent<GettableItem>();
+                
+                Rigidbody itemRigid = item.AddComponent<Rigidbody>();
+                itemRigid.AddForce(Vector3.up * 10f);
 
+            }
         }
-      
     }
 
     void StartAnimation(string animationName, float timer)
@@ -227,13 +258,13 @@ public class EnemyController : Controller, IIdentifiable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (bDead) return;
-        if(other.gameObject.CompareTag("Player"))
+        if (!bDead) return;
+       /* if(other.gameObject.CompareTag("Player"))
         {
             PlayerController player = other.GetComponent<PlayerController>();
             player.GetDamage(enemyStruct.attack);
             Debug.Log("Attack Hit");
-        }
+        }*/
     }
     private void OnDrawGizmos()
     {
@@ -252,5 +283,10 @@ public class EnemyController : Controller, IIdentifiable
         Gizmos.DrawLine(Transforms.position, Transforms.position + rightBoundary);
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(Transforms.position, 20);
+    }
+
+    public void Damaged(int damage)
+    {
+        BeAttacked(damage);
     }
 }

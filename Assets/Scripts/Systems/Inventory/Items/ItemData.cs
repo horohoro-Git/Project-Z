@@ -12,17 +12,17 @@ public class ItemData : MonoBehaviour
     public static void ItemDatabaseSetup()
     {
         items.Add(new ItemStruct());
-        items = GameInstance.Instance.assetLoader.items;
-        //  List<string> keys = GameInstance.Instance.assetLoader.spriteAssetkeys;
-        //    List<string> goKeys = GameInstance.Instance.assetLoader.itemAssetkeys;
+        List<ItemStruct> itemStructs = GameInstance.Instance.assetLoader.items;
         for (int i = 0; i < AssetLoader.itemAssetkeys.Count; i++)
         {
             Sprite sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[i]];
             GameObject go = GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[i]];
-            ItemStruct item = items[i];
+            ItemStruct item = itemStructs[i];
             item.image = sprite;
             item.itemGO = go;
+            item.used = true;
             items.Add(item);
+            
         }
     }
 

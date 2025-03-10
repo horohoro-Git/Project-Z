@@ -172,3 +172,6 @@ load normalization
 
 03/08
 Add enemies drop table, drop item when enemy died
+
+03/09
+Add box inventory ui, zombie players can now attack players

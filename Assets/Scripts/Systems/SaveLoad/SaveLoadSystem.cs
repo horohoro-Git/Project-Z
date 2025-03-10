@@ -239,7 +239,6 @@ public class SaveLoadSystem
     //플레이어 데이터 로드
     public static bool LoadPlayerData(PlayerController pc)
     {
-        List<HousingInfo> housingInfos = new List<HousingInfo>();
         byte[] data;
         string p = Path.Combine(path, "Save/Player.dat");
 
@@ -321,7 +320,7 @@ public class SaveLoadSystem
                         {
                             
                             ItemStruct item = slot.item;
-                            if (item.item_index == 0) continue; 
+                            if (item.item_index == 0) continue;
                             writer.Write(slot.slotX);
                             writer.Write(slot.slotY);
                             writer.Write(item.item_index);
@@ -366,7 +365,7 @@ public class SaveLoadSystem
 
                             ItemStruct item = new ItemStruct(index, null, name, (SlotType)slotType, (ItemType)itemType, null);
                             GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, item);
-
+                            GameInstance.Instance.boxInventorySystem.LoadInvetory(X,Y,item);
                         }
                     }
                 }
@@ -491,6 +490,125 @@ public class SaveLoadSystem
                     }
                 }
             }
+        }
+    }
+
+
+
+
+    //적 정보 로드
+    public static bool LoadEnemyInfo()
+    {
+        byte[] data;
+        string p = Path.Combine(path, "Save/Enemies.dat");
+
+        if (File.Exists(p))
+        {
+            using (FileStream fs = new FileStream(p, FileMode.Open))
+            {
+                data = new byte[fs.Length];
+                fs.Read(data, 0, data.Length);
+                if (data.Length > 0)
+                {
+                    using (BinaryReader reader = new BinaryReader(new MemoryStream(data)))
+                    {
+                        while (reader.BaseStream.Position < reader.BaseStream.Length)
+                        {
+                            float x = reader.ReadSingle();
+                            float y = reader.ReadSingle();
+                            float z = reader.ReadSingle();
+
+                            float rx = reader.ReadSingle();
+                            float ry = reader.ReadSingle();
+                            float rz = reader.ReadSingle();
+                            float rw = reader.ReadSingle();
+
+
+                            int type = reader.ReadInt32();
+                            int count = reader.ReadInt32();
+
+                            List<ItemStruct> itemStructs = new List<ItemStruct>();
+                            for(int i = 0; i< count; i++)
+                            {
+                                int index = reader.ReadInt32();
+                                string name = reader.ReadString();
+                                int slotType = reader.ReadInt32();
+                                int itemType = reader.ReadInt32();
+                                ItemStruct item = new ItemStruct(index, null, name, (SlotType)slotType, (ItemType)itemType, null);
+                                itemStructs.Add(item);
+                            }
+
+                            Vector3 position = new Vector3(x, y, z);
+                            Quaternion rotation = new Quaternion(rx, ry, rz, rw);
+                            GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, type, itemStructs);
+                         
+                            //GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, item);
+
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    //적 정보 저장
+    public static void SaveEnemyInfo()
+    {
+        string dir = Path.Combine(path, "Save");
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        string p = Path.Combine(path, "Save/Enemies.dat");
+        using (MemoryStream ms = new MemoryStream())
+        {
+            using (BinaryWriter writer = new BinaryWriter(ms))
+            {
+                foreach (GameObject enemy in GameInstance.Instance.worldGrids.ReturnLives())
+                {
+                    EnemyController EC = enemy.GetComponent<EnemyController>();
+                    //위치
+                    Vector3 position = EC.Transforms.position;
+
+                    //방향
+                    Quaternion rotation = EC.Transforms.rotation;
+
+                    //적의 타입
+                    int type = EC.enemyStruct.id;
+
+                    writer.Write(EC.Transforms.position.x);
+                    writer.Write(EC.Transforms.position.y);
+                    writer.Write(EC.Transforms.position.z);
+
+                    writer.Write(EC.Transforms.rotation.x);
+                    writer.Write(EC.Transforms.rotation.y);
+                    writer.Write(EC.Transforms.rotation.z);
+                    writer.Write(EC.Transforms.rotation.w);
+                    writer.Write(type);
+
+                    writer.Write(EC.itemStructs.Count);
+                    //적의 인벤토리
+                    for (int i = 0; i < EC.itemStructs.Count; i++)
+                    {
+                        int item_index = EC.itemStructs[i].item_index;
+                        string item_name = EC.itemStructs[i].item_name;
+                     
+                        int slotType = (int)EC.itemStructs[i].slot_type;
+                        int itemType = (int)EC.itemStructs[i].item_type;
+
+                        writer.Write(item_index);
+                        writer.Write(item_name);
+                        writer.Write(slotType);
+                        writer.Write(itemType);
+                    }
+
+                }
+            }
+            File.WriteAllBytes(p, ms.ToArray());
         }
     }
 }

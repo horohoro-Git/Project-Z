@@ -21,6 +21,8 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     [NonSerialized]
     public GameObject draggedItem;
 
+    List<SlotArray> slotArrays = new List<SlotArray>();
+
 
     [SerializeField]
     SlotArray inventoryList;
@@ -49,7 +51,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     int currentSlotIndex = 0;
     private void Awake()
     {
-       // GameInstance.Instance.inventorySystem = this;
+        //GameInstance.Instance.inventorySystem = this;
        
     }
 
@@ -68,6 +70,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
             inventoryArray[slotNum, i] = slots.slots[i];
             //Debug.Log(inventoryArray[slotNum, i]);
         }
+        slots.slotX = slotNum;
         slots.Setup();
         slotNum++;
     }
@@ -80,14 +83,14 @@ public class InventorySystem : MonoBehaviour, IUIComponent
             {
                 if(!inventoryArray[i, j].GetItem().used)
                 {
-                    Debug.Log("아이템을 얻음" + item.itemIndex);
-                    ItemStruct itemStruct = new ItemStruct(item.itemIndex, item.item_Image, item.item_Name, item.item_Slot, item.item_Type, item.item_GO);
+                    Debug.Log("아이템을 얻음" + item.itemStruct.item_index);
+                   // ItemStruct itemStruct = new ItemStruct(item.itemIndex, item.item_Image, item.item_Name, item.item_Slot, item.item_Type, item.item_GO);
 
-                    inventoryArray[i, j].AddItem(itemStruct);
-
+                    inventoryArray[i, j].AddItem(item.itemStruct);
+                    GameInstance.Instance.boxInventorySystem.UpdateSlot(item.itemStruct, i, j);
                     if(i == 0)
                     {
-                        GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, j);
+                        GameInstance.Instance.quickSlotUI.UpdateSlot(item.itemStruct, j);
                     }
 
                     SaveLoadSystem.SaveInventoryData();
@@ -95,9 +98,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
                 }
             }
         }
-
         Debug.Log("인벤토리 공간이 없음");
-
     }
 
     public void UseItem(PlayerController pc ,int index)
@@ -147,12 +148,13 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         GameInstance.Instance.inventorySystem = this;
         SlotArray slots = GetComponentInChildren<SlotArray>();
         InventoryExtends(slots);
-
+        slotArrays.Add(slots);
         for (int i = 0; i < 5; i++)
         {
             SlotArray newSlots = Instantiate(inventoryList);
             newSlots.GetComponent<RectTransform>().SetParent(list);
             InventoryExtends(newSlots);
+            slotArrays.Add(newSlots);
         }
         head.Setup();
         chest.Setup();
@@ -161,9 +163,19 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         backpack.Setup();
     }
 
+    public void UpdateSlot(ItemStruct itemStruct, int x, int y)
+    {
+        inventoryArray[x, y].AddItem(itemStruct);
+    }
+
+    public void RemoveSlot(int x, int y)
+    {
+        inventoryArray[x, y].RemoveItem();
+    }
+
     public void LoadInvetory(int x, int y, ItemStruct itemStruct)
     {
-        ItemStruct item = ItemData.GetItem(itemStruct.item_index - 1);
+        ItemStruct item = ItemData.GetItem(itemStruct.item_index);
 
         itemStruct.itemGO = item.itemGO;
         itemStruct.image = item.image;
@@ -173,5 +185,24 @@ public class InventorySystem : MonoBehaviour, IUIComponent
             GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, y);
         }
         inventoryArray[x, y].AddItem(itemStruct);
+    }
+
+    public void ResetInventory()
+    {
+        slotNum = 1;
+        for (int i = slotArrays.Count -1; i > 0; i--)
+        {
+            for(int j=0; j< 10; j++)
+            {
+                inventoryArray[i, j] = null;
+            }
+            Destroy(slotArrays[i].gameObject);
+        }
+
+        for(int i = 0; i< 10; i++)
+        {
+            RemoveSlot(0, i);
+        }
+        GameInstance.Instance.boxInventorySystem.ResetInventory();
     }
 }

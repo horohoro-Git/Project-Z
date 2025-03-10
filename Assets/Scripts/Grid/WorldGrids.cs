@@ -22,8 +22,8 @@ public class WorldGrids : MonoBehaviour
     int[] findX = new int[9] {0, 1, 1, 0,-1,-1,-1,0,1 };
     int[] findY = new int[9] {0, 0, -1, -1,-1, 0, 1, 1, 1 };
 
-    Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>();   
-    Dictionary<string, GameObject> lives = new Dictionary<string, GameObject>();
+    Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>(); //아이템
+    Dictionary<string, GameObject> lives = new Dictionary<string, GameObject>(); //적대적 생명체
     private void Awake()
     {
         GameInstance.Instance.worldGrids = this;
