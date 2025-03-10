@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 using System;
 using UnityEngine.Networking;
 using System.IO;
@@ -35,7 +33,8 @@ public class AssetLoader : MonoBehaviour
     "floor", "wall", "door", "roof",
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "grasses",
-      "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup","enemy_zombie"
+      "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup","enemy_zombie",
+      "human_male"
     };
 
     [NonSerialized]
@@ -50,6 +49,10 @@ public class AssetLoader : MonoBehaviour
     [NonSerialized]
     public static List<string> enemykeys = new List<string> {
     "enemy_zombie"
+    };
+    [NonSerialized]
+    public static List<string> humankeys = new List<string> {
+    "human_male"
     };
 
     [NonSerialized]
@@ -86,8 +89,8 @@ public class AssetLoader : MonoBehaviour
     public GameObject lastSelectedMaterial;
     Color lastSelectedColor;
     Shader standard;
-    AsyncOperationHandle<IList<GameObject>> handle;
-    AsyncOperationHandle<IList<Sprite>> spritehandle;
+//    AsyncOperationHandle<IList<GameObject>> handle;
+//    AsyncOperationHandle<IList<Sprite>> spritehandle;
 
   
     Shader Standard { get { if (standard == null) standard = Shader.Find("Standard"); return standard; } }
@@ -314,7 +317,8 @@ public class AssetLoader : MonoBehaviour
 
     public void ClearAsset()
     {
-        Addressables.Release(handle);
+        //AssetBundle.UnloadAllAssetBundles(true);
+        //Addressables.Release(handle);
     }
    
     public bool CheckAssetLoaded()
@@ -654,6 +658,10 @@ public class AssetLoader : MonoBehaviour
 
     public void Clear()
     {
+        GameInstance instance = GameInstance.Instance;
+        if (instance.enemySpawner.loaded) SaveLoadSystem.SaveEnemyInfo();
+        if (instance.GetPlayers.Count > 0 && instance.GetPlayers[0].loaded) SaveLoadSystem.SavePlayerData(instance.GetPlayers[0].GetPlayer); 
+
         AssetBundle.UnloadAllAssetBundles(bundle);
     }
 }

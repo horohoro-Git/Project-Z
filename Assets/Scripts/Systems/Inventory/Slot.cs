@@ -21,6 +21,8 @@ public class Slot : MonoBehaviour, IUIComponent
 
     public SlotType slotType;
     public ItemStruct item = new ItemStruct();
+    public WeaponStruct weapon = new WeaponStruct();
+    public ConsumptionStruct consumption = new ConsumptionStruct();
 
     //SerializeField]
     public int slotX;
@@ -155,6 +157,12 @@ public class Slot : MonoBehaviour, IUIComponent
                     ItemStruct tempStruct = s.item;
                     s.item = item;
                     item = tempStruct;
+                    WeaponStruct weaponTemp = s.weapon;
+                    s.weapon = weapon;
+                    weapon = weaponTemp;
+                    ConsumptionStruct consumptionTemp = s.consumption;
+                    s.consumption = consumption;
+                    s.consumption = consumptionTemp;
 
                     UpdateSlot();
                     s.UpdateSlot();
@@ -162,7 +170,7 @@ public class Slot : MonoBehaviour, IUIComponent
                     PlayerController pc = GameInstance.Instance.GetPlayers[0];
                     if (slotX == 0 )
                     {
-                        GameInstance.Instance.quickSlotUI.UpdateSlot(item, slotY);
+                        GameInstance.Instance.quickSlotUI.UpdateSlot(item, weapon, consumption, slotY);
                         if(slotY == pc.equipSlotIndex)
                         {
                             pc.Unequipment();
@@ -171,7 +179,7 @@ public class Slot : MonoBehaviour, IUIComponent
 
                     if (s.slotX == 0)
                     {
-                        GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.slotY);
+                        GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.slotY);
                         if (slotY == pc.equipSlotIndex)
                         {
                             pc.Unequipment();
@@ -180,8 +188,8 @@ public class Slot : MonoBehaviour, IUIComponent
 
                     if(GetComponentInParent<InventorySystem>())
                     {
-                        GameInstance.Instance.boxInventorySystem.UpdateSlot(item, slotX, slotY);
-                        GameInstance.Instance.boxInventorySystem.UpdateSlot(s.item, s.slotX, s.slotY);
+                        GameInstance.Instance.boxInventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
+                        GameInstance.Instance.boxInventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.slotX, s.slotY);
                     }
 
                     if(GetComponentInParent<BoxInventorySystem>())
@@ -192,8 +200,8 @@ public class Slot : MonoBehaviour, IUIComponent
                         }
                         else
                         {
-                            GameInstance.Instance.inventorySystem.UpdateSlot(item, slotX, slotY);
-                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.slotX, s.slotY);
+                            GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
+                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.slotX, s.slotY);
 
                         }
                     }
@@ -292,23 +300,24 @@ public class Slot : MonoBehaviour, IUIComponent
         return item;
     }
 
-    public void AddItem(ItemStruct item)
+    public void AddItem(ItemStruct item, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct)
     {
         this.item = item;
-
+        this.weapon = weaponStruct;
+        this.consumption = consumptionStruct;
         UpdateSlot();
-    //    if (!item.used) itemImage.sprite = originImage;
-     //   else itemImage.sprite = item.image;
     }
 
     public void RemoveItem()
     {
         ItemStruct itemS = new ItemStruct();
         item = itemS;
-        GameInstance.Instance.boxInventorySystem.UpdateSlot(itemS, slotX, slotY);
+        weapon = new WeaponStruct();
+        consumption = new ConsumptionStruct();
+        GameInstance.Instance.boxInventorySystem.UpdateSlot(itemS, weapon, consumption, slotX, slotY);
         if (slotX == 0)
         {
-            GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, slotY);
+            GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, weapon, consumption, slotY);
            
             PlayerController pc = GameInstance.Instance.GetPlayers[0];
             if (pc != null)
@@ -337,7 +346,7 @@ public class Slot : MonoBehaviour, IUIComponent
             case SlotType.None:
                 break;
             default:
-                GameInstance.Instance.inventorySystem.UpdateEquipSlot(slotType, item);
+                GameInstance.Instance.inventorySystem.UpdateEquipSlot(slotType, item, weapon, consumption);
                 break;
         }
 

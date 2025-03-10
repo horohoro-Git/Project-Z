@@ -242,6 +242,15 @@ public struct ConsumptionStruct
     public int heal_amount;
     public int energy_amount;
     public float duration;
+
+    public ConsumptionStruct(int item_index, ConsumptionType consumption_type, int heal_amount, int energy_amount, float duration)
+    {
+        this.item_index = item_index;
+        this.consumption_type = consumption_type;
+        this.heal_amount = heal_amount;
+        this.energy_amount = energy_amount;
+        this.duration = duration;
+    }
 }
 
 //무기 아이템 정보
@@ -253,6 +262,16 @@ public struct WeaponStruct
     public float attack_speed;
     public int max_ammo;
     public int durability;
+
+    public WeaponStruct(int item_index, WeaponType weapon_type, int attack_damage, float attack_speed, int max_ammo, int durability)
+    {
+        this.item_index = item_index;
+        this.weapon_type = weapon_type;
+        this.attack_damage = attack_damage;
+        this.attack_speed = attack_speed;
+        this.max_ammo = max_ammo;
+        this.durability = durability;
+    }
 }
 
 //버프 정보

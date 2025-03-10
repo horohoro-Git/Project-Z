@@ -73,12 +73,12 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         }
     }*/
 
-    public void UpdateSlot(ItemStruct itemStruct, int x, int y)
+    public void UpdateSlot(ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, int x, int y)
     {
-        inventoryArray[x, y].AddItem(itemStruct);
+        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct);
     }
 
-    public void LoadInvetory(int x, int y, ItemStruct itemStruct)
+    public void LoadInvetory(int x, int y, ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct)
     {
         ItemStruct item = ItemData.GetItem(itemStruct.item_index);
 
@@ -87,9 +87,9 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         itemStruct.used = true;
         if (x == 0)
         {
-            GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, y);
+            GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, y);
         }
-        inventoryArray[x, y].AddItem(itemStruct);
+        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct);
     }
 
     public void ResetInventory()

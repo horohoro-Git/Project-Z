@@ -16,11 +16,11 @@ public class PlayerController : Controller, IDamageable
 
     RightHand rightHand;
 
-    RightHand GetRightHand { get { if (rightHand == null) rightHand = GetComponentInChildren<RightHand>(); return rightHand; } }
+    public RightHand GetRightHand { get { if (rightHand == null) rightHand = GetComponentInChildren<RightHand>(); return rightHand; } }
 
     LeftHand leftHand;
 
-    LeftHand GetLeftHand { get { if (leftHand == null) leftHand = GetComponentInChildren<LeftHand>(); return leftHand; } }
+    public LeftHand GetLeftHand { get { if (leftHand == null) leftHand = GetComponentInChildren<LeftHand>(); return leftHand; } }
 
     PlayerInput input;
     PlayerInput Inputs
@@ -51,9 +51,10 @@ public class PlayerController : Controller, IDamageable
     float motion;
 
     [NonSerialized]
-    Animator modelAnimator;
+    public Animator modelAnimator;
 
-    PlayerState state = PlayerState.Default;
+    [NonSerialized]
+    public PlayerState state = PlayerState.Default;
     float combatTimer;
     Coroutine combatMotion;
 
@@ -73,43 +74,69 @@ public class PlayerController : Controller, IDamageable
 
     [NonSerialized]
     public PlayerCamera camera;
+
+    [NonSerialized]
+    public bool loaded;
+
+    [NonSerialized]
+    public bool noAction;
     private void Awake()
     {
-        GameInstance.Instance.playerController = this;
-        Inputs.defaultActionMap = "OnMove";
-        moveSpeed = 200f;
-        slotHandlers = new Action<InputAction.CallbackContext>[10];
-        for (int i = 0; i < 10; i++)
-        {
-            int index = i;
-            int slotNumber = i + 1;
-            slotHandlers[i] = ctx => SelectInventorySlot(index);
-        }
-        /*modelAnimator = GetComponentInChildren<Animator>();
-   */
-
-       
+    
     }
 
-    public void SetController(GameObject go, bool load)
+    public void SetController(GameObject go, bool load, bool human = true)
     {
-        modelAnimator = go.GetComponent<Animator>();
-        model = go;
-        model.tag = "Player";
-        model.layer = 0b0011;
-
-
-        ChangeTagLayer(model.transform, "Player", 0b0011);
-
-        GetRightHand.boxCollider.excludeLayers = 0b1000;
-        GetLeftHand.boxCollider.excludeLayers = 0b1000;
-        if (load)
+        if (human)
         {
-            if(!SaveLoadSystem.LoadPlayerData(this))
+            
+            GameInstance.Instance.playerController = this;
+            Inputs.defaultActionMap = "OnMove";
+            moveSpeed = 200f;
+            slotHandlers = new Action<InputAction.CallbackContext>[10];
+            for (int i = 0; i < 10; i++)
+            {
+                int index = i;
+                int slotNumber = i + 1;
+                slotHandlers[i] = ctx => SelectInventorySlot(index);
+            }
+
+            //입력 설정
+            AddAction();
+            Inputs.actions["OpenInventory"].performed += OpenInventory;
+            Inputs.actions["ZoomIn"].performed += ZoomIn;
+            Inputs.actions["ZoomOut"].performed += ZoomOut;
+
+            //테스트
+            Inputs.actions["TestInventory"].performed += JustTest;
+
+
+            modelAnimator = go.GetComponent<Animator>();
+            model = go;
+            model.tag = "Player";
+            model.layer = 0b0011;
+
+
+            ChangeTagLayer(model.transform, "Player", 0b0011);
+
+            GetRightHand.boxCollider.excludeLayers = 0b1000;
+            GetLeftHand.boxCollider.excludeLayers = 0b1000;
+            if (load)
+            {
+                if (!SaveLoadSystem.LoadPlayerData(this))
+                {
+                    //플레이어 초기 값
+
+                    PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0, 100, 1, 0, 0, 1, 1, 1);
+
+                    GetPlayer.playerStruct = playerStruct;
+                    GetPlayer.UpdatePlayer();
+                }
+            }
+            else
             {
                 //플레이어 초기 값
-
-                PlayerStruct playerStruct = new PlayerStruct(100,100,100,100,0,100,1,0,0, 1, 1, 1);
+                PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0, 100, 1, 0, 0, 1, 1, 1);
 
                 GetPlayer.playerStruct = playerStruct;
                 GetPlayer.UpdatePlayer();
@@ -117,15 +144,13 @@ public class PlayerController : Controller, IDamageable
         }
         else
         {
-            //플레이어 초기 값
-            PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0, 100, 1, 0, 0, 1, 1, 1);
-
-            GetPlayer.playerStruct = playerStruct;
-            GetPlayer.UpdatePlayer();
+            modelAnimator = go.GetComponent<Animator>();
+            model = go;
         }
+
     }
 
-    void ChangeTagLayer(Transform parent, string newTag, int layerName)
+    public void ChangeTagLayer(Transform parent, string newTag, int layerName)
     {
         if (parent != null)
         { 
@@ -153,14 +178,6 @@ public class PlayerController : Controller, IDamageable
 
     private void OnEnable()
     {
-       
-        AddAction();
-        Inputs.actions["OpenInventory"].performed += OpenInventory;
-        Inputs.actions["ZoomIn"].performed += ZoomIn;
-        Inputs.actions["ZoomOut"].performed += ZoomOut;
-
-        //테스트
-        Inputs.actions["TestInventory"].performed += JustTest;
     }
 
     private void OnDisable()
@@ -221,8 +238,7 @@ public class PlayerController : Controller, IDamageable
     {
         if (GameInstance.Instance.GetPlayers.Count == 0) GameInstance.Instance.AddPlayer(this);
         else GameInstance.Instance.GetPlayers[0] = this;
-        ItemStruct item = GameInstance.Instance.quickSlotUI.slots[0].item;
-        Equipment(item, 0);
+        Equipment(GameInstance.Instance.quickSlotUI.slots[0], 0);
     }
 
     // Update is called once per frame
@@ -359,7 +375,6 @@ public class PlayerController : Controller, IDamageable
             if (equipItem.itemStruct.item_type == ItemType.Equipmentable)  //무기
             {
                 Weapon weapon = equipItem.GetComponent<Weapon>();
-
                 switch (weapon.weaponStruct.weapon_type)
                 {
                     case WeaponType.None:
@@ -512,13 +527,13 @@ public class PlayerController : Controller, IDamageable
         GameInstance.Instance.inventorySystem.UseItem(this ,index);
     }
 
-    public void Equipment(ItemStruct equipItem, int index)
+    public void Equipment(Slot equipItem, int index)
     {
         if (animationWorking > 0) return;
 
         AssetLoader loader = GameInstance.Instance.assetLoader;
         //무기
-        if (equipItem.item_type == ItemType.Equipmentable)
+        if (equipItem.item.item_type == ItemType.Equipmentable)
         {
             if(this.equipItem != null)
             {
@@ -526,15 +541,16 @@ public class PlayerController : Controller, IDamageable
                 this.equipItem = null;
             }
             equipSlotIndex = index;
-            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item_index - 1]]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
+            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
             this.equipItem.transform.SetParent(attachItem.transform);
-
+            this.equipItem.itemStruct = equipItem.item;
+            this.equipItem.GetComponent<Weapon>().weaponStruct = equipItem.weapon;
+            
             this.equipItem.transform.localPosition = Vector3.zero;
             this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
             modelAnimator.SetFloat("equip", 1);
-
             /*   if (equipWeapon != null)
                {
                    Destroy(equipWeapon.gameObject);
@@ -550,19 +566,21 @@ public class PlayerController : Controller, IDamageable
                equipWeapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
                modelAnimator.SetFloat("equip", 1);*/
         }
-        else if (equipItem.item_type == ItemType.Consumable)     //음식을 손에 듬
+        else if (equipItem.item.item_type == ItemType.Consumable)     //음식을 손에 듬
         {
             if (this.equipItem != null)
             {
                 Destroy(this.equipItem.gameObject);
                 this.equipItem = null;
             }
-            Debug.Log(equipItem.item_index);
+            Debug.Log(equipItem.item.item_index);
             equipSlotIndex = index;
-            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item_index - 1]]).GetComponent<Item>();
+            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
             this.equipItem.transform.SetParent(attachItem.transform);
+            this.equipItem.itemStruct = equipItem.item;
+            this.equipItem.GetComponent<ConsumptionItem>().consumtionStruct = equipItem.consumption;
 
             this.equipItem.transform.localPosition = Vector3.zero;
             this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
@@ -586,8 +604,7 @@ public class PlayerController : Controller, IDamageable
             Destroy(equipWeapon.gameObject);
             equipWeapon = null;
         }
-        ItemStruct item = GameInstance.Instance.quickSlotUI.slots[equipSlotIndex].item;
-        Equipment(item, equipSlotIndex);
+        Equipment(GameInstance.Instance.quickSlotUI.slots[equipSlotIndex], equipSlotIndex);
         
     }
 
@@ -623,9 +640,11 @@ public class PlayerController : Controller, IDamageable
             GetComponent<CapsuleCollider>().excludeLayers = 0;
             GetLeftHand.boxCollider.excludeLayers = 0b10000000000;
             GetRightHand.boxCollider.excludeLayers = 0b10000000000;
+            Rigid.interpolation = RigidbodyInterpolation.None;
             //죽은 시체에 인벤토리의 아이템 적용
             gameObject.AddComponent<NavMeshAgent>();
             EnemyController enemyController = gameObject.AddComponent<EnemyController>();
+            enemyController.playerType = 1;
             enemyController.capsuleCollider = GetComponent<CapsuleCollider>();
             enemyController.bDead = true;
 
@@ -703,14 +722,10 @@ public class PlayerController : Controller, IDamageable
         modelAnimator.SetLayerWeight(2, 0);
 
        
-        GetComponent<EnemyController>().bDead = false;
-
+        EnemyController enemyController = GetComponent<EnemyController>();
+        enemyController.bDead = false;
+        enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
         Destroy(GetComponent<PlayerInput>());
-
-      //  gameObject.AddComponent<NavMeshAgent>();
-     
-
-        
 
         RemoveAction();
         Inputs.actions["OpenInventory"].performed -= OpenInventory;
@@ -754,10 +769,11 @@ public class PlayerController : Controller, IDamageable
     {
         GameInstance.Instance.uiManager.SwitchUI(UIType.BoxInventory, false);
     }
-    private void OnApplicationQuit()
+ /*   private void OnApplicationQuit()
     {
         SaveLoadSystem.SavePlayerData(GetPlayer);
-    }
+        
+    }*/
 
     public void Damaged(int damage)
     {

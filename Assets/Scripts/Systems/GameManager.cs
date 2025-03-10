@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+
         GameInstance.Instance.gameManager = this;
     }
     private void Start()
@@ -64,15 +65,24 @@ public class GameManager : MonoBehaviour
 
     public void PlayerSettings(bool load)
     {
+        
         PlayerController pc = Instantiate(player); //플레이어 생성
         pc.name = playerName;
 
       
       //  pc.transform.position = startPosition;
 
-        InputManager inputMGR = Instantiate(inputManager);  //입력 시스템 생성
-        inputMGR.name = inputManagerName;
-        inputMGR.Setup(pc.GetComponent<PlayerInput>());
+        if(load)
+        {
+            InputManager inputMGR = Instantiate(inputManager);  //입력 시스템 생성
+            inputMGR.name = inputManagerName;
+            inputMGR.Setup(pc.GetComponent<PlayerInput>());
+        }
+        else
+        {
+            GameInstance.Instance.inputManager.Setup(pc.GetComponent<PlayerInput>());
+        }
+       
 
         //캐릭터 추가
         /* GameObject human = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Human_Male]);
