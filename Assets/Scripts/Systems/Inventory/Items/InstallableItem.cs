@@ -25,16 +25,17 @@ public class InstallableItem : Item, IUIComponent
     public void Setup()
     {
         
-        image.sprite = item_Image;
-        text.text = item_Name;
+        image.sprite = itemStruct.image;
+        text.text = itemStruct.item_name;
 
     }
     public void SetItemStruct(ItemStruct itemStruct, StructureState structureType)
     {
-        item_Image = itemStruct.image;
+        this.itemStruct = itemStruct;
+    /*    item_Image = itemStruct.image;
         item_Name = itemStruct.item_name;
         item_Slot = itemStruct.slot_type;
-        item_Type = itemStruct.item_type;
+        item_Type = itemStruct.item_type;*/
         type = structureType;
     }
 

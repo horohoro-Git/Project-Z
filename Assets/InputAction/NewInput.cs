@@ -219,6 +219,15 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""TestInventory"",
+                    ""type"": ""Button"",
+                    ""id"": ""acef41f6-7c5e-435f-aa64-0da671cb9e5d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -230,6 +239,17 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";keyboard;touch"",
                     ""action"": ""OpenInventory"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a5c89a5f-c1bc-4b7e-a533-724238f67eb9"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TestInventory"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -562,6 +582,7 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
         // OnInventory
         m_OnInventory = asset.FindActionMap("OnInventory", throwIfNotFound: true);
         m_OnInventory_OpenInventory = m_OnInventory.FindAction("OpenInventory", throwIfNotFound: true);
+        m_OnInventory_TestInventory = m_OnInventory.FindAction("TestInventory", throwIfNotFound: true);
         // OnUseItem
         m_OnUseItem = asset.FindActionMap("OnUseItem", throwIfNotFound: true);
         m_OnUseItem_Item1 = m_OnUseItem.FindAction("Item1", throwIfNotFound: true);
@@ -886,11 +907,13 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_OnInventory;
     private List<IOnInventoryActions> m_OnInventoryActionsCallbackInterfaces = new List<IOnInventoryActions>();
     private readonly InputAction m_OnInventory_OpenInventory;
+    private readonly InputAction m_OnInventory_TestInventory;
     public struct OnInventoryActions
     {
         private @NewInput m_Wrapper;
         public OnInventoryActions(@NewInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @OpenInventory => m_Wrapper.m_OnInventory_OpenInventory;
+        public InputAction @TestInventory => m_Wrapper.m_OnInventory_TestInventory;
         public InputActionMap Get() { return m_Wrapper.m_OnInventory; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -903,6 +926,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
             @OpenInventory.started += instance.OnOpenInventory;
             @OpenInventory.performed += instance.OnOpenInventory;
             @OpenInventory.canceled += instance.OnOpenInventory;
+            @TestInventory.started += instance.OnTestInventory;
+            @TestInventory.performed += instance.OnTestInventory;
+            @TestInventory.canceled += instance.OnTestInventory;
         }
 
         private void UnregisterCallbacks(IOnInventoryActions instance)
@@ -910,6 +936,9 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
             @OpenInventory.started -= instance.OnOpenInventory;
             @OpenInventory.performed -= instance.OnOpenInventory;
             @OpenInventory.canceled -= instance.OnOpenInventory;
+            @TestInventory.started -= instance.OnTestInventory;
+            @TestInventory.performed -= instance.OnTestInventory;
+            @TestInventory.canceled -= instance.OnTestInventory;
         }
 
         public void RemoveCallbacks(IOnInventoryActions instance)
@@ -1186,6 +1215,7 @@ public partial class @NewInput: IInputActionCollection2, IDisposable
     public interface IOnInventoryActions
     {
         void OnOpenInventory(InputAction.CallbackContext context);
+        void OnTestInventory(InputAction.CallbackContext context);
     }
     public interface IOnUseItemActions
     {

@@ -139,6 +139,7 @@ public  enum UIType
     Housing,
     Inventory,
     AbilityMenu,
+    BoxInventory,
     QuickSlot
 
 }
@@ -387,5 +388,10 @@ public interface IIdentifiable
 {
     public string ID { get; set; }
    
+}
+
+public interface IDamageable
+{
+    public void Damaged(int damage);
 }
 

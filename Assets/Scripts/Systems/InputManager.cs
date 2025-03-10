@@ -36,6 +36,7 @@ public class InputManager : MonoBehaviour
 
 
     public const int BuildMaterials = 7;
+    public const int Plane = 11;
     PointerEventData eventData = new PointerEventData(EventSystem.current);
     List<RaycastResult> raycastResults = new List<RaycastResult>();
     public void Setup(PlayerInput playerInput)
@@ -82,7 +83,7 @@ public class InputManager : MonoBehaviour
             }
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, int.MaxValue, ~(1 << BuildMaterials)))
+            if (Physics.Raycast(ray, out RaycastHit hit, int.MaxValue, Plane))
             {
                 if (GameInstance.Instance.drawGrid)
                 {

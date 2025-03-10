@@ -13,7 +13,11 @@ public class GettableItem : Item, IIdentifiable
         if (other.CompareTag("Player"))
         {
             PlayerController pc = other.GetComponent<PlayerController>();
-            pc.RegisterAction(GetItem);
+            if (pc)
+            {
+                pc.RegisterAction(GetItem);
+                
+            }
         }
     }
 
@@ -22,7 +26,11 @@ public class GettableItem : Item, IIdentifiable
         if (other.CompareTag("Player"))
         {
             PlayerController pc = other.GetComponent<PlayerController>();
-            pc.RemoveAction(GetItem);
+            if (pc)
+            {
+                pc.RemoveAction(GetItem);
+                
+            }
         }
     }
 

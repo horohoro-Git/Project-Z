@@ -14,10 +14,10 @@ public class Weapon : Item
 
     private void Start()
     {
-        Invoke("ItemLoad", 0.2f);
+    //    Invoke("ItemLoad", 0.2f);
     }
 
-    void ItemLoad()
+ /*   void ItemLoad()
     {
         if(!GameInstance.Instance.assetLoader.assetLoadSuccessful)
         {
@@ -26,8 +26,8 @@ public class Weapon : Item
             return;
         }
 
-        weaponStruct = GameInstance.Instance.assetLoader.weapons[itemIndex];
-    }
+        weaponStruct = GameInstance.Instance.assetLoader.weapons[itemStruct.item_index];
+    }*/
 
     public void Attack(float start, float end)
     {

@@ -35,7 +35,7 @@ public class AssetLoader : MonoBehaviour
     "floor", "wall", "door", "roof",
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "grasses",
-      "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup"
+      "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup","enemy_zombie"
     };
 
     [NonSerialized]
@@ -46,6 +46,10 @@ public class AssetLoader : MonoBehaviour
     [NonSerialized]
     public static List<string> spriteAssetkeys = new List<string> {
     "log_Sprite", "axe_Sprite", "apple_Sprite"
+    };
+    [NonSerialized]
+    public static List<string> enemykeys = new List<string> {
+    "enemy_zombie"
     };
 
     [NonSerialized]
@@ -299,7 +303,7 @@ public class AssetLoader : MonoBehaviour
         List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
         enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
 
-        Debug.Log(weaponTable[0].attack_damage);
+     //   Debug.Log(weaponTable[0].attack_damage);
         for(int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
         for(int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
     

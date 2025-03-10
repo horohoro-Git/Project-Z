@@ -29,9 +29,11 @@ public class GameInstance
     public QuickSlotUI quickSlotUI;
     public PlayerStatusUI playerStatusUI;
     public AbilityMenuUI abilityMenuUI;
+    public BoxInventorySystem boxInventorySystem;
     public MinimapUI minimapUI;
     public EnvironmentSpawner environmentSpawner;
     public EditMode editMode;
+    public EnemySpawner enemySpawner;
     List<PlayerController> players = new List<PlayerController>();
 
     public List<PlayerController> GetPlayers { get { return players; } }
@@ -57,6 +59,8 @@ public class GameInstance
         drawGrid = null;
         assetLoader = null;
         quickSlotUI = null;
+        enemySpawner = null;
+        boxInventorySystem = null;
     }
 
     public void AddPlayer(PlayerController pc)
