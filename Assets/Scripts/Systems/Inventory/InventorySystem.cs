@@ -77,20 +77,35 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     public void AddItem(Item item)
     {
+        ItemStruct itemStruct = item.itemStruct;
         for(int i =0; i< slotNum; i++)
         {
             for(int j =0; j < 10; j++)
             {
                 if(!inventoryArray[i, j].GetItem().used)
                 {
-                    Debug.Log("아이템을 얻음" + item.itemStruct.item_index);
+                    Debug.Log("아이템을 얻음" + itemStruct.item_index);
                    // ItemStruct itemStruct = new ItemStruct(item.itemIndex, item.item_Image, item.item_Name, item.item_Slot, item.item_Type, item.item_GO);
 
-                    inventoryArray[i, j].AddItem(item.itemStruct);
-                    GameInstance.Instance.boxInventorySystem.UpdateSlot(item.itemStruct, i, j);
+                    WeaponStruct weaponStruct = new WeaponStruct();
+                    ConsumptionStruct consumptionStruct = new ConsumptionStruct();
+                    if(itemStruct.item_type == ItemType.Equipmentable)
+                    {
+                        //무기 타입
+                        weaponStruct = GameInstance.Instance.assetLoader.weapons[itemStruct.item_index];
+                    }
+                    if(itemStruct.item_type == ItemType.Consumable)
+                    {
+                        //소비 타입
+                        consumptionStruct = GameInstance.Instance.assetLoader.consumptions[itemStruct.item_index];
+                    }
+
+                    inventoryArray[i, j].AddItem(itemStruct, weaponStruct, consumptionStruct);
+
+                    GameInstance.Instance.boxInventorySystem.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, i, j);
                     if(i == 0)
                     {
-                        GameInstance.Instance.quickSlotUI.UpdateSlot(item.itemStruct, j);
+                        GameInstance.Instance.quickSlotUI.UpdateSlot(item.itemStruct, weaponStruct, consumptionStruct, j);
                     }
 
                     SaveLoadSystem.SaveInventoryData();
@@ -107,33 +122,32 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         GameInstance.Instance.quickSlotUI.slots[currentSlotIndex].image.sprite = defaultSlot;
 
         currentSlotIndex = index;
-        ItemStruct item = inventoryArray[0, index].GetItem();
-        pc.Equipment(item, index);
+        pc.Equipment(inventoryArray[0, index], index);
         inventoryArray[0, index].image.sprite = highLightSlot;
         GameInstance.Instance.quickSlotUI.slots[index].image.sprite = highLightSlot;
     }
 
   
-    public void UpdateEquipSlot(SlotType slotType, ItemStruct item)
+    public void UpdateEquipSlot(SlotType slotType, ItemStruct item, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct)
     {
         switch (slotType)
         {
             case SlotType.None:
                 break;
             case SlotType.Head:
-                head.AddItem(item);
+                head.AddItem(item, weaponStruct, consumptionStruct);
                 break;
             case SlotType.Chest:
-                chest.AddItem(item);
+                chest.AddItem(item, weaponStruct, consumptionStruct);
                 break;
             case SlotType.Arm:
-                arm.AddItem(item);
+                arm.AddItem(item, weaponStruct, consumptionStruct);
                 break;
             case SlotType.Leg:
-                leg.AddItem(item);
+                leg.AddItem(item, weaponStruct, consumptionStruct);
                 break;
             case SlotType.Backpack:
-                backpack.AddItem(item); 
+                backpack.AddItem(item, weaponStruct, consumptionStruct); 
                 break;
         }
     }
@@ -163,9 +177,9 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         backpack.Setup();
     }
 
-    public void UpdateSlot(ItemStruct itemStruct, int x, int y)
+    public void UpdateSlot(ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, int x, int y)
     {
-        inventoryArray[x, y].AddItem(itemStruct);
+        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct);
     }
 
     public void RemoveSlot(int x, int y)
@@ -173,7 +187,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         inventoryArray[x, y].RemoveItem();
     }
 
-    public void LoadInvetory(int x, int y, ItemStruct itemStruct)
+    public void LoadInvetory(int x, int y, ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct)
     {
         ItemStruct item = ItemData.GetItem(itemStruct.item_index);
 
@@ -182,15 +196,14 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         itemStruct.used = true;
         if(x == 0)
         {
-            GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, y);
+            GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, y);
         }
-        inventoryArray[x, y].AddItem(itemStruct);
+        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct);
     }
 
     public void ResetInventory()
     {
-        slotNum = 1;
-        for (int i = slotArrays.Count -1; i > 0; i--)
+        for (int i = slotNum - 1; i > 0; i--)
         {
             for(int j=0; j< 10; j++)
             {
@@ -198,6 +211,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
             }
             Destroy(slotArrays[i].gameObject);
         }
+        slotNum = 1;
 
         for(int i = 0; i< 10; i++)
         {

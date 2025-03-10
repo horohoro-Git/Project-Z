@@ -327,6 +327,29 @@ public class SaveLoadSystem
                             writer.Write(item.item_name);
                             writer.Write((int)item.slot_type);
                             writer.Write((int)item.item_type);
+
+                           
+                            if((int)item.item_type == 1)
+                            {
+                                //소비 아이템
+                                ConsumptionStruct consumptionStruct = slot.consumption;
+                                writer.Write(consumptionStruct.item_index);
+                                writer.Write((int)consumptionStruct.consumption_type);
+                                writer.Write(consumptionStruct.heal_amount);
+                                writer.Write(consumptionStruct.energy_amount);
+                                writer.Write(consumptionStruct.duration);
+                            }
+                            if ((int)item.item_type == 2)
+                            {
+                                //무기 아이템
+                                WeaponStruct weaponStruct = slot.weapon;
+                                writer.Write(weaponStruct.item_index);
+                                writer.Write((int)weaponStruct.weapon_type);
+                                writer.Write(weaponStruct.attack_damage);
+                                writer.Write(weaponStruct.attack_speed);
+                                writer.Write(weaponStruct.max_ammo);
+                                writer.Write(weaponStruct.durability);
+                            }
                         }
                     }
                 }
@@ -364,8 +387,33 @@ public class SaveLoadSystem
                             int itemType = reader.ReadInt32();
 
                             ItemStruct item = new ItemStruct(index, null, name, (SlotType)slotType, (ItemType)itemType, null);
-                            GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, item);
-                            GameInstance.Instance.boxInventorySystem.LoadInvetory(X,Y,item);
+
+                            WeaponStruct weaponStruct = new WeaponStruct();
+                            ConsumptionStruct consumptionStruct = new ConsumptionStruct();
+
+                           
+                            if ((ItemType)itemType == ItemType.Consumable)
+                            {
+                                int consumption_index = reader.ReadInt32();
+                                ConsumptionType consumption_type = (ConsumptionType)reader.ReadInt32();
+                                int heal_amount = reader.ReadInt32();
+                                int energy_amount = reader.ReadInt32();
+                                float duration = reader.ReadSingle();
+                                consumptionStruct = new ConsumptionStruct(consumption_index, consumption_type, heal_amount, energy_amount, duration);
+                            }
+                            if ((ItemType)itemType == ItemType.Equipmentable)
+                            {
+                                int weapon_index = reader.ReadInt32();
+                                WeaponType weapon_type = (WeaponType)reader.ReadInt32();
+                                int attack_damage = reader.ReadInt32();
+                                float attack_spped = reader.ReadSingle();
+                                int max_ammo = reader.ReadInt32();
+                                int durability = reader.ReadInt32();
+
+                                weaponStruct = new WeaponStruct(weapon_index, weapon_type, attack_damage, attack_spped, max_ammo, durability);
+                            }
+                            GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, item, weaponStruct, consumptionStruct);
+                            GameInstance.Instance.boxInventorySystem.LoadInvetory(X,Y,item, weaponStruct, consumptionStruct);
                         }
                     }
                 }
@@ -525,6 +573,7 @@ public class SaveLoadSystem
 
 
                             int type = reader.ReadInt32();
+                            int modelType = reader.ReadInt32();
                             int count = reader.ReadInt32();
 
                             List<ItemStruct> itemStructs = new List<ItemStruct>();
@@ -540,10 +589,8 @@ public class SaveLoadSystem
 
                             Vector3 position = new Vector3(x, y, z);
                             Quaternion rotation = new Quaternion(rx, ry, rz, rw);
-                            GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, type, itemStructs);
-                         
-                            //GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, item);
 
+                            GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, type, itemStructs, modelType);
                         }
                     }
                 }
@@ -570,6 +617,7 @@ public class SaveLoadSystem
             {
                 foreach (GameObject enemy in GameInstance.Instance.worldGrids.ReturnLives())
                 {
+                    
                     EnemyController EC = enemy.GetComponent<EnemyController>();
                     //위치
                     Vector3 position = EC.Transforms.position;
@@ -579,6 +627,7 @@ public class SaveLoadSystem
 
                     //적의 타입
                     int type = EC.enemyStruct.id;
+                    int modelType = EC.playerType;
 
                     writer.Write(EC.Transforms.position.x);
                     writer.Write(EC.Transforms.position.y);
@@ -589,6 +638,7 @@ public class SaveLoadSystem
                     writer.Write(EC.Transforms.rotation.z);
                     writer.Write(EC.Transforms.rotation.w);
                     writer.Write(type);
+                    writer.Write(modelType);
 
                     writer.Write(EC.itemStructs.Count);
                     //적의 인벤토리

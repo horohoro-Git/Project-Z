@@ -35,7 +35,7 @@ public class InputManager : MonoBehaviour
 
 
     public const int BuildMaterials = 7;
-    public const int Plane = 11;
+    public const int Plane = 1 << 11;
     PointerEventData eventData = new PointerEventData(EventSystem.current);
     List<RaycastResult> raycastResults = new List<RaycastResult>();
     public void Setup(PlayerInput playerInput)

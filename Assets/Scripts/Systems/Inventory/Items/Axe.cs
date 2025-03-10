@@ -14,11 +14,16 @@ public class Axe : Weapon
             }
         }
 
-        if(other.gameObject.CompareTag("Enemy"))
+        IDamageable damageable = other.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            damageable.Damaged(weaponStruct.attack_damage);
+        }
+      /*  if(other.gameObject.CompareTag("Enemy"))
         {
             other.gameObject.GetComponent<EnemyController>().BeAttacked(weaponStruct.attack_damage);
         }
-        
+        */
     }
  /*   private void OnTriggerStay(Collider other)
     {

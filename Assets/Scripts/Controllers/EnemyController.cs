@@ -48,8 +48,9 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     [NonSerialized]
     public List<ItemStruct> itemStructs = new List<ItemStruct>();
 
- //   int attackDamage;
-  //  int hp;
+    [NonSerialized]
+    public int playerType = 0; //감염된 플레이어가 아니면 0
+
     public string ID { get; set; }
 
     private void Awake()

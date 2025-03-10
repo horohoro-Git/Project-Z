@@ -58,6 +58,7 @@ public class Controller : MonoBehaviour
     Vector3 lastVectors;
     [NonSerialized]
     public float around;
+
     void FixedUpdate()
     {
         if(!lookAround) Rotate();

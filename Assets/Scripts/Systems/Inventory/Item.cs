@@ -12,6 +12,8 @@ public class Item : MonoBehaviour
     public GameObject item_GO;*/
 
     public ItemStruct itemStruct;
+   // public WeaponStruct weaponStruct;
+   // public ConsumptionStruct consumptionStruct;
 
     public Player equippedPlayer;
 }
