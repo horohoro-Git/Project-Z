@@ -3,12 +3,27 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
+using System.Security.Cryptography;
 using UnityEngine;
 
 public class SaveLoadSystem
 {
 
     static string path = Application.persistentDataPath;
+
+     public static Hash128 ComputeHash128(byte[] rawData)
+    {
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
+            byte[] hashBytes = sha256Hash.ComputeHash(rawData);
+
+            // SHA256 해시값을 Hash128으로 변환 (32바이트 -> 16바이트로 잘라서 Hash128으로 만들기)
+            byte[] hash128Bytes = new byte[16];
+            System.Array.Copy(hashBytes, hash128Bytes, 16); // 앞 16바이트만 사용
+
+            return new Hash128(hash128Bytes[0], hash128Bytes[1], hash128Bytes[2], hash128Bytes[3]);
+        }
+    }
 
     //게임 맵 데이터 저장
     public static void SaveEnviromentData()
@@ -147,10 +162,9 @@ public class SaveLoadSystem
             enemy.dropStruct = LoadDropData(itemData);
             enemyStruct[i] = enemy;
         }
-       
+        
         return enemyStruct;
     }
-
 
     //드랍 테이블
     public static List<DropStruct> LoadDropData(string content)
@@ -585,6 +599,7 @@ public class SaveLoadSystem
                                 int itemType = reader.ReadInt32();
                                 ItemStruct item = new ItemStruct(index, null, name, (SlotType)slotType, (ItemType)itemType, null);
                                 itemStructs.Add(item);
+
                             }
 
                             Vector3 position = new Vector3(x, y, z);

@@ -110,6 +110,7 @@ public class AssetLoader : MonoBehaviour
 
     public void Awake()
     {
+    
         GameInstance.Instance.assetLoader = this;
     }
     public void Start()
@@ -120,54 +121,36 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
-      //  Hash128 hash = new Hash128("32ce1ea3ec288bfce17eda2344bb145b");
-        uint version = 2;
+      //  Caching.ClearCache();
         int unloadNum = 0;
-        /*   //데이터 테이블
-           AsyncOperationHandle<TextAsset> lvlHandle = Addressables.LoadAssetAsync<TextAsset>("level");
-           yield return lvlHandle;
-           if(lvlHandle.Status == AsyncOperationStatus.Succeeded)
-           {
-               TextAsset textAsset = lvlHandle.Result;
-               levelContent = textAsset.text;
-           }
-           AsyncOperationHandle<TextAsset> itemHandle = Addressables.LoadAssetAsync<TextAsset>("item");
-           yield return itemHandle;
-           if (itemHandle.Status == AsyncOperationStatus.Succeeded)
-           {
-               TextAsset textAsset = itemHandle.Result;
-               itemContent = textAsset.text;
-           }
-           AsyncOperationHandle<TextAsset> weaponHandle = Addressables.LoadAssetAsync<TextAsset>("weapon");
-           yield return weaponHandle;
-           if (weaponHandle.Status == AsyncOperationStatus.Succeeded)
-           {
-               TextAsset textAsset = weaponHandle.Result;
-               weaponContent = textAsset.text;
-           }
-           AsyncOperationHandle<TextAsset> consumptionHandle = Addressables.LoadAssetAsync<TextAsset>("consumption");
-           yield return consumptionHandle;
-           if (consumptionHandle.Status == AsyncOperationStatus.Succeeded)
-           {
-               TextAsset textAsset = consumptionHandle.Result;
-               consumptionContent = textAsset.text;
-           }*/
-        // AssetBundle.Load
-      //  byte[] hashBytes = Utility.StringToByteArray("32ce1ea3ec288bfce17eda2344bb145b");
-      //  Hash128 hash = new Hash128(hashBytes[0], hashBytes[1], hashBytes[2], hashBytes[3]);
-
-
 
         string homeUrl = Path.Combine(SaveLoadSystem.LoadServerURL(), "home");
-        //   if (Caching.IsVersionCached(homeUrl, hash)) Debug.Log("Cehck");
+        Hash128 bundleHash = SaveLoadSystem.ComputeHash128(System.Text.Encoding.UTF8.GetBytes(homeUrl));
 
-        UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(homeUrl);//, hash, version);
+        if (Caching.IsVersionCached(homeUrl, bundleHash))
+        {
+            Debug.Log("Asset Found");
+        }
+        else
+        {
+            Debug.Log("Asset Not Found");
+          
+        }
+        UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(homeUrl, bundleHash, 0);
         yield return www.SendWebRequest();
 
         if (www.result == UnityWebRequest.Result.Success)
         {
+
             bundle = DownloadHandlerAssetBundle.GetContent(www);
             yield return bundle;
+
+            if (Caching.IsVersionCached(homeUrl, bundleHash))
+            {
+                Debug.Log("AssetBundle Cached Successfully");
+            }
+
+
             if (!bundle.isStreamedSceneAssetBundle)
             {
                 //데이터 테이블 로드
@@ -248,7 +231,7 @@ public class AssetLoader : MonoBehaviour
                 }
             }
 
-            bundle.Unload(false);
+           
         }
         else
         {
@@ -315,7 +298,6 @@ public class AssetLoader : MonoBehaviour
         List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
         enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
 
-        //   Debug.Log(weaponTable[0].attack_damage);
         for (int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
         for (int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
 
@@ -669,8 +651,6 @@ public class AssetLoader : MonoBehaviour
     {
  
         GameInstance instance = GameInstance.Instance;
-        if (loadedAssets != null) Debug.Log("AA");
-        if (loadedSprites != null) Debug.Log("AA");
 
         if (instance.enemySpawner.loaded) SaveLoadSystem.SaveEnemyInfo();
         if (instance.GetPlayers.Count > 0 && instance.GetPlayers[0].loaded) SaveLoadSystem.SavePlayerData(instance.GetPlayers[0].GetPlayer); 
@@ -697,7 +677,7 @@ public class AssetLoader : MonoBehaviour
         loadedSprites = null;
         loadedAssets = null;
 
-
+        bundle.Unload(true);
     }
 
 }

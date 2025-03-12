@@ -92,6 +92,16 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct);
     }
 
+    public void GetOpponentInventory(List<ItemStruct> itemStructs)
+    {
+        int index = 0;
+        for(int i = 0; i < itemStructs.Count; i++)
+        {
+            boxInventoryArray[index / 10, index % 10].AddItem(itemStructs[i], new WeaponStruct(), new ConsumptionStruct());
+            index++;
+        }
+    }
+
     public void ResetInventory()
     {
         slotNum = 1;
