@@ -50,7 +50,7 @@ public class GettableItem : Item, IIdentifiable
         Destroy(this.gameObject);
     }
 
-    public void Start()
+ /*   public void Start()
     {
         Invoke("AA", 0.5f);
     }
@@ -58,5 +58,10 @@ public class GettableItem : Item, IIdentifiable
     void AA()
     {
         GameInstance.Instance.worldGrids.AddObjects(this.gameObject);
+    }*/
+    public void Spawned(bool load)
+    {
+        GameInstance.Instance.worldGrids.AddObjects(this.gameObject, load);
+
     }
 }

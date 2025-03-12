@@ -178,3 +178,6 @@ Add box inventory ui, zombie players can now attack players
 
 03/10
 Change ineventory system's structure (equipmentable item, consumable item), save & load player zombie
+
+03/11
+Garbage collection optimization

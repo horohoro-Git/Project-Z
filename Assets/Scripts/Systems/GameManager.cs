@@ -26,7 +26,9 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
+        
         Invoke("GameLoad", 1f);
+
     }
 
     void GameLoad()
@@ -46,14 +48,15 @@ public class GameManager : MonoBehaviour
 
     void TestItem()
     {
-        Item go =  Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[1]]).GetComponent<Item>();
-   //     go.itemStruct = ItemData.GetItem(1);
+        Item go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[1]]).GetComponent<Item>();
+
         go.transform.position = Vector3.zero;
 
         GettableItem gettable = go.AddComponent<GettableItem>();
+        gettable.Spawned(false);
         go.AddComponent<Rigidbody>();
         go.GetComponent<BoxCollider>().enabled = true;
-     
+
         gettable.itemStruct = ItemData.GetItem(2);
         Destroy(go);
     }

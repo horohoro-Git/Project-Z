@@ -839,4 +839,13 @@ public class HousingSystem : MonoBehaviour
         removeMaterials.Clear();
         changeLists.Clear();
     }
+
+    private void OnDestroy()
+    {
+        for(int i = 0; i< changeLists.Count; i++)
+        {
+            changeLists[i].Clear();
+        }
+        for (int i = 0; i < removeEnvironments.Count; i++) removeEnvironments[i].Clear();
+    }
 }

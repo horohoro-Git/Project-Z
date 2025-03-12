@@ -16,4 +16,9 @@ public class Item : MonoBehaviour
    // public ConsumptionStruct consumptionStruct;
 
     public Player equippedPlayer;
+
+    private void OnDestroy()
+    {
+        itemStruct.Clear();
+    }
 }

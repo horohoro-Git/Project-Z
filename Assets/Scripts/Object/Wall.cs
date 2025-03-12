@@ -13,4 +13,13 @@ public class Wall : MonoBehaviour, IBuildMaterials
     public Renderer GetRenderer;
     Renderer IBuildMaterials.renderer { get { return GetRenderer; } }
     public StructureState structureState { get; set; }
+
+    private void OnDestroy()
+    {
+        Clear();
+    }
+    public void Clear()
+    {
+        GetRenderer = null;
+    }
 }

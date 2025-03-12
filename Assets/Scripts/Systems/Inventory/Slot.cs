@@ -157,6 +157,7 @@ public class Slot : MonoBehaviour, IUIComponent
                     ItemStruct tempStruct = s.item;
                     s.item = item;
                     item = tempStruct;
+                    tempStruct.Clear();
                     WeaponStruct weaponTemp = s.weapon;
                     s.weapon = weapon;
                     weapon = weaponTemp;
@@ -311,6 +312,7 @@ public class Slot : MonoBehaviour, IUIComponent
     public void RemoveItem()
     {
         ItemStruct itemS = new ItemStruct();
+        item.Clear();
         item = itemS;
         weapon = new WeaponStruct();
         consumption = new ConsumptionStruct();
@@ -365,5 +367,9 @@ public class Slot : MonoBehaviour, IUIComponent
         }
 
         itemImage.sprite = originImage;
+    }
+    private void OnDestroy()
+    {
+        item.Clear();
     }
 }

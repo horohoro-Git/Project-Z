@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,6 +26,8 @@ public class WorldGrids : MonoBehaviour
 
     Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>(); //아이템
     Dictionary<string, GameObject> lives = new Dictionary<string, GameObject>(); //적대적 생명체
+    //NativeHashMap<string>
+
     private void Awake()
     {
         GameInstance.Instance.worldGrids = this;
@@ -63,14 +67,24 @@ public class WorldGrids : MonoBehaviour
         players[x,y].Add(pc);   //새로운 위치에 플레이어 참조
     }
 
-    //적의 위치를 기반으로 그리드 탐색
-    public List<PlayerController> FindPlayersInGrid(Transform transforms)
+    public void RemovePlayer(PlayerController pc, ref int refX, ref int refY)
     {
+        Vector3 playerLoc = pc.Transforms.position;
+        int x = Mathf.FloorToInt(playerLoc.x / 10) - indexingMinX;
+        int y = Mathf.FloorToInt(playerLoc.y / 10) - indexingMinY;
+
+        players[refX, refY].Remove(pc);
+    }
+
+    //적의 위치를 기반으로 그리드 탐색
+    public List<PlayerController> FindPlayersInGrid(Transform transforms, ref List<PlayerController> lists)
+    {
+        lists.Clear();
         Vector3 currentPosition = transforms.position;   
         int x = Mathf.FloorToInt(currentPosition.x /10)- indexingMinX;
         int y = Mathf.FloorToInt(currentPosition.y /10)- indexingMinY;
 
-        List<PlayerController> returnPlayers = new List<PlayerController>();
+      //  List<PlayerController> returnPlayers = new List<PlayerController>();
 
         for (int i = 0; i < 9; i++) // 현재 위치부터 8방향 탐색 
         {
@@ -80,17 +94,19 @@ public class WorldGrids : MonoBehaviour
             if (ValidCheck(posX, posY)) //인덱스 유효성 체크
             {
                 List<PlayerController> controllers = players[posX, posY];
-                for (int j = 0; j < controllers.Count; j++)
+                int preCount = lists.Count;
+                lists.AddRange(controllers);
+                for (int j = lists.Count - 1; j >= preCount; j--)
                 {
                     PlayerController controller = controllers[j];
                     Vector3 dir = controller.Transforms.position - currentPosition;
                     float distance = dir.magnitude;
                     dir = Vector3.Normalize(dir);
-                    if (Physics.Raycast(currentPosition,dir,distance,1 << 3)) returnPlayers.Add(controller); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
+                    if (Physics.Raycast(currentPosition,dir,distance,1 << 3)) lists.RemoveAt(j); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
                 }
             }
         }
-        return returnPlayers;
+        return lists;
     }
 
     bool ValidCheck(int x, int y)
@@ -103,27 +119,54 @@ public class WorldGrids : MonoBehaviour
     {
         return BitConverter.ToString(binary).Replace("-", "").ToLower();
     }
-    public void AddObjects(GameObject ob)
+    public void AddObjects(GameObject ob, bool load)
     {
-        while (true)
+        IIdentifiable identifiable = ob.GetComponent<IIdentifiable>();
+        if (identifiable.ID == null)
         {
-            byte[] random = Guid.NewGuid().ToByteArray();
-            string key = ConvertBinaryToString(random);
-
-            if(!objects.ContainsKey(key))
+            while (true)
             {
-                IIdentifiable identifiable = ob.GetComponent<IIdentifiable>();
-                identifiable.ID = key;
-                objects[key] = ob;
-                break;
+                //아이디 갖고 있지 않음
+                byte[] random = Guid.NewGuid().ToByteArray();
+                string key = ConvertBinaryToString(random);
+                if (!objects.ContainsKey(key))
+                {
+                    identifiable.ID = key;
+                    objects[key] = ob;
+                    break;
+                }
             }
         }
+        else
+        {
+            if (!objects.ContainsKey(identifiable.ID))
+            {
+                //아이디를 갖고 있고 사용 가능
+                objects[identifiable.ID] = ob;
+            }
+            else //갖고있던 아이디 뺏김
+            {
+                while (true)
+                {
+                    byte[] random = Guid.NewGuid().ToByteArray();
+                    string key = ConvertBinaryToString(random);
+                    if (!objects.ContainsKey(key))
+                    {
+                        identifiable.ID = key;
+                        objects[key] = ob;
+                        break;
+                    }
+                }
+            }
+        }
+        if (!load) GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Object);
     }
 
     public void RemoveObjects(IIdentifiable ob)
     {
       //  ob.ID = null;
         objects.Remove(ob.ID);
+        GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Object);
     }
 
     public List<GameObject> ReturnObjects()
@@ -138,7 +181,7 @@ public class WorldGrids : MonoBehaviour
     }
 
 
-    public void AddLives(GameObject livingObject)
+    public void AddLives(GameObject livingObject, bool load)
     {
         IIdentifiable identifiable = livingObject.GetComponent<IIdentifiable>();
         if(identifiable.ID == null)
@@ -178,23 +221,37 @@ public class WorldGrids : MonoBehaviour
                 }
             }
         }
+
+        if(!load) GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
+      
     }
 
 
     public void RemoveLives(string ID)
     {
         lives.Remove(ID);
+        GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
     }
 
 
     public List<GameObject> ReturnLives()
     {
         List<GameObject> returnObjects = new List<GameObject>();
+     
         foreach (var livingObject in lives)
         {
             returnObjects.Add(livingObject.Value);
         }
 
         return returnObjects;
+    }
+
+    public void Clear()
+    {
+        foreach(var livingObject in lives) Destroy(livingObject.Value);
+        foreach(var objectItem in objects) Destroy(objectItem.Value);
+      
+        lives.Clear();
+        objects.Clear();
     }
 }

@@ -51,11 +51,12 @@ public class EnemySpawner : MonoBehaviour
                 EnemyController enemy = Instantiate(assetLoader.loadedAssets[AssetLoader.enemykeys[type - 1]]).GetComponent<EnemyController>();
                 enemy.Transforms.position = new Vector3(x - 49, 0, y - 49);
                 enemy.enemyStruct = assetLoader.enemies[type - 1];
-                GameInstance.Instance.worldGrids.AddLives(enemy.gameObject);
+                GameInstance.Instance.worldGrids.AddLives(enemy.gameObject, true);
                 enemy.Setup();
 
             }
         }
+        GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
     }
 
     public void LoadEnemies(Vector3 position, Quaternion rotation, int type, List<ItemStruct> itemStructs, int modelType)
@@ -97,7 +98,7 @@ public class EnemySpawner : MonoBehaviour
             enemyController.capsuleCollider = GetComponent<CapsuleCollider>();
             enemyController.itemStructs = itemStructs;
             enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
-            GameInstance.Instance.worldGrids.AddLives(enemyController.gameObject);
+            GameInstance.Instance.worldGrids.AddLives(enemyController.gameObject, true);
 
             enemyController.playerType = modelType;
 
@@ -111,7 +112,7 @@ public class EnemySpawner : MonoBehaviour
             enemyController.transform.rotation = rotation;
             enemyController.itemStructs = itemStructs;
             enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[type - 1];
-            GameInstance.Instance.worldGrids.AddLives(enemyController.gameObject);
+            GameInstance.Instance.worldGrids.AddLives(enemyController.gameObject, true);
 
             enemyController.Setup();
         }

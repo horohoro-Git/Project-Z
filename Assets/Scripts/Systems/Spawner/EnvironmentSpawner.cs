@@ -204,4 +204,16 @@ public class EnvironmentSpawner : MonoBehaviour
         environmentObjects[obj.X, obj.Y] = null;
         Destroy(obj.gameObject);
     }
+
+    public void Clear()
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            for (int j = 0; j < 100; j++)
+            {
+                if(environmentObjects[i, j] != null) Destroy(environmentObjects[i, j]);
+                environmentObjects[i, j] = null;
+            }
+        }
+    }
 }

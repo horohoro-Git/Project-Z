@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using UnityEngine.Networking;
 using System.IO;
+using System.Linq;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -119,6 +120,8 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
+      //  Hash128 hash = new Hash128("32ce1ea3ec288bfce17eda2344bb145b");
+        uint version = 2;
         int unloadNum = 0;
         /*   //데이터 테이블
            AsyncOperationHandle<TextAsset> lvlHandle = Addressables.LoadAssetAsync<TextAsset>("level");
@@ -150,16 +153,21 @@ public class AssetLoader : MonoBehaviour
                consumptionContent = textAsset.text;
            }*/
         // AssetBundle.Load
-        string homeUrl = Path.Combine(SaveLoadSystem.LoadServerURL(), "home");
+      //  byte[] hashBytes = Utility.StringToByteArray("32ce1ea3ec288bfce17eda2344bb145b");
+      //  Hash128 hash = new Hash128(hashBytes[0], hashBytes[1], hashBytes[2], hashBytes[3]);
 
-        UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(homeUrl);
+
+
+        string homeUrl = Path.Combine(SaveLoadSystem.LoadServerURL(), "home");
+        //   if (Caching.IsVersionCached(homeUrl, hash)) Debug.Log("Cehck");
+
+        UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(homeUrl);//, hash, version);
         yield return www.SendWebRequest();
 
         if (www.result == UnityWebRequest.Result.Success)
         {
-            AssetBundle bundle = DownloadHandlerAssetBundle.GetContent(www);
+            bundle = DownloadHandlerAssetBundle.GetContent(www);
             yield return bundle;
-
             if (!bundle.isStreamedSceneAssetBundle)
             {
                 //데이터 테이블 로드
@@ -208,7 +216,7 @@ public class AssetLoader : MonoBehaviour
                 }
 
                 //프리팹 에셋 로드
-                foreach(string key in assetkeys)
+                foreach (string key in assetkeys)
                 {
                     GameObject asset = bundle.LoadAsset<GameObject>(key);
                     if(asset != null)
@@ -244,6 +252,7 @@ public class AssetLoader : MonoBehaviour
         }
         else
         {
+            unloadNum++;
             Debug.Log("Error"); 
         }
 
@@ -306,10 +315,10 @@ public class AssetLoader : MonoBehaviour
         List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
         enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
 
-     //   Debug.Log(weaponTable[0].attack_damage);
-        for(int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
-        for(int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
-    
+        //   Debug.Log(weaponTable[0].attack_damage);
+        for (int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
+        for (int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
+
 
         ItemData.ItemDatabaseSetup();
 
@@ -658,10 +667,37 @@ public class AssetLoader : MonoBehaviour
 
     public void Clear()
     {
+ 
         GameInstance instance = GameInstance.Instance;
+        if (loadedAssets != null) Debug.Log("AA");
+        if (loadedSprites != null) Debug.Log("AA");
+
         if (instance.enemySpawner.loaded) SaveLoadSystem.SaveEnemyInfo();
         if (instance.GetPlayers.Count > 0 && instance.GetPlayers[0].loaded) SaveLoadSystem.SavePlayerData(instance.GetPlayers[0].GetPlayer); 
+        ItemData.Clear();
+        GameInstance.Instance.environmentSpawner.Clear();
+        GameInstance.Instance.worldGrids.Clear();
 
-        AssetBundle.UnloadAllAssetBundles(bundle);
+        var keys = loadedAssets.Keys;
+        for(int i = 0; i< keys.Count; i++)
+        {
+            loadedAssets[keys.ElementAt(i)] = null;
+        }
+
+        var keyss = loadedSprites.Keys;
+        for (int i = 0; i < keyss.Count; i++)
+        {
+            loadedSprites[keyss.ElementAt(i)] = null;
+        }
+     
+        loadedAssets.Clear();
+
+
+        loadedSprites.Clear();
+        loadedSprites = null;
+        loadedAssets = null;
+
+
     }
+
 }

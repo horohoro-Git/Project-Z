@@ -51,6 +51,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     [NonSerialized]
     public int playerType = 0; //감염된 플레이어가 아니면 0
 
+    List<PlayerController> pcs = new List<PlayerController>(10);
     public string ID { get; set; }
 
     private void Awake()
@@ -77,7 +78,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
      //   if (LastPosition != Transforms.position)
         {
        //     LastPosition = Transforms.position;
-            DetectPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms));
+            DetectPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms, ref pcs));
             //Debug.Log(agent.velocity.magnitude);
             modelAnimator.SetFloat("speed", agent.velocity.magnitude);
         }
@@ -217,7 +218,8 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
                 capsuleCollider.isTrigger = true;
             }
             else capsuleCollider.excludeLayers = 0b1000;
-         //   Destroy(Rigid);
+            //   Destroy(Rigid);
+            GameInstance.Instance.worldGrids.RemoveLives(ID);
             modelAnimator.SetTrigger("dead");
             Reward();
         }
@@ -289,5 +291,12 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     public void Damaged(int damage)
     {
         BeAttacked(damage);
+    }
+    private void OnDestroy()
+    {
+        for (int i = 0; i < itemStructs.Count; i++)
+        {
+            itemStructs[i].Clear();
+        }
     }
 }
