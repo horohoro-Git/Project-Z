@@ -121,6 +121,7 @@ public class PlayerController : Controller, IDamageable
 
             GetRightHand.boxCollider.excludeLayers = 0b1000;
             GetLeftHand.boxCollider.excludeLayers = 0b1000;
+            loaded = load;
             if (load)
             {
                 if (!SaveLoadSystem.LoadPlayerData(this))
@@ -655,7 +656,6 @@ public class PlayerController : Controller, IDamageable
                 {
                     ItemStruct itemStruct = GameInstance.Instance.inventorySystem.inventoryArray[i, j].item;
                     if (itemStruct.item_index == 0) continue;
-
                     enemyController.itemStructs.Add(itemStruct);
                 }
             }

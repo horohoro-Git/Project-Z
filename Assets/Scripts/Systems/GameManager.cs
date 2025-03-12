@@ -68,13 +68,10 @@ public class GameManager : MonoBehaviour
 
     public void PlayerSettings(bool load)
     {
-        
         PlayerController pc = Instantiate(player); //플레이어 생성
         pc.name = playerName;
-
-      
       //  pc.transform.position = startPosition;
-
+        
         if(load)
         {
             InputManager inputMGR = Instantiate(inputManager);  //입력 시스템 생성

@@ -181,3 +181,6 @@ Change ineventory system's structure (equipmentable item, consumable item), save
 
 03/11
 Garbage collection optimization
+
+03/12
+Cached the assetbundle from which the asset was loaded

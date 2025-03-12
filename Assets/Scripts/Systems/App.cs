@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,14 +27,13 @@ public class App : MonoBehaviour
         SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
        // GameInstance.Instance.assetLoader.ClearAsset();
      
+        if (GameInstance.Instance.assetLoader != null) GameInstance.Instance.assetLoader.Clear();
         GameInstance.Instance.Reset();
         GameInstance.Instance.quit = true;
-
+ 
+        GameInstance.Instance.Reset();
     }
     private void OnSceneUnloaded(Scene scene)
     {
-
-        if (GameInstance.Instance.assetLoader != null) GameInstance.Instance.assetLoader.Clear();
-        GameInstance.Instance.Reset();
     }
 }

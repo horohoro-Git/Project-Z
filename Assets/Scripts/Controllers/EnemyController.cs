@@ -213,35 +213,54 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
             agent.isStopped = true;
 
-            if (itemStructs.Count > 0)
-            {
-                capsuleCollider.isTrigger = true;
-            }
-            else capsuleCollider.excludeLayers = 0b1000;
+            capsuleCollider = GetComponent<CapsuleCollider>();
+            capsuleCollider.excludeLayers = 0b1000;
+           
+         
             //   Destroy(Rigid);
             GameInstance.Instance.worldGrids.RemoveLives(ID);
-            modelAnimator.SetTrigger("dead");
+            modelAnimator.SetTrigger("zombieDead");
             Reward();
         }
     }
 
     void Reward()
     {
-        for (int i = 0; i < enemyStruct.dropStruct.Count; i++)
+        if (playerType != 0)
         {
-            int random = UnityEngine.Random.Range(1, 101);
-            if(random <= enemyStruct.dropStruct[i].item_chance)
+            Debug.Log("player Zombie Dead");
+            if (itemStructs.Count > 0)
             {
-                int index = enemyStruct.dropStruct[i].item_index - 1;
-                GameObject item = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[index]]);
-                item.transform.position = new Vector3(Transforms.position.x, Transforms.position.y + 1, Transforms.position.z);
-                GettableItem gettableItem = item.AddComponent<GettableItem>();
-                
-                Rigidbody itemRigid = item.AddComponent<Rigidbody>();
-                itemRigid.AddForce(Vector3.up * 10f);
-
+                Debug.Log("Inventory Recovery");
+             
+        
             }
         }
+        else
+        {
+            for (int i = 0; i < enemyStruct.dropStruct.Count; i++)
+            {
+                int random = UnityEngine.Random.Range(1, 101);
+                if (random <= enemyStruct.dropStruct[i].item_chance)
+                {
+                    int index = enemyStruct.dropStruct[i].item_index - 1;
+                    GameObject item = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[index]]);
+                    item.transform.position = new Vector3(Transforms.position.x, Transforms.position.y + 1, Transforms.position.z);
+                    GettableItem gettableItem = item.AddComponent<GettableItem>();
+
+                    Rigidbody itemRigid = item.AddComponent<Rigidbody>();
+                    itemRigid.AddForce(Vector3.up * 10f);
+
+                }
+            }
+        }
+    }
+
+    void OpenInventorySystem(PlayerController pc)
+    {
+        GameInstance.Instance.uiManager.SwitchUI(UIType.BoxInventory, false);
+        GameInstance.Instance.boxInventorySystem.GetOpponentInventory(itemStructs);
+
     }
 
     void StartAnimation(string animationName, float timer)
@@ -261,13 +280,26 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!bDead) return;
-       /* if(other.gameObject.CompareTag("Player"))
+        if (bDead && playerType != 0 && itemStructs.Count > 0)
         {
-            PlayerController player = other.GetComponent<PlayerController>();
-            player.GetDamage(enemyStruct.attack);
-            Debug.Log("Attack Hit");
-        }*/
+            PlayerController pc = other.GetComponent<PlayerController>();
+            if (pc != null)
+            {
+                pc.RegisterAction(OpenInventorySystem);
+            }
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (bDead && playerType != 0 && itemStructs.Count > 0)
+        {
+            PlayerController pc = other.GetComponent<PlayerController>();
+            if (pc != null)
+            {
+                pc.RemoveAction(OpenInventorySystem);
+            }
+        }
     }
     private void OnDrawGizmos()
     {
