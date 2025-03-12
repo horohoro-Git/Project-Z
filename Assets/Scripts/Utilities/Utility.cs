@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -120,6 +121,17 @@ public struct RemoveEnvironmentList
     {
         this.environmentObjects = environmentObjects;
     }
+
+    public void Clear()
+    {
+        foreach (EnvironmentObject obj in environmentObjects)
+        {
+            obj.Clear();
+        }
+
+        environmentObjects.Clear();
+    }
+
 }
 
 //아이템 타입
@@ -142,6 +154,15 @@ public  enum UIType
     BoxInventory,
     QuickSlot
 
+}
+
+//미니맵에 사용할 개체의 타입
+public enum MinimapIconType
+{
+    None,
+    Player,
+    Enemy,
+    Object
 }
 
 //장착 무기 타입
@@ -206,6 +227,11 @@ public struct HousingChangeInfo
         this.type = type;
         this.used = true;
     }
+
+    public void Clear()
+    {
+        buildMat = null;
+    }
 }
 
 
@@ -230,6 +256,12 @@ public struct ItemStruct
         this.item_type = itemType;
         used = true;
         this.itemGO = itemGO;
+    }
+
+    public void Clear()
+    {
+        image = null;
+        itemGO = null;
     }
 }
 
@@ -387,6 +419,16 @@ public class Utility
         return buildDirectionWithOffset;
     }
 
+    public static byte[] StringToByteArray(string hex)
+    {
+        int length = hex.Length;
+        byte[] bytes = new byte[length / 2];
+        for (int i = 0; i < length; i += 2)
+        {
+            bytes[i / 2] = System.Convert.ToByte(hex.Substring(i, 2), 16);
+        }
+        return bytes;
+    }
 }
 
 //UI 인터페이스
@@ -400,6 +442,8 @@ public interface IBuildMaterials
 {
     StructureState structureState { get; set; }
     public Renderer renderer { get; }
+
+    public void Clear();
 }
 
 //객체 인터페이스

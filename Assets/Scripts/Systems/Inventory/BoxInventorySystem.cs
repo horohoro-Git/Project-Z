@@ -109,4 +109,27 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
             inventoryArray[0, i].RemoveItem();
         }
     }
+    private void OnDestroy()
+    {
+      
+     //   Destroy(slotArrays[0].gameObject);
+        //ResetInventory();
+        for (int i = 0; i < 7; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                inventoryArray[i, j] = null;
+            }
+        }
+
+        for (int i = 0; i < 7; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                boxInventoryArray[i, j] = null;
+            }
+        }
+
+       
+    }
 }

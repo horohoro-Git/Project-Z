@@ -244,5 +244,11 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     {
     }
 
-   
+    private void OnDestroy()
+    {
+        for(int i = 0;i < items.Count;i++) items[i].itemStruct.Clear();
+        for(int i =0; i < floors.Count; i++) floors[i].Clear();
+        for(int i =0; i < walls.Count; i++) walls[i].Clear();
+        for(int i =0; i < doors.Count; i++) doors[i].Clear();
+    }
 }

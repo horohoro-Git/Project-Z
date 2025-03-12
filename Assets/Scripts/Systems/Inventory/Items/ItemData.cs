@@ -30,4 +30,12 @@ public class ItemData : MonoBehaviour
     {
         return items[index];
     }
+
+    public static void Clear()
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            items[i].Clear();
+        }
+    }
 }

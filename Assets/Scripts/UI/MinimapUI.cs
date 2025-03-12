@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,7 +13,20 @@ public class MinimapUI : MonoBehaviour
     public Image player;
     public Image item;
     public Image enemy;
+
+    public Sprite playerSprite;
+    public Sprite itemSprite;
+    public Sprite enemySprite;
+
+    [SerializeField]
+    MinimapIcon icon;
+    
     List<Image> images = new List<Image>();
+    Queue<MinimapIcon> deactivatedMinimapIcons = new Queue<MinimapIcon>(50);
+    Queue<MinimapIcon> activatedMinimapIcons = new Queue<MinimapIcon>(50);
+
+    List<GameObject> gameObjects = new List<GameObject>();
+    List<GameObject> lives = new List<GameObject>();
 
     // Start is called before the first frame update
     private void Awake()
@@ -21,6 +35,7 @@ public class MinimapUI : MonoBehaviour
     }
     void Start()
     {
+        NewIcons();
         camera = Camera.main;
     }
 
@@ -31,15 +46,16 @@ public class MinimapUI : MonoBehaviour
         if (GameInstance.Instance.GetPlayers.Count > 0)
         {
             Transform transforms = GameInstance.Instance.GetPlayers[0].Transforms;
-            Image playerIcon = Instantiate(player);
-            playerIcon.rectTransform.SetParent(playerRectTransform);
-            playerIcon.rectTransform.localPosition = Vector3.zero; //플레이어 위치 중앙 기준
-            playerIcon.rectTransform.localRotation = Quaternion.Euler(0, 0,  -(transforms.eulerAngles.y - 45) + 180); //플레이어 방향
-            images.Add(playerIcon);
+            MinimapIcon playerIcon = CreateIcon();
+            playerIcon.image.sprite = playerSprite;
+            playerIcon.GetRectTransform.SetParent(playerRectTransform);
+            playerIcon.GetRectTransform.localPosition = Vector3.zero; //플레이어 위치 중앙 기준
+            playerIcon.GetRectTransform.localRotation = Quaternion.Euler(0, 0,  -(transforms.eulerAngles.y - 45) + 180); //플레이어 방향
+          
             
             if (GameInstance.Instance.worldGrids != null)
             {
-                List<GameObject> gameObjects = GameInstance.Instance.worldGrids.ReturnObjects();
+              //  List<GameObject> gameObjects = GameInstance.Instance.worldGrids.ReturnObjects();
 
                 for (int i = 0; i < gameObjects.Count; i++)
                 {
@@ -49,14 +65,14 @@ public class MinimapUI : MonoBehaviour
                     Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
                     if(rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
                     {
-                        Image itemIcon = Instantiate(item);
-                        itemIcon.rectTransform.SetParent(objectRectTransform);
-                        itemIcon.rectTransform.localPosition = rotatedPosition;
-                        images.Add(itemIcon);
+                        MinimapIcon itemIcon = CreateIcon();
+                        itemIcon.image.sprite = itemSprite;
+                        itemIcon.GetRectTransform.SetParent(objectRectTransform);
+                        itemIcon.GetRectTransform.localPosition = rotatedPosition;
                     }
                 }
 
-                List<GameObject> lives = GameInstance.Instance.worldGrids.ReturnLives();
+               // List<GameObject> lives = GameInstance.Instance.worldGrids.ReturnLives();
 
                 for(int i = 0;i < lives.Count;i++)
                 {
@@ -68,25 +84,90 @@ public class MinimapUI : MonoBehaviour
                     Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
                     if (rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
                     {
-                        Image enemyIcon = Instantiate(enemy);
-                        enemyIcon.rectTransform.SetParent(enemyRectTransform);
-                        enemyIcon.rectTransform.localPosition = rotatedPosition;
-                        enemyIcon.rectTransform.localRotation = Quaternion.Euler(0, 0, -(livesTransform.eulerAngles.y - 45) + 180);
-                        images.Add(enemyIcon);
+                        MinimapIcon enemyIcon = CreateIcon();
+                        enemyIcon.image.sprite = enemySprite;
+                        enemyIcon.GetRectTransform.SetParent(enemyRectTransform);
+                        enemyIcon.GetRectTransform.localPosition = rotatedPosition;
+                        enemyIcon.GetRectTransform.localRotation = Quaternion.Euler(0, 0, -(livesTransform.eulerAngles.y - 45) + 180);
                     }
                 }
             }
         }
     }
 
+
+    public void ChangeList(MinimapIconType minimapIconType)
+    {
+        switch (minimapIconType)
+        {
+            case MinimapIconType.None:
+                break;
+            case MinimapIconType.Player:
+                break;
+            case MinimapIconType.Enemy:
+                lives = GameInstance.Instance.worldGrids.ReturnLives();
+                break;
+            case MinimapIconType.Object:
+                gameObjects = GameInstance.Instance.worldGrids.ReturnObjects();
+                break;
+        }
+    }
+
+    //아이콘 풀링
+    void NewIcons()
+    {
+        for (int i = 0; i < 50; i++)
+        {
+            MinimapIcon minimapIcon = Instantiate(icon);
+            minimapIcon.gameObject.SetActive(false);
+            deactivatedMinimapIcons.Enqueue(minimapIcon);
+        }
+    }
+
+    MinimapIcon CreateIcon()
+    {
+        if (deactivatedMinimapIcons.Count > 0)
+        {
+            MinimapIcon newIcon = deactivatedMinimapIcons.Dequeue();
+            newIcon.gameObject.SetActive(true);
+            activatedMinimapIcons.Enqueue(newIcon);
+            return newIcon;
+        }
+        else
+        {
+            MinimapIcon newIcon = Instantiate(icon);
+            newIcon.gameObject.SetActive(true);
+            activatedMinimapIcons.Enqueue(newIcon);
+            return newIcon;
+        }
+    }
+
     void RemoveIcons()
     {
-        int c = images.Count -1;
-        for(int i = c; i >= 0; i--)
+        while (activatedMinimapIcons.Count > 0)
         {
-            Image image = images[i];
-            images.RemoveAt(i);
-            Destroy(image.gameObject);
+            MinimapIcon minimapIcon = activatedMinimapIcons.Dequeue();
+
+            if(deactivatedMinimapIcons.Count > 50)
+            {
+                Destroy(minimapIcon);
+            }
+            else
+            {
+                minimapIcon.gameObject.SetActive(false);
+                deactivatedMinimapIcons.Enqueue(minimapIcon);
+            }
         }
+    }
+
+    private void OnDestroy()
+    {
+        while (deactivatedMinimapIcons.Count > 0) deactivatedMinimapIcons.Dequeue();
+        while (activatedMinimapIcons.Count > 0) activatedMinimapIcons.Dequeue();
+        for(int i = 0; i< gameObjects.Count; i++) gameObjects[i] = null;
+        for(int i = 0; i< lives.Count; i++) lives[i] = null;
+
+        gameObjects.Clear();
+        lives.Clear();
     }
 }

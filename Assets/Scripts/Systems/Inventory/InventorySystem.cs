@@ -219,4 +219,17 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         }
         GameInstance.Instance.boxInventorySystem.ResetInventory();
     }
+
+    private void OnDestroy()
+    {
+
+        for (int i = 0; i < 7; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                inventoryArray[i, j] = null;
+            }
+        }
+
+    }
 }

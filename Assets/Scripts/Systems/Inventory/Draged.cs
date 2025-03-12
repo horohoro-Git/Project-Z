@@ -15,4 +15,9 @@ public class Draged : MonoBehaviour
     {
         rectTransform.position = Input.mousePosition;
     }
+
+    private void OnDestroy()
+    {
+        item.Clear();
+    }
 }

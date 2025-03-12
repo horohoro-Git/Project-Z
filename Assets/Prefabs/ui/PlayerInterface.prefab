@@ -156,13 +156,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: da9525c251c90bd479e465775767f9c5, type: 3}
   slotType: 5
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!114 &2902965827910053549
@@ -1083,13 +1089,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
   slotType: 0
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!1 &1528397130187739771
@@ -1229,13 +1241,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
   slotType: 0
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!114 &4208416225584918084
@@ -1857,13 +1875,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
   slotType: 0
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!114 &4804004468351450441
@@ -2359,13 +2383,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
   slotType: 0
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!114 &3588826047914906264
@@ -2586,6 +2616,7 @@ MonoBehaviour:
   - {fileID: 1693356655549056389}
   - {fileID: 7039738987176815970}
   slotIndex: 0
+  slotX: 0
 --- !u!1 &5308988460448221398
 GameObject:
   m_ObjectHideFlags: 0
@@ -2754,13 +2785,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: 362f46dba7d8dcc408271033f95d7c68, type: 3}
   slotType: 3
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!114 &2482074942267398278
@@ -2904,6 +2941,10 @@ MonoBehaviour:
   player: {fileID: 1499131816419712418, guid: ece08c558abcb6343b65b967c68ff917, type: 3}
   item: {fileID: 1499131816419712418, guid: 23a5e3f172f953a4abd5390cb6d8eaf4, type: 3}
   enemy: {fileID: 1499131816419712418, guid: 6db8ae8bda3761346abced6a91d3f77a, type: 3}
+  playerSprite: {fileID: 21300000, guid: 6e0c3f50d73c50648bf435eec798adda, type: 3}
+  itemSprite: {fileID: 21300000, guid: d6aa9cc38253da84cb0e752154af6dac, type: 3}
+  enemySprite: {fileID: 21300000, guid: eec27ed0287befd47aeaf9bc6411a3b0, type: 3}
+  icon: {fileID: 6692694713957484061, guid: a8adbe057375e6f42bd813b6eb435467, type: 3}
 --- !u!1 &5510266740950731522
 GameObject:
   m_ObjectHideFlags: 0
@@ -3072,13 +3113,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
   slotType: 0
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!114 &598331581051389778
@@ -3469,13 +3516,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: 1a9ae4e0a3b16374fa92f0418bc43b2d, type: 3}
   slotType: 4
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!114 &183602623916131145
@@ -3727,13 +3780,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: 1d7720495f19e5f469a7a93752efa474, type: 3}
   slotType: 6
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!114 &6308779346913565527
@@ -4133,13 +4192,19 @@ MonoBehaviour:
   originImage: {fileID: 21300000, guid: f161da28bf07eaa4cad83a75b8b066bd, type: 3}
   slotType: 7
   item:
-    itemIndex: 0
+    item_index: 0
     image: {fileID: 0}
-    itemName: 
-    slotType: 0
-    itemType: 0
+    item_name: 
+    slot_type: 0
+    item_type: 0
     used: 0
     itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
 --- !u!114 &6985269967993579763

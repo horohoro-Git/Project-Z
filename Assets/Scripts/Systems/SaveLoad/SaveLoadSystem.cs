@@ -120,9 +120,9 @@ public class SaveLoadSystem
         string path = Path.Combine(Application.streamingAssetsPath, "servercommunication.bytes");
         
         string content = File.ReadAllText(path);
+      
         string decryptedData = EncryptorDecryptor.Decyptor(content, "AAA");
         Dictionary<string, object> data = JsonConvert.DeserializeObject<Dictionary<string, object>>(decryptedData);
-
         string returnURL = data["server"].ToString();
 
         return returnURL;
@@ -592,6 +592,7 @@ public class SaveLoadSystem
 
                             GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, type, itemStructs, modelType);
                         }
+                        GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
                     }
                 }
             }

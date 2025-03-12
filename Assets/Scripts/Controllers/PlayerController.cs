@@ -633,6 +633,7 @@ public class PlayerController : Controller, IDamageable
         {
             modelAnimator.SetTrigger("dead");
             state = PlayerState.Dead;
+            GameInstance.Instance.worldGrids.RemovePlayer(this, ref lastGridX, ref lastGridY);
             gameObject.tag = "Enemy";
             gameObject.layer = 0b1010;
             Rigid.excludeLayers = 0;
@@ -658,7 +659,7 @@ public class PlayerController : Controller, IDamageable
                     enemyController.itemStructs.Add(itemStruct);
                 }
             }
-            GameInstance.Instance.worldGrids.AddLives(enemyController.gameObject);
+            GameInstance.Instance.worldGrids.AddLives(enemyController.gameObject, false);
             //인벤토리 초기화
             GameInstance.Instance.inventorySystem.ResetInventory();
 
