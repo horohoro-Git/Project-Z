@@ -219,7 +219,8 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
            
          
             //   Destroy(Rigid);
-            GameInstance.Instance.worldGrids.RemoveLives(ID);
+            GameInstance.Instance.worldGrids.RemoveObjects(ID, MinimapIconType.Enemy);
+            
             modelAnimator.SetTrigger("zombieDead");
             Reward();
         }
@@ -229,6 +230,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     {
         if (playerType != 0)
         {
+            GameInstance.Instance.worldGrids.AddObjects(this.gameObject, MinimapIconType.ItemBox, false);
             Debug.Log("player Zombie Dead");
             if (itemStructs.Count > 0)
             {
@@ -254,6 +256,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
                 }
             }
+
         }
     }
 

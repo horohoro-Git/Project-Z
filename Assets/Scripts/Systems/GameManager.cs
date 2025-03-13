@@ -48,17 +48,20 @@ public class GameManager : MonoBehaviour
 
     void TestItem()
     {
-        Item go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[1]]).GetComponent<Item>();
+        for (int i = 0; i < 10; i++)
+        {
+            Item go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[1]]).GetComponent<Item>();
 
-        go.transform.position = Vector3.zero;
+            go.transform.position = Vector3.zero;
 
-        GettableItem gettable = go.AddComponent<GettableItem>();
-        gettable.Spawned(false);
-        go.AddComponent<Rigidbody>();
-        go.GetComponent<BoxCollider>().enabled = true;
+            GettableItem gettable = go.AddComponent<GettableItem>();
+            gettable.Spawned(false);
+            go.AddComponent<Rigidbody>();
+            go.GetComponent<BoxCollider>().enabled = true;
 
-        gettable.itemStruct = ItemData.GetItem(2);
-        Destroy(go);
+            gettable.itemStruct = ItemData.GetItem(2);
+            Destroy(go);
+        }
     }
 
     void PlayerSetting()

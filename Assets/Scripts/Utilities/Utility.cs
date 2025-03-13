@@ -162,7 +162,8 @@ public enum MinimapIconType
     None,
     Player,
     Enemy,
-    Object
+    Object,
+    ItemBox
 }
 
 //장착 무기 타입

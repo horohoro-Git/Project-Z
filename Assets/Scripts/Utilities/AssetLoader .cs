@@ -677,7 +677,7 @@ public class AssetLoader : MonoBehaviour
         loadedSprites = null;
         loadedAssets = null;
 
-        bundle.Unload(true);
+        if(assetLoadSuccessful) bundle.Unload(true);
     }
 
 }

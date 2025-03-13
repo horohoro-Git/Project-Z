@@ -659,7 +659,7 @@ public class PlayerController : Controller, IDamageable
                     enemyController.itemStructs.Add(itemStruct);
                 }
             }
-            GameInstance.Instance.worldGrids.AddLives(enemyController.gameObject, false);
+            
             //인벤토리 초기화
             GameInstance.Instance.inventorySystem.ResetInventory();
 
@@ -726,6 +726,7 @@ public class PlayerController : Controller, IDamageable
         EnemyController enemyController = GetComponent<EnemyController>();
         enemyController.bDead = false;
         enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
+        GameInstance.Instance.worldGrids.AddObjects(enemyController.gameObject, MinimapIconType.Enemy, false);
         Destroy(GetComponent<PlayerInput>());
 
         RemoveAction();

@@ -26,6 +26,7 @@ public class WorldGrids : MonoBehaviour
 
     Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>(); //아이템
     Dictionary<string, GameObject> lives = new Dictionary<string, GameObject>(); //적대적 생명체
+    Dictionary<string, GameObject> itemBoxes = new Dictionary<string, GameObject>(); //아이템 슬롯
     //NativeHashMap<string>
 
     private void Awake()
@@ -119,8 +120,25 @@ public class WorldGrids : MonoBehaviour
     {
         return BitConverter.ToString(binary).Replace("-", "").ToLower();
     }
-    public void AddObjects(GameObject ob, bool load)
+    public void AddObjects(GameObject ob, MinimapIconType type, bool load)
     {
+        Dictionary<string, GameObject> dic = new Dictionary<string, GameObject>();
+        switch(type)
+        {
+            case MinimapIconType.None:
+                break;
+            case MinimapIconType.Object:
+                dic = objects;
+                break;
+            case MinimapIconType.Enemy:
+                dic = lives;
+                break;
+            case MinimapIconType.ItemBox:
+                dic = itemBoxes;
+                break;
+        }
+
+
         IIdentifiable identifiable = ob.GetComponent<IIdentifiable>();
         if (identifiable.ID == null)
         {
@@ -129,20 +147,20 @@ public class WorldGrids : MonoBehaviour
                 //아이디 갖고 있지 않음
                 byte[] random = Guid.NewGuid().ToByteArray();
                 string key = ConvertBinaryToString(random);
-                if (!objects.ContainsKey(key))
+                if (!dic.ContainsKey(key))
                 {
                     identifiable.ID = key;
-                    objects[key] = ob;
+                    dic[key] = ob;
                     break;
                 }
             }
         }
         else
         {
-            if (!objects.ContainsKey(identifiable.ID))
+            if (!dic.ContainsKey(identifiable.ID))
             {
                 //아이디를 갖고 있고 사용 가능
-                objects[identifiable.ID] = ob;
+                dic[identifiable.ID] = ob;
             }
             else //갖고있던 아이디 뺏김
             {
@@ -150,29 +168,61 @@ public class WorldGrids : MonoBehaviour
                 {
                     byte[] random = Guid.NewGuid().ToByteArray();
                     string key = ConvertBinaryToString(random);
-                    if (!objects.ContainsKey(key))
+                    if (!dic.ContainsKey(key))
                     {
                         identifiable.ID = key;
-                        objects[key] = ob;
+                        dic[key] = ob;
                         break;
                     }
                 }
             }
         }
-        if (!load) GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Object);
+        if (!load) GameInstance.Instance.minimapUI.ChangeList(type);
     }
 
-    public void RemoveObjects(IIdentifiable ob)
+    public void RemoveObjects(string id, MinimapIconType type)
     {
-      //  ob.ID = null;
-        objects.Remove(ob.ID);
-        GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Object);
+      
+        switch (type)
+        {
+            case MinimapIconType.None:
+                break;
+            case MinimapIconType.Object:
+                objects.Remove(id);
+                GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Object);
+                break;
+            case MinimapIconType.Enemy:
+                lives.Remove(id);
+                GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
+                break;
+            case MinimapIconType.ItemBox:
+                itemBoxes.Remove(id);
+                GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.ItemBox);
+                break;
+        }
+        //  ob.ID = null;
+        
     }
 
-    public List<GameObject> ReturnObjects()
+    public List<GameObject> ReturnObjects(MinimapIconType type)
     {
+        Dictionary<string, GameObject> dic = new Dictionary<string, GameObject>();
+        switch (type)
+        {
+            case MinimapIconType.None:
+                break;
+            case MinimapIconType.Object:
+                dic = objects;
+                break;
+            case MinimapIconType.Enemy:
+                dic = lives;
+                break;
+            case MinimapIconType.ItemBox:
+                dic = itemBoxes;
+                break;
+        }
         List<GameObject> returnObjects = new List<GameObject>();
-        foreach (var obj in objects)
+        foreach (var obj in dic)
         {
             returnObjects.Add(obj.Value);
         }
@@ -181,7 +231,7 @@ public class WorldGrids : MonoBehaviour
     }
 
 
-    public void AddLives(GameObject livingObject, bool load)
+  /*  public void AddLives(GameObject livingObject, bool load)
     {
         IIdentifiable identifiable = livingObject.GetComponent<IIdentifiable>();
         if(identifiable.ID == null)
@@ -225,16 +275,16 @@ public class WorldGrids : MonoBehaviour
         if(!load) GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
       
     }
+*/
 
-
-    public void RemoveLives(string ID)
+  /*  public void RemoveLives(string ID)
     {
         lives.Remove(ID);
         GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
-    }
+    }*/
 
 
-    public List<GameObject> ReturnLives()
+  /*  public List<GameObject> ReturnLives()
     {
         List<GameObject> returnObjects = new List<GameObject>();
      
@@ -244,14 +294,15 @@ public class WorldGrids : MonoBehaviour
         }
 
         return returnObjects;
-    }
+    }*/
 
     public void Clear()
     {
         foreach(var livingObject in lives) Destroy(livingObject.Value);
         foreach(var objectItem in objects) Destroy(objectItem.Value);
-      
+        foreach(var boxes in itemBoxes) Destroy(boxes.Value);
         lives.Clear();
         objects.Clear();
+        itemBoxes.Clear();
     }
 }
