@@ -631,7 +631,7 @@ public class SaveLoadSystem
         {
             using (BinaryWriter writer = new BinaryWriter(ms))
             {
-                foreach (GameObject enemy in GameInstance.Instance.worldGrids.ReturnLives())
+                foreach (GameObject enemy in GameInstance.Instance.worldGrids.ReturnObjects(MinimapIconType.Enemy))
                 {
                     
                     EnemyController EC = enemy.GetComponent<EnemyController>();

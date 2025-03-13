@@ -169,41 +169,72 @@ public class Slot : MonoBehaviour, IUIComponent
                     s.UpdateSlot();
 
                     PlayerController pc = GameInstance.Instance.GetPlayers[0];
-                    if (slotX == 0 )
-                    {
-                        GameInstance.Instance.quickSlotUI.UpdateSlot(item, weapon, consumption, slotY);
-                        if(slotY == pc.equipSlotIndex)
-                        {
-                            pc.Unequipment();
-                        }
-                    }
-
-                    if (s.slotX == 0)
-                    {
-                        GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.slotY);
-                        if (slotY == pc.equipSlotIndex)
-                        {
-                            pc.Unequipment();
-                        }
-                    }
+                 
 
                     if(GetComponentInParent<InventorySystem>())
                     {
                         GameInstance.Instance.boxInventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
                         GameInstance.Instance.boxInventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.slotX, s.slotY);
+                        if (slotX == 0)
+                        {
+                            GameInstance.Instance.quickSlotUI.UpdateSlot(item, weapon, consumption, slotY);
+                            if (slotY == pc.equipSlotIndex)
+                            {
+                                pc.Unequipment();
+                            }
+                        }
+
+                        if (s.slotX == 0)
+                        {
+                            GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.slotY);
+                            if (slotY == pc.equipSlotIndex)
+                            {
+                                pc.Unequipment();
+                            }
+                        }
                     }
 
                     if(GetComponentInParent<BoxInventorySystem>())
                     {
+                        if(s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
+                        {
+
+                            if (s.slotX == 0)
+                            {
+                                GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.slotY);
+                                if (slotY == pc.equipSlotIndex)
+                                {
+                                    pc.Unequipment();
+                                }
+                            }
+                        }
+                        if (transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
+                        {
+                            if (slotX == 0)
+                            {
+                                GameInstance.Instance.quickSlotUI.UpdateSlot(item, weapon, consumption, slotY);
+                                if (slotY == pc.equipSlotIndex)
+                                {
+                                    pc.Unequipment();
+                                }
+                            }
+                        }
+
                         if (transform.parent.parent == GameInstance.Instance.boxInventorySystem.list && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2)
                         {
                             GameInstance.Instance.inventorySystem.RemoveSlot(slotX, slotY);
                         }
-                        else
+                        else if(transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2 && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
                         {
-                            GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
+                         //   GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
                             GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.slotX, s.slotY);
 
+                        }
+                        else
+                        {
+
+                            GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
+                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.slotX, s.slotY);
                         }
                     }
                  

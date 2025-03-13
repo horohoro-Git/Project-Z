@@ -2944,6 +2944,7 @@ MonoBehaviour:
   playerSprite: {fileID: 21300000, guid: 6e0c3f50d73c50648bf435eec798adda, type: 3}
   itemSprite: {fileID: 21300000, guid: d6aa9cc38253da84cb0e752154af6dac, type: 3}
   enemySprite: {fileID: 21300000, guid: eec27ed0287befd47aeaf9bc6411a3b0, type: 3}
+  itemBoxSprite: {fileID: 21300000, guid: 061963bb3aefc1e4fa1787cfeca68282, type: 3}
   icon: {fileID: 6692694713957484061, guid: a8adbe057375e6f42bd813b6eb435467, type: 3}
 --- !u!1 &5510266740950731522
 GameObject:
