@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -39,7 +40,7 @@ public class Controller : MonoBehaviour
     public float currentMoveSpeed;
     [NonSerialized]
     public float currentDir;
-    Vector3 viewDir = Vector3.zero;
+    public  Vector3 viewDir = Vector3.zero;
     public bool turn = false;
     public bool longturn = false;
     [NonSerialized]
@@ -59,17 +60,24 @@ public class Controller : MonoBehaviour
     [NonSerialized]
     public float around;
 
+    [NonSerialized]
+    public bool directionPlayer;
+
+
     void FixedUpdate()
     {
-        if(!lookAround) Rotate();
+        if (!lookAround) Rotate();
         else
         {
             LookAround();
         }
+
+
         if (canMove > 0)
         {
+            viewVelocity = 0;
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
-            Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
+            Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
             viewSpeed = currentMoveSpeed;
             return;
         }
@@ -77,7 +85,7 @@ public class Controller : MonoBehaviour
         {
             viewDir = moveDir;
             viewSpeed = currentMoveSpeed;
-            currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.5f);
+            currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.2f);
             Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
 
         }
@@ -89,91 +97,10 @@ public class Controller : MonoBehaviour
             viewSpeed = currentMoveSpeed;
         }
 
-       /* if (canMove > 0)
-        {
-            currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
-            Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
-            viewSpeed = currentMoveSpeed;
-            return;
-        }
+        if(currentMoveSpeed < 50) viewDir = Vector3.zero;
+       
+     //   Debug.Log(viewDir);
 
-        if (lookAround)
-        {
-            if (moveDir != Vector3.zero)
-            {
-               // Transforms.rotation
-                viewDir = moveDir;
-
-                viewVelocity = 0;
-                currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.5f);
-                Rigid.velocity = moveDir * Time.fixedDeltaTime * currentMoveSpeed;
-
-                float dot = Vector3.Dot(Transforms.forward, moveDir);
-                float cross = Vector3.Cross(Transforms.forward, moveDir).y;
-
-                viewSpeed = currentMoveSpeed;
-                if (dot > 0)
-                {
-                    Debug.Log("앞");
-                }
-                else if(dot < 0 )
-                {
-                    viewSpeed *= -1;
-                    Debug.Log(" 뒤");
-                }
-                Debug.Log(currentMoveSpeed);
-                float angle = Vector3.Angle(Transforms.forward, moveDir);
-                float directionValue = Mathf.Clamp01(1 - angle / 100f) * 2f - 1;
-                //Debug.Log(dot + " " + cross);
-            }
-            else
-            {
-                viewVelocity = 0;
-                // 감속 되는 애니메이션
-                currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
-                Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
-                float dot = Vector3.Dot(Transforms.forward, viewDir);
-                float cross = Vector3.Cross(Transforms.forward, viewDir).y;
-
-                viewSpeed = currentMoveSpeed;
-                if (dot > 0)
-                {
-                    Debug.Log("앞");
-                }
-                else if (dot < 0)
-                {
-                    viewSpeed *= -1;
-                    Debug.Log(" 뒤");
-                }
-
-                float angle = Vector3.Angle(Transforms.forward, viewDir);
-                float directionValue = Mathf.Clamp01(1 - angle / 100f) * 2f - 1;
-                Debug.Log(dot + " " + cross);
-            }
-        }
-        else
-        {
-            if (moveDir != Vector3.zero)
-            {
-                viewDir = moveDir;
-
-                viewVelocity = 0;
-
-                currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.5f);
-                viewSpeed = currentMoveSpeed;
-                //Rigid.velocity = Transforms.forward * Time.fixedDeltaTime * currentMoveSpeed;
-                Rigid.velocity = moveDir * Time.fixedDeltaTime * currentMoveSpeed;
-                // }
-            }
-            else
-            {
-                viewVelocity = 0;
-                // 감속 되는 애니메이션
-                currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
-                Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
-                viewSpeed = currentMoveSpeed;
-            }
-        }*/
     }
 
     void Rotate()
@@ -198,6 +125,8 @@ public class Controller : MonoBehaviour
 
     void LookAround()
     {
+       
+        
         Vector3 mousePosition = Input.mousePosition;
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hitInfo))
@@ -208,7 +137,22 @@ public class Controller : MonoBehaviour
             targetRotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0);
             Transforms.rotation = Quaternion.Slerp(Transforms.rotation, targetRotation, 5 * Time.deltaTime);
 
+            float dot = Vector3.Dot(transform.forward, viewDir);
+            Vector3 cross = Vector3.Cross(transform.forward, viewDir);
+            float side = cross.y;
+          /*  if (dot > -0.2f)
+            {
+                viewDir = Vector3.Normalize(direction);
+                Debug.Log("앞");
+            }
+            else
+            {
+                viewDir = -Vector3.Normalize(direction);
 
+                Debug.Log("뒤");
+            }
+*/
+       //     viewDir = Vector3.Normalize(direction);
         }
     }
 }
