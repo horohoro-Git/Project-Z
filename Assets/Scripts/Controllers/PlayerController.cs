@@ -89,7 +89,6 @@ public class PlayerController : Controller, IDamageable
     {
         if (human)
         {
-            
             GameInstance.Instance.playerController = this;
             Inputs.defaultActionMap = "OnMove";
             moveSpeed = 200f;
@@ -245,12 +244,21 @@ public class PlayerController : Controller, IDamageable
     // Update is called once per frame
     void Update()
     {
-        if (state == PlayerState.Dead) return;
-
+        Debug.Log("speed" + currentMoveSpeed);
+        if (state == PlayerState.Dead)
+        {
+          //  modelAnimator.SetFloat("lookAround", 0);
+            return;
+        }
         if (LastPosition != Transforms.position)
         {
             LastPosition = Transforms.position;
             GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY);
+        }
+
+        if(animationWorking > 0)
+        {
+            modelAnimator.SetFloat("lookAround", 0);
         }
 
         if(combatTimer < Time.time)
@@ -261,9 +269,10 @@ public class PlayerController : Controller, IDamageable
 
         if(lookAround)
         {
-            float dot = Vector3.Dot(transform.forward, moveDir);
-            Vector3 cross = Vector3.Cross(transform.forward, moveDir);
+            float dot = Vector3.Dot(transform.forward, viewDir);
+            Vector3 cross = Vector3.Cross(transform.forward, viewDir);
             float side = cross.y;
+            if(viewDir == Vector3.zero) side = 0;
             if (dot > -0.2f)
             {
                 //¾Õ
@@ -275,12 +284,14 @@ public class PlayerController : Controller, IDamageable
                 modelAnimator.SetFloat("speed", -viewSpeed / 200, 0.1f, Time.deltaTime);
             }
             modelAnimator.SetFloat("lookAround", side, 0.1f, Time.deltaTime);
+            Debug.Log(side);
         }
         else
         {
             modelAnimator.SetFloat("lookAround", around);
             modelAnimator.SetFloat("speed", viewSpeed / 200);
             modelAnimator.SetFloat("dir", viewVelocity);
+           
         }
      
         if (state == PlayerState.Combat)

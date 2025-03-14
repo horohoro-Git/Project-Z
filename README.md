@@ -187,3 +187,6 @@ Cached the assetbundle from which the asset was loaded
 
 03/13
 Add player zombie's inventory
+
+03/14
+Fixed controller movement and animations
