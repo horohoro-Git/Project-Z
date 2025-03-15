@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class RightHand : MonoBehaviour
 {
+    WeaponTrail weaponTrail;
+    public WeaponTrail GetWeaponTrail {  get { if (weaponTrail == null) weaponTrail = GetComponent<WeaponTrail>(); return weaponTrail; } }
     public BoxCollider boxCollider;
 
     bool attacking = false;

@@ -190,3 +190,6 @@ Add player zombie's inventory
 
 03/14
 Fixed controller movement and animations
+
+03/15
+Save data of dead players, add attack afterimages to animation key frames

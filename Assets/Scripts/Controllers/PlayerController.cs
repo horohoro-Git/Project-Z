@@ -135,17 +135,20 @@ public class PlayerController : Controller, IDamageable
             }
             else
             {
-                //플레이어 초기 값
+                SaveLoadSystem.LoadPlayerData(this);
+
+             /*   //플레이어 초기 값
                 PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0, 100, 1, 0, 0, 1, 1, 1);
 
                 GetPlayer.playerStruct = playerStruct;
-                GetPlayer.UpdatePlayer();
+                GetPlayer.UpdatePlayer();*/
             }
         }
         else
         {
             modelAnimator = go.GetComponent<Animator>();
             model = go;
+
         }
 
     }
@@ -174,6 +177,7 @@ public class PlayerController : Controller, IDamageable
         Rigid.MoveRotation(rot);
         GetPlayer.playerStruct = playerStruct;
         GetPlayer.UpdatePlayer();
+      //  SaveLoadSystem.SavePlayerData(GetPlayer);
     }
 
     private void OnEnable()
@@ -244,7 +248,6 @@ public class PlayerController : Controller, IDamageable
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("speed" + currentMoveSpeed);
         if (state == PlayerState.Dead)
         {
           //  modelAnimator.SetFloat("lookAround", 0);
@@ -284,7 +287,6 @@ public class PlayerController : Controller, IDamageable
                 modelAnimator.SetFloat("speed", -viewSpeed / 200, 0.1f, Time.deltaTime);
             }
             modelAnimator.SetFloat("lookAround", side, 0.1f, Time.deltaTime);
-            Debug.Log(side);
         }
         else
         {
@@ -446,11 +448,14 @@ public class PlayerController : Controller, IDamageable
         {
             GetLeftHand.Attack(0.8f, GetPlayer.playerStruct.attackDamage);
             StartAnimation("punchLeft", 0.8f);
+            GetLeftHand.GetWeaponTrail.Trail(true);
+            Debug.Log(GetLeftHand.gameObject.name);
         }
         else
         {
             GetRightHand.GetComponentInChildren<RightHand>().Attack(0.8f, GetPlayer.playerStruct.attackDamage);
             StartAnimation("punchRight", 0.8f);
+            GetRightHand.GetWeaponTrail.Trail(true);
         }
     }
 
@@ -644,6 +649,7 @@ public class PlayerController : Controller, IDamageable
         if (GetPlayer.playerStruct.hp <= 0)
         {
             modelAnimator.SetTrigger("dead");
+            GetPlayer.dead = true;
             state = PlayerState.Dead;
             GameInstance.Instance.worldGrids.RemovePlayer(this, ref lastGridX, ref lastGridY);
             gameObject.tag = "Enemy";
@@ -660,7 +666,8 @@ public class PlayerController : Controller, IDamageable
             enemyController.playerType = 1;
             enemyController.capsuleCollider = GetComponent<CapsuleCollider>();
             enemyController.bDead = true;
-
+            enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
+            GameInstance.Instance.worldGrids.AddObjects(enemyController.gameObject, MinimapIconType.Enemy, false);
             for (int i = 0; i < GameInstance.Instance.inventorySystem.slotNum; i++)
             {
                 for(int j= 0; j<10; j++)
@@ -670,7 +677,9 @@ public class PlayerController : Controller, IDamageable
                     enemyController.itemStructs.Add(itemStruct);
                 }
             }
-            
+
+            SaveLoadSystem.SavePlayerData(GetPlayer);
+
             //인벤토리 초기화
             GameInstance.Instance.inventorySystem.ResetInventory();
 
@@ -736,8 +745,7 @@ public class PlayerController : Controller, IDamageable
        
         EnemyController enemyController = GetComponent<EnemyController>();
         enemyController.bDead = false;
-        enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
-        GameInstance.Instance.worldGrids.AddObjects(enemyController.gameObject, MinimapIconType.Enemy, false);
+      
         Destroy(GetComponent<PlayerInput>());
 
         RemoveAction();
