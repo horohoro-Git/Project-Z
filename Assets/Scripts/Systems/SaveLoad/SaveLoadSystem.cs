@@ -189,6 +189,7 @@ public class SaveLoadSystem
     //플레이어 데이터 저장
     public static void SavePlayerData(Player player)
     {
+        Debug.Log("저장");
         string dir = Path.Combine(path, "Save");
         if (!Directory.Exists(dir))
         {
@@ -217,6 +218,8 @@ public class SaveLoadSystem
                 writer.Write(rz);
                 writer.Write(rw);
 
+                //플레이어 생존 여부
+                writer.Write(player.dead);
 
                 PlayerStruct ps = player.playerStruct;
                 //플레이어 능력치
@@ -247,12 +250,14 @@ public class SaveLoadSystem
                 writer.Write(weightLevel);
             }
             File.WriteAllBytes(p, ms.ToArray());
+
         }
     }
 
     //플레이어 데이터 로드
     public static bool LoadPlayerData(PlayerController pc)
     {
+        Debug.Log("로드");
         byte[] data;
         string p = Path.Combine(path, "Save/Player.dat");
 
@@ -277,6 +282,9 @@ public class SaveLoadSystem
                         float rz = reader.ReadSingle();
                         float rw = reader.ReadSingle(); 
 
+                        //생존 여부
+                        bool dead = reader.ReadBoolean();
+
                         Quaternion rot = new Quaternion(rx, ry, rz, rw);
                         Vector3 pos = new Vector3(x, y, z);
 
@@ -294,9 +302,18 @@ public class SaveLoadSystem
                         int energyLevel = reader.ReadInt32();
                         int weightLevel = reader.ReadInt32();
 
-
-                        PlayerStruct playerStruct = new PlayerStruct(hp, maxHP, energy, maxEnergy, exp, requireEXP, level, attackDamage, skillPoint, hpLevel, energyLevel, weightLevel);
-                        pc.SetPlayerData(pos, rot, playerStruct);
+                        if (!dead)
+                        {
+                            PlayerStruct playerStruct = new PlayerStruct(hp, maxHP, energy, maxEnergy, exp, requireEXP, level, attackDamage, skillPoint, hpLevel, energyLevel, weightLevel);
+                            pc.SetPlayerData(pos, rot, playerStruct);
+                        }
+                        else
+                        {
+                            exp = (int)(exp * 0.9f);
+                            //부활로 인한 기본 값
+                            PlayerStruct playerStruct = new PlayerStruct(maxHP / 2, maxHP, energy, maxEnergy, exp, requireEXP, level, attackDamage, skillPoint, hpLevel, energyLevel, weightLevel);
+                            pc.SetPlayerData(Vector3.zero, rot, playerStruct);
+                        }
                     }
                 }
             }

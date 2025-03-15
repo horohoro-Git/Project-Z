@@ -111,7 +111,10 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
             {
                 inventoryArray[i, j] = null;
             }
-            Destroy(slotArrays[i].gameObject);
+
+            SlotArray slotArray = slotArrays[i];
+            slotArrays.RemoveAt(i);
+            Destroy(slotArray.gameObject);
         }
 
         for (int i = 0; i < 10; i++)

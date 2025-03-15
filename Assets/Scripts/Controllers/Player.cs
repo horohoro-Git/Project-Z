@@ -27,6 +27,9 @@ public class Player : MonoBehaviour
     BuffStruct buffStruct = new BuffStruct(true);
     float healBuffTimer;
 
+    [NonSerialized]
+    public bool dead;
+
     private void Update()
     {
         if (healBuffTimer < Time.time)
