@@ -136,7 +136,7 @@ public class Tree : EnvironmentObject
                 go.transform.position = spawnLocations[i].transform.position; //new Vector3(corners[i].x, corners[i].y + 5f, corners[i].z);
                 go.transform.rotation = upper.transform.rotation;
                 go.GetComponent<Item>().itemStruct = GameInstance.Instance.assetLoader.items[0]; //.itemIndex = 1;
-
+                GameInstance.Instance.worldGrids.AddObjects(go, MinimapIconType.Object, false);
             }
 
           

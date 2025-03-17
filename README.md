@@ -193,3 +193,6 @@ Fixed controller movement and animations
 
 03/15
 Save data of dead players, add attack afterimages to animation key frames
+
+03/16
+Changed weapon attack trails to LineRenderer using CatMull-Rom

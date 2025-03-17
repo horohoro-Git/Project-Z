@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Weapon : Item
 {
-
+    WeaponTrail weaponTrail;
+    public WeaponTrail GetWeaponTrail { get { if (weaponTrail == null) weaponTrail = GetComponent<WeaponTrail>(); return weaponTrail; } }
   //  public Player equippedPlayer;
 
     public WeaponStruct weaponStruct;
@@ -36,6 +37,7 @@ public class Weapon : Item
     }
     public void StartAttack()
     {
+        GetWeaponTrail.Trail(true);
         weaponColider.enabled = true;
     /*    Debug.Log("Start");
         attack = true;*/
@@ -43,6 +45,7 @@ public class Weapon : Item
 
     public void StopAttack()
     {
+        GetWeaponTrail.Trail(false);
         weaponColider.enabled = false;
       /*  Debug.Log("Stop");
         attack = false;*/
