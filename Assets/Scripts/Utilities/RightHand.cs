@@ -4,25 +4,31 @@ using UnityEngine;
 
 public class RightHand : MonoBehaviour
 {
-    WeaponTrail weaponTrail;
-    public WeaponTrail GetWeaponTrail {  get { if (weaponTrail == null) weaponTrail = GetComponent<WeaponTrail>(); return weaponTrail; } }
+    TrailRenderer trailRenderer;
+   // WeaponTrail weaponTrail;
+    public TrailRenderer GetTrailRenderer {  get { if (trailRenderer == null) trailRenderer = GetComponent<TrailRenderer>(); return trailRenderer; } }
     public BoxCollider boxCollider;
 
     bool attacking = false;
     int damage;
-    public void Attack(float timer, int damage)
+    public void Attack(int damage)
     {
         boxCollider.enabled = true;
         attacking = true;
         this.damage = damage;
-        Invoke("TurnOff", timer);
     }
 
-    void TurnOff()
+    public void Trail(bool on)
+    {
+        GetTrailRenderer.enabled = on;
+    }
+
+    public void StopAttack()
     {
         attacking = false;
         boxCollider.enabled = false;
     }
+
 
     private void OnTriggerEnter(Collider other)
     {

@@ -80,6 +80,8 @@ public class PlayerController : Controller, IDamageable
 
     [NonSerialized]
     public bool noAction;
+
+    public GameObject testEffect;
     private void Awake()
     {
     
@@ -395,7 +397,7 @@ public class PlayerController : Controller, IDamageable
                         break;
                     case WeaponType.Axe:
                         StartAnimation("cut", 1);
-                        weapon.Attack(0.35f, 0.6f);
+                      //  weapon.Attack(0.35f, 0.6f);
                         /*    equipWeapon.GetComponent<Axe>().EndAttack();*/
                         break;
                 }
@@ -446,16 +448,13 @@ public class PlayerController : Controller, IDamageable
         int r = UnityEngine.Random.Range(0, 2);
         if (r == 1)
         {
-            GetLeftHand.Attack(0.8f, GetPlayer.playerStruct.attackDamage);
             StartAnimation("punchLeft", 0.8f);
-            GetLeftHand.GetWeaponTrail.Trail(true);
-            Debug.Log(GetLeftHand.gameObject.name);
+            //GetLeftHand.GetWeaponTrail.Trail(true);
         }
         else
         {
-            GetRightHand.GetComponentInChildren<RightHand>().Attack(0.8f, GetPlayer.playerStruct.attackDamage);
             StartAnimation("punchRight", 0.8f);
-            GetRightHand.GetWeaponTrail.Trail(true);
+          //  GetRightHand.GetWeaponTrail.Trail(true);
         }
     }
 
@@ -564,7 +563,7 @@ public class PlayerController : Controller, IDamageable
             this.equipItem.transform.SetParent(attachItem.transform);
             this.equipItem.itemStruct = equipItem.item;
             this.equipItem.GetComponent<Weapon>().weaponStruct = equipItem.weapon;
-            
+            this.equipItem.itemInteractionColider.enabled = false;
             this.equipItem.transform.localPosition = Vector3.zero;
             this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
             modelAnimator.SetFloat("equip", 1);
@@ -598,7 +597,7 @@ public class PlayerController : Controller, IDamageable
             this.equipItem.transform.SetParent(attachItem.transform);
             this.equipItem.itemStruct = equipItem.item;
             this.equipItem.GetComponent<ConsumptionItem>().consumtionStruct = equipItem.consumption;
-
+            this.equipItem.itemInteractionColider.enabled = false;
             this.equipItem.transform.localPosition = Vector3.zero;
             this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
             modelAnimator.SetFloat("equip", 0);
@@ -611,6 +610,7 @@ public class PlayerController : Controller, IDamageable
                 this.equipItem = null;
             }
             equipSlotIndex = index;
+            modelAnimator.SetFloat("equip", 0);
         }
     }
 

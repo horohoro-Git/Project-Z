@@ -10,7 +10,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 {
     RightHand rightHand;
 
-    RightHand GetRightHand { get { if (rightHand == null) rightHand = GetComponentInChildren<RightHand>(); return rightHand; } }
+    public RightHand GetRightHand { get { if (rightHand == null) rightHand = GetComponentInChildren<RightHand>(); return rightHand; } }
 
 
     enum EnemyType
@@ -151,7 +151,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
             if (distance <= 1.5f)
             {
                 StartAnimation("scratch", 2);
-                GetRightHand.Attack(2, enemyStruct.attack);
+             //   GetRightHand.Attack(enemyStruct.attack);
                 agent.isStopped = true;
             }
             else if(distance < 6)

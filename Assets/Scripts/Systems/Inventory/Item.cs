@@ -17,6 +17,8 @@ public class Item : MonoBehaviour
 
     public Player equippedPlayer;
 
+    public Collider itemInteractionColider;
+
     private void OnDestroy()
     {
         itemStruct.Clear();

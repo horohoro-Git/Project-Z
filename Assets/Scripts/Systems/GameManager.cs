@@ -52,13 +52,16 @@ public class GameManager : MonoBehaviour
         {
             Item go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[1]]).GetComponent<Item>();
 
-            go.transform.position = Vector3.zero;
+            go.transform.position = new Vector3(0, 1, 0);
 
             GettableItem gettable = go.AddComponent<GettableItem>();
             gettable.Spawned(false);
-            go.AddComponent<Rigidbody>();
-            go.GetComponent<BoxCollider>().enabled = true;
-
+            go.itemInteractionColider.enabled = true;
+      //      go.itemInteractionColider.excludeLayers = 0;
+            go.itemInteractionColider.isTrigger = true;
+          //  go.AddComponent<Rigidbody>().excludeLayers = go.itemInteractionColider.excludeLayers;
+           // go.GetComponent<BoxCollider>().enabled = true;
+            if(go.TryGetComponent<WeaponTrail>(out WeaponTrail trail)) Destroy(trail);
             gettable.itemStruct = ItemData.GetItem(2);
             Destroy(go);
         }
