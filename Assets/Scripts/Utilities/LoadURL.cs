@@ -20,6 +20,8 @@ public class LoadURL : MonoBehaviour
     public const string Log = "log";
     public const string Heal = "heal";
     public const string LevelUp = "levelup";
+    public const string Male = "male";
+    public const string UMA_GLIB = "UMA_GLIB";
 
 
 

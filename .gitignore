@@ -32,6 +32,8 @@
 /[Aa]ssets/WoodsLifestyle.meta
 /[Aa]ssets/[Bb]link/
 /[Aa]ssets/Blink.meta
+/[Aa]ssets/[Bb]linkCharacter/
+/[Aa]ssets/BlinkCharacter.meta
 /[Aa]ssets/[Ll]ow Poly Nature Pack Lite/
 /[Aa]ssets/Low Poly Nature Pack Lite.meta
 /[Aa]ssets/[Hh]andpainted_Forest_pack/
@@ -60,6 +62,16 @@
 /[Aa]ssets/Hovl Studio.meta
 /[Aa]ssets/[Mm]atthew Guz/
 /[Aa]ssets/Matthew Guz.meta
+/[Aa]ssets/[Mm]ilitary/
+/[Aa]ssets/Military.meta
+/[Aa]ssets/[Hh]unter_1/
+/[Aa]ssets/Hunter_1.meta
+/[Aa]ssets/[Aa]dventure_Character/
+/[Aa]ssets/Adventure_Character.meta
+/[Aa]ssets/[Uu]MA/
+/[Aa]ssets/UMA.meta
+/[Aa]ssets/[Uu]MAContent/
+/[Aa]ssets/UMAContent.meta
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

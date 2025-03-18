@@ -50,8 +50,9 @@ public class PlayerController : Controller, IDamageable
     int lastGridY = 0;
     float motion;
 
-    [NonSerialized]
-    public Animator modelAnimator;
+    //  [NonSerialized]
+    public Animator animator;
+    public Animator modelAnimator { get { if (animator == null) { animator = model.GetComponent<Animator>(); animator.applyRootMotion = true; Equipment(GameInstance.Instance.quickSlotUI.slots[0], 0); } return animator; } }
 
     [NonSerialized]
     public PlayerState state = PlayerState.Default;
@@ -112,7 +113,7 @@ public class PlayerController : Controller, IDamageable
             Inputs.actions["TestInventory"].performed += JustTest;
 
 
-            modelAnimator = go.GetComponent<Animator>();
+       //     modelAnimator = go.GetComponent<Animator>();
             model = go;
             model.tag = "Player";
             model.layer = 0b0011;
@@ -148,10 +149,13 @@ public class PlayerController : Controller, IDamageable
         }
         else
         {
-            modelAnimator = go.GetComponent<Animator>();
+          //  modelAnimator = go.GetComponent<Animator>();
             model = go;
 
         }
+
+        Destroy(go.GetComponent<Rigidbody>());  
+        Destroy(go.GetComponent<Collider>());
 
     }
 
@@ -244,7 +248,7 @@ public class PlayerController : Controller, IDamageable
     {
         if (GameInstance.Instance.GetPlayers.Count == 0) GameInstance.Instance.AddPlayer(this);
         else GameInstance.Instance.GetPlayers[0] = this;
-        Equipment(GameInstance.Instance.quickSlotUI.slots[0], 0);
+     
     }
 
     // Update is called once per frame
