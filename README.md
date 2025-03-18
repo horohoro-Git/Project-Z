@@ -196,3 +196,6 @@ Save data of dead players, add attack afterimages to animation key frames
 
 03/16
 Changed weapon attack trails to LineRenderer using CatMull-Rom
+
+03/17
+Characters are now created using the UMA system

@@ -4,8 +4,11 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - UMAKeepChain
   - Tree
   - Enemy
+  - CinemachineTarget
+  - UMAIgnore
   layers:
   - Default
   - TransparentFX

@@ -160,6 +160,7 @@ MonoBehaviour:
     used: 0
     itemGO: {fileID: 0}
   equippedPlayer: {fileID: 0}
+  itemInteractionColider: {fileID: 0}
 --- !u!4 &43892433
 Transform:
   m_ObjectHideFlags: 0
@@ -765,6 +766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveDir: {x: 0, y: 0, z: 0}
   moveSpeed: 0
+  viewDir: {x: 0, y: 0, z: 0}
   turn: 0
   longturn: 0
   sprint: 0
