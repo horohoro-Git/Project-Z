@@ -68,6 +68,7 @@ public class EnemySpawner : MonoBehaviour
 
             pc.RemoveAction();
             pc.Rigid.interpolation = RigidbodyInterpolation.None;
+            pc.Rigid.constraints = RigidbodyConstraints.FreezeAll;
             pc.state = PlayerState.Dead;
             GameObject model = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.humankeys[modelType - 1]]);
             model.transform.SetParent(pc.Transforms);

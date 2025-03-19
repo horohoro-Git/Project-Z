@@ -253,24 +253,24 @@ public class HousingSystem : MonoBehaviour
         int indexX = x - minx;
         int indexY = y - miny;
         int indexZ = 0;
-        int dirX = 0;
-        int dirY = 0;
+       // int dirX = 0;
+      //  int dirY = 0;
         switch (build)
         {
             case BuildWallDirection.None:
                 break;
             case BuildWallDirection.Left:
-                dirX = -1;
+          //      dirX = -1;
                 break;
             case BuildWallDirection.Right:
                 indexX += 1;
-                dirX = 1;
+         //       dirX = 1;
                 break;
             case BuildWallDirection.Top:
-                indexY += 1; indexZ = 1; dirY = 1;
+                indexY += 1; indexZ = 1; //dirY = 1;
                 break;
             case BuildWallDirection.Bottom:
-                indexZ = 1; dirY = -1;
+                indexZ = 1;// dirY = -1;
                 break;
         }
         walls[indexX, indexY, indexZ] = wall;

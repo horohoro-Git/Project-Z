@@ -9,7 +9,7 @@ public class MinimapUI : MonoBehaviour
     public RectTransform playerRectTransform;
     public RectTransform enemyRectTransform;
     public RectTransform objectRectTransform;
-    Camera camera;
+ //   Camera camera;
     public Image player;
     public Image item;
     public Image enemy;
@@ -38,7 +38,7 @@ public class MinimapUI : MonoBehaviour
     void Start()
     {
         NewIcons();
-        camera = Camera.main;
+     //   camera = Camera.main;
     }
 
     // Update is called once per frame

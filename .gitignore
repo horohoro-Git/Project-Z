@@ -72,6 +72,13 @@
 /[Aa]ssets/UMA.meta
 /[Aa]ssets/[Uu]MAContent/
 /[Aa]ssets/UMAContent.meta
+/[Aa]ssets/[Ff]antasyGarment/
+/[Aa]ssets/FantasyGarment.meta
+/[Aa]ssets/[Uu]MABackpacks_Sample/
+/[Aa]ssets/UMABackpacks_Sample.meta
+/[Aa]ssets/[Ss]tandard Assets/
+/[Aa]ssets/Standard Assets.meta
+
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data

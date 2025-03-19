@@ -174,7 +174,7 @@ public class InputManager : MonoBehaviour
             PlayerController pc = GameInstance.Instance.GetPlayers[0];
             if (pc != null)
             {
-                PlayerCamera camera = pc.camera;
+                PlayerCamera camera = pc.GetComponent<PlayerCamera>();
                 if (camera != null)
                 {
                     if (pc.lookAround)
@@ -198,7 +198,7 @@ public class InputManager : MonoBehaviour
             PlayerController pc = GameInstance.Instance.GetPlayers[0];
             if (pc != null)
             {
-                PlayerCamera camera = pc.camera;
+                PlayerCamera camera = pc.GetComponent<PlayerCamera>();
                 if (camera != null)
                 {
                     pc.lookAround = false;
