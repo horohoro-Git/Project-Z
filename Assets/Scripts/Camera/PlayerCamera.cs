@@ -7,9 +7,10 @@ using UnityEngine;
 public class PlayerCamera : MonoBehaviour
 {
 
-    public GameObject camera;
+    //public GameObject camera;
     Transform transforms;
     PlayerController pc;
+    Camera cam;
 
     [NonSerialized]
     public bool lookAround;
@@ -22,6 +23,19 @@ public class PlayerCamera : MonoBehaviour
         }
     }
 
+    public Camera GetCamera
+    {
+        get
+        {
+            if(cam == null)
+            {
+                cam = Camera.main;
+            }
+
+            return cam;
+        }
+    }
+
     public PlayerController PC
     {
         get
@@ -31,7 +45,7 @@ public class PlayerCamera : MonoBehaviour
                 if (GameInstance.Instance.GetPlayers.Count > 0)
                 {
                     pc = GameInstance.Instance.GetPlayers[0];//GameObject.FindObjectOfType<PlayerController>();
-                    pc.camera = this;
+                    pc.playerCamera = this;
                 }
             }
             return pc;
@@ -74,15 +88,15 @@ public class PlayerCamera : MonoBehaviour
         {
             //if (!lookAround)
             {
-                if (!lookAround) targetPos = camera.transform.localPosition;
+                if (!lookAround) targetPos = GetCamera.transform.localPosition;
                 Vector3 target = PC.Transforms.position;
                // Transforms.position =
                 Vector3 targetLoc = new Vector3(target.x - 40, 100, target.z - 40);
 
                  Transforms.position = targetLoc;
                 //Transforms.position = Vector3.SmoothDamp(Transforms.position, targetLoc, ref velocity, 0.3f);
-                if(lookAround) camera.transform.localPosition = Vector3.SmoothDamp(camera.transform.localPosition, targetPos, ref velocity, 0.3f);
-                else camera.transform.localPosition = Vector3.SmoothDamp(camera.transform.localPosition, Vector3.zero, ref velocity, 0.3f);
+                if(lookAround) GetCamera.transform.localPosition = Vector3.SmoothDamp(GetCamera.transform.localPosition, targetPos, ref velocity, 0.3f);
+                else GetCamera.transform.localPosition = Vector3.SmoothDamp(GetCamera.transform.localPosition, Vector3.zero, ref velocity, 0.3f);
             }
            // else
             {

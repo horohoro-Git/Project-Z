@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public Vector3 startPosition;
     public GameMode gameMode;
     public bool loaded;
-   
+    public GameObject glib;
 
     private void Awake()
     {
@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
 
     void PlayerSetting()
     {
-        GameObject builds = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.UMA_GLIB]);
+        glib = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.UMA_GLIB]);
 
         PlayerSettings(true);
 

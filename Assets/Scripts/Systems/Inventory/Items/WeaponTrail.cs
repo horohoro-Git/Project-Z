@@ -14,7 +14,7 @@ public class WeaponTrail : MonoBehaviour
     public float startWidth;
     public float endWidth;
     private List<Vector3> trailPositions = new List<Vector3>();
-    private float lastSaveTime = 0f;
+ //   private float lastSaveTime = 0f;
     public float saveInterval = 0.01f;
     public int trailLength = 100;
 

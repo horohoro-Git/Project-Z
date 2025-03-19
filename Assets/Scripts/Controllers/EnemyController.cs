@@ -29,9 +29,9 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     NavMeshAgent agent;
     PlayerController target;
     bool hunting=false;
-    float detectTimer = 0;
+  //  float detectTimer = 0;
     MoveCalculator moveCalculator = new MoveCalculator();
-    EnemyType enemyType= EnemyType.Roaming;
+  //  EnemyType enemyType= EnemyType.Roaming;
     Coroutine coroutine;
     List<Vector3> destinations = new List<Vector3>();
     public CapsuleCollider capsuleCollider;

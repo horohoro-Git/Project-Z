@@ -199,3 +199,6 @@ Changed weapon attack trails to LineRenderer using CatMull-Rom
 
 03/17
 Characters are now created using the UMA system
+
+03/18
+Characters can equip items using slots based on the UMA system

@@ -16,7 +16,7 @@ public class MoveCalculateTest : MonoBehaviour
     {
         DebugLine(calculator.Calculate(transform.position, target.transform.position));
     }
-    float timer = 0;
+ //   float timer = 0;
     List<Vector3> vector3s = new List<Vector3>();
     // Update is called once per frame
     void Update()

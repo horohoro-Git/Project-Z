@@ -74,7 +74,7 @@ public class PlayerController : Controller, IDamageable
     public GameObject model;
 
     [NonSerialized]
-    public PlayerCamera camera;
+    public PlayerCamera playerCamera;
 
     [NonSerialized]
     public bool loaded;
@@ -378,8 +378,8 @@ public class PlayerController : Controller, IDamageable
         }
     }
 
-    bool reinput = false;
-    bool attack = false;
+  //  bool reinput = false;
+ //   bool attack = false;
     PointerEventData eventData = new PointerEventData(EventSystem.current);
     List<RaycastResult> raycastResults = new List<RaycastResult>();
     void Attack(InputAction.CallbackContext callback)
@@ -444,7 +444,7 @@ public class PlayerController : Controller, IDamageable
     }
     void EndAttack(InputAction.CallbackContext callback)
     {
-        attack = false;
+     //   attack = false;
     }
 
     void Punch()
@@ -464,7 +464,7 @@ public class PlayerController : Controller, IDamageable
 
     void InputTimer()
     {
-        reinput = true;
+       // reinput = true;
     }
     bool attackAgain;
  
@@ -746,6 +746,7 @@ public class PlayerController : Controller, IDamageable
         modelAnimator.SetLayerWeight(1, 0);
         modelAnimator.SetLayerWeight(2, 0);
 
+        Rigid.constraints = RigidbodyConstraints.FreezeAll;
        
         EnemyController enemyController = GetComponent<EnemyController>();
         enemyController.bDead = false;
@@ -768,7 +769,7 @@ public class PlayerController : Controller, IDamageable
     {
         if(lookAround)
         {
-            Camera cam = camera.GetComponentInChildren<Camera>();
+            Camera cam = playerCamera.GetComponentInChildren<Camera>();
             if (cam != null)
             {
                 cam.orthographicSize -= 0.5f;
@@ -781,7 +782,7 @@ public class PlayerController : Controller, IDamageable
     {
         if (lookAround)
         {
-            Camera cam = camera.GetComponentInChildren<Camera>();
+            Camera cam = playerCamera.GetComponentInChildren<Camera>();
             if (cam != null)
             {
                 cam.orthographicSize += 0.5f;

@@ -5,6 +5,9 @@ using System;
 using UnityEngine.Networking;
 using System.IO;
 using System.Linq;
+using UMA.CharacterSystem;
+using UnityEditor.VersionControl;
+using UMA;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -55,6 +58,34 @@ public class AssetLoader : MonoBehaviour
     public static List<string> humankeys = new List<string> {
     "human_male"
     };
+    [NonSerialized]
+    public static List<string> recipeKeys = new List<string> {
+    "SamplePack01_M_Recipe","KnickerbockerBlackM_Recipe", "SchoesLaceUpBlackM_Recipe", "GambesonM_Recipe", "HatLeatherM_Recipe", "GlovesLinenM_Recipe"
+    };
+    [NonSerialized]
+    public static List<string> helmetRecipeKeys = new List<string> {
+    "HatLeatherM_Recipe"
+    };
+    [NonSerialized]
+    public static List<string> backpackRecipeKeys = new List<string> {
+    "SamplePack01_M_Recipe"
+    };
+    [NonSerialized]
+    public static List<string> legsRecipeKeys = new List<string> {
+    "KnickerbockerBlackM_Recipe"
+    };
+    [NonSerialized]
+    public static List<string> chestRecipeKeys = new List<string> {
+    "GambesonM_Recipe"
+    };
+    [NonSerialized]
+    public static List<string> feetRecipeKeys = new List<string> {
+    "SchoesLaceUpBlackM_Recipe"
+    };
+    [NonSerialized]
+    public static List<string> handsRecipeKeys = new List<string> {
+    "GlovesLinenM_Recipe"
+    };
 
     [NonSerialized]
     public List<LevelData> levelData;
@@ -71,6 +102,8 @@ public class AssetLoader : MonoBehaviour
 
     public Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
     public Dictionary<string, Sprite> loadedSprites = new Dictionary<string, Sprite>();
+
+    public Dictionary<string, UMAWardrobeRecipe> loadedRecipes = new Dictionary<string, UMAWardrobeRecipe>();
 
     [SerializeField]
     Shader holoShader;
@@ -221,6 +254,22 @@ public class AssetLoader : MonoBehaviour
                     if (asset != null)
                     {
                         loadedSprites[key] = asset;
+                        Debug.Log(key + " loaded");
+                    }
+                    else
+                    {
+                        Debug.Log(key + " loaded fail");
+                        unloadNum++;
+                    }
+                }
+
+                //레시피 로드
+                foreach(string key in recipeKeys)
+                {
+                    UMAWardrobeRecipe wardrobeRecipe = bundle.LoadAsset<UMAWardrobeRecipe>(key);
+                    if (wardrobeRecipe != null)
+                    {
+                        loadedRecipes[key] = wardrobeRecipe;
                         Debug.Log(key + " loaded");
                     }
                     else
@@ -649,7 +698,8 @@ public class AssetLoader : MonoBehaviour
 
     public void Clear()
     {
- 
+        if (GameInstance.Instance.gameManager.glib != null) Destroy(GameInstance.Instance.gameManager.glib);
+
         GameInstance instance = GameInstance.Instance;
 
         if (instance.enemySpawner.loaded) SaveLoadSystem.SaveEnemyInfo();
