@@ -11,6 +11,13 @@ public class UMACharacterAvatar : MonoBehaviour
     public UMAWardrobeRecipe recipe;
 
     //public WardrobeCollection wardrobeCollection;
+
+    public void SetDefault()
+    {
+        avatar.SetSlot("MaleDefaultUnderwear");
+        avatar.BuildCharacter();
+    }
+
     private void Start()
     {
         // avatar.Save
@@ -31,7 +38,7 @@ public class UMACharacterAvatar : MonoBehaviour
             ApplyClothes();*/
      //   avatar.SetSlot(recipe);
        // avatar.BuildCharacter();
-        Invoke("AddClothes", 2f);
+       // Invoke("AddClothes", 2f);
     }
     void AddClothes()
     {
@@ -39,12 +46,12 @@ public class UMACharacterAvatar : MonoBehaviour
         //  avatar.BuildCharacter();
         if (GameInstance.Instance.assetLoader.assetLoadSuccessful)
         {
-            avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.backpackRecipeKeys[0]]);
+          /*  avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.backpackRecipeKeys[0]]);
             avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.chestRecipeKeys[0]]);
             avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.helmetRecipeKeys[0]]);
             avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.legsRecipeKeys[0]]);
             avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.handsRecipeKeys[0]]);
-            avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.feetRecipeKeys[0]]);
+            avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.feetRecipeKeys[0]]);*/
             avatar.BuildCharacter();
             Invoke("RemoveClothes", 2f);
         }
@@ -56,8 +63,24 @@ public class UMACharacterAvatar : MonoBehaviour
 
     void RemoveClothes()
     {
-        avatar.ClearSlot("Cape");
+       // avatar.ClearSlot("Cape");
         avatar.BuildCharacter();
 
     }
+
+
+    public void AddCloth(int recipeIndex)
+    {
+
+        avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.recipeKeys[recipeIndex]]);
+
+        avatar.BuildCharacter();
+    }
+
+    public void RemoveCloth(string slotName)
+    {
+        avatar.ClearSlot(slotName);
+        avatar.BuildCharacter();
+    }
+
 }

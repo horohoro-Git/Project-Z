@@ -16,8 +16,8 @@ public class QuickSlotUI : MonoBehaviour, IUIComponent
         }
     }
 
-    public void UpdateSlot(ItemStruct item, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, int index)
+    public void UpdateSlot(ItemStruct item, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, ArmorStruct armorStruct, int index, bool justUpdate)
     {
-        slots[index].AddItem(item, weaponStruct, consumptionStruct);
+        slots[index].AddItem(item, weaponStruct, consumptionStruct, armorStruct, justUpdate);
     }
 }

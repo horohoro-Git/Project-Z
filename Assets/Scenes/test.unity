@@ -555,6 +555,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: AppleRed
       objectReference: {fileID: 0}
+    - target: {fileID: 5696135962152487699, guid: df4e8cc284076084cb8e3fff380cfdd3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7045172399258469722, guid: df4e8cc284076084cb8e3fff380cfdd3, type: 3}
       propertyPath: m_CastShadows
       value: 0

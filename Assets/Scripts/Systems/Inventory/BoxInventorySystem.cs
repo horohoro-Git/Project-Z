@@ -73,12 +73,12 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         }
     }*/
 
-    public void UpdateSlot(ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, int x, int y)
+    public void UpdateSlot(ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, ArmorStruct armorStruct, int x, int y)
     {
-        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct);
+        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, true);
     }
 
-    public void LoadInvetory(int x, int y, ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct)
+    public void LoadInvetory(int x, int y, ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, ArmorStruct armorStruct)
     {
         ItemStruct item = ItemData.GetItem(itemStruct.item_index);
 
@@ -87,9 +87,9 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         itemStruct.used = true;
         if (x == 0)
         {
-            GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, y);
+            GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, armorStruct, y, true);
         }
-        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct);
+        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, true);
     }
 
     public void GetOpponentInventory(List<ItemStruct> itemStructs)
@@ -97,7 +97,7 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         int index = 0;
         for(int i = 0; i < itemStructs.Count; i++)
         {
-            boxInventoryArray[index / 10, index % 10].AddItem(itemStructs[i], new WeaponStruct(), new ConsumptionStruct());
+            boxInventoryArray[index / 10, index % 10].AddItem(itemStructs[i], new WeaponStruct(), new ConsumptionStruct(), new ArmorStruct(), true);
             index++;
         }
     }

@@ -79,9 +79,9 @@ public enum SlotType
     Chest,
     Arm,
     Leg,
+    Foot,
     Backpack,
-    JustView
-
+    Other
 }
 
 //환경 오브젝트 타입
@@ -140,6 +140,7 @@ public enum ItemType
     None,
     Consumable,
     Equipmentable,
+    Wearable,
     Installable
 }
 
@@ -243,7 +244,7 @@ public struct ItemStruct
     public int item_index;
     public Sprite image;
     public string item_name;
-    public SlotType slot_type;
+    public SlotType slot_type;  //방어구 용
     public ItemType item_type;
     public bool used;
     public GameObject itemGO;
@@ -306,6 +307,32 @@ public struct WeaponStruct
         this.durability = durability;
     }
 }
+
+//방어구 아이템 정보
+public struct ArmorStruct
+{
+    public int item_index;
+    public SlotType armor_type;
+    public int defense;
+    public int durability;
+    public int carrying_capacity;
+    public int move_speed;
+    public int attack_damage;
+    public int key_index;
+
+    public ArmorStruct(int item_index, SlotType armor_type, int defense, int durability, int carring_capacity, int move_speed, int attack_damage, int key_index)
+    {
+        this.item_index = item_index;
+        this.armor_type = armor_type;
+        this.defense = defense;
+        this.durability = durability;
+        this.carrying_capacity = carring_capacity;
+        this.move_speed = move_speed;
+        this.attack_damage = attack_damage;
+        this.key_index = key_index;
+    }
+}
+
 
 //버프 정보
 public struct BuffStruct

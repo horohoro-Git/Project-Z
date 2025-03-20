@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: da9525c251c90bd479e465775767f9c5, type: 3}
-  slotType: 5
+  slotType: 3
   item:
     item_index: 0
     image: {fileID: 0}
@@ -171,6 +171,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!114 &2902965827910053549
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -564,11 +565,11 @@ MonoBehaviour:
   - {fileID: 8577527420518225703}
   - {fileID: 1662367856866367336}
   - {fileID: 4676588365189584008}
-  - {fileID: 7979389265004386505}
   - {fileID: 1295194827829548757}
   - {fileID: 7378912201533834520}
   - {fileID: 269597185739612458}
   - {fileID: 1693356655549056389}
+  - {fileID: 7979389265004386505}
   - {fileID: 7039738987176815970}
 --- !u!114 &1240684792490089472
 MonoBehaviour:
@@ -1104,6 +1105,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!1 &1528397130187739771
 GameObject:
   m_ObjectHideFlags: 0
@@ -1256,6 +1258,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!114 &4208416225584918084
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1890,6 +1893,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!114 &4804004468351450441
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2398,6 +2402,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!114 &3588826047914906264
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2553,11 +2558,11 @@ RectTransform:
   - {fileID: 217119765287534807}
   - {fileID: 3786844262640956888}
   - {fileID: 4038467132531343922}
-  - {fileID: 819296312511551341}
   - {fileID: 6693253973766588476}
   - {fileID: 7711899361119250213}
   - {fileID: 6708512726198492202}
   - {fileID: 4023169195232954285}
+  - {fileID: 819296312511551341}
   - {fileID: 8127139271936325680}
   m_Father: {fileID: 4522248430141766423}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2609,11 +2614,11 @@ MonoBehaviour:
   - {fileID: 8577527420518225703}
   - {fileID: 1662367856866367336}
   - {fileID: 4676588365189584008}
-  - {fileID: 7979389265004386505}
   - {fileID: 1295194827829548757}
   - {fileID: 7378912201533834520}
   - {fileID: 269597185739612458}
   - {fileID: 1693356655549056389}
+  - {fileID: 7979389265004386505}
   - {fileID: 7039738987176815970}
   slotIndex: 0
   slotX: 0
@@ -2783,7 +2788,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 362f46dba7d8dcc408271033f95d7c68, type: 3}
-  slotType: 3
+  slotType: 1
   item:
     item_index: 0
     image: {fileID: 0}
@@ -2800,6 +2805,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!114 &2482074942267398278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3035,7 +3041,7 @@ GameObject:
   - component: {fileID: 7979389265004386505}
   - component: {fileID: 598331581051389778}
   m_Layer: 5
-  m_Name: item
+  m_Name: item_foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3111,8 +3117,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c92a556227f5a94faebb4b1635d6d47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
-  slotType: 0
+  originImage: {fileID: 21300000, guid: 1d7720495f19e5f469a7a93752efa474, type: 3}
+  slotType: 5
   item:
     item_index: 0
     image: {fileID: 0}
@@ -3129,6 +3135,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!114 &598331581051389778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3515,7 +3522,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 1a9ae4e0a3b16374fa92f0418bc43b2d, type: 3}
-  slotType: 4
+  slotType: 2
   item:
     item_index: 0
     image: {fileID: 0}
@@ -3532,6 +3539,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!114 &183602623916131145
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3778,8 +3786,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c92a556227f5a94faebb4b1635d6d47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  originImage: {fileID: 21300000, guid: 1d7720495f19e5f469a7a93752efa474, type: 3}
-  slotType: 6
+  originImage: {fileID: 21300000, guid: 3c8582189bf44ae43ba84c224782ef94, type: 3}
+  slotType: 4
   item:
     item_index: 0
     image: {fileID: 0}
@@ -3796,6 +3804,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!114 &6308779346913565527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4191,7 +4200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: f161da28bf07eaa4cad83a75b8b066bd, type: 3}
-  slotType: 7
+  slotType: 6
   item:
     item_index: 0
     image: {fileID: 0}
@@ -4208,6 +4217,7 @@ MonoBehaviour:
     duration: 0
   slotX: 0
   slotY: 0
+  justView: 1
 --- !u!114 &6985269967993579763
 MonoBehaviour:
   m_ObjectHideFlags: 0

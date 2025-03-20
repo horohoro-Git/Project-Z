@@ -1,11 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Threading;
-using System.Timers;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -35,6 +30,16 @@ public class PlayerController : Controller, IDamageable
     public Player GetPlayer
     {
         get { if(player == null) player = GetComponent<Player>(); return player;}
+    }
+
+    UMACharacterAvatar avatar;
+    public UMACharacterAvatar GetAvatar
+    {
+        get
+        {
+            if(avatar == null) avatar = GetComponentInChildren<UMACharacterAvatar>();
+            return avatar;
+        }
     }
     
     //public delegate void PlayerAction();
@@ -92,6 +97,8 @@ public class PlayerController : Controller, IDamageable
     {
         if (human)
         {
+            if (GameInstance.Instance.GetPlayers.Count == 0) GameInstance.Instance.AddPlayer(this);
+            else GameInstance.Instance.GetPlayers[0] = this;
             GameInstance.Instance.playerController = this;
             Inputs.defaultActionMap = "OnMove";
             moveSpeed = 200f;
@@ -146,6 +153,9 @@ public class PlayerController : Controller, IDamageable
                 GetPlayer.playerStruct = playerStruct;
                 GetPlayer.UpdatePlayer();*/
             }
+           // Item
+          //  GameInstance.Instance.inventorySystem.UpdateSlot(ItemData.GetItem()
+         ///   ItemData.
         }
         else
         {
@@ -157,6 +167,23 @@ public class PlayerController : Controller, IDamageable
         Destroy(go.GetComponent<Rigidbody>());  
         Destroy(go.GetComponent<Collider>());
 
+       GameInstance.Instance.inventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
+       GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
+
+        GameInstance.Instance.inventorySystem.LoadInvetory(1, 1, ItemData.GetItem(5), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[5]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 1, ItemData.GetItem(5), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[5]);
+
+        GameInstance.Instance.inventorySystem.LoadInvetory(1, 2, ItemData.GetItem(6), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[6]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 2, ItemData.GetItem(6), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[6]);
+
+        GameInstance.Instance.inventorySystem.LoadInvetory(1, 3, ItemData.GetItem(7), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[7]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 3, ItemData.GetItem(7), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[7]);
+
+        GameInstance.Instance.inventorySystem.LoadInvetory(1, 4, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 4, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
+
+        GameInstance.Instance.inventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
     }
 
     public void ChangeTagLayer(Transform parent, string newTag, int layerName)
@@ -246,8 +273,7 @@ public class PlayerController : Controller, IDamageable
     // Start is called before the first frame update
     void Start()
     {
-        if (GameInstance.Instance.GetPlayers.Count == 0) GameInstance.Instance.AddPlayer(this);
-        else GameInstance.Instance.GetPlayers[0] = this;
+        
      
     }
 
@@ -285,19 +311,19 @@ public class PlayerController : Controller, IDamageable
             if (dot > -0.2f)
             {
                 //¾Õ
-                modelAnimator.SetFloat("speed", viewSpeed / 200, 0.1f, Time.deltaTime);
+                modelAnimator.SetFloat("speed", viewSpeed / moveSpeed, 0.1f, Time.deltaTime);
             }
             else
             {
                 // µÚ
-                modelAnimator.SetFloat("speed", -viewSpeed / 200, 0.1f, Time.deltaTime);
+                modelAnimator.SetFloat("speed", -viewSpeed / moveSpeed, 0.1f, Time.deltaTime);
             }
             modelAnimator.SetFloat("lookAround", side, 0.1f, Time.deltaTime);
         }
         else
         {
             modelAnimator.SetFloat("lookAround", around);
-            modelAnimator.SetFloat("speed", viewSpeed / 200);
+            modelAnimator.SetFloat("speed", viewSpeed / moveSpeed);
             modelAnimator.SetFloat("dir", viewVelocity);
            
         }
