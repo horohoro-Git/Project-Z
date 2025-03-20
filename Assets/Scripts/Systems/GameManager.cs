@@ -104,6 +104,7 @@ public class GameManager : MonoBehaviour
         GameObject human = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Male]);
         human.transform.SetParent(pc.Transforms);
         human.transform.localPosition = Vector3.zero;
+        human.GetComponent<UMACharacterAvatar>().SetDefault();
         pc.SetController(human, load);
 
       //  GameInstance.Instance.GetPlayers[0] = pc;

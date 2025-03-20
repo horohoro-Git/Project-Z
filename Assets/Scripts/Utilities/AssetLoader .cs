@@ -6,8 +6,6 @@ using UnityEngine.Networking;
 using System.IO;
 using System.Linq;
 using UMA.CharacterSystem;
-using UnityEditor.VersionControl;
-using UMA;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -48,7 +46,8 @@ public class AssetLoader : MonoBehaviour
 
     [NonSerialized]
     public static List<string> spriteAssetkeys = new List<string> {
-    "log_Sprite", "axe_Sprite", "apple_Sprite"
+        "log_Sprite", "axe_Sprite", "apple_Sprite", "HatLeatherM_Sprite", "GambesonM_Sprite",
+        "GlovesLinenM_Sprite","KnickerbockerBlackM_Sprite", "SchoesLaceUpBlackM_Sprite",  "SamplePack01_M_Sprite",
     };
     [NonSerialized]
     public static List<string> enemykeys = new List<string> {
@@ -60,32 +59,10 @@ public class AssetLoader : MonoBehaviour
     };
     [NonSerialized]
     public static List<string> recipeKeys = new List<string> {
-    "SamplePack01_M_Recipe","KnickerbockerBlackM_Recipe", "SchoesLaceUpBlackM_Recipe", "GambesonM_Recipe", "HatLeatherM_Recipe", "GlovesLinenM_Recipe"
+         "HatLeatherM_Recipe", "GambesonM_Recipe", "GlovesLinenM_Recipe", "KnickerbockerBlackM_Recipe", "SchoesLaceUpBlackM_Recipe",
+         "SamplePack01_M_Recipe"
     };
-    [NonSerialized]
-    public static List<string> helmetRecipeKeys = new List<string> {
-    "HatLeatherM_Recipe"
-    };
-    [NonSerialized]
-    public static List<string> backpackRecipeKeys = new List<string> {
-    "SamplePack01_M_Recipe"
-    };
-    [NonSerialized]
-    public static List<string> legsRecipeKeys = new List<string> {
-    "KnickerbockerBlackM_Recipe"
-    };
-    [NonSerialized]
-    public static List<string> chestRecipeKeys = new List<string> {
-    "GambesonM_Recipe"
-    };
-    [NonSerialized]
-    public static List<string> feetRecipeKeys = new List<string> {
-    "SchoesLaceUpBlackM_Recipe"
-    };
-    [NonSerialized]
-    public static List<string> handsRecipeKeys = new List<string> {
-    "GlovesLinenM_Recipe"
-    };
+    
 
     [NonSerialized]
     public List<LevelData> levelData;
@@ -99,6 +76,9 @@ public class AssetLoader : MonoBehaviour
 
     [NonSerialized]
     public Dictionary<int, ConsumptionStruct> consumptions = new Dictionary<int, ConsumptionStruct>(); //List<ConsumptionStruct> consumptions;
+
+    [NonSerialized]
+    public Dictionary<int, ArmorStruct> armors = new Dictionary<int, ArmorStruct>();
 
     public Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
     public Dictionary<string, Sprite> loadedSprites = new Dictionary<string, Sprite>();
@@ -140,6 +120,8 @@ public class AssetLoader : MonoBehaviour
     public string consumptionContent;
     [NonSerialized]
     public string enemyContent;
+    [NonSerialized]
+    public string armorContent;
 
     public void Awake()
     {
@@ -231,6 +213,14 @@ public class AssetLoader : MonoBehaviour
                     enemyContent = enemyTextAsset.text;
                 }
 
+                AssetBundleRequest armorrequest = bundle.LoadAssetAsync<TextAsset>("armor");
+                yield return armorrequest;
+                if (armorrequest != null)
+                {
+                    TextAsset armorTextAsset = (TextAsset)armorrequest.asset;
+                    armorContent = armorTextAsset.text;
+                }
+
                 //프리팹 에셋 로드
                 foreach (string key in assetkeys)
                 {
@@ -288,71 +278,72 @@ public class AssetLoader : MonoBehaviour
             Debug.Log("Error"); 
         }
 
-    /*    Debug.Log(levelContent);
+        /*    Debug.Log(levelContent);
 
-        Debug.Log("Loading");
-        //호스팅 서버에 Remote Load Path로 연결 후
+            Debug.Log("Loading");
+            //호스팅 서버에 Remote Load Path로 연결 후
 
-        handle = Addressables.LoadAssetsAsync<GameObject>(
-             assetkeys, 
-             asset => { Debug.Log("Loaded: " + asset.name); },
-             Addressables.MergeMode.Union,
-             false); // false: 모든 에셋이 로드될 때까지 기다림
+            handle = Addressables.LoadAssetsAsync<GameObject>(
+                 assetkeys, 
+                 asset => { Debug.Log("Loaded: " + asset.name); },
+                 Addressables.MergeMode.Union,
+                 false); // false: 모든 에셋이 로드될 때까지 기다림
 
-        yield return handle;
-     
-        if(handle.Status == AsyncOperationStatus.Succeeded)
-        {
-            foreach (var asset in handle.Result)
+            yield return handle;
+
+            if(handle.Status == AsyncOperationStatus.Succeeded)
             {
-                Debug.Log("Loaded " + asset.name);
-                loadedAssets[asset.name] = asset;   //에셋을 사용할 때에는 해당 에셋의 이름으로 호출
+                foreach (var asset in handle.Result)
+                {
+                    Debug.Log("Loaded " + asset.name);
+                    loadedAssets[asset.name] = asset;   //에셋을 사용할 때에는 해당 에셋의 이름으로 호출
+                }
+                loadNum++;
             }
-            loadNum++;
-        }
-        else
-        {
-            Debug.Log("error");
-        }
-
-
-        spritehandle = Addressables.LoadAssetsAsync<Sprite>(spriteAssetkeys,
-            spriteAsset => { Debug.Log("Loaded: " + spriteAsset.name); },
-            Addressables.MergeMode.Union,
-            false);
-
-        yield return spritehandle;
-
-        if (spritehandle.Status == AsyncOperationStatus.Succeeded)
-        {
-            foreach (var asset in spritehandle.Result)
+            else
             {
-                Debug.Log(asset.name);
-                loadedSprites[asset.name] = asset;
+                Debug.Log("error");
             }
-            loadNum++;
-        }
-        else
-        {
-            Debug.Log("error");
-        }*/
+
+
+            spritehandle = Addressables.LoadAssetsAsync<Sprite>(spriteAssetkeys,
+                spriteAsset => { Debug.Log("Loaded: " + spriteAsset.name); },
+                Addressables.MergeMode.Union,
+                false);
+
+            yield return spritehandle;
+
+            if (spritehandle.Status == AsyncOperationStatus.Succeeded)
+            {
+                foreach (var asset in spritehandle.Result)
+                {
+                    Debug.Log(asset.name);
+                    loadedSprites[asset.name] = asset;
+                }
+                loadNum++;
+            }
+            else
+            {
+                Debug.Log("error");
+            }*/
 
         if (unloadNum == 0)
         {
             assetLoadSuccessful = true;
+
+            levelData = SaveLoadSystem.GetLevelData(levelContent);
+            items = SaveLoadSystem.GetItemData(itemContent);
+            List<WeaponStruct> weaponTable = SaveLoadSystem.GetWeaponData(weaponContent);
+            List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
+            enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
+            List<ArmorStruct> armorTable = SaveLoadSystem.GetArmorData(armorContent);
+
+            for (int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
+            for (int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
+            for (int i = 0; i < armorTable.Count; i++) armors[armorTable[i].item_index] = armorTable[i];
+
+            ItemData.ItemDatabaseSetup();
         }
-        levelData = SaveLoadSystem.GetLevelData(levelContent);
-        items = SaveLoadSystem.GetItemData(itemContent);
-        List<WeaponStruct> weaponTable = SaveLoadSystem.GetWeaponData(weaponContent);
-        List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
-        enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
-
-        for (int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
-        for (int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
-
-
-        ItemData.ItemDatabaseSetup();
-
     }
 
     public void ClearAsset()

@@ -202,3 +202,6 @@ Characters are now created using the UMA system
 
 03/18
 Characters can equip items using slots based on the UMA system
+
+03/19
+Added armor data table, armor boots, and edited UI, player will wear armor when they put an appropriate item in the slot

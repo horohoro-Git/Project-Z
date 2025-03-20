@@ -39,7 +39,11 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     [SerializeField]
     Slot leg;
     [SerializeField]
+    Slot foot;
+    [SerializeField]
     Slot backpack;
+    [SerializeField]
+    Slot equipedItem;
 
 
     [SerializeField]
@@ -89,6 +93,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
                     WeaponStruct weaponStruct = new WeaponStruct();
                     ConsumptionStruct consumptionStruct = new ConsumptionStruct();
+                    ArmorStruct armorStruct = new ArmorStruct();
                     if(itemStruct.item_type == ItemType.Equipmentable)
                     {
                         //무기 타입
@@ -100,12 +105,18 @@ public class InventorySystem : MonoBehaviour, IUIComponent
                         consumptionStruct = GameInstance.Instance.assetLoader.consumptions[itemStruct.item_index];
                     }
 
-                    inventoryArray[i, j].AddItem(itemStruct, weaponStruct, consumptionStruct);
+                    if(itemStruct.item_type == ItemType.Wearable)
+                    {
+                        //방어구 타입
+                        armorStruct = GameInstance.Instance.assetLoader.armors[itemStruct.item_index];
+                    }
 
-                    GameInstance.Instance.boxInventorySystem.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, i, j);
+                    inventoryArray[i, j].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, false);
+
+                    GameInstance.Instance.boxInventorySystem.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, armorStruct, i, j);
                     if(i == 0)
                     {
-                        GameInstance.Instance.quickSlotUI.UpdateSlot(item.itemStruct, weaponStruct, consumptionStruct, j);
+                        GameInstance.Instance.quickSlotUI.UpdateSlot(item.itemStruct, weaponStruct, consumptionStruct, armorStruct, j, false);
                     }
 
                     SaveLoadSystem.SaveInventoryData();
@@ -128,26 +139,29 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     }
 
   
-    public void UpdateEquipSlot(SlotType slotType, ItemStruct item, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct)
+    public void UpdateEquipSlot(SlotType slotType, ItemStruct item, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, ArmorStruct armorStruct)
     {
         switch (slotType)
         {
             case SlotType.None:
                 break;
             case SlotType.Head:
-                head.AddItem(item, weaponStruct, consumptionStruct);
+                head.AddItem(item, weaponStruct, consumptionStruct, armorStruct, true);
                 break;
             case SlotType.Chest:
-                chest.AddItem(item, weaponStruct, consumptionStruct);
+                chest.AddItem(item, weaponStruct, consumptionStruct, armorStruct, true);
                 break;
             case SlotType.Arm:
-                arm.AddItem(item, weaponStruct, consumptionStruct);
+                arm.AddItem(item, weaponStruct, consumptionStruct, armorStruct, true);
                 break;
             case SlotType.Leg:
-                leg.AddItem(item, weaponStruct, consumptionStruct);
+                leg.AddItem(item, weaponStruct, consumptionStruct, armorStruct, true);
+                break;
+            case SlotType.Foot:
+                foot.AddItem(item, weaponStruct, consumptionStruct, armorStruct, true);
                 break;
             case SlotType.Backpack:
-                backpack.AddItem(item, weaponStruct, consumptionStruct); 
+                backpack.AddItem(item, weaponStruct, consumptionStruct, armorStruct, true); 
                 break;
         }
     }
@@ -174,12 +188,14 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         chest.Setup();
         arm.Setup();
         leg.Setup();
+        foot.Setup();
         backpack.Setup();
+        equipedItem.Setup();
     }
 
-    public void UpdateSlot(ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, int x, int y)
+    public void UpdateSlot(ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, ArmorStruct armorStruct, int x, int y)
     {
-        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct);
+        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, true);
     }
 
     public void RemoveSlot(int x, int y)
@@ -187,7 +203,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         inventoryArray[x, y].RemoveItem();
     }
 
-    public void LoadInvetory(int x, int y, ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct)
+    public void LoadInvetory(int x, int y, ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, ArmorStruct armorStruct)
     {
         ItemStruct item = ItemData.GetItem(itemStruct.item_index);
 
@@ -196,9 +212,9 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         itemStruct.used = true;
         if(x == 0)
         {
-            GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, y);
+            GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, armorStruct, y, false);
         }
-        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct);
+        inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, true);
     }
 
     public void ResetInventory()

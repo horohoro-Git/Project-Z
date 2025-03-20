@@ -23,11 +23,13 @@ public class Slot : MonoBehaviour, IUIComponent
     public ItemStruct item = new ItemStruct();
     public WeaponStruct weapon = new WeaponStruct();
     public ConsumptionStruct consumption = new ConsumptionStruct();
+    public ArmorStruct armor = new ArmorStruct();
 
     //SerializeField]
     public int slotX;
     //[SerializeField]
     public int slotY;
+    public bool justView;
 
     EventTrigger eventTrigger;
     EventTrigger.Entry entryHover;
@@ -53,7 +55,7 @@ public class Slot : MonoBehaviour, IUIComponent
             entryExit.eventID = EventTriggerType.PointerExit;
             hoverExit = (eventData) => OnHoverExit();
 
-            if (slotType != SlotType.JustView)
+            if (!justView)
             {
                 dragStart = new EventTrigger.Entry();
                 dragStart.eventID = EventTriggerType.PointerDown;
@@ -73,7 +75,7 @@ public class Slot : MonoBehaviour, IUIComponent
         entryExit.callback.AddListener(hoverExit);
         eventTrigger.triggers.Add(entryExit);
 
-        if (slotType == SlotType.JustView) return;
+        if (justView) return;
 
         //상호작용 가능 슬롯
 
@@ -98,7 +100,7 @@ public class Slot : MonoBehaviour, IUIComponent
             entryExit.callback.RemoveListener(hoverExit);
             eventTrigger.triggers.Remove(entryExit);
 
-            if (slotType == SlotType.JustView) return;
+            if (justView) return;
 
 
             dragStart.callback.RemoveListener(dragEnter);
@@ -153,7 +155,7 @@ public class Slot : MonoBehaviour, IUIComponent
                 Slot s = r.gameObject.GetComponent<Slot>();
                 if (s != null)  //다른 슬롯으로 아이템 이동
                 {
-                    if (s.slotType == SlotType.JustView) break;
+                    if (s.justView) break;
                     ItemStruct tempStruct = s.item;
                     s.item = item;
                     item = tempStruct;
@@ -163,21 +165,23 @@ public class Slot : MonoBehaviour, IUIComponent
                     weapon = weaponTemp;
                     ConsumptionStruct consumptionTemp = s.consumption;
                     s.consumption = consumption;
-                    s.consumption = consumptionTemp;
-
-                    UpdateSlot();
-                    s.UpdateSlot();
+                    consumption = consumptionTemp;
+                    ArmorStruct armorTemp = s.armor;
+                    s.armor = armor;
+                    armor = armorTemp;
+                    UpdateSlot(true);
+                    s.UpdateSlot(true);
 
                     PlayerController pc = GameInstance.Instance.GetPlayers[0];
                  
 
                     if(GetComponentInParent<InventorySystem>())
                     {
-                        GameInstance.Instance.boxInventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
-                        GameInstance.Instance.boxInventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.slotX, s.slotY);
+                        GameInstance.Instance.boxInventorySystem.UpdateSlot(item, weapon, consumption, armor, slotX, slotY);
+                        GameInstance.Instance.boxInventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
                         if (slotX == 0)
                         {
-                            GameInstance.Instance.quickSlotUI.UpdateSlot(item, weapon, consumption, slotY);
+                            GameInstance.Instance.quickSlotUI.UpdateSlot(item, weapon, consumption, armor, slotY,false);
                             if (slotY == pc.equipSlotIndex)
                             {
                                 pc.Unequipment();
@@ -186,7 +190,7 @@ public class Slot : MonoBehaviour, IUIComponent
 
                         if (s.slotX == 0)
                         {
-                            GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.slotY);
+                            GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotY, false);
                             if (slotY == pc.equipSlotIndex)
                             {
                                 pc.Unequipment();
@@ -201,7 +205,7 @@ public class Slot : MonoBehaviour, IUIComponent
 
                             if (s.slotX == 0)
                             {
-                                GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.slotY);
+                                GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotY, false   );
                                 if (slotY == pc.equipSlotIndex)
                                 {
                                     pc.Unequipment();
@@ -212,7 +216,7 @@ public class Slot : MonoBehaviour, IUIComponent
                         {
                             if (slotX == 0)
                             {
-                                GameInstance.Instance.quickSlotUI.UpdateSlot(item, weapon, consumption, slotY);
+                                GameInstance.Instance.quickSlotUI.UpdateSlot(item, weapon, consumption, armor, slotY, false);
                                 if (slotY == pc.equipSlotIndex)
                                 {
                                     pc.Unequipment();
@@ -227,14 +231,14 @@ public class Slot : MonoBehaviour, IUIComponent
                         else if(transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2 && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
                         {
                          //   GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
-                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.slotX, s.slotY);
+                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
 
                         }
                         else
                         {
 
-                            GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
-                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.slotX, s.slotY);
+                            GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, armor, slotX, slotY);
+                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
                         }
                     }
                  
@@ -317,8 +321,6 @@ public class Slot : MonoBehaviour, IUIComponent
 
         info.UpdateSlotInfo(item);
         SaveLoadSystem.SaveInventoryData();
-        //     info
-
     }
 
     void OnHoverExit()
@@ -332,12 +334,13 @@ public class Slot : MonoBehaviour, IUIComponent
         return item;
     }
 
-    public void AddItem(ItemStruct item, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct)
+    public void AddItem(ItemStruct item, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, ArmorStruct armorStruct, bool justUpdate)
     {
         this.item = item;
         this.weapon = weaponStruct;
         this.consumption = consumptionStruct;
-        UpdateSlot();
+        this.armor = armorStruct;
+        UpdateSlot(justUpdate);
     }
 
     public void RemoveItem()
@@ -347,10 +350,11 @@ public class Slot : MonoBehaviour, IUIComponent
         item = itemS;
         weapon = new WeaponStruct();
         consumption = new ConsumptionStruct();
-        GameInstance.Instance.boxInventorySystem.UpdateSlot(itemS, weapon, consumption, slotX, slotY);
+        armor = new ArmorStruct();
+        GameInstance.Instance.boxInventorySystem.UpdateSlot(itemS, weapon, consumption, armor, slotX, slotY);
         if (slotX == 0)
         {
-            GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, weapon, consumption, slotY);
+            GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, weapon, consumption, armor, slotY, false);
            
             PlayerController pc = GameInstance.Instance.GetPlayers[0];
             if (pc != null)
@@ -361,10 +365,10 @@ public class Slot : MonoBehaviour, IUIComponent
                 }
             }
         }
-        UpdateSlot();
+        UpdateSlot(true);
     }
 
-    public void UpdateSlot()
+    public void UpdateSlot(bool justUpdate)
     {
      //   GameInstance.Instance.assetLoader.loadedSprites[GameInstance.Instance.assetLoader.spriteAssetkeys[item.itemIndex]];
         if(item.used)
@@ -374,15 +378,48 @@ public class Slot : MonoBehaviour, IUIComponent
             itemImage.sprite = originImage;
         }
 
-        switch (slotType)
+        if (!justUpdate)
         {
-            case SlotType.None:
-                break;
-            default:
-                GameInstance.Instance.inventorySystem.UpdateEquipSlot(slotType, item, weapon, consumption);
-                break;
-        }
+            switch (slotType)
+            {
+                case SlotType.None:
+                    break;
+                default:
+                    if(slotType == armor.armor_type) GameInstance.Instance.inventorySystem.UpdateEquipSlot(slotType, item, weapon, consumption, armor);
+                    else GameInstance.Instance.inventorySystem.UpdateEquipSlot(slotType, new ItemStruct(), new WeaponStruct(), new ConsumptionStruct(), new ArmorStruct());
+                    break;
+            }
+            UMACharacterAvatar character = GameInstance.Instance.GetPlayers[0].GetAvatar;
 
+            switch (slotType)
+            {
+                case SlotType.None:
+                    break;
+                case SlotType.Head:
+                    character.RemoveCloth("Helmet");
+                    break;
+                case SlotType.Chest:
+                    character.RemoveCloth("Chest");
+                    break;
+                case SlotType.Arm:
+                    character.RemoveCloth("Hands");
+                    break;
+                case SlotType.Leg:
+                    character.RemoveCloth("Legs");
+                    break;
+                case SlotType.Foot:
+                    character.RemoveCloth("Feet");
+                    break;
+                case SlotType.Backpack:
+                    character.RemoveCloth("Cape");
+                    break;
+            }
+            if(armor.armor_type == slotType)
+            {
+                character.AddCloth(armor.key_index);
+            }
+        }
+     
     }
 
     public void Setup()

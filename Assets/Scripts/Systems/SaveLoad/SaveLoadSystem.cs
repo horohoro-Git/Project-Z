@@ -121,6 +121,13 @@ public class SaveLoadSystem
         return JsonConvert.DeserializeObject<List<WeaponStruct>>(data);
     }
 
+    //방어구 데이터 불러오기
+    public static List<ArmorStruct> GetArmorData(string content)
+    {
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+        return JsonConvert.DeserializeObject<List<ArmorStruct>>(data);
+    }
+
     //소비 아이템 불러오기
     public static List<ConsumptionStruct> GetConsumptionData(string content)
     {
@@ -381,6 +388,19 @@ public class SaveLoadSystem
                                 writer.Write(weaponStruct.max_ammo);
                                 writer.Write(weaponStruct.durability);
                             }
+                            if ((int)item.item_type == 3)
+                            {
+                                //방어구 아이템
+                                ArmorStruct armorStruct = slot.armor;
+                                writer.Write(armorStruct.item_index);
+                                writer.Write((int)armorStruct.armor_type);
+                                writer.Write(armorStruct.defense);
+                                writer.Write(armorStruct.durability);
+                                writer.Write(armorStruct.move_speed);
+                                writer.Write(armorStruct.attack_damage);
+                                writer.Write(armorStruct.carrying_capacity);
+                                writer.Write(armorStruct.key_index);
+                            }
                         }
                     }
                 }
@@ -421,7 +441,7 @@ public class SaveLoadSystem
 
                             WeaponStruct weaponStruct = new WeaponStruct();
                             ConsumptionStruct consumptionStruct = new ConsumptionStruct();
-
+                            ArmorStruct armorStruct = new ArmorStruct();
                            
                             if ((ItemType)itemType == ItemType.Consumable)
                             {
@@ -443,8 +463,22 @@ public class SaveLoadSystem
 
                                 weaponStruct = new WeaponStruct(weapon_index, weapon_type, attack_damage, attack_spped, max_ammo, durability);
                             }
-                            GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, item, weaponStruct, consumptionStruct);
-                            GameInstance.Instance.boxInventorySystem.LoadInvetory(X,Y,item, weaponStruct, consumptionStruct);
+
+
+                            if((ItemType)itemType == ItemType.Wearable)
+                            {
+                                int item_index = reader.ReadInt32();
+                                SlotType armor_type = (SlotType)reader.ReadInt32();
+                                int defense = reader.ReadInt32();
+                                int durability = reader.ReadInt32();
+                                int move_speed = reader.ReadInt32();
+                                int attack_damage = reader.ReadInt32();
+                                int carrying_capacity = reader.ReadInt32();
+                                int key_index = reader.ReadInt32();
+                                armorStruct = new ArmorStruct(item_index, armor_type, defense, durability, carrying_capacity, move_speed, attack_damage, key_index);
+                            }
+                            GameInstance.Instance.inventorySystem.LoadInvetory(X, Y, item, weaponStruct, consumptionStruct, armorStruct);
+                            GameInstance.Instance.boxInventorySystem.LoadInvetory(X,Y,item, weaponStruct, consumptionStruct, armorStruct);
                         }
                     }
                 }
