@@ -119,8 +119,6 @@ public class PlayerController : Controller, IDamageable
             //테스트
             Inputs.actions["TestInventory"].performed += JustTest;
 
-
-       //     modelAnimator = go.GetComponent<Animator>();
             model = go;
             model.tag = "Player";
             model.layer = 0b0011;
@@ -137,7 +135,7 @@ public class PlayerController : Controller, IDamageable
                 {
                     //플레이어 초기 값
 
-                    PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0, 100, 1, 0, 0, 1, 1, 1);
+                    PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0,0, 100, 1, 0, 0, 200, 20 , 0, 1, 1, 1, 0);
 
                     GetPlayer.playerStruct = playerStruct;
                     GetPlayer.UpdatePlayer();
@@ -146,22 +144,14 @@ public class PlayerController : Controller, IDamageable
             else
             {
                 SaveLoadSystem.LoadPlayerData(this);
-
-             /*   //플레이어 초기 값
-                PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0, 100, 1, 0, 0, 1, 1, 1);
-
-                GetPlayer.playerStruct = playerStruct;
-                GetPlayer.UpdatePlayer();*/
             }
-           // Item
-          //  GameInstance.Instance.inventorySystem.UpdateSlot(ItemData.GetItem()
-         ///   ItemData.
+
+            GameInstance.Instance.characterProfileUI.CreateCharacter(load, go);
+         //   GameInstance.Instance.
         }
         else
         {
-          //  modelAnimator = go.GetComponent<Animator>();
             model = go;
-
         }
 
         Destroy(go.GetComponent<Rigidbody>());  
@@ -404,8 +394,6 @@ public class PlayerController : Controller, IDamageable
         }
     }
 
-  //  bool reinput = false;
- //   bool attack = false;
     PointerEventData eventData = new PointerEventData(EventSystem.current);
     List<RaycastResult> raycastResults = new List<RaycastResult>();
     void Attack(InputAction.CallbackContext callback)
@@ -821,11 +809,6 @@ public class PlayerController : Controller, IDamageable
     {
         GameInstance.Instance.uiManager.SwitchUI(UIType.BoxInventory, false);
     }
- /*   private void OnApplicationQuit()
-    {
-        SaveLoadSystem.SavePlayerData(GetPlayer);
-        
-    }*/
 
     public void Damaged(int damage)
     {

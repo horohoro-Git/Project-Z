@@ -234,27 +234,37 @@ public class SaveLoadSystem
                 int maxHP = ps.maxHP;
                 int energy = ps.energy;
                 int maxEnergy = ps.maxEnergy;
+                int defense = ps.defense;
                 int exp = ps.exp;
                 int requireEXP = ps.requireEXP;
                 int level = ps.level;
                 int attackDamage = ps.attackDamage;
+                float attackSpeed = ps.attackSpeed;
+                float moveSpeed = ps.moveSpeed;
+                int weight = ps.weight;
                 int skillPoint = ps.skillPoint;
                 int hpLevel = ps.hpLevel;
                 int energyLevel = ps.energyLevel;
                 int weightLevel = ps.weightLevel;
+                int backpackLevel = ps.backpackLevel;
 
                 writer.Write(hp);
                 writer.Write(maxHP);
                 writer.Write(energy);
                 writer.Write(maxEnergy);
+                writer.Write(defense);
                 writer.Write(exp);
                 writer.Write(requireEXP);
                 writer.Write(level);
                 writer.Write(attackDamage);
+                writer.Write(attackSpeed);
+                writer.Write(moveSpeed);
+                writer.Write(weight);
                 writer.Write(skillPoint);
                 writer.Write(hpLevel);
                 writer.Write(energyLevel);
                 writer.Write(weightLevel);
+                writer.Write(backpackLevel);
             }
             File.WriteAllBytes(p, ms.ToArray());
 
@@ -300,25 +310,30 @@ public class SaveLoadSystem
                         int maxHP = reader.ReadInt32();
                         int energy = reader.ReadInt32();
                         int maxEnergy = reader.ReadInt32();
+                        int defense = reader.ReadInt32();
                         int exp = reader.ReadInt32();
                         int requireEXP = reader.ReadInt32();
                         int level = reader.ReadInt32();
                         int attackDamage = reader.ReadInt32();
+                        float attackSpeed = reader.ReadSingle();
+                        float moveSpeed = reader.ReadSingle();
+                        int weight = reader.ReadInt32();
                         int skillPoint = reader.ReadInt32();
                         int hpLevel = reader.ReadInt32();
                         int energyLevel = reader.ReadInt32();
                         int weightLevel = reader.ReadInt32();
+                        int backpackLevel = reader.ReadInt32();
 
                         if (!dead)
                         {
-                            PlayerStruct playerStruct = new PlayerStruct(hp, maxHP, energy, maxEnergy, exp, requireEXP, level, attackDamage, skillPoint, hpLevel, energyLevel, weightLevel);
+                            PlayerStruct playerStruct = new PlayerStruct(hp, maxHP, energy, maxEnergy, defense, exp, requireEXP, level, attackDamage, attackSpeed, moveSpeed, weight, skillPoint, hpLevel, energyLevel, weightLevel, backpackLevel);
                             pc.SetPlayerData(pos, rot, playerStruct);
                         }
                         else
                         {
                             exp = (int)(exp * 0.9f);
                             //부활로 인한 기본 값
-                            PlayerStruct playerStruct = new PlayerStruct(maxHP / 2, maxHP, energy, maxEnergy, exp, requireEXP, level, attackDamage, skillPoint, hpLevel, energyLevel, weightLevel);
+                            PlayerStruct playerStruct = new PlayerStruct(maxHP / 2, maxHP, energy, maxEnergy, 0, exp, requireEXP, level, attackDamage, 0, 200, 20, skillPoint, hpLevel, energyLevel, weightLevel, 0);
                             pc.SetPlayerData(Vector3.zero, rot, playerStruct);
                         }
                     }

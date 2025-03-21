@@ -320,13 +320,13 @@ public struct ArmorStruct
     public int attack_damage;
     public int key_index;
 
-    public ArmorStruct(int item_index, SlotType armor_type, int defense, int durability, int carring_capacity, int move_speed, int attack_damage, int key_index)
+    public ArmorStruct(int item_index, SlotType armor_type, int defense, int durability, int carrying_capacity, int move_speed, int attack_damage, int key_index)
     {
         this.item_index = item_index;
         this.armor_type = armor_type;
         this.defense = defense;
         this.durability = durability;
-        this.carrying_capacity = carring_capacity;
+        this.carrying_capacity = carrying_capacity;
         this.move_speed = move_speed;
         this.attack_damage = attack_damage;
         this.key_index = key_index;
@@ -357,29 +357,39 @@ public struct PlayerStruct
     public int maxHP;
     public int energy;
     public int maxEnergy;
+    public int defense;
     public int exp;
     public int requireEXP;
     public int level;
     public int attackDamage;
+    public float attackSpeed;
+    public float moveSpeed;
+    public int weight;
     public int skillPoint;
     public int hpLevel;
     public int energyLevel;
     public int weightLevel;
+    public int backpackLevel;
 
-    public PlayerStruct(int hp, int maxHP, int energy, int maxEnergy, int exp, int requireEXP, int level, int attackDamage, int skillPoint, int hpLevel, int energyLevel, int weightLevel)
+    public PlayerStruct(int hp, int maxHP, int energy, int maxEnergy, int defense, int exp, int requireEXP, int level, int attackDamage, float attackSpeed, float moveSpeed, int weight, int skillPoint, int hpLevel, int energyLevel, int weightLevel, int backpackLevel)
     {
         this.hp = hp;
         this.maxHP = maxHP;
         this.energy = energy;
         this.maxEnergy = maxEnergy;
+        this.defense = defense;
         this.exp = exp;
         this.requireEXP = requireEXP;
         this.level = level;
         this.attackDamage = attackDamage;
+        this.attackSpeed = attackSpeed;
+        this.moveSpeed = moveSpeed;
+        this.weight = weight;
         this.skillPoint = skillPoint;
         this.hpLevel = hpLevel;
         this.energyLevel = energyLevel;
         this.weightLevel = weightLevel;
+        this.backpackLevel = backpackLevel;
     }
 
 }
