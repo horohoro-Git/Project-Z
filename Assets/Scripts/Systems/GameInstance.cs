@@ -28,9 +28,11 @@ public class GameInstance
     public CreatableUISystem creatableUISystem;
     public QuickSlotUI quickSlotUI;
     public PlayerStatusUI playerStatusUI;
+    public PlayerStatusDetailsUI playerStatusDetailsUI;
     public AbilityMenuUI abilityMenuUI;
     public BoxInventorySystem boxInventorySystem;
     public MinimapUI minimapUI;
+    public CharacterProfileUI characterProfileUI;
     public EnvironmentSpawner environmentSpawner;
     public EditMode editMode;
     public EnemySpawner enemySpawner;
@@ -41,6 +43,8 @@ public class GameInstance
     public bool quit = false;
     public void Reset()
     {
+        playerStatusDetailsUI = null;
+        characterProfileUI = null;
         abilityMenuUI = null;
         minimapUI = null;
         playerStatusUI = null;

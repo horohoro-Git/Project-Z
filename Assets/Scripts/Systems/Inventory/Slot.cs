@@ -244,7 +244,9 @@ public class Slot : MonoBehaviour, IUIComponent
                  
 
                 }
-                else // 아이템 버리기
+
+                Trashcan t = r.gameObject.GetComponent<Trashcan>();
+                if(t != null) // 아이템 버리기
                 {
                     AcceptanceUI acceptanceUI = Instantiate(GameInstance.Instance.uiManager.acceptanceUI).GetComponent<AcceptanceUI>();
                     RectTransform rect = GameInstance.Instance.uiManager.canvas.GetComponent<RectTransform>();  
@@ -257,8 +259,6 @@ public class Slot : MonoBehaviour, IUIComponent
                     UnityAction action = () => RemoveItem();
                     acceptanceUI.GetAction(action);
                     //RemoveItem();
-
-
                 }
                 break;
             }
@@ -319,7 +319,7 @@ public class Slot : MonoBehaviour, IUIComponent
             }
         }
 
-        info.UpdateSlotInfo(item);
+        info.UpdateSlotInfo(item, consumption, weapon, armor);
         SaveLoadSystem.SaveInventoryData();
     }
 
@@ -391,32 +391,40 @@ public class Slot : MonoBehaviour, IUIComponent
             }
             UMACharacterAvatar character = GameInstance.Instance.GetPlayers[0].GetAvatar;
 
+            CharacterProfileUI characterProfileUI = GameInstance.Instance.characterProfileUI;
             switch (slotType)
             {
                 case SlotType.None:
                     break;
                 case SlotType.Head:
                     character.RemoveCloth("Helmet");
+                    characterProfileUI.RemoveCloth("Helmet");
                     break;
                 case SlotType.Chest:
                     character.RemoveCloth("Chest");
+                    characterProfileUI.RemoveCloth("Chest");
                     break;
                 case SlotType.Arm:
                     character.RemoveCloth("Hands");
+                    characterProfileUI.RemoveCloth("Hands");
                     break;
                 case SlotType.Leg:
                     character.RemoveCloth("Legs");
+                    characterProfileUI.RemoveCloth("Legs");
                     break;
                 case SlotType.Foot:
                     character.RemoveCloth("Feet");
+                    characterProfileUI.RemoveCloth("Feet");
                     break;
                 case SlotType.Backpack:
                     character.RemoveCloth("Cape");
+                    characterProfileUI.RemoveCloth("Cape");
                     break;
             }
             if(armor.armor_type == slotType)
             {
                 character.AddCloth(armor.key_index);
+                characterProfileUI.AddCloth(armor.key_index);
             }
         }
      

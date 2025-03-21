@@ -44,12 +44,14 @@ public class Player : MonoBehaviour
     {
         playerStruct.hp -= damage;
         GameInstance.Instance.playerStatusUI.ChangeHP(playerStruct.hp);
+        GameInstance.Instance.playerStatusDetailsUI.UpdateHP(playerStruct.hp, playerStruct.maxHP);
     }
 
     public void SpendEnergy(int energy)
     {
         playerStruct.energy -= energy;
         GameInstance.Instance.playerStatusUI.ChangeEnergy(playerStruct.energy);
+        GameInstance.Instance.playerStatusDetailsUI.UpdateEnergy(playerStruct.energy, playerStruct.maxEnergy);
     }
 
     public void GetExperience(int experience)
@@ -72,6 +74,7 @@ public class Player : MonoBehaviour
         }
 
         GameInstance.Instance.playerStatusUI.GetEXP(playerStruct.exp);
+        GameInstance.Instance.playerStatusDetailsUI.UpdateExp(playerStruct.exp, playerStruct.requireEXP);
     }
 
     public void UpdatePlayer()
@@ -89,6 +92,7 @@ public class Player : MonoBehaviour
         GameInstance.Instance.playerStatusUI.UpdateUI(playerStruct);
         GameInstance.Instance.abilityMenuUI.GetPoint(playerStruct.skillPoint);
         GameInstance.Instance.abilityMenuUI.ShowChanges(this);
+        GameInstance.Instance.playerStatusDetailsUI.Setup(playerStruct);
     }
 
 
@@ -141,6 +145,7 @@ public class Player : MonoBehaviour
                 healBuffTimer = Time.time + 10f;
             }
             GameInstance.Instance.playerStatusUI.ChangeHP(playerStruct.hp);
+            GameInstance.Instance.playerStatusDetailsUI.UpdateHP(playerStruct.hp, playerStruct.maxHP);
         }
 
         buffStruct.healBuff.Dequeue();

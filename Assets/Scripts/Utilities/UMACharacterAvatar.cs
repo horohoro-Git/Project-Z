@@ -68,7 +68,6 @@ public class UMACharacterAvatar : MonoBehaviour
 
     }
 
-
     public void AddCloth(int recipeIndex)
     {
 

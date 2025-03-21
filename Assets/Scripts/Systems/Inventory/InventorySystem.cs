@@ -168,8 +168,8 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     public void SetPlayerView(bool on)
     {
-        if(on) playerView.sprite = null;
-        else playerView.sprite = trashcan;
+        if (on) playerView.gameObject.SetActive(false); //playerView.sprite = null;
+        else playerView.gameObject.SetActive(true); //playerView.sprite = trashcan;
     }
     public void Setup()
     {
