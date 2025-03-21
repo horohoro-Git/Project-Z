@@ -17,7 +17,8 @@ public class Slot : MonoBehaviour, IUIComponent
     SlotInfo info;
     [SerializeField]
     Sprite originImage;
-    Image itemImage;
+    [NonSerialized]
+    public Image itemImage;
 
     public SlotType slotType;
     public ItemStruct item = new ItemStruct();
@@ -156,6 +157,36 @@ public class Slot : MonoBehaviour, IUIComponent
                 if (s != null)  //다른 슬롯으로 아이템 이동
                 {
                     if (s.justView) break;
+                    int targetNum = s.armor.carrying_capacity;
+                    int currentSlotNum = armor.carrying_capacity;
+                   
+                    if(armor.armor_type == SlotType.Backpack)
+                    {
+                        if (!ValidCheckBackpackChange(this, targetNum)) return;
+                    }
+
+                    if(s.armor.armor_type == SlotType.Backpack)
+                    {
+                        if (!ValidCheckBackpackChange(this, targetNum)) return;
+                    }
+              /*      if (armor.armor_type == SlotType.Backpack && slotX == 0 && slotY == 9)
+                    {
+                        int slotNum = GameInstance.Instance.inventorySystem.slotNum;
+
+                        int targetNum = s.armor.carrying_capacity;
+
+                        if (slotNum > targetNum)
+                        {
+                            if(!GameInstance.Instance.inventorySystem.CheckItem(targetNum, slotNum))
+                            {
+                                Debug.Log("Fail");
+                                return;
+                            }
+                        }
+                    }*/
+
+
+
                     ItemStruct tempStruct = s.item;
                     s.item = item;
                     item = tempStruct;
@@ -172,6 +203,9 @@ public class Slot : MonoBehaviour, IUIComponent
                     UpdateSlot(true);
                     s.UpdateSlot(true);
 
+
+                   
+
                     PlayerController pc = GameInstance.Instance.GetPlayers[0];
                  
 
@@ -185,15 +219,18 @@ public class Slot : MonoBehaviour, IUIComponent
                             if (slotY == pc.equipSlotIndex)
                             {
                                 pc.Unequipment();
+                            //    GameInstance.Instance.inventorySystem.UseItem(pc, pc.equipSlotIndex);
                             }
+                           
                         }
 
                         if (s.slotX == 0)
                         {
                             GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotY, false);
-                            if (slotY == pc.equipSlotIndex)
+                            if (s.slotY == pc.equipSlotIndex)
                             {
                                 pc.Unequipment();
+                              //  GameInstance.Instance.inventorySystem.UseItem(pc, pc.equipSlotIndex);
                             }
                         }
                     }
@@ -205,8 +242,8 @@ public class Slot : MonoBehaviour, IUIComponent
 
                             if (s.slotX == 0)
                             {
-                                GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotY, false   );
-                                if (slotY == pc.equipSlotIndex)
+                                GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotY, false);
+                                if (s.slotY == pc.equipSlotIndex)
                                 {
                                     pc.Unequipment();
                                 }
@@ -265,6 +302,27 @@ public class Slot : MonoBehaviour, IUIComponent
 
         }
         GameInstance.Instance.inventorySystem.SetPlayerView(true);
+    }
+
+
+    //가방 교체 가능 확인
+    bool ValidCheckBackpackChange(Slot slot, int targetNum)
+    {
+        ArmorStruct armorStruct = slot.armor;
+        if (armorStruct.armor_type == SlotType.Backpack && slotX == 0 && slotY == 9)
+        {
+            int slotNum = GameInstance.Instance.inventorySystem.slotNum;
+
+            if (slotNum > targetNum)
+            {
+                if (!GameInstance.Instance.inventorySystem.CheckItem(targetNum, slotNum))
+                {
+                    Debug.Log("Fail");
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     void OnHoverEnter()
@@ -370,11 +428,16 @@ public class Slot : MonoBehaviour, IUIComponent
 
     public void UpdateSlot(bool justUpdate)
     {
-     //   GameInstance.Instance.assetLoader.loadedSprites[GameInstance.Instance.assetLoader.spriteAssetkeys[item.itemIndex]];
-        if(item.used)
-        itemImage.sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[item.item_index - 1]];
+        //   GameInstance.Instance.assetLoader.loadedSprites[GameInstance.Instance.assetLoader.spriteAssetkeys[item.itemIndex]];
+        if (item.used)
+        {
+   //         itemImage.gameObject.SetActive(true);
+            itemImage.sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[item.item_index - 1]];
+        }
         else
         {
+  //          itemImage.gameObject.SetActive(false);
+            //image.sprite = originImage;
             itemImage.sprite = originImage;
         }
 
@@ -390,15 +453,17 @@ public class Slot : MonoBehaviour, IUIComponent
                     break;
             }
             UMACharacterAvatar character = GameInstance.Instance.GetPlayers[0].GetAvatar;
-
+            Player player = GameInstance.Instance.GetPlayers[0].GetPlayer;
             CharacterProfileUI characterProfileUI = GameInstance.Instance.characterProfileUI;
             switch (slotType)
             {
                 case SlotType.None:
-                    break;
+                    return;
                 case SlotType.Head:
                     character.RemoveCloth("Helmet");
                     characterProfileUI.RemoveCloth("Helmet");
+                   
+                //    player.
                     break;
                 case SlotType.Chest:
                     character.RemoveCloth("Chest");
@@ -419,10 +484,13 @@ public class Slot : MonoBehaviour, IUIComponent
                 case SlotType.Backpack:
                     character.RemoveCloth("Cape");
                     characterProfileUI.RemoveCloth("Cape");
+                    //GameInstance.Instance.inventorySystem.ClearSlots();
+                    player.WearingArmor(armor, true);
                     break;
             }
             if(armor.armor_type == slotType)
             {
+                if(slotType != SlotType.Backpack) player.WearingArmor(armor,false);
                 character.AddCloth(armor.key_index);
                 characterProfileUI.AddCloth(armor.key_index);
             }
@@ -441,8 +509,9 @@ public class Slot : MonoBehaviour, IUIComponent
         {
             if (image != i) itemImage = i;
         }
-
         itemImage.sprite = originImage;
+       // itemImage.gameObject.SetActive(false);
+       // itemImage.sprite = originImage;
     }
     private void OnDestroy()
     {

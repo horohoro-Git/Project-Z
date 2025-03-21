@@ -6,7 +6,8 @@ using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
-    public PlayerStruct playerStruct;
+    public PlayerStruct playerStruct; //플레이어의 능력치
+    public PlayerStruct equipmentStats; //장비로 오른 능력치
 
     Transform transforms;
     public Transform Transforms
@@ -79,7 +80,7 @@ public class Player : MonoBehaviour
 
     public void UpdatePlayer()
     {
-
+        equipmentStats = new PlayerStruct();
         playerStruct.requireEXP = GameInstance.Instance.assetLoader.levelData[playerStruct.level - 1].exp;
 
         //힐 버프 이펙트
@@ -177,5 +178,44 @@ public class Player : MonoBehaviour
         }
         levelupBuff.SetActive(false);
         levelupBuff = null;
+    }
+
+    public void WearingArmor(ArmorStruct armorStruct, bool backpack)
+    {
+        if (!backpack)
+        {
+            switch (armorStruct.armor_type)
+            {
+                case SlotType.None:
+                    break;
+                case SlotType.Head:
+                case SlotType.Chest:
+                case SlotType.Arm:
+                case SlotType.Leg:
+                case SlotType.Foot:
+                    playerStruct.defense += armorStruct.defense;
+                    equipmentStats.defense += armorStruct.defense;
+                    GameInstance.Instance.playerStatusDetailsUI.UpdateDefense(playerStruct.defense);
+
+                    if (armorStruct.armor_type == SlotType.Arm)
+                    {
+                        playerStruct.attackDamage += armorStruct.attack_damage;
+                        equipmentStats.attackDamage += armorStruct.attack_damage;
+                        GameInstance.Instance.playerStatusDetailsUI.UpdateDamage(playerStruct.attackDamage);
+                    }
+                    if (armorStruct.armor_type == SlotType.Foot)
+                    {
+                        playerStruct.moveSpeed += armorStruct.move_speed;
+                        equipmentStats.moveSpeed += armorStruct.move_speed;
+                        GameInstance.Instance.playerStatusDetailsUI.UpdateMoveSpeed(playerStruct.moveSpeed);
+
+                    }
+                    break;
+            }
+        }
+        else
+        {
+            GameInstance.Instance.inventorySystem.ExpandSlot(armorStruct.carrying_capacity);
+        }
     }
 }
