@@ -145,8 +145,11 @@ public class PlayerController : Controller, IDamageable
             {
                 SaveLoadSystem.LoadPlayerData(this);
             }
+            equipSlotIndex = 0;
 
             GameInstance.Instance.characterProfileUI.CreateCharacter(load, go);
+            GameInstance.Instance.inventorySystem.UseItem(this, equipSlotIndex);
+            
          //   GameInstance.Instance.
         }
         else
@@ -156,24 +159,31 @@ public class PlayerController : Controller, IDamageable
 
         Destroy(go.GetComponent<Rigidbody>());  
         Destroy(go.GetComponent<Collider>());
+        GameInstance.Instance.inventorySystem.LoadInvetory(0, 0, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 0, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
+        GameInstance.Instance.inventorySystem.LoadInvetory(0, 1, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 1, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
 
-       GameInstance.Instance.inventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
-       GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
+        GameInstance.Instance.inventorySystem.LoadInvetory(0, 2, ItemData.GetItem(5), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[5]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(0,2, ItemData.GetItem(5), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[5]);
 
-        GameInstance.Instance.inventorySystem.LoadInvetory(1, 1, ItemData.GetItem(5), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[5]);
-        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 1, ItemData.GetItem(5), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[5]);
+        /*GameInstance.Instance.inventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
 
-        GameInstance.Instance.inventorySystem.LoadInvetory(1, 2, ItemData.GetItem(6), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[6]);
-        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 2, ItemData.GetItem(6), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[6]);
+         GameInstance.Instance.inventorySystem.LoadInvetory(1, 1, ItemData.GetItem(5), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[5]);
+         GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 1, ItemData.GetItem(5), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[5]);
 
-        GameInstance.Instance.inventorySystem.LoadInvetory(1, 3, ItemData.GetItem(7), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[7]);
-        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 3, ItemData.GetItem(7), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[7]);
+         GameInstance.Instance.inventorySystem.LoadInvetory(1, 2, ItemData.GetItem(6), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[6]);
+         GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 2, ItemData.GetItem(6), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[6]);
 
-        GameInstance.Instance.inventorySystem.LoadInvetory(1, 4, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
-        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 4, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
+         GameInstance.Instance.inventorySystem.LoadInvetory(1, 3, ItemData.GetItem(7), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[7]);
+         GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 3, ItemData.GetItem(7), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[7]);
 
-        GameInstance.Instance.inventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
-        GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
+         GameInstance.Instance.inventorySystem.LoadInvetory(1, 4, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
+         GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 4, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
+
+         GameInstance.Instance.inventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
+         GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);*/
     }
 
     public void ChangeTagLayer(Transform parent, string newTag, int layerName)
@@ -565,6 +575,8 @@ public class PlayerController : Controller, IDamageable
     {
         if (animationWorking > 0) return;
 
+        bool equip = true;
+        equipSlotIndex = index;
         AssetLoader loader = GameInstance.Instance.assetLoader;
         //무기
         if (equipItem.item.item_type == ItemType.Equipmentable)
@@ -574,7 +586,6 @@ public class PlayerController : Controller, IDamageable
                 Destroy(this.equipItem.gameObject);
                 this.equipItem = null;
             }
-            equipSlotIndex = index;
             this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
@@ -585,20 +596,10 @@ public class PlayerController : Controller, IDamageable
             this.equipItem.transform.localPosition = Vector3.zero;
             this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
             modelAnimator.SetFloat("equip", 1);
-            /*   if (equipWeapon != null)
-               {
-                   Destroy(equipWeapon.gameObject);
-                   equipWeapon = null;
-               }
-               equipSlotIndex = index;
-               equipWeapon = Instantiate(equipItem.itemGO).GetComponent<Weapon>();
-               equipWeapon.equippedPlayer = GetPlayer;
-               AttachItem attachItem = GetComponentInChildren<AttachItem>();
-               equipWeapon.transform.SetParent(attachItem.transform);
 
-               equipWeapon.transform.localPosition = new Vector3(0, 0, 0);
-               equipWeapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
-               modelAnimator.SetFloat("equip", 1);*/
+
+            GameInstance.Instance.characterProfileUI.UnEquipItem();
+            GameInstance.Instance.characterProfileUI.EquipItem(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]);
         }
         else if (equipItem.item.item_type == ItemType.Consumable)     //음식을 손에 듬
         {
@@ -607,8 +608,6 @@ public class PlayerController : Controller, IDamageable
                 Destroy(this.equipItem.gameObject);
                 this.equipItem = null;
             }
-            Debug.Log(equipItem.item.item_index);
-            equipSlotIndex = index;
             this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
@@ -619,6 +618,11 @@ public class PlayerController : Controller, IDamageable
             this.equipItem.transform.localPosition = Vector3.zero;
             this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
             modelAnimator.SetFloat("equip", 0);
+
+
+
+            GameInstance.Instance.characterProfileUI.UnEquipItem();
+            GameInstance.Instance.characterProfileUI.EquipItem(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]);
         }
         else
         {
@@ -627,9 +631,12 @@ public class PlayerController : Controller, IDamageable
                 Destroy(this.equipItem.gameObject);
                 this.equipItem = null;
             }
-            equipSlotIndex = index;
             modelAnimator.SetFloat("equip", 0);
+            equip = false;
+            GameInstance.Instance.characterProfileUI.UnEquipItem();
         }
+
+        GameInstance.Instance.inventorySystem.EquipItem(equipItem, equip);
     }
 
     public void Unequipment()
@@ -640,7 +647,7 @@ public class PlayerController : Controller, IDamageable
             equipWeapon = null;
         }
         Equipment(GameInstance.Instance.quickSlotUI.slots[equipSlotIndex], equipSlotIndex);
-        
+        GameInstance.Instance.inventorySystem.UseItem(this, equipSlotIndex);
     }
 
     void StartAnimation(string animationName, float timer)
@@ -772,8 +779,7 @@ public class PlayerController : Controller, IDamageable
         GameInstance.Instance.gameManager.PlayerSettings(false);
         Destroy(this);
     }
-
-
+    
     void StopMotion()
     {
         motion = 0;
@@ -791,7 +797,7 @@ public class PlayerController : Controller, IDamageable
             }
         }
     }
-
+    
     void ZoomOut(InputAction.CallbackContext callback)
     {
         if (lookAround)

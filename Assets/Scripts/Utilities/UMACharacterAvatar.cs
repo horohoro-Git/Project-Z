@@ -9,7 +9,7 @@ public class UMACharacterAvatar : MonoBehaviour
     public DynamicCharacterAvatar avatar;
     public UMAData collectionList;
     public UMAWardrobeRecipe recipe;
-
+    GameObject itemObject;
     //public WardrobeCollection wardrobeCollection;
 
     public void SetDefault()
@@ -82,4 +82,21 @@ public class UMACharacterAvatar : MonoBehaviour
         avatar.BuildCharacter();
     }
 
+    public void AddItem(GameObject itemGO)
+    {
+        itemObject = Instantiate(itemGO);
+        AttachItem attachItem = GetComponentInChildren<AttachItem>();
+        itemObject.transform.SetParent(attachItem.transform);
+        itemObject.transform.localPosition = Vector3.zero;
+        itemObject.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+    }
+
+    public void RemoveItem()
+    {
+        if (itemObject != null)
+        {
+            Destroy(itemObject);
+            itemObject = null;
+        }
+    }
 }

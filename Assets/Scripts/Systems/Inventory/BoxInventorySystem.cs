@@ -88,6 +88,7 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         if (x == 0)
         {
             GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, armorStruct, y, true);
+            if (GameInstance.Instance.GetPlayers[0].equipSlotIndex == y) GameInstance.Instance.inventorySystem.UseItem(GameInstance.Instance.GetPlayers[0], y);
         }
         inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, true);
     }

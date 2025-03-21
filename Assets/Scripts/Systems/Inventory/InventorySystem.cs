@@ -129,12 +129,20 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     public void UseItem(PlayerController pc ,int index)
     {
+       
+        inventoryArray[0, currentSlotIndex].itemImage.gameObject.SetActive(true);
+        GameInstance.Instance.quickSlotUI.slots[currentSlotIndex].itemImage.gameObject.SetActive(true);
         inventoryArray[0, currentSlotIndex].image.sprite = defaultSlot;
         GameInstance.Instance.quickSlotUI.slots[currentSlotIndex].image.sprite = defaultSlot;
 
         currentSlotIndex = index;
         pc.Equipment(inventoryArray[0, index], index);
         inventoryArray[0, index].image.sprite = highLightSlot;
+        if (!inventoryArray[0, index].item.used)
+        {
+            inventoryArray[0, index].itemImage.gameObject.SetActive(false);
+            GameInstance.Instance.quickSlotUI.slots[index].itemImage.gameObject.SetActive(false);
+        }
         GameInstance.Instance.quickSlotUI.slots[index].image.sprite = highLightSlot;
     }
 
@@ -177,13 +185,13 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         SlotArray slots = GetComponentInChildren<SlotArray>();
         InventoryExtends(slots);
         slotArrays.Add(slots);
-        for (int i = 0; i < 5; i++)
+       /* for (int i = 0; i < 5; i++)
         {
             SlotArray newSlots = Instantiate(inventoryList);
             newSlots.GetComponent<RectTransform>().SetParent(list);
             InventoryExtends(newSlots);
             slotArrays.Add(newSlots);
-        }
+        }*/
         head.Setup();
         chest.Setup();
         arm.Setup();
@@ -193,6 +201,81 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         equipedItem.Setup();
     }
 
+    public void ExpandSlot(int num)
+    {
+        if(num > slotNum - 1)
+        {
+            int n = slotNum - 1;
+            for (int i = n; i < num; i++)
+            {
+                SlotArray newSlots = Instantiate(inventoryList);
+                newSlots.GetComponent<RectTransform>().SetParent(list);
+                InventoryExtends(newSlots);
+                slotArrays.Add(newSlots);
+            }
+        }
+        else if(num < slotNum - 1)
+        {
+            int n = slotNum - 1;
+            for (int i = n; i > num; i--)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    inventoryArray[i, j] = null;
+                }
+                SlotArray s = slotArrays[i];
+                slotArrays.RemoveAt(i);
+                Destroy(s.gameObject);
+            }
+            slotNum = num + 1;
+        }
+      
+    }
+    public bool CheckItem(int min, int max)
+    {
+        for(int i = min; i < max; i++)
+        {
+            if (i == 0) continue;
+            for(int j =0; j < 10; j++)
+            {
+                if(inventoryArray[i, j].item.used)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public void EquipItem(Slot item, bool equip)
+    {
+        Player player = GameInstance.Instance.GetPlayers[0].GetPlayer;
+
+        PlayerStruct playerStruct = player.playerStruct;
+        PlayerStruct equipedStruct = player.equipmentStats;
+        if (equip)
+        {
+            //Âø¿ë ½Ã 
+            equipedItem.AddItem(item.item, item.weapon, item.consumption, item.armor, true);
+            player.playerStruct.attackDamage += item.weapon.attack_damage;
+            player.playerStruct.attackSpeed += item.weapon.attack_speed;
+            player.equipmentStats.attackDamage += item.weapon.attack_damage;
+            player.equipmentStats.attackSpeed += item.weapon.attack_speed;
+            GameInstance.Instance.playerStatusDetailsUI.UpdateDamage(player.playerStruct.attackDamage);
+            GameInstance.Instance.playerStatusDetailsUI.UpdateAttackSpeed(player.playerStruct.attackSpeed);
+        }
+        else
+        {
+            //Âø¿ë ÇØÁ¦ ½Ã
+            player.playerStruct.attackDamage -= equipedItem.weapon.attack_damage;
+            player.playerStruct.attackSpeed -= equipedItem.weapon.attack_speed;
+            player.equipmentStats.attackDamage -= equipedItem.weapon.attack_damage;
+            player.equipmentStats.attackSpeed -= equipedItem.weapon.attack_speed;
+            GameInstance.Instance.playerStatusDetailsUI.UpdateDamage(player.playerStruct.attackDamage);
+            GameInstance.Instance.playerStatusDetailsUI.UpdateAttackSpeed(player.playerStruct.attackSpeed);
+            equipedItem.AddItem(new ItemStruct(), new WeaponStruct(), new ConsumptionStruct(), new ArmorStruct(), true);
+        }
+    }
     public void UpdateSlot(ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, ArmorStruct armorStruct, int x, int y)
     {
         inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, true);

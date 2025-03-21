@@ -208,3 +208,6 @@ Added armor data table, armor boots, and edited UI, player will wear armor when 
 
 03/20
 Add player status ui, character display
+
+03/21
+The equipped items change the player's stats and appearance through the inventory system

@@ -49,4 +49,14 @@ public class CharacterProfileUI : MonoBehaviour
     {
         avatar.RemoveCloth(slotName);
     }
+
+    public void EquipItem(GameObject itemObject)
+    {
+        avatar.AddItem(itemObject);
+    }
+
+    public void UnEquipItem()
+    {
+        avatar.RemoveItem();
+    }
 }

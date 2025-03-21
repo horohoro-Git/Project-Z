@@ -229,24 +229,25 @@ public class SaveLoadSystem
                 writer.Write(player.dead);
 
                 PlayerStruct ps = player.playerStruct;
+                PlayerStruct equip = player.equipmentStats;
                 //플레이어 능력치
                 int hp = ps.hp;
                 int maxHP = ps.maxHP;
                 int energy = ps.energy;
                 int maxEnergy = ps.maxEnergy;
-                int defense = ps.defense;
+                int defense = ps.defense - equip.defense;
                 int exp = ps.exp;
                 int requireEXP = ps.requireEXP;
                 int level = ps.level;
-                int attackDamage = ps.attackDamage;
-                float attackSpeed = ps.attackSpeed;
-                float moveSpeed = ps.moveSpeed;
+                int attackDamage = ps.attackDamage - equip.attackDamage;
+                float attackSpeed = ps.attackSpeed - equip.attackSpeed;
+                float moveSpeed = ps.moveSpeed - equip.moveSpeed;
                 int weight = ps.weight;
                 int skillPoint = ps.skillPoint;
                 int hpLevel = ps.hpLevel;
                 int energyLevel = ps.energyLevel;
                 int weightLevel = ps.weightLevel;
-                int backpackLevel = ps.backpackLevel;
+                int backpackLevel = ps.backpackLevel - equip.backpackLevel;
 
                 writer.Write(hp);
                 writer.Write(maxHP);
