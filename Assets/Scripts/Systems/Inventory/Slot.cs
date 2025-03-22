@@ -26,6 +26,8 @@ public class Slot : MonoBehaviour, IUIComponent
     public ConsumptionStruct consumption = new ConsumptionStruct();
     public ArmorStruct armor = new ArmorStruct();
 
+    ArmorStruct lastArmor = new ArmorStruct();
+
     //SerializeField]
     public int slotX;
     //[SerializeField]
@@ -81,12 +83,10 @@ public class Slot : MonoBehaviour, IUIComponent
         //상호작용 가능 슬롯
 
         //드래그 시작
-      
         dragStart.callback.AddListener(dragEnter);
         eventTrigger.triggers.Add(dragStart);
 
         //드래그 종료
-   
         dragEnd.callback.AddListener(dragExit);
         eventTrigger.triggers.Add(dragEnd);
     }
@@ -397,6 +397,7 @@ public class Slot : MonoBehaviour, IUIComponent
         this.item = item;
         this.weapon = weaponStruct;
         this.consumption = consumptionStruct;
+        lastArmor = this.armor;
         this.armor = armorStruct;
         UpdateSlot(justUpdate);
     }
@@ -462,8 +463,8 @@ public class Slot : MonoBehaviour, IUIComponent
                 case SlotType.Head:
                     character.RemoveCloth("Helmet");
                     characterProfileUI.RemoveCloth("Helmet");
-                   
-                //    player.
+
+                    //    player.
                     break;
                 case SlotType.Chest:
                     character.RemoveCloth("Chest");
@@ -488,9 +489,16 @@ public class Slot : MonoBehaviour, IUIComponent
                     player.WearingArmor(armor, true);
                     break;
             }
-            if(armor.armor_type == slotType)
+            //if (slotType != SlotType.Backpack)
+            Debug.Log(lastArmor.armor_type);
+            Debug.Log(armor.armor_type);
+            if (slotType != SlotType.Backpack) player.PutonArmor(lastArmor);
+            if (armor.armor_type == slotType)
             {
-                if(slotType != SlotType.Backpack) player.WearingArmor(armor,false);
+                if (slotType != SlotType.Backpack)
+                {
+                    player.WearingArmor(armor, false);
+                }
                 character.AddCloth(armor.key_index);
                 characterProfileUI.AddCloth(armor.key_index);
             }
