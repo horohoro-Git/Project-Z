@@ -218,4 +218,30 @@ public class Player : MonoBehaviour
             GameInstance.Instance.inventorySystem.ExpandSlot(armorStruct.carrying_capacity);
         }
     }
+
+    public void PutonArmor(ArmorStruct armorStruct)
+    {
+        switch (armorStruct.armor_type)
+        {
+            case SlotType.None:
+                break;
+            case SlotType.Head: case SlotType.Chest: case SlotType.Arm: case SlotType.Leg: case SlotType.Foot:
+                playerStruct.defense -= armorStruct.defense;
+                equipmentStats.defense -= armorStruct.defense;
+                GameInstance.Instance.playerStatusDetailsUI.UpdateDefense(playerStruct.defense);
+                if(armorStruct.armor_type == SlotType.Arm)
+                {
+                    playerStruct.attackDamage -= armorStruct.attack_damage;
+                    equipmentStats.attackDamage -= armorStruct.attack_damage;
+                    GameInstance.Instance.playerStatusDetailsUI.UpdateDamage(playerStruct.attackDamage);
+                }
+                if (armorStruct.armor_type == SlotType.Foot)
+                {
+                    playerStruct.moveSpeed -= armorStruct.move_speed;
+                    equipmentStats.moveSpeed -= armorStruct.move_speed;
+                    GameInstance.Instance.playerStatusDetailsUI.UpdateMoveSpeed(playerStruct.moveSpeed);
+                }
+                break;
+        }
+    }
 }

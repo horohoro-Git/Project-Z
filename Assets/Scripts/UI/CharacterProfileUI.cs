@@ -2,7 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class CharacterProfileUI : MonoBehaviour
 {
@@ -13,10 +16,86 @@ public class CharacterProfileUI : MonoBehaviour
 
     public RawImage characterImage;
 
+    EventTrigger eventTrigger;
+    EventTrigger.Entry dragStart;
+    EventTrigger.Entry dragEnd;
+    UnityAction<BaseEventData> dragEnter;
+    UnityAction<BaseEventData> dragExit;
+    bool dragModel;
+    Vector3 dragPosition = Vector3.zero;
+    Vector3 positionDelta;
+
     private void Awake()
     {
         GameInstance.Instance.characterProfileUI = this;
     }
+
+    private void OnEnable()
+    {
+        if (eventTrigger == null)
+        {
+            eventTrigger = gameObject.AddComponent<EventTrigger>();
+            dragStart = new EventTrigger.Entry();
+            dragStart.eventID = EventTriggerType.PointerDown;
+            dragEnter = (eventData) => OnDragEnter();
+
+            dragEnd = new EventTrigger.Entry();
+            dragEnd.eventID = EventTriggerType.PointerUp;
+            dragExit = (eventData) => OnDragExit();
+        }
+        //드래그 시작
+        dragStart.callback.AddListener(dragEnter);
+        eventTrigger.triggers.Add(dragStart);
+
+        //드래그 종료
+        dragEnd.callback.AddListener(dragExit);
+        eventTrigger.triggers.Add(dragEnd);
+    }
+
+    private void OnDisable()
+    {
+        if(eventTrigger != null)
+        {
+            dragStart.callback.RemoveListener(dragEnter);
+            eventTrigger.triggers.Remove(dragStart);
+
+            dragEnd.callback.RemoveListener(dragExit);
+            eventTrigger.triggers.Remove(dragEnd);
+        }
+        if(avatar != null)
+        {
+            avatar.transform.rotation = Quaternion.Euler(0, 180, 0);
+        }
+    }
+
+    private void Update()
+    {
+        if(dragModel)
+        {
+            dragPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            float x = positionDelta.x - dragPosition.x;
+
+            avatar.transform.Rotate(0, x * 100, 0);
+
+            positionDelta = dragPosition;
+        }
+    }
+
+    void OnDragEnter()
+    {
+        dragModel = true;
+        positionDelta = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Debug.Log("Enter");
+
+    }
+
+    void OnDragExit()
+    {
+        dragModel= false;
+        Debug.Log("Exit");
+    }
+
     public void CreateCharacter(bool load, GameObject characterGO)
     {
         if (!load) Destroy(avatar.gameObject);

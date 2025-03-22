@@ -211,3 +211,6 @@ Add player status ui, character display
 
 03/21
 The equipped items change the player's stats and appearance through the inventory system
+
+03/22
+Rotate the character model of the inventory by dragging the mouse
