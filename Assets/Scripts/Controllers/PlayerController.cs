@@ -51,8 +51,8 @@ public class PlayerController : Controller, IDamageable
 
     public event Action<PlayerController> InteractionEvent;
     Action<PlayerController> lastAction;
-    int lastGridX = 0; 
-    int lastGridY = 0;
+    int lastGridX; 
+    int lastGridY;
     float motion;
 
     //  [NonSerialized]
@@ -88,10 +88,6 @@ public class PlayerController : Controller, IDamageable
     public bool noAction;
 
     public GameObject testEffect;
-    private void Awake()
-    {
-    
-    }
 
     public void SetController(GameObject go, bool load, bool human = true)
     {
@@ -149,8 +145,9 @@ public class PlayerController : Controller, IDamageable
 
             GameInstance.Instance.characterProfileUI.CreateCharacter(load, go);
             GameInstance.Instance.inventorySystem.UseItem(this, equipSlotIndex);
-            
-         //   GameInstance.Instance.
+
+          //  Debug.Log(lastGridX + " " + lastGridY);
+            //   GameInstance.Instance.
         }
         else
         {
@@ -285,10 +282,15 @@ public class PlayerController : Controller, IDamageable
           //  modelAnimator.SetFloat("lookAround", 0);
             return;
         }
+        
+        LastPosition = Transforms.position;
+        GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY, false);
+    
         if (LastPosition != Transforms.position)
         {
-            LastPosition = Transforms.position;
-            GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY);
+    //        LastPosition = Transforms.position;
+      //      GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY, false);
+            
         }
 
         if(animationWorking > 0)
@@ -425,8 +427,6 @@ public class PlayerController : Controller, IDamageable
                         break;
                     case WeaponType.Axe:
                         StartAnimation("cut", 1);
-                      //  weapon.Attack(0.35f, 0.6f);
-                        /*    equipWeapon.GetComponent<Axe>().EndAttack();*/
                         break;
                 }
             }
@@ -559,6 +559,7 @@ public class PlayerController : Controller, IDamageable
 
     void OpenInventory(InputAction.CallbackContext callback)
     {
+        if (animationWorking > 0) return;
         InventorySystem inventorySystem = GameInstance.Instance.inventorySystem;
         if (inventorySystem == null) return;
 
@@ -571,9 +572,9 @@ public class PlayerController : Controller, IDamageable
         GameInstance.Instance.inventorySystem.UseItem(this ,index);
     }
 
-    public void Equipment(Slot equipItem, int index)
+    public void Equipment(Slot equipItem, int index, bool forcedEquip = false)
     {
-        if (animationWorking > 0) return;
+        if (animationWorking > 0 && !forcedEquip) return;
 
         bool equip = true;
         equipSlotIndex = index;
@@ -594,7 +595,7 @@ public class PlayerController : Controller, IDamageable
             this.equipItem.GetComponent<Weapon>().weaponStruct = equipItem.weapon;
             this.equipItem.itemInteractionColider.enabled = false;
             this.equipItem.transform.localPosition = Vector3.zero;
-            this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+            this.equipItem.transform.localRotation = Quaternion.Euler(-90, -90, 0);
             modelAnimator.SetFloat("equip", 1);
 
 
@@ -616,7 +617,7 @@ public class PlayerController : Controller, IDamageable
             this.equipItem.GetComponent<ConsumptionItem>().consumtionStruct = equipItem.consumption;
             this.equipItem.itemInteractionColider.enabled = false;
             this.equipItem.transform.localPosition = Vector3.zero;
-            this.equipItem.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+            this.equipItem.transform.localRotation = Quaternion.Euler(-90, -90, 0);
             modelAnimator.SetFloat("equip", 0);
 
 
@@ -672,10 +673,13 @@ public class PlayerController : Controller, IDamageable
         //GetPlayer.playerStruct.hp -= damage;
         GetPlayer.GetDamage(damage);
         if (GetPlayer.playerStruct.hp <= 0)
-        {
+        {    
+          
             modelAnimator.SetTrigger("dead");
             GetPlayer.dead = true;
             state = PlayerState.Dead;
+            playerCamera.lookAround = false;
+            lookAround = false;
             GameInstance.Instance.worldGrids.RemovePlayer(this, ref lastGridX, ref lastGridY);
             gameObject.tag = "Enemy";
             gameObject.layer = 0b1010;
@@ -695,7 +699,7 @@ public class PlayerController : Controller, IDamageable
             GameInstance.Instance.worldGrids.AddObjects(enemyController.gameObject, MinimapIconType.Enemy, false);
             for (int i = 0; i < GameInstance.Instance.inventorySystem.slotNum; i++)
             {
-                for(int j= 0; j<10; j++)
+                for (int j = 0; j < 10; j++)
                 {
                     ItemStruct itemStruct = GameInstance.Instance.inventorySystem.inventoryArray[i, j].item;
                     if (itemStruct.item_index == 0) continue;
@@ -705,15 +709,15 @@ public class PlayerController : Controller, IDamageable
 
             SaveLoadSystem.SavePlayerData(GetPlayer);
 
+
             //인벤토리 초기화
             GameInstance.Instance.inventorySystem.ResetInventory();
-
 
             //인벤토리와 적 데이터 저장
             SaveLoadSystem.SaveEnemyInfo();
             SaveLoadSystem.SaveInventoryData();
 
-           // GameInstance.Instance.enemySpawner.enemies.Add(enemyController);
+            // GameInstance.Instance.enemySpawner.enemies.Add(enemyController);
 
 
             Invoke("Infected",2f);
@@ -721,6 +725,7 @@ public class PlayerController : Controller, IDamageable
         else
         {
             modelAnimator.SetTrigger("hit");
+           // modelAnimator.SetTrigger("dead");
             Invoke("StopAnimation", 0.5f);
             Invoke("StopMotion", 0.667f);
         }
@@ -777,6 +782,8 @@ public class PlayerController : Controller, IDamageable
         RemoveAction();
         Inputs.actions["OpenInventory"].performed -= OpenInventory;
         GameInstance.Instance.gameManager.PlayerSettings(false);
+
+        if (playerCamera != null) playerCamera.ResetPlayer();
         Destroy(this);
     }
     
@@ -816,8 +823,10 @@ public class PlayerController : Controller, IDamageable
         GameInstance.Instance.uiManager.SwitchUI(UIType.BoxInventory, false);
     }
 
-    public void Damaged(int damage)
+    public bool Damaged(int damage, int layer)
     {
-        GetDamage(damage);
+        if(gameObject.layer != layer) GetDamage(damage);
+        else return false;
+        return true;
     }
 }

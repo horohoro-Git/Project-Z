@@ -44,21 +44,12 @@ public class GettableItem : Item, IIdentifiable
 
     void GetItemComplete(PlayerController pc)
     {
-        GameInstance.Instance.inventorySystem.AddItem(this);
+        if(!GameInstance.Instance.inventorySystem.AddItem(this)) return;
         GameInstance.Instance.worldGrids.RemoveObjects(ID, MinimapIconType.Object);
         pc.RemoveAction(GetItem);
         Destroy(this.gameObject);
     }
 
- /*   public void Start()
-    {
-        Invoke("AA", 0.5f);
-    }
-
-    void AA()
-    {
-        GameInstance.Instance.worldGrids.AddObjects(this.gameObject);
-    }*/
     public void Spawned(bool load)
     {
         GameInstance.Instance.worldGrids.AddObjects(this.gameObject, MinimapIconType.Object, load);

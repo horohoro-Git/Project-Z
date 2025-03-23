@@ -169,13 +169,14 @@ public class InputManager : MonoBehaviour
 
     void StartAround(InputAction.CallbackContext callback)
     {
+       
         if (GameInstance.Instance.GetPlayers.Count > 0)
         {
             PlayerController pc = GameInstance.Instance.GetPlayers[0];
             if (pc != null)
             {
-                PlayerCamera camera = pc.GetComponent<PlayerCamera>();
-                if (camera != null)
+                PlayerCamera camera = pc.playerCamera;
+                if (camera != null && pc.state != PlayerState.Dead)
                 {
                     if (pc.lookAround)
                     {
