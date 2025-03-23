@@ -8,8 +8,6 @@ public class WeaponTrail : MonoBehaviour
     public TrailRenderer GetTrailRenderer;
 
     public Transform weaponTransform;
-   // public float trailDuration = 0.5f; 
-    private float trailTime = 0.5f;
 
     public float startWidth;
     public float endWidth;
@@ -19,26 +17,30 @@ public class WeaponTrail : MonoBehaviour
     public int trailLength = 100;
 
     public LineRenderer lineRenderer;
+    public Material trailMat;
     bool trail;
     bool updated;
     private void Start()
     {
-        GetTrailRenderer.enabled = false;
-        GetTrailRenderer.time = trailTime;
-        GetTrailRenderer.startWidth = 0.2f;
-        GetTrailRenderer.endWidth = 0.2f;
-     //   GetTrailRenderer.widthCurve.AddKey(0, 0.2f);
-     //   GetTrailRenderer.widthCurve.AddKey(0.2f, 0.1f);
-    //    GetTrailRenderer.minVertexDistance = 0.25f;
-        GetTrailRenderer.alignment = LineAlignment.TransformZ;
+        lineRenderer = weaponTransform.gameObject.AddComponent<LineRenderer>();
+        lineRenderer.enabled = false;
+        lineRenderer.material = trailMat;
+        /*   GetTrailRenderer.enabled = false;
+           GetTrailRenderer.time = trailTime;
+           GetTrailRenderer.startWidth = 0.2f;
+           GetTrailRenderer.endWidth = 0.2f;
+        //   GetTrailRenderer.widthCurve.AddKey(0, 0.2f);
+        //   GetTrailRenderer.widthCurve.AddKey(0.2f, 0.1f);
+       //    GetTrailRenderer.minVertexDistance = 0.25f;
+           GetTrailRenderer.alignment = LineAlignment.TransformZ;*/
         //GetTrailRenderer.emitting = false;
 
-   //     lineRenderer.startWidth = 0.2f;
-   //     lineRenderer.endWidth = 0.2f;
+        //     lineRenderer.startWidth = 0.2f;
+        //     lineRenderer.endWidth = 0.2f;
     }
  
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (trail && lineRenderer)
         {

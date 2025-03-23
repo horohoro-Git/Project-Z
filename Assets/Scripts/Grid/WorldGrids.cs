@@ -6,6 +6,7 @@ using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.LowLevel;
 
 public class WorldGrids : MonoBehaviour
 {
@@ -52,20 +53,28 @@ public class WorldGrids : MonoBehaviour
   
 
     //플레이어의 위치를 기록
-    public void UpdatePlayerInGrid(PlayerController pc, ref int refX, ref int refY)
+    public void UpdatePlayerInGrid(PlayerController pc, ref int refX, ref int refY, bool init)
     {
         //10f 간격으로 배열에 배치
-        Vector3 playerLoc = pc.Transforms.position; 
-        int x = Mathf.FloorToInt(playerLoc.x / 10) - indexingMinX; 
+        Vector3 playerLoc = pc.Transforms.position;
+        int x = Mathf.FloorToInt(playerLoc.x / 10) - indexingMinX;
         int y = Mathf.FloorToInt(playerLoc.y / 10) - indexingMinY;
+        if (init)
+        {
+            refX = x;
+            refY = y;
+            players[x, y].Add(pc);
+        }
+        else
+        {
+            if (x == refX && y == refY) return; // 인덱스상 위치가 달라졌을 때에만 배열의 내용을 변경
 
-        if (x == refX && y == refY) return; // 인덱스상 위치가 달라졌을 때에만 배열의 내용을 변경
+            players[refX, refY].Remove(pc); //기존 위치에 있던 플레이어 참조 제거
 
-        players[refX, refY].Remove(pc); //기존 위치에 있던 플레이어 참조 제거
-
-        refX = x;
-        refY = y;
-        players[x,y].Add(pc);   //새로운 위치에 플레이어 참조
+            refX = x;
+            refY = y;
+            players[x, y].Add(pc);   //새로운 위치에 플레이어 참조
+        }
     }
 
     public void RemovePlayer(PlayerController pc, ref int refX, ref int refY)
@@ -85,25 +94,25 @@ public class WorldGrids : MonoBehaviour
         int x = Mathf.FloorToInt(currentPosition.x /10)- indexingMinX;
         int y = Mathf.FloorToInt(currentPosition.y /10)- indexingMinY;
 
-      //  List<PlayerController> returnPlayers = new List<PlayerController>();
-
         for (int i = 0; i < 9; i++) // 현재 위치부터 8방향 탐색 
         {
             int posX = x + findX[i];
             int posY = y + findY[i];
 
+          
             if (ValidCheck(posX, posY)) //인덱스 유효성 체크
             {
                 List<PlayerController> controllers = players[posX, posY];
                 int preCount = lists.Count;
                 lists.AddRange(controllers);
+
                 for (int j = lists.Count - 1; j >= preCount; j--)
                 {
                     PlayerController controller = controllers[j];
                     Vector3 dir = controller.Transforms.position - currentPosition;
                     float distance = dir.magnitude;
                     dir = Vector3.Normalize(dir);
-                    if (Physics.Raycast(currentPosition,dir,distance,1 << 3)) lists.RemoveAt(j); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
+                    if (!Physics.Raycast(currentPosition,dir,distance,1 << 3)) lists.RemoveAt(j); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
                 }
             }
         }

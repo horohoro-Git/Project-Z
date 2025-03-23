@@ -493,6 +493,7 @@ public interface IIdentifiable
 
 public interface IDamageable
 {
-    public void Damaged(int damage);
+    
+    public bool Damaged(int damage, int layer);
 }
 

@@ -79,19 +79,10 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         {
        //     LastPosition = Transforms.position;
             DetectPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms, ref pcs));
-            //Debug.Log(agent.velocity.magnitude);
+
             modelAnimator.SetFloat("speed", agent.velocity.magnitude);
         }
-       /* if (GameInstance.Instance.player)
-        {
-            DetectPlayer(false);
-        }
-
-        if(enemyType == EnemyType.TargetDetect)
-        {
-            agent.SetDestination(GameInstance.Instance.player.Transforms.position);
-        }
-      */
+       
     }
 
     public void Setup()
@@ -121,10 +112,11 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         int index = 0;
         while (players.Count > index)
         {
+           
             PlayerController pc = players[index++];
             float distance = Vector3.Distance(pc.Transforms.position, Transforms.position);
 
-            if (distance < 10)  
+            if (distance < 10)
             {
                 Vector3 dir = (pc.Transforms.position - Transforms.position).normalized;
                 float angle = Vector3.Angle(Transforms.forward, dir);   // 적의 전면부에서 110도 까지 탐지 
@@ -306,7 +298,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     }
     private void OnDrawGizmos()
     {
-        
+        if (pcs.Count == 0) return; 
         if(!hunting) Gizmos.color = Color.yellow;
         else Gizmos.color = Color.red;
         Gizmos.color = Color.yellow;
@@ -323,9 +315,11 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         Gizmos.DrawWireSphere(Transforms.position, 20);
     }
 
-    public void Damaged(int damage)
+    public bool Damaged(int damage, int layer)
     {
-        BeAttacked(damage);
+        if (layer != gameObject.layer) BeAttacked(damage);
+        else return false;
+        return true;
     }
     private void OnDestroy()
     {

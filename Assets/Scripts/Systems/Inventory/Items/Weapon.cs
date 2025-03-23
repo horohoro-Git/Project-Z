@@ -37,6 +37,7 @@ public class Weapon : Item
     }
     public void StartAttack()
     {
+        attack = true;
         GetWeaponTrail.Trail(true);
         weaponColider.enabled = true;
     /*    Debug.Log("Start");
@@ -45,6 +46,7 @@ public class Weapon : Item
 
     public void StopAttack()
     {
+        attack = false;
         GetWeaponTrail.Trail(false);
         weaponColider.enabled = false;
       /*  Debug.Log("Stop");

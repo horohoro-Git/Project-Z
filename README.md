@@ -214,3 +214,6 @@ The equipped items change the player's stats and appearance through the inventor
 
 03/22
 Rotate the character model of the inventory by dragging the mouse
+
+03/23
+Improvement of attack hitbox, Bug fixes

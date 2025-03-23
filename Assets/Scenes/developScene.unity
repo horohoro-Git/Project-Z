@@ -1105,7 +1105,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1469880352332938026, guid: 48ce29f69bfd5e2458e600a5540d28c2, type: 3}
-  test: {fileID: 4731646552306349913, guid: 79ad9c370040e7946820c1662fa55c41, type: 3}
+  test: {fileID: 7768194137454234923, guid: ede9efc9c0f227d41a9101f7ca684822, type: 3}
   testWeapon: {fileID: 7306231138323477368, guid: c0e023263d2c1674094011fee7dd62d1, type: 3}
   inputManager: {fileID: 7613169056353209988, guid: 08e552a3f1d69e94a9e3ce4c1c6c01f1, type: 3}
   startPosition: {x: 0, y: 0, z: 0}

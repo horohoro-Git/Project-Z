@@ -106,6 +106,10 @@ public class PlayerCamera : MonoBehaviour
         lastPos = Input.mousePosition;
     }
  
+    public void ResetPlayer()
+    {
+        pc = null;
+    }
     void SmoothMovement()
     {
 

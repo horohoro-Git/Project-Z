@@ -113,8 +113,6 @@ public class Slot : MonoBehaviour, IUIComponent
             if (info != null) Destroy(info.gameObject);
         }
     }
-
-
     void OnDragEnter()
     {
         if (!item.used) return;
@@ -160,6 +158,7 @@ public class Slot : MonoBehaviour, IUIComponent
                     int targetNum = s.armor.carrying_capacity;
                     int currentSlotNum = armor.carrying_capacity;
                    
+                    //가방 타입 조건 체크
                     if(armor.armor_type == SlotType.Backpack)
                     {
                         if (!ValidCheckBackpackChange(this, targetNum)) return;
@@ -169,23 +168,6 @@ public class Slot : MonoBehaviour, IUIComponent
                     {
                         if (!ValidCheckBackpackChange(this, targetNum)) return;
                     }
-              /*      if (armor.armor_type == SlotType.Backpack && slotX == 0 && slotY == 9)
-                    {
-                        int slotNum = GameInstance.Instance.inventorySystem.slotNum;
-
-                        int targetNum = s.armor.carrying_capacity;
-
-                        if (slotNum > targetNum)
-                        {
-                            if(!GameInstance.Instance.inventorySystem.CheckItem(targetNum, slotNum))
-                            {
-                                Debug.Log("Fail");
-                                return;
-                            }
-                        }
-                    }*/
-
-
 
                     ItemStruct tempStruct = s.item;
                     s.item = item;
@@ -203,12 +185,8 @@ public class Slot : MonoBehaviour, IUIComponent
                     UpdateSlot(true);
                     s.UpdateSlot(true);
 
-
-                   
-
                     PlayerController pc = GameInstance.Instance.GetPlayers[0];
                  
-
                     if(GetComponentInParent<InventorySystem>())
                     {
                         GameInstance.Instance.boxInventorySystem.UpdateSlot(item, weapon, consumption, armor, slotX, slotY);
@@ -221,7 +199,6 @@ public class Slot : MonoBehaviour, IUIComponent
                                 pc.Unequipment();
                             //    GameInstance.Instance.inventorySystem.UseItem(pc, pc.equipSlotIndex);
                             }
-                           
                         }
 
                         if (s.slotX == 0)
@@ -267,9 +244,8 @@ public class Slot : MonoBehaviour, IUIComponent
                         }
                         else if(transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2 && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
                         {
-                         //   GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
+                            //   GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
                             GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
-
                         }
                         else
                         {
@@ -278,8 +254,6 @@ public class Slot : MonoBehaviour, IUIComponent
                             GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
                         }
                     }
-                 
-
                 }
 
                 Trashcan t = r.gameObject.GetComponent<Trashcan>();
@@ -299,11 +273,9 @@ public class Slot : MonoBehaviour, IUIComponent
                 }
                 break;
             }
-
         }
         GameInstance.Instance.inventorySystem.SetPlayerView(true);
     }
-
 
     //가방 교체 가능 확인
     bool ValidCheckBackpackChange(Slot slot, int targetNum)
@@ -317,7 +289,7 @@ public class Slot : MonoBehaviour, IUIComponent
             {
                 if (!GameInstance.Instance.inventorySystem.CheckItem(targetNum, slotNum))
                 {
-                    Debug.Log("Fail");
+                    Debug.Log("Item Exists");
                     return false;
                 }
             }
@@ -413,9 +385,10 @@ public class Slot : MonoBehaviour, IUIComponent
         GameInstance.Instance.boxInventorySystem.UpdateSlot(itemS, weapon, consumption, armor, slotX, slotY);
         if (slotX == 0)
         {
-            GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, weapon, consumption, armor, slotY, false);
            
             PlayerController pc = GameInstance.Instance.GetPlayers[0];
+            if(pc.state == PlayerState.Dead) GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, weapon, consumption, armor, slotY, true);
+            else GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, weapon, consumption, armor, slotY, false);
             if (pc != null)
             {
                 if(pc.equipSlotIndex == slotY)
@@ -489,9 +462,6 @@ public class Slot : MonoBehaviour, IUIComponent
                     player.WearingArmor(armor, true);
                     break;
             }
-            //if (slotType != SlotType.Backpack)
-            Debug.Log(lastArmor.armor_type);
-            Debug.Log(armor.armor_type);
             if (slotType != SlotType.Backpack) player.PutonArmor(lastArmor);
             if (armor.armor_type == slotType)
             {

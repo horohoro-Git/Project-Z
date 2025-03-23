@@ -79,7 +79,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         slotNum++;
     }
 
-    public void AddItem(Item item)
+    public bool AddItem(Item item)
     {
         ItemStruct itemStruct = item.itemStruct;
         for(int i =0; i< slotNum; i++)
@@ -117,19 +117,29 @@ public class InventorySystem : MonoBehaviour, IUIComponent
                     if(i == 0)
                     {
                         GameInstance.Instance.quickSlotUI.UpdateSlot(item.itemStruct, weaponStruct, consumptionStruct, armorStruct, j, false);
+
+                        if (GameInstance.Instance.GetPlayers.Count > 0)
+                        {
+                            PlayerController pc = GameInstance.Instance.GetPlayers[0];
+                            if(pc.equipSlotIndex == j)
+                            {
+                                UseItem(pc, j);
+                                pc.Equipment(inventoryArray[i, j], j, true);
+                            }
+                        }
                     }
 
                     SaveLoadSystem.SaveInventoryData();
-                    return;
+                    return true;
                 }
             }
         }
         Debug.Log("인벤토리 공간이 없음");
+        return false;
     }
 
     public void UseItem(PlayerController pc ,int index)
     {
-       
         inventoryArray[0, currentSlotIndex].itemImage.gameObject.SetActive(true);
         GameInstance.Instance.quickSlotUI.slots[currentSlotIndex].itemImage.gameObject.SetActive(true);
         inventoryArray[0, currentSlotIndex].image.sprite = defaultSlot;
