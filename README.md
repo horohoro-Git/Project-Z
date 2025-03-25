@@ -217,3 +217,6 @@ Rotate the character model of the inventory by dragging the mouse
 
 03/23
 Improvement of attack hitbox, Bug fixes
+
+03/24
+Add furniture type in housing system (item box)

@@ -385,7 +385,6 @@ public class Slot : MonoBehaviour, IUIComponent
         GameInstance.Instance.boxInventorySystem.UpdateSlot(itemS, weapon, consumption, armor, slotX, slotY);
         if (slotX == 0)
         {
-           
             PlayerController pc = GameInstance.Instance.GetPlayers[0];
             if(pc.state == PlayerState.Dead) GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, weapon, consumption, armor, slotY, true);
             else GameInstance.Instance.quickSlotUI.UpdateSlot(itemS, weapon, consumption, armor, slotY, false);
