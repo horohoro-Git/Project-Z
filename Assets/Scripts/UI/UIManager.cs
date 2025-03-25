@@ -55,22 +55,29 @@ public class UIManager : MonoBehaviour
         uiGO.GetComponent<IUIComponent>().Setup();
     }
 
-    public void SwitchUI(UIType type, bool forcedUpdate = false)
+    public bool SwitchUI(UIType type, bool forcedUpdate = false)
     {
-        if (!(GameInstance.Instance.gameManager.loaded && GameInstance.Instance.assetLoader.assetLoadSuccessful) && !forcedUpdate) return;
+        bool returnValue = false;
+        if (!(GameInstance.Instance.gameManager.loaded && GameInstance.Instance.assetLoader.assetLoadSuccessful) && !forcedUpdate) return false;
         if (uiType == type && type != UIType.Menu)
         {
             SwitchUI(UIType.QuickSlot);
-            return;
+            return false;
         }
         uiType = type;
         
         foreach (KeyValuePair<UIType, GameObject> ui in uiDictionary)
         {
             if (ui.Key == UIType.Menu) continue;
-            if (ui.Key == type) ui.Value.SetActive(true);
+            if (ui.Key == type)
+            {
+                ui.Value.SetActive(true);
+                returnValue = true;  
+            }
             else ui.Value.SetActive(false);
         }
+
+        return returnValue;
     }
 
 

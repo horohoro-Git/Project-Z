@@ -27,6 +27,8 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
     public RectTransform border1;
     public RectTransform border2;
 
+    public ItemBox currentItemBox;
+
     List<SlotArray> slotArrays = new List<SlotArray>();
     public void Setup()
     {
@@ -34,19 +36,49 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         SlotArray slots = list.gameObject.GetComponentInChildren<SlotArray>();
         InventoryExtends(slots, inventoryArray, ref slotNum);
         slotArrays.Add(slots);
-        for (int i = 0; i < 6; i++)
+     /*   for (int i = 0; i < 6; i++)
         {
             SlotArray newSlots = Instantiate(inventoryList);
             newSlots.GetComponent<RectTransform>().SetParent(list);
             InventoryExtends(newSlots, inventoryArray, ref slotNum);
             slotArrays.Add(newSlots);
-        }
+        }*/
 
         for (int i = 0; i < 7; i++)
         {
             SlotArray newSlots = Instantiate(inventoryList);
             newSlots.GetComponent<RectTransform>().SetParent(list2);
             InventoryExtends(newSlots, boxInventoryArray, ref boxSlotNum);
+        }
+    }
+
+    public void Extends(int num)
+    {
+        if (num > slotNum - 1)
+        {
+            int n = slotNum - 1;
+            for (int i = n; i < num; i++)
+            {
+                SlotArray newSlots = Instantiate(inventoryList);
+                newSlots.GetComponent<RectTransform>().SetParent(list);
+                InventoryExtends(newSlots, inventoryArray, ref slotNum);
+                slotArrays.Add(newSlots);
+            }
+        }
+        else if (num < slotNum - 1)
+        {
+            int n = slotNum - 1;
+            for (int i = n; i > num; i--)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    inventoryArray[i, j] = null;
+                }
+                SlotArray s = slotArrays[i];
+                slotArrays.RemoveAt(i);
+                Destroy(s.gameObject);
+            }
+            slotNum = num + 1;
         }
     }
 
@@ -145,5 +177,30 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         }
 
        
+    }
+    public void NewBox(ItemStruct[,] itemStructs, WeaponStruct[,] weaponStructs, ConsumptionStruct[,] consumptionStructs, ArmorStruct[,] armorStructs)
+    {
+        for (int i = 0; i < 7; i++)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                boxInventoryArray[i, j].item = new ItemStruct();
+                boxInventoryArray[i, j].weapon = new WeaponStruct();
+                boxInventoryArray[i, j].consumption = new ConsumptionStruct();
+                boxInventoryArray[i, j].armor = new ArmorStruct();
+                boxInventoryArray[i, j].UpdateSlot(true);
+            }
+        }
+        for (int i = 0; i < itemStructs.GetLength(0); i++)
+        {
+            for(int j = 0; j < itemStructs.GetLength(1); j++)
+            {
+                boxInventoryArray[i,j].item = itemStructs[i,j];
+                boxInventoryArray[i,j].weapon = weaponStructs[i,j];
+                boxInventoryArray[i,j].consumption = consumptionStructs[i,j];
+                boxInventoryArray[i,j].armor = armorStructs[i,j];
+                boxInventoryArray[i,j].UpdateSlot(true);
+            }
+        }
     }
 }
