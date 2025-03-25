@@ -15,6 +15,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     public Button floorBtn;
     public Button wallBtn;
     public Button doorBtn;
+    public Button furnitureBtn;
     public Button backBtn;
     public Button applyBtn;
     public Button restBtn;
@@ -22,6 +23,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     const string floorStr = "Floor";
     const string wallStr = "Wall";
     const string doorStr = "Door";
+    const string furnitureStr = "Furnitures";
 
     [SerializeField]
     Button editModeButton;
@@ -40,6 +42,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     UnityAction floorBtnListener;
     UnityAction wallBtnListener;
     UnityAction doorBtnListener;
+    UnityAction furnitureBtnListener;
     UnityAction editBtnListener;
     UnityAction backBtnListener;
     UnityAction applyBtnListener;
@@ -50,6 +53,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     public List<ItemStruct> floors = new List<ItemStruct>();
     public List<ItemStruct> walls = new List<ItemStruct>();
     public List<ItemStruct> doors = new List<ItemStruct>();
+    public List<ItemStruct> furnitures = new List<ItemStruct>();
 
     [SerializeField]
     InstallableItem installableItem;
@@ -58,8 +62,6 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
     private void Awake()
     {
         GameInstance.Instance.creatableUISystem = this;
-       // ItemStruct itemStruct = new ItemStruct(,);
-      //  floors.
     }
 
     private void OnEnable()
@@ -67,6 +69,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         floorBtnListener = () => ChangeSelectionType(StructureState.Floor);
         wallBtnListener = () => ChangeSelectionType(StructureState.Wall);
         doorBtnListener = () => ChangeSelectionType(StructureState.Door);
+        furnitureBtnListener = () => ChangeSelectionType(StructureState.Furniture);
         editBtnListener = () => ChangeMode();
         backBtnListener = () => GameInstance.Instance.housingSystem.Revert();
         applyBtnListener = () => GameInstance.Instance.housingSystem.Apply();
@@ -75,6 +78,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         floorBtn.onClick.AddListener(floorBtnListener);
         wallBtn.onClick.AddListener(wallBtnListener);
         doorBtn.onClick.AddListener(doorBtnListener);
+        furnitureBtn.onClick.AddListener(furnitureBtnListener);
         editModeButton.onClick.AddListener(editBtnListener);
         backBtn.onClick.AddListener(backBtnListener);
         applyBtn.onClick.AddListener(applyBtnListener);
@@ -101,13 +105,14 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         floorBtn.onClick.RemoveListener(floorBtnListener);
         wallBtn.onClick.RemoveListener(wallBtnListener);
         doorBtn.onClick.RemoveListener(doorBtnListener);
+        furnitureBtn.onClick.RemoveListener(furnitureBtnListener);
         editModeButton.onClick.RemoveListener(editBtnListener);
         backBtn.onClick.RemoveListener(backBtnListener);
         applyBtn.onClick.RemoveListener(applyBtnListener);
         restBtn.onClick.RemoveListener(resetBtnListener);
         tab.SetActive(false);
         labelText.text = "";
-        if (GameInstance.Instance.quit) return;
+   
         if (!(GameInstance.Instance.gameManager.loaded && GameInstance.Instance.assetLoader.assetLoadSuccessful)) return;
         GameInstance.Instance.inputManager.structureState = StructureState.None;
         GameInstance.Instance.editMode = EditMode.None;
@@ -116,7 +121,6 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         GameInstance.Instance.housingSystem.ResetMaterials();
         GameInstance.Instance.housingSystem.CheckRoofInWorld();
         GameInstance.Instance.playerController.AddAction();
-      
     }
 
     void ChangeSelectionType(StructureState structureState)
@@ -167,11 +171,19 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 labelText.text = doorStr;
                 tab.SetActive(true);
                 break;
+            case StructureState.Furniture:
+                if (labelText.text == furnitureStr)
+                {
+                    tab.SetActive(false);
+                    labelText.text = "";
+                    return ;
+                }
+                labelText.text= furnitureStr;
+                tab.SetActive(true);
+                break;
         }
 
         LoadInstallableMaterials(structureState);
-    /*    if (GameInstance.Instance.inputManager.structureState == structureState) GameInstance.Instance.inputManager.structureState = InputManager.StructureState.None;
-        else GameInstance.Instance.inputManager.structureState = structureState;*/
     }
  
     void ChangeMode()
@@ -231,6 +243,17 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 {
                     InstallableItem spawnItem = Instantiate(installableItem);
                     spawnItem.SetItemStruct(doors[i], StructureState.Door);
+                    spawnItem.Setup();
+                    spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
+                    items.Add(spawnItem);
+                }
+                break;
+            case StructureState.Furniture:
+                int index = AssetLoader.furnituresKey.Count;
+                for (int i = 0; i< index; i++)
+                {
+                    InstallableItem spawnItem = Instantiate(installableItem);
+                    spawnItem.SetItemStruct(ItemData.GetItem(AssetLoader.furnituresKey[i]), StructureState.Furniture);
                     spawnItem.Setup();
                     spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
                     items.Add(spawnItem);

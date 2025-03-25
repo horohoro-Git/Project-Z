@@ -88,7 +88,7 @@ public class UMACharacterAvatar : MonoBehaviour
         AttachItem attachItem = GetComponentInChildren<AttachItem>();
         itemObject.transform.SetParent(attachItem.transform);
         itemObject.transform.localPosition = Vector3.zero;
-        itemObject.transform.localRotation = Quaternion.Euler(-90, 120, 0);
+        itemObject.transform.localRotation = Quaternion.Euler(-90, -90, 0);
     }
 
     public void RemoveItem()

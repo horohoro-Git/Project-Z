@@ -37,8 +37,12 @@ public class InputManager : MonoBehaviour
 
     public const int BuildMaterials = 7;
     public const int Plane = 1 << 11;
+    public const int Furniture = 1 << 13;
     PointerEventData eventData = new PointerEventData(EventSystem.current);
     List<RaycastResult> raycastResults = new List<RaycastResult>();
+
+    [NonSerialized]
+    public ItemStruct selectedInstallableItem;
     public void Setup(PlayerInput playerInput)
     {
       
@@ -81,8 +85,27 @@ public class InputManager : MonoBehaviour
                 y = int.MaxValue;
                 return;
             }
-
+            AssetLoader assetLoader = GameInstance.Instance.assetLoader;
+            HousingSystem housing = GameInstance.Instance.housingSystem;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if(Physics.Raycast(ray, out RaycastHit hitFurniture, int.MaxValue, Furniture))
+            {
+               
+                GameInstance.Instance.drawGrid.Select(hitFurniture.collider.gameObject.transform.position, ref x, ref y);
+               
+                if (!(x >= 24 || x < -24 || y >= 24 || y < -24) && GameInstance.Instance.editMode == EditMode.DestroyMode)
+                {
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        GameInstance.Instance.housingSystem.RemoveFurniture(x, y);
+                        return;
+                    }
+                    GameInstance.Instance.assetLoader.PreviewDestoryObject(hitFurniture, x, y);
+                    return;
+                }
+            }
+
             if (Physics.Raycast(ray, out RaycastHit hit, int.MaxValue, Plane))
             {
                 if (GameInstance.Instance.drawGrid)
@@ -94,19 +117,22 @@ public class InputManager : MonoBehaviour
                         {
                             case StructureState.None: break;
                             case StructureState.Floor:
-                                if (GameInstance.Instance.editMode != EditMode.None) GameInstance.Instance.assetLoader.PreLoadFloor(x, y);
+                                if (GameInstance.Instance.editMode != EditMode.None) assetLoader.PreLoadFloor(hit.point, x, y);
                                 break;
                             case StructureState.Wall:
-                                if (GameInstance.Instance.editMode != EditMode.None) GameInstance.Instance.assetLoader.PreLoadWall(hit.point, x, y, true);
+                                if (GameInstance.Instance.editMode != EditMode.None) assetLoader.PreLoadWall(hit.point, x, y, true);
                                 break;
                             case StructureState.Door:
-                                if (GameInstance.Instance.editMode != EditMode.None) GameInstance.Instance.assetLoader.PreLoadWall(hit.point, x, y, false);
+                                if (GameInstance.Instance.editMode != EditMode.None) assetLoader.PreLoadWall(hit.point, x, y, false);
                                 break;
+                            case StructureState.Furniture:
+                                if (GameInstance.Instance.editMode != EditMode.None) assetLoader.PreviewFurniture(hit.point, x, y, AssetLoader.previewAssetKeys[selectedInstallableItem.item_index - 1]);
+                                 break;
                         }
                     }
                     else if (!(x >= 24 || x < -24 || y >= 24 || y < -24) && GameInstance.Instance.editMode == EditMode.DestroyMode)
                     {
-                        BuildWallDirection buildWallDirection = GameInstance.Instance.housingSystem.GetWallDirection(hit.point, x, y);
+                        BuildWallDirection buildWallDirection = housing.GetWallDirection(hit.point, x, y);
                         GameInstance.Instance.assetLoader.PreviewDestoryObject(buildWallDirection, hit, x, y);
                     }
                 }
@@ -117,7 +143,7 @@ public class InputManager : MonoBehaviour
                 {
                     if (GameInstance.Instance.editMode == EditMode.DestroyMode)
                     {
-                        BuildWallDirection buildWallDirection = GameInstance.Instance.housingSystem.GetWallDirection(hit.point, x, y);
+                        BuildWallDirection buildWallDirection = housing.GetWallDirection(hit.point, x, y);
                         GameInstance.Instance.housingSystem.RemoveMaterial(buildWallDirection, x, y);
                     }
                     else
@@ -126,26 +152,28 @@ public class InputManager : MonoBehaviour
                         {
                             case StructureState.None: break;
                             case StructureState.Floor:
-                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) GameInstance.Instance.assetLoader.LoadFloor(x, y);
-                                else if (GameInstance.Instance.editMode == EditMode.DestroyMode) GameInstance.Instance.housingSystem.RemoveFloor(x, y);
+                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) assetLoader.LoadFloor(x, y);
+                                else if (GameInstance.Instance.editMode == EditMode.DestroyMode) housing.RemoveFloor(x, y);
                                 break;
                             case StructureState.Wall:
-                                BuildWallDirection buildWallDirection = GameInstance.Instance.housingSystem.GetWallDirection(hit.point, x, y);
-                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) GameInstance.Instance.assetLoader.LoadWall(buildWallDirection, x, y);
-                                else if (GameInstance.Instance.editMode == EditMode.DestroyMode) GameInstance.Instance.housingSystem.RemoveWall(buildWallDirection, x, y);
+                                BuildWallDirection buildWallDirection = housing.GetWallDirection(hit.point, x, y);
+                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) assetLoader.LoadWall(buildWallDirection, x, y);
+                                else if (GameInstance.Instance.editMode == EditMode.DestroyMode) housing.RemoveWall(buildWallDirection, x, y);
                                 break;
 
                             case StructureState.Door:
-                                BuildWallDirection buildDoorDirection = GameInstance.Instance.housingSystem.GetWallDirection(hit.point, x, y);
-                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) GameInstance.Instance.assetLoader.LoadWall(buildDoorDirection, x, y, false);
-                                else if (GameInstance.Instance.editMode == EditMode.DestroyMode) GameInstance.Instance.housingSystem.RemoveWall(buildDoorDirection, x, y);
+                                BuildWallDirection buildDoorDirection = housing.GetWallDirection(hit.point, x, y);
+                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) assetLoader.LoadWall(buildDoorDirection, x, y, false);
+                                else if (GameInstance.Instance.editMode == EditMode.DestroyMode) housing.RemoveWall(buildDoorDirection, x, y);
+                                break;
+                            case StructureState.Furniture:
+                                BuildWallDirection buildfurnitureDirection = housing.GetWallDirection(hit.point, x, y);
+                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) assetLoader.LoadFurniture(buildfurnitureDirection, x, y, AssetLoader.itemAssetkeys[selectedInstallableItem.item_index - 1], false);
+                                else if (GameInstance.Instance.editMode == EditMode.DestroyMode) housing.RemoveFurniture(x, y);
                                 break;
                         }
                     }
-                     
-
                 }
-          
             }
         }
     }

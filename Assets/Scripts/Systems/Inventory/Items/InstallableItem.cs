@@ -43,6 +43,7 @@ public class InstallableItem : Item, IUIComponent
     void BuildStart()
     {
         GameInstance.Instance.creatableUISystem.tab.SetActive(false);
+        GameInstance.Instance.inputManager.selectedInstallableItem = itemStruct;
         GameInstance.Instance.inputManager.structureState = type;
     }
 }

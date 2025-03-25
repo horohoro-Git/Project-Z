@@ -31,7 +31,7 @@ public class App : MonoBehaviour
         GameInstance.Instance.Reset();
         GameInstance.Instance.quit = true;
  
-        GameInstance.Instance.Reset();
+       // GameInstance.Instance.Reset();
     }
     private void OnSceneUnloaded(Scene scene)
     {

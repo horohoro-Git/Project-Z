@@ -36,18 +36,24 @@ public class AssetLoader : MonoBehaviour
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "grasses",
       "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup","enemy_zombie",
-      "human_male", "male", "UMA_GLIB"
+      "human_male", "male", "UMA_GLIB", "cardboardbox","cardboardbox_preview"
     };
 
     [NonSerialized]
     public static List<string> itemAssetkeys = new List<string> {
-    "log", "wooden Axe", "apple"
+    "log", "wooden Axe", "apple", "cardboardbox"
+    };
+
+    public static List<string> previewAssetKeys = new List<string>
+    {
+        "","","", "cardboardbox_preview"
     };
 
     [NonSerialized]
     public static List<string> spriteAssetkeys = new List<string> {
-        "log_Sprite", "axe_Sprite", "apple_Sprite", "HatLeatherM_Sprite", "GambesonM_Sprite",
+        "log_Sprite", "axe_Sprite", "apple_Sprite", "cardboardbox_sprite", "HatLeatherM_Sprite", "GambesonM_Sprite",
         "GlovesLinenM_Sprite","KnickerbockerBlackM_Sprite", "SchoesLaceUpBlackM_Sprite",  "SamplePack01_M_Sprite",
+        
     };
     [NonSerialized]
     public static List<string> enemykeys = new List<string> {
@@ -103,6 +109,8 @@ public class AssetLoader : MonoBehaviour
     public GameObject lastSelectedMaterial;
     Color lastSelectedColor;
     Shader standard;
+
+    Vector3 hitPoint = new Vector3(-100,-100,-100);
 //    AsyncOperationHandle<IList<GameObject>> handle;
 //    AsyncOperationHandle<IList<Sprite>> spritehandle;
 
@@ -122,6 +130,11 @@ public class AssetLoader : MonoBehaviour
     public string enemyContent;
     [NonSerialized]
     public string armorContent;
+
+    //설치물 키
+    [NonSerialized]
+    public static List<int> furnituresKey = new List<int>
+    { 4 };
 
     public void Awake()
     {
@@ -343,6 +356,7 @@ public class AssetLoader : MonoBehaviour
             for (int i = 0; i < armorTable.Count; i++) armors[armorTable[i].item_index] = armorTable[i];
 
             ItemData.ItemDatabaseSetup();
+           // GameInstance.Instance.creatableUISystem
         }
     }
 
@@ -367,15 +381,15 @@ public class AssetLoader : MonoBehaviour
         if (preLoadedObject != null) Destroy(preLoadedObject);
         preLoadedObject = null;
     }
-    public void PreLoadFloor(int x, int y)
+    public void PreLoadFloor(Vector3 point, int x, int y)
     {
         if (CheckAssetLoaded())
         {
-            if (x != preLoadX || y != preLoadY)
+            if (x != preLoadX || y != preLoadY || point != hitPoint)
             {
                 if (preLoadedObject != null) Destroy(preLoadedObject);
                 preLoadedObject = Instantiate(loadedAssets[LoadURL.PreviewFloor], root.transform);
-                preLoadX = x; preLoadY = y; 
+                preLoadX = x; preLoadY = y; hitPoint = point;
             }
             if (preLoadedObject)
             {
@@ -384,7 +398,7 @@ public class AssetLoader : MonoBehaviour
 
                 if (GameInstance.Instance.editMode == EditMode.DestroyMode)
                 {
-                    if (GameInstance.Instance.housingSystem.CheckFloor(x, y)) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
+                    if (GameInstance.Instance.housingSystem.CheckFloor(x, y) && !GameInstance.Instance.housingSystem.CheckFurniture(x,y)) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
                     else preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
                 }
                 else
@@ -401,12 +415,13 @@ public class AssetLoader : MonoBehaviour
         if (CheckAssetLoaded())
         {
             BuildWallDirection buildWallDirection = GameInstance.Instance.housingSystem.GetWallDirection(hit, x, y);
-            if (x != preLoadX || y != preLoadY || buildDirection != buildWallDirection || isWall != wall)
+            if (x != preLoadX || y != preLoadY || buildDirection != buildWallDirection || isWall != wall || hitPoint != hit)
             {
                 if (preLoadedObject != null) Destroy(preLoadedObject);
                 if (isWall) preLoadedObject = Instantiate(loadedAssets[LoadURL.PreviewWall], root.transform);
                 else preLoadedObject = Instantiate(loadedAssets[LoadURL.PreviewDoor], root.transform);
                 preLoadX = x; preLoadY = y; buildDirection = buildWallDirection; isWall = wall;
+                hitPoint = hit;
             }
             if (preLoadedObject)
             {
@@ -446,6 +461,99 @@ public class AssetLoader : MonoBehaviour
         }
     }
 
+    public void PreviewFurniture(Vector3 hit, int x, int y, string assetName)
+    {
+        if (CheckAssetLoaded())
+        {
+            BuildWallDirection buildWallDirection = GameInstance.Instance.housingSystem.GetWallDirection(hit, x, y);
+            if (x != preLoadX || y != preLoadY || buildDirection != buildWallDirection || hit != hitPoint)
+            {
+                if (preLoadedObject != null) Destroy(preLoadedObject);
+                preLoadedObject = Instantiate(loadedAssets[assetName], root.transform);
+
+                preLoadX = x; preLoadY = y; buildDirection = buildWallDirection;
+                hitPoint = hit; 
+            }
+            if (preLoadedObject)
+            {
+                int offsetX = 0;
+                int offsetY = 0;
+                int offsetZ = 0;
+                int locX = 0;
+                int locY = 0;
+                BuildDirectionWithOffset buildDirectionWithOffset = Utility.GetWallDirectionWithOffset(buildWallDirection, x, y);
+
+                offsetX = buildDirectionWithOffset.offsetX;
+                offsetY = buildDirectionWithOffset.offsetY;
+                offsetZ = buildDirectionWithOffset.offsetZ;
+                locX = buildDirectionWithOffset.locX;
+                locY = buildDirectionWithOffset.locY;
+                float xx = 0;
+                float yy = 0;
+                if (offsetX == -1) xx = 0.5f;
+                if (offsetX == 1) xx = -0.5f;
+                if (offsetY == -1) yy = 0.5f;
+                if (offsetY == 1) yy = -0.5f;
+                preLoadedObject.transform.position = new Vector3(locX + xx, 0.75f, locY + yy);
+                if (offsetZ == 0) preLoadedObject.transform.rotation = Quaternion.Euler(-90, -90, 0);
+                else preLoadedObject.transform.rotation = Quaternion.Euler(-90, 0, 0);
+
+                if (GameInstance.Instance.editMode == EditMode.DestroyMode)
+                {
+                    preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
+
+                    if (GameInstance.Instance.housingSystem.CheckFurniture(x, y)) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.yellow;
+                }
+                else
+                {
+                    if (!GameInstance.Instance.housingSystem.CheckFloor(x, y) || GameInstance.Instance.housingSystem.CheckFurniture(x,y)) preLoadedObject.GetComponent<MeshRenderer>().material.color = Color.red;
+                }
+
+            }
+        }
+    }
+
+    public void PreviewDestoryObject(RaycastHit hits, int x, int y)
+    {
+        if (CheckAssetLoaded())
+        {
+            if (x != preLoadX || y != preLoadY || hits.point != hitPoint)
+            {
+                if (lastSelectedMaterial != null)
+                {
+                    IBuildMaterials buildMaterials = lastSelectedMaterial.GetComponent<IBuildMaterials>();
+
+                    Renderer render = buildMaterials.renderer;
+                    render.material.shader = Standard;
+                    render.material.color = lastSelectedColor;
+                }
+
+                hitPoint = hits.point;
+                preLoadX = x;
+                preLoadY = y;
+                buildDirection = BuildWallDirection.None;
+
+                int xx = x + 25;
+                int yy = y + 25;
+                Debug.Log("Check");
+                GameObject furniture = GameInstance.Instance.housingSystem.GetFurniture(xx, yy);
+                if (furniture != null)
+                {
+                    Renderer otherRender = furniture.GetComponent<Renderer>();
+                    lastSelectedColor = otherRender.material.color;
+                    lastSelectedMaterial = furniture;
+                    otherRender.material.color = Color.yellow;
+                    otherRender.material.shader = holoShader;
+                  
+                    return;
+                }
+            }
+
+         
+        }
+
+    }
+
     public void PreviewDestoryObject(BuildWallDirection buildWallDirection, RaycastHit hits, int x, int y)
     {
         if (CheckAssetLoaded())
@@ -460,6 +568,7 @@ public class AssetLoader : MonoBehaviour
                 {
                     if (lastSelectedMaterial != null)
                     {
+                   //     Renderer render = lastSelectedMaterial.GetComponent<Renderer>();
                         IBuildMaterials buildMaterials = lastSelectedMaterial.GetComponent<IBuildMaterials>();
 
                         Renderer render = buildMaterials.renderer;
@@ -512,10 +621,19 @@ public class AssetLoader : MonoBehaviour
 
                     GameObject floor = GameInstance.Instance.housingSystem.GetFloor(xx, yy);
                     if(floor == null) return;
+
                     Renderer renderer = floor.GetComponent<IBuildMaterials>().renderer;
                     lastSelectedColor = renderer.material.color;
                     lastSelectedMaterial = floor;
-                    renderer.material.color = Color.yellow;
+
+                    if(GameInstance.Instance.housingSystem.CheckFurniture(x,y))
+                    {
+                        renderer.material.color = Color.red;
+                    }
+                    else
+                    {
+                        renderer.material.color = Color.yellow;
+                    }
                     renderer.material.shader = holoShader;
                 }
 
@@ -663,6 +781,53 @@ public class AssetLoader : MonoBehaviour
             }
         }
         
+    }
+    public void LoadFurniture(BuildWallDirection buildWallDirection, int x, int y, string assetName, bool forecedBuild = false)
+    {
+        if (CheckAssetLoaded())
+        {
+            int offsetX = 0;
+            int offsetY = 0;
+            int offsetZ = 0;
+            int locX = 0;
+            int locY = 0;
+            BuildDirectionWithOffset buildDirectionWithOffset = Utility.GetWallDirectionWithOffset(buildWallDirection, x, y);
+
+            offsetX = buildDirectionWithOffset.offsetX;
+            offsetY = buildDirectionWithOffset.offsetY;
+            offsetZ = buildDirectionWithOffset.offsetZ;
+            locX = buildDirectionWithOffset.locX;
+            locY = buildDirectionWithOffset.locY;
+
+            HousingSystem housing = GameInstance.Instance.housingSystem;
+
+            if (housing.CheckFloor(x, y) || forecedBuild)
+            {
+                if (!housing.CheckFurniture(x, y) || forecedBuild)
+                {
+                    if (preLoadedObject != null) Destroy(preLoadedObject);
+                    GameObject go;
+                    go = Instantiate(loadedAssets[assetName], root.transform);
+                    float xx = 0;
+                    float yy = 0;
+                    if (offsetX == -1) xx = 0.5f;
+                    else if (offsetX == 1) xx = -0.5f;
+                    if (offsetY== -1) yy = 0.5f;
+                    else if (offsetY == 1) yy = -0.5f;
+                    go.transform.position = new Vector3(locX + xx, 0.75f, locY + yy);
+                    if (offsetZ == 0)
+                    {
+                        go.transform.rotation = Quaternion.Euler(-90, -90, 0);
+                    }
+                    else
+                    {
+                        go.transform.rotation = Quaternion.Euler(-90, 0, 0);
+                    }
+                    housing.BuilFurniture(x, y, go, buildWallDirection, forecedBuild);
+                }
+            }
+        }
+
     }
 
     public void LoadAsset()

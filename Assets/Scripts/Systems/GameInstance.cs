@@ -43,6 +43,27 @@ public class GameInstance
     public bool quit = false;
     public void Reset()
     {
+        playerStatusDetailsUI.enabled = false;
+        characterProfileUI.enabled = false;
+        abilityMenuUI.enabled = false;
+        minimapUI.enabled = false;
+        playerStatusUI.enabled = false;
+        environmentSpawner.enabled = false;
+        creatableUISystem.enabled = false;
+        uiManager.enabled = false;
+        inventorySystem.enabled = false;
+        housingSystem.enabled = false;
+        playerController.enabled = false;
+        worldGrids.enabled = false;
+        app.enabled = false;
+        gameManager.enabled = false;
+        inputManager.enabled = false;
+        drawGrid.enabled = false;
+        assetLoader.enabled = false;
+        quickSlotUI.enabled = false;
+        enemySpawner.enabled = false;
+        boxInventorySystem.enabled = false;
+
         playerStatusDetailsUI = null;
         characterProfileUI = null;
         abilityMenuUI = null;

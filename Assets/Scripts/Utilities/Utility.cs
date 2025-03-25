@@ -141,7 +141,10 @@ public enum ItemType
     Consumable,
     Equipmentable,
     Wearable,
-    Installable
+    Installable_Floor,
+    Installable_Wall,
+    Installable_Door,
+    Installable_Furniture
 }
 
 //UI의 상태 값
@@ -197,7 +200,8 @@ public enum StructureState
     None,
     Floor,
     Wall,
-    Door
+    Door,
+    Furniture
 }
 
 
