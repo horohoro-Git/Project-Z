@@ -220,3 +220,6 @@ Improvement of attack hitbox, Bug fixes
 
 03/24
 Add furniture type in housing system (item box)
+
+03/25
+Implementation features of itembox (placement and storage functions)

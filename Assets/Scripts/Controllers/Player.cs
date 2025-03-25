@@ -216,6 +216,8 @@ public class Player : MonoBehaviour
         else
         {
             GameInstance.Instance.inventorySystem.ExpandSlot(armorStruct.carrying_capacity);
+            GameInstance.Instance.boxInventorySystem.Extends(armorStruct.carrying_capacity);
+
         }
     }
 
