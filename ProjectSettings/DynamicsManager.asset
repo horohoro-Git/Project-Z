@@ -3,32 +3,111 @@
 --- !u!55 &1
 PhysicsManager:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
+  serializedVersion: 15 # Hypothetically increased version number due to new fields
+  # --- Core Simulation ---
+  m_PhysicsBackend: 0 # NEW: Select backend (0: PhysX, 1: Jolt Physics [Experimental], 2: DOTS Physics [Experimental], 3: Custom)
+  m_AutoSimulation: 1
+  m_SimulationMode: 0 # NEW: (0: Standard Update, 1: Fixed Update, 2: Manual Update)
+  m_TimeScale: 1.0 # NEW: Local physics time scale
+  m_MaxDeltaTime: 0.1 # NEW: Max simulation time step to prevent spiral of death
+  m_MaxSubsteps: 2 # NEW: Max physics substeps per frame if time delta is large
   m_Gravity: {x: 0, y: -9.81, z: 0}
-  m_DefaultMaterial: {fileID: 0}
-  m_BounceThreshold: 2
-  m_SleepThreshold: 0.005
-  m_DefaultContactOffset: 0.01
+  # --- Solver Settings ---
+  m_SolverType: 0 # NEW: (0: PGS (Projected Gauss-Seidel), 1: TGS (Temporal Gauss-Seidel))
   m_DefaultSolverIterations: 6
   m_DefaultSolverVelocityIterations: 1
-  m_QueriesHitBackfaces: 0
-  m_QueriesHitTriggers: 1
+  m_SolverStabilizationHeuristic: 1 # NEW: Enable/disable solver stabilization passes (0: Disabled, 1: Enabled)
+  m_MaxProjectionIterations: 4 # NEW: Max iterations for constraint projection (TGS specific)
+  m_JointCorrectionFactor: 0.3 # NEW: How much joint separation is corrected per step (0-1)
+  m_JointRateCorrectionFactor: 0.7 # NEW: How much joint velocity error is corrected per step (0-1)
   m_EnableAdaptiveForce: 0
-  m_ClothInterCollisionDistance: 0
-  m_ClothInterCollisionStiffness: 0
-  m_ContactsGeneration: 1
-  m_LayerCollisionMatrix: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
-  m_AutoSimulation: 1
-  m_AutoSyncTransforms: 0
-  m_ReuseCollisionCallbacks: 1
-  m_ClothInterCollisionSettingsToggle: 0
-  m_ContactPairsMode: 0
-  m_BroadphaseType: 0
+  m_SleepThreshold: 0.005
+  # --- Collision Detection ---
+  m_BroadphaseType: 0 # (0: Sweep and Prune, 1: Multi-Box Pruning, 2: Automatic) -> NEW: Added Automatic option
   m_WorldBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 250, y: 250, z: 250}
-  m_WorldSubdivisions: 8
-  m_FrictionType: 0
-  m_EnableEnhancedDeterminism: 0
-  m_EnableUnifiedHeightmaps: 1
-  m_DefaultMaxAngluarSpeed: 7
+  m_WorldBoundsScaleFactor: 1.2 # NEW: Safety margin multiplier for dynamic world bounds adjustment
+  m_WorldSubdivisions: 8 # Used by Multi-Box Pruning Broadphase
+  m_ContactsGeneration: 1 # (0: Legacy Contacts, 1: Persistent Contact Manifold (PCM))
+  m_ContactPairsMode: 0 # (0: Default, 1: Enable Kinematic-Kinematic Pairs, 2: Enable Kinematic-Static Pairs, 3: Enable All Pairs)
+  m_DefaultContactOffset: 0.01
+  m_BounceThreshold: 2
+  m_QueriesHitBackfaces: 0
+  m_QueriesHitTriggers: 1
+  m_UseSpatialQueryCache: 1 # NEW: Enable caching for scene queries (raycasts, etc.)
+  m_DefaultRaycastMaxHits: 1 # NEW: Default max hits for multi-hit raycasts
+  m_ReuseCollisionCallbacks: 1
+  # --- Continuous Collision Detection (CCD) ---
+  m_EnableCCD: 1 # NEW: Global toggle for Continuous Collision Detection
+  m_CCDSweepMethod: 0 # NEW: (0: Linear Sweep, 1: Conservative Advancement)
+  m_CCDMaxContactIterations: 3 # NEW: Solver iterations specifically for CCD contacts
+  m_CCDEpsilon: 0.001 # NEW: Tolerance value used in CCD algorithms
+  m_CCDMinFrictionSeparation: 0.005 # NEW: Separation distance below which friction is applied in CCD contacts
+  # --- Materials & Friction ---
+  m_DefaultMaterial: {fileID: 0} # Assign a default PhysicMaterial asset
+  m_FrictionType: 0 # (0: Patch Friction, 1: One Directional, 2: Two Directional)
+  m_EnableAnisotropicFriction: 0 # NEW: Globally enable support for anisotropic friction in materials
+  m_EnableRollingFriction: 0 # NEW: Globally enable support for rolling friction/resistance in materials
+  m_ImprovedPatchFriction: 1 # NEW: Use more stable patch friction model if available
+  # --- Layers & Masks ---
+  m_LayerCollisionMatrix: ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff
+  # NEW: Named Layer Presets (example, actual implementation might differ)
+  m_LayerPresets: # NEW Section
+  - m_Name: Gameplay Elements
+    m_Mask: 00000000000000000000000011111111 # Example mask data
+  - m_Name: Environment Only
+    m_Mask: 00000000000000001111111100000000 # Example mask data
+  # --- Multithreading & Performance ---
+  m_PhysicsJobSystemType: 1 # NEW: (0: Disabled, 1: Unity Job System, 2: Native Backend Threads)
+  m_MaxPhysicsThreads: 0 # NEW: Max threads for physics jobs (0 = Auto based on core count)
+  m_PhysicsJobBatchSize: 64 # NEW: Granularity of physics jobs dispatched to worker threads
+  m_EnableCollisionBatching: 1 # NEW: Allow batching collision checks for performance
+  m_AutoSyncTransforms: 0 # Sync transforms before/after simulation
+  # --- Determinism & Networking ---
+  m_EnableEnhancedDeterminism: 0 # Ensure identical results on same hardware/build (within limits)
+  m_ForceDeterministicOrder: 0 # NEW: Force deterministic island/constraint processing order (potentially slower)
+  m_NetworkPredictionMode: 0 # NEW: (0: None, 1: Client-Side Prediction Assist, 2: Server Reconciliation Assist)
+  m_NetworkStateBufferSize: 60 # NEW: Size of buffer for physics state (for rollback/prediction)
+  # --- Soft Body / Cloth ---
+  m_ClothInterCollisionSettingsToggle: 0 # Use specific cloth inter-collision settings
+  m_ClothInterCollisionDistance: 0
+  m_ClothInterCollisionStiffness: 0
+  m_EnableGlobalSoftBodySimulation: 0 # NEW: Master toggle for integrated soft-body simulation
+  m_SoftBodySolverIterations: 10 # NEW: Default solver iterations for soft bodies
+  m_DefaultVolumeStiffness: 0.8 # NEW: Default volume preservation stiffness for soft bodies
+  m_DefaultShapeMatchingStiffness: 0.6 # NEW: Default shape matching stiffness for soft bodies
+  # --- Fluid Simulation (SPH Example) ---
+  m_EnableSPHFluidSimulation: 0 # NEW: Master toggle for integrated SPH fluid simulation
+  m_SPHParticleRadius: 0.1 # NEW: Default radius for SPH particles
+  m_SPHRestDensity: 1000 # NEW: Target density for SPH fluid
+  m_SPHViscosityCoefficient: 0.05 # NEW: Fluid viscosity
+  m_SPHMaxParticles: 10000 # NEW: Global limit for SPH particles
+  m_SPHCollisionMargin: 0.02 # NEW: Collision offset for SPH particles
+  # --- Destruction / Fracture ---
+  m_EnableDestructionManager: 0 # NEW: Master toggle for integrated destruction system
+  m_DefaultFractureImpulseThreshold: 50 # NEW: Impulse needed to initiate fracture
+  m_MaxDebrisObjects: 200 # NEW: Limit on active physics debris objects
+  m_DebrisCullingTime: 5 # NEW: Time (seconds) before inactive debris is potentially removed
+  m_DebrisSleepThresholdMultiplier: 2.0 # NEW: Multiplier for sleep threshold applied to debris objects
+  # --- Vehicle Physics Helpers ---
+  m_EnableVehicleSupport: 1 # NEW: Globally enable specific vehicle physics optimizations/helpers
+  m_DefaultWheelRaycastLength: 0.5 # NEW: Default suspension raycast length for wheel colliders
+  m_DefaultSuspensionForceFactor: 30000 # NEW: Default suspension strength multiplier
+  m_DefaultAntiRollStiffness: 5000 # NEW: Default stiffness for anti-roll bar helpers
+  # --- Character Controller Defaults ---
+  m_DefaultCharacterStepOffset: 0.3 # NEW: Default step height for physics character controllers
+  m_DefaultCharacterSlopeLimit: 45 # NEW: Default max slope angle
+  m_CharacterContactProcessingMode: 1 # NEW: (0: Standard, 1: Enhanced Filtering) How characters interact with complex contacts
+  # --- Debugging & Visualization ---
+  m_VisualizeContacts: 0 # NEW: Draw contact points
+  m_VisualizeAABBs: 0 # NEW: Draw broadphase Axis-Aligned Bounding Boxes
+  m_VisualizeBroadphase: 0 # NEW: Draw broadphase grid/structure (if applicable)
+  m_VisualizeConstraints: 0 # NEW: Draw joint limits and constraint info
+  m_VisualizeSleepState: 0 # NEW: Color objects based on sleep state
+  m_DebugTextColor: {r: 1, g: 1, b: 1, a: 1} # NEW: Color for physics debug text overlays
+  m_DebugDrawScale: 1.0 # NEW: Scale factor for debug visualization geometry
+  # --- Miscellaneous ---
+  m_EnableUnifiedHeightmaps: 1 # Optimization for Terrain heightmap colliders
+  m_DefaultMaxAngluarSpeed: 50 # Increased from 7 to a more common default like 50 or 100
+  m_PhysicsQualityPreset: 1 # NEW: (0: Fastest, 1: Balanced, 2: Best Quality, 3: Custom) Applies a set of underlying settings
