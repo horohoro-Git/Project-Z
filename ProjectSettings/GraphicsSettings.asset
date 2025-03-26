@@ -3,61 +3,105 @@
 --- !u!30 &1
 GraphicsSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 13
+  serializedVersion: 13 # Assuming the version stays the same for this example
+  # --- Built-in RP Settings (Less relevant if SRP is active) ---
+  # You might turn these off (m_Mode: 0) if exclusively using SRP,
+  # or keep them if you might switch back or use specific features.
   m_Deferred:
-    m_Mode: 1
-    m_Shader: {fileID: 69, guid: 0000000000000000f000000000000000, type: 0}
+    m_Mode: 0 # Disabled - URP/HDRP handles deferred rendering differently
+    m_Shader: {fileID: 0}
   m_DeferredReflections:
-    m_Mode: 1
-    m_Shader: {fileID: 74, guid: 0000000000000000f000000000000000, type: 0}
+    m_Mode: 0 # Disabled - URP/HDRP handle reflections differently
+    m_Shader: {fileID: 0}
   m_ScreenSpaceShadows:
-    m_Mode: 1
-    m_Shader: {fileID: 64, guid: 0000000000000000f000000000000000, type: 0}
+    m_Mode: 0 # Disabled - URP/HDRP handle screen space shadows differently
+    m_Shader: {fileID: 0}
   m_LegacyDeferred:
-    m_Mode: 1
-    m_Shader: {fileID: 63, guid: 0000000000000000f000000000000000, type: 0}
+    m_Mode: 0 # Disabled
+    m_Shader: {fileID: 0}
   m_DepthNormals:
-    m_Mode: 1
+    m_Mode: 1 # Often kept enabled even with SRPs for effects needing depth/normals texture
     m_Shader: {fileID: 62, guid: 0000000000000000f000000000000000, type: 0}
   m_MotionVectors:
-    m_Mode: 1
+    m_Mode: 1 # Keep enabled if using Temporal Anti-Aliasing (TAA) or motion blur
     m_Shader: {fileID: 75, guid: 0000000000000000f000000000000000, type: 0}
   m_LightHalo:
-    m_Mode: 1
-    m_Shader: {fileID: 105, guid: 0000000000000000f000000000000000, type: 0}
+    m_Mode: 0 # Disabled - Less common effect
+    m_Shader: {fileID: 0}
   m_LensFlare:
-    m_Mode: 1
+    m_Mode: 1 # Enabled - Still usable, often enhanced in SRPs via Post-Processing
     m_Shader: {fileID: 102, guid: 0000000000000000f000000000000000, type: 0}
-  m_AlwaysIncludedShaders:
+  # --- Shader Management ---
+  m_AlwaysIncludedShaders: # Added a common URP/HDRP related shader (Example!)
   - {fileID: 7, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 15104, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 15105, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 15106, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
   - {fileID: 10770, guid: 0000000000000000f000000000000000, type: 0}
-  m_PreloadedShaders: []
+  # Example: Adding URP Unlit shader to prevent stripping if needed
+  - {fileID: 4800000, guid: abcdef1234567890abcdef1234567890, type: 3} # Placeholder!
+  # Example: Adding a custom critical shader
+  - {fileID: 4800002, guid: fedcba0987654321fedcba0987654321, type: 3} # Placeholder!
+  m_PreloadedShaders: # Example: Preload a complex shader for faster first use
+  - {fileID: 4800004, guid: 11223344556677881122334455667788, type: 3} # Placeholder!
   m_SpritesDefaultMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000,
-    type: 0}
-  m_CustomRenderPipeline: {fileID: 0}
-  m_TransparencySortMode: 0
-  m_TransparencySortAxis: {x: 0, y: 0, z: 1}
-  m_DefaultRenderingPath: 1
-  m_DefaultMobileRenderingPath: 1
-  m_TierSettings: []
-  m_LightmapStripping: 0
-  m_FogStripping: 0
-  m_InstancingStripping: 0
+    type: 0} # Usually okay, but URP/HDRP might need specific sprite materials.
+  # --- Core Rendering Pipeline ---
+  m_CustomRenderPipeline: {fileID: 11400000, guid: 1234567890abcdef1234567890abcdef, type: 2} # Placeholder! Assign your URP or HDRP Asset here
+  # --- Sorting ---
+  m_TransparencySortMode: 1 # Changed to Perspective sorting (more accurate for 3D)
+  m_TransparencySortAxis: {x: 0, y: 1, z: 0} # Changed axis example (relevant for Orthographic)
+  # --- Rendering Paths (Less relevant when SRP is active, SRP Asset controls this) ---
+  m_DefaultRenderingPath: 0 # Changed to Forward (example)
+  m_DefaultMobileRenderingPath: 0 # Changed to Forward (example)
+  # --- Graphics Tiers (Massive Enhancement!) ---
+  m_TierSettings: # Define settings for Low (Tier1), Medium (Tier2), High (Tier3) quality
+  - m_Name: Tier1 # Low Quality
+    serializedVersion: 2
+    renderingPath: 0 # Forward Rendering
+    hdrMode: 0 # No HDR
+    hdr: 0
+    realtimeGICPUUsage: 100 # High CPU Usage (Less accurate GI)
+    enableAutoGraphicsAPIs: 1
+    graphicsAPIs: []
+    platformSettings: []
+  - m_Name: Tier2 # Medium Quality
+    serializedVersion: 2
+    renderingPath: 0 # Forward Rendering (Could be Deferred depending on SRP)
+    hdrMode: 1 # HDR On if supported
+    hdr: 1
+    realtimeGICPUUsage: 75 # Medium CPU Usage
+    enableAutoGraphicsAPIs: 1
+    graphicsAPIs: []
+    platformSettings: []
+  - m_Name: Tier3 # High Quality
+    serializedVersion: 2
+    renderingPath: 1 # Deferred Rendering (If using Built-in, or let SRP decide)
+    hdrMode: 1 # HDR On if supported
+    hdr: 1
+    realtimeGICPUUsage: 50 # Low CPU Usage (More accurate GI)
+    enableAutoGraphicsAPIs: 1
+    graphicsAPIs: []
+    platformSettings: [] # Add platform-specific overrides here (e.g., for PC, Mobile)
+  # --- Stripping Settings (Modern stripping managed elsewhere, but flags exist) ---
+  m_LightmapStripping: 0 # Obsolete
+  m_FogStripping: 0 # Obsolete
+  m_InstancingStripping: 0 # Obsolete
   m_LightmapKeepPlain: 1
   m_LightmapKeepDirCombined: 1
-  m_LightmapKeepDynamicPlain: 1
-  m_LightmapKeepDynamicDirCombined: 1
-  m_LightmapKeepShadowMask: 1
-  m_LightmapKeepSubtractive: 1
+  m_LightmapKeepDynamicPlain: 0 # Example: Stripping dynamic plain lightmaps if unused
+  m_LightmapKeepDynamicDirCombined: 0 # Example: Stripping dynamic directional lightmaps if unused
+  m_LightmapKeepShadowMask: 1 # Keep if using Shadowmask mode
+  m_LightmapKeepSubtractive: 0 # Example: Stripping subtractive if not used
   m_FogKeepLinear: 1
-  m_FogKeepExp: 1
+  m_FogKeepExp: 0 # Example: Stripping Exp fog variant if only using Linear/Exp2
   m_FogKeepExp2: 1
-  m_AlbedoSwatchInfos: []
-  m_LightsUseLinearIntensity: 0
-  m_LightsUseColorTemperature: 0
-  m_LogWhenShaderIsCompiled: 0
+  m_AlbedoSwatchInfos: [] # Internal
+  # --- Lighting Settings ---
+  m_LightsUseLinearIntensity: 1 # Enabled - Requires Linear Color Space in Player Settings
+  m_LightsUseColorTemperature: 1 # Enabled - Allows using Kelvin for light colors
+  # --- Debugging ---
+  m_LogWhenShaderIsCompiled: 1 # Enabled - Useful for debugging shader compile times/issues
+  # --- Legacy ---
   m_AllowEnlightenSupportForUpgradedProject: 0
