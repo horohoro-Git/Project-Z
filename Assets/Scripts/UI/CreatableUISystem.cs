@@ -249,11 +249,13 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 }
                 break;
             case StructureState.Furniture:
+                List<CraftingData> craftingDatas = GameInstance.Instance.craftingLearnSystem.learnedDatas;
                 int index = AssetLoader.furnituresKey.Count;
-                for (int i = 0; i< index; i++)
+                int c = craftingDatas.Count;    
+                for (int i = 0; i< c; i++)
                 {
                     InstallableItem spawnItem = Instantiate(installableItem);
-                    spawnItem.SetItemStruct(ItemData.GetItem(AssetLoader.furnituresKey[i]), StructureState.Furniture);
+                    spawnItem.SetItemStruct(craftingDatas[i].item, StructureState.Furniture);
                     spawnItem.Setup();
                     spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
                     items.Add(spawnItem);

@@ -1371,7 +1371,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4197333411415815507}
   - component: {fileID: 1767538360291298621}
-  - component: {fileID: 6806612920812864846}
   m_Layer: 5
   m_Name: onlyhomebaseui
   m_TagString: Untagged
@@ -1453,18 +1452,6 @@ MonoBehaviour:
     itemGO: {fileID: 0}
   furnitures: []
   installableItem: {fileID: 6418595802802880002, guid: 2ca645f3d3901fa42ba4b49e5d90c523, type: 3}
---- !u!114 &6806612920812864846
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4547795168140859874}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3e831f8cf760f8419983c60d68777a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &4865954748699033013
 GameObject:
   m_ObjectHideFlags: 0

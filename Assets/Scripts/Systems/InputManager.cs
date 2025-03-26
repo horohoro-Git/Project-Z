@@ -168,7 +168,7 @@ public class InputManager : MonoBehaviour
                                 break;
                             case StructureState.Furniture:
                                 BuildWallDirection buildfurnitureDirection = housing.GetWallDirection(hit.point, x, y);
-                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) assetLoader.LoadFurniture(buildfurnitureDirection, x, y, AssetLoader.itemAssetkeys[selectedInstallableItem.item_index - 1], false);
+                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) assetLoader.LoadFurniture(buildfurnitureDirection, x, y, selectedInstallableItem.item_index - 1, false);
                                 else if (GameInstance.Instance.editMode == EditMode.DestroyMode) housing.RemoveFurniture(x, y);
                                 break;
                         }

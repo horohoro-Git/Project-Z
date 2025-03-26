@@ -129,6 +129,7 @@ public class PlayerController : Controller, IDamageable
             {
                 if (!SaveLoadSystem.LoadPlayerData(this))
                 {
+
                     //플레이어 초기 값
 
                     PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0,0, 100, 1, 0, 0, 200, 20 , 0, 1, 1, 1, 0);

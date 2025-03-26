@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -147,8 +148,17 @@ public enum ItemType
     Installable_Furniture
 }
 
+//배울 수 있는 제작 타입
+public enum LearnType
+{
+    None,
+    Installable
+    
+}
+
+
 //UI의 상태 값
-public  enum UIType
+public enum UIType
 {
     None,
     Menu,
@@ -203,6 +213,14 @@ public enum StructureState
     Door,
     Furniture
 }
+
+//가구 타입
+public enum FurnitureType
+{
+    None,
+    ItemBox
+}
+
 
 
 //하우징에 사용되는 모드
@@ -426,6 +444,30 @@ public struct DropStruct
 {
     public int item_index;
     public int item_chance;
+}
+
+//아이템 박스 데이터
+public struct BoxStruct
+{
+    public ItemStruct[,] itemStructs;
+    public ConsumptionStruct[,] consumptionStructs;
+    public WeaponStruct[,] weaponStructs;
+    public ArmorStruct[,] armorStructs;
+
+    public BoxStruct(ItemStruct[,] items, ConsumptionStruct[,] consumptions, WeaponStruct[,] weapons, ArmorStruct[,] armors)
+    {
+        itemStructs = items;
+        consumptionStructs = consumptions;
+        weaponStructs = weapons;
+        armorStructs = armors;
+    }
+}
+
+//제작 정보
+public struct CraftStruct
+{
+    public int index;
+
 }
 
 
