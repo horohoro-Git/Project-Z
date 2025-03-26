@@ -9,6 +9,10 @@ public class InstallableObject : MonoBehaviour, IBuildMaterials
     public Renderer GetRenderer;
     Renderer IBuildMaterials.renderer { get { return GetRenderer; } }
 
+    public FurnitureType furnitureType;
+    public MaterialsType materialType;
+    public BuildWallDirection buildWallDirection;
+    public int assetID;
     public void Clear()
     {
       

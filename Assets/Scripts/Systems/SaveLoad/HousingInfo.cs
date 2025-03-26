@@ -7,7 +7,8 @@ public enum MaterialsType
     None,
     Floor,
     Wall,
-    Door
+    Door,
+    Furniture
 }
 public struct HousingInfo
 {
@@ -15,12 +16,14 @@ public struct HousingInfo
     public int x;
     public int y;
     public int z;
+    public int id;
 
-    public HousingInfo(int x, int y, int z, MaterialsType type)
+    public HousingInfo(int x, int y, int z, MaterialsType type, int id)
     {
         this.materialsType = type;
         this.x = x;
         this.y = y;
         this.z = z;
+        this.id = id;
     }
 }

@@ -123,7 +123,6 @@ public class HousingSystem : MonoBehaviour
         int indexY = y - miny;
         floorCount++;
         floors[indexX, indexY] = floor;
-        Debug.Log(indexX + "," + indexY);
         if (isLoad) return;
 
         MeshRenderer meshRender = floor.GetComponent<MeshRenderer>();
@@ -306,7 +305,9 @@ public class HousingSystem : MonoBehaviour
         int indexY = y - miny;
     
         others[indexX, indexY] = furniture;
-        furniture.GetComponent<IBuildMaterials>().structureState = StructureState.Furniture;
+        InstallableObject installableObject = furniture.GetComponent<InstallableObject>();
+        installableObject.structureState = StructureState.Furniture;
+        installableObject.buildWallDirection = build;
         //  walls[indexX, indexY, indexZ] = wall;
         if (isLoad) return;
       

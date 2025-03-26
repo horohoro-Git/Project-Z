@@ -223,3 +223,6 @@ Add furniture type in housing system (item box)
 
 03/25
 Implementation features of itembox (placement and storage functions)
+
+03/26
+Added the crafting unlock system to unlock multiple crafting items

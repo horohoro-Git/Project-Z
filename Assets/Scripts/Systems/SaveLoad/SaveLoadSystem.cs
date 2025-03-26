@@ -136,6 +136,13 @@ public class SaveLoadSystem
         return JsonConvert.DeserializeObject<List<ConsumptionStruct>>(data);
     }
 
+    //제작 정보 가져오기
+    public static List<CraftStruct> GetCraftData(string content)
+    {
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+        return JsonConvert.DeserializeObject<List<CraftStruct>>(data);
+    }
+
     //서버 불러오기
     public static string LoadServerURL()
     {
@@ -337,6 +344,9 @@ public class SaveLoadSystem
                             PlayerStruct playerStruct = new PlayerStruct(maxHP / 2, maxHP, energy, maxEnergy, 0, exp, requireEXP, level, attackDamage, 0, 200, 20, skillPoint, hpLevel, energyLevel, weightLevel, 0);
                             pc.SetPlayerData(Vector3.zero, rot, playerStruct);
                         }
+                        List<CraftStruct> craftStructs = new List<CraftStruct>();
+                        GameInstance.Instance.craftingLearnSystem.LoadLearns(craftStructs);
+                        //
                     }
                 }
             }
@@ -523,7 +533,7 @@ public class SaveLoadSystem
             {
                 BuildSystem_WriteFloor(writer);
                 BuildSystem_WriteWall(writer);
-
+                BuildSystem_WriteFurniture(writer);
             }
             File.WriteAllBytes(p, ms.ToArray());
         }
@@ -552,23 +562,35 @@ public class SaveLoadSystem
                             //재질 타입
                             MaterialsType type = (MaterialsType)reader.ReadInt32();
 
-                            if(type == MaterialsType.Floor)
+                            switch (type)
                             {
-                                int x = reader.ReadInt32();
-                                int y = reader.ReadInt32();
-                                HousingInfo housingInfo = new HousingInfo(x,y,0,type);
-                                housingInfos.Add(housingInfo);
-                               
-                            }
-                            else
-                            {
-                                int x = reader.ReadInt32();
-                                int y = reader.ReadInt32();
-                                int z = reader.ReadInt32();
-                                bool d = reader.ReadBoolean();
+                                case MaterialsType.None:
+                                    break;
+                                case MaterialsType.Floor:
+                                    int x = reader.ReadInt32();
+                                    int y = reader.ReadInt32();
+                                    HousingInfo housingInfo = new HousingInfo(x, y, 0, type, 0);
+                                    housingInfos.Add(housingInfo);
+                                    break;
+                                case MaterialsType.Wall:
+                                case MaterialsType.Door:
+                                    int wx = reader.ReadInt32();
+                                    int wy = reader.ReadInt32();
+                                    int wz = reader.ReadInt32();
+                                    bool d = reader.ReadBoolean();
 
-                                HousingInfo housingInfo = new HousingInfo(x,y,z, d ? MaterialsType.Door : MaterialsType.Wall);
-                                housingInfos.Add(housingInfo);
+                                    HousingInfo housingWInfo = new HousingInfo(wx, wy, wz, d ? MaterialsType.Door : MaterialsType.Wall, 0);
+                                    housingInfos.Add(housingWInfo);
+                                    break;
+                                case MaterialsType.Furniture:
+                                    int fx = reader.ReadInt32();
+                                    int fy = reader.ReadInt32();
+                                    int fz = reader.ReadInt32();
+                                    int id = reader.ReadInt32();
+                                    HousingInfo housingFInfo = new HousingInfo(fx, fy, fz, type, id);
+                                    housingInfos.Add(housingFInfo);
+
+                                    break;
                             }
                         }
                     }
@@ -622,8 +644,228 @@ public class SaveLoadSystem
         }
     }
 
+    public static void BuildSystem_WriteFurniture(BinaryWriter writer)
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            for (int j = 0; j < 100; j++)
+            {
+                GameObject furnitureGO = GameInstance.Instance.housingSystem.GetFurniture(i, j);
+                if (furnitureGO != null)
+                {
+                    InstallableObject furniture = furnitureGO.GetComponent<InstallableObject>();
+                    if (furniture != null)
+                    {
+                        writer.Write((int)MaterialsType.Furniture);
+                        writer.Write(i);
+                        writer.Write(j);
+                        writer.Write((int)furniture.buildWallDirection);
+                        writer.Write(furniture.assetID);
+                    }
+                }
+            }
+        }
+    }
+
+    //창고 저장, 로드
+    public static void SaveItemBox()
+    {
+        string dir = Path.Combine(path, "Save");
+        if (!Directory.Exists(dir))
+        {
+            Directory.CreateDirectory(dir);
+        }
+        string p = Path.Combine(path, "Save/ItemBox.dat");
+
+        using (MemoryStream ms = new MemoryStream())
+        {
+            using (BinaryWriter writer = new BinaryWriter(ms))
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    for(int j = 0;j < 100; j++)
+                    {
+                        GameObject itemBoxGO = GameInstance.Instance.housingSystem.GetFurniture(i, j);
+                        if (itemBoxGO != null)
+                        {
+                            ItemBox itemBox = GameInstance.Instance.housingSystem.GetFurniture(i, j).GetComponent<ItemBox>();
+                          
+                            if (itemBox != null)
+                            {
+                                int x = i;
+                                int y = j;
+                                writer.Write(x);
+                                writer.Write(y);
+                                for (int k = 0; k < 7; k++)
+                                {
+                                    for (int l = 0; l < 10; l++)
+                                    {
+                                        ItemStruct item = itemBox.itemData[k, l];
+                                        if (item.item_index == 0)
+                                        {
+                                            writer.Write(false);
+                                            continue;
+                                        }
+                                        writer.Write(true);
+
+                                        writer.Write(item.item_index);
+                                        writer.Write(item.item_name);
+                                        writer.Write((int)item.slot_type);
+                                        writer.Write((int)item.item_type);
+
+                                        switch (itemBox.itemData[k, l].item_type)
+                                        {
+                                            case ItemType.None:
+                                                break;
+                                            case ItemType.Consumable:
+                                                //소비 아이템
+                                                ConsumptionStruct consumptionStruct = itemBox.consumptionData[k, l];
+                                                writer.Write(consumptionStruct.item_index);
+                                                writer.Write((int)consumptionStruct.consumption_type);
+                                                writer.Write(consumptionStruct.heal_amount);
+                                                writer.Write(consumptionStruct.energy_amount);
+                                                writer.Write(consumptionStruct.duration);
+                                                break;
+                                            case ItemType.Equipmentable:
+                                                //무기 아이템
+                                                WeaponStruct weaponStruct = itemBox.weaponData[k, l];
+                                                writer.Write(weaponStruct.item_index);
+                                                writer.Write((int)weaponStruct.weapon_type);
+                                                writer.Write(weaponStruct.attack_damage);
+                                                writer.Write(weaponStruct.attack_speed);
+                                                writer.Write(weaponStruct.max_ammo);
+                                                writer.Write(weaponStruct.durability);
+                                                break;
+                                            case ItemType.Wearable:
+                                                //방어구 아이템
+                                                ArmorStruct armorStruct = itemBox.armorData[k, l];
+                                                writer.Write(armorStruct.item_index);
+                                                writer.Write((int)armorStruct.armor_type);
+                                                writer.Write(armorStruct.defense);
+                                                writer.Write(armorStruct.durability);
+                                                writer.Write(armorStruct.move_speed);
+                                                writer.Write(armorStruct.attack_damage);
+                                                writer.Write(armorStruct.carrying_capacity);
+                                                writer.Write(armorStruct.key_index);
+                                                break;
+                                        }
+
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            File.WriteAllBytes(p, ms.ToArray());
+        }
+    }
+
+    public static void LoadItemBox()
+    {
+        List<HousingInfo> housingInfos = new List<HousingInfo>();
+        byte[] data;
+        string p = Path.Combine(path, "Save/ItemBox.dat");
+
+        if (File.Exists(p))
+        {
+            using (FileStream fs = new FileStream(p, FileMode.Open))
+            {
+                data = new byte[fs.Length];
+                fs.Read(data, 0, data.Length);
+
+                if (data.Length > 0)
+                {
+                    using (BinaryReader reader = new BinaryReader(new MemoryStream(data)))
+                    {
+                        while (reader.BaseStream.Position < reader.BaseStream.Length)
+                        {
+                            int x = reader.ReadInt32();
+                            int y = reader.ReadInt32();
+                            ItemStruct[,] itemStructs = new ItemStruct[7, 10];
+                            ConsumptionStruct[,] consumptionStructs = new ConsumptionStruct[7, 10];
+                            WeaponStruct[,] weaponStructs = new WeaponStruct[7, 10];
+                            ArmorStruct[,] armorStructs = new ArmorStruct[7, 10];
+
+                            for(int i = 0;i<7; i++)
+                            {
+                                for(int j =0; j<10; j++)
+                                {
+                                    bool used = reader.ReadBoolean();
+                                 
+                                    ConsumptionStruct consumptionStruct = new ConsumptionStruct();
+                                    WeaponStruct weaponStruct = new WeaponStruct();
+                                    ArmorStruct armorStruct = new ArmorStruct();
+                                    ItemStruct itemStruct = new ItemStruct();
+                                    itemStructs[i, j] = itemStruct;
+                                    consumptionStructs[i, j] = consumptionStruct;
+                                    weaponStructs[i, j] = weaponStruct;
+                                    armorStructs[i, j] = armorStruct;
+                                    if (!used) continue;
+                                    int index = reader.ReadInt32();
+                                    string name = reader.ReadString();
+                                    SlotType slotType = (SlotType)reader.ReadInt32();
+                                    ItemType itemType = (ItemType)reader.ReadInt32();
+
+                                    itemStruct = new ItemStruct(index,null,name,slotType,itemType,null);
+                                    itemStructs[i, j] = itemStruct;
+                                    switch (itemType)
+                                    {
+                                        case ItemType.None:
+                                            break;
+                                        case ItemType.Consumable:
+                                            int consumpI_index = reader.ReadInt32();
+                                            ConsumptionType consumptionType = (ConsumptionType)reader.ReadInt32(); 
+                                            int heal_amount = reader.ReadInt32();
+                                            int energy_amount = reader.ReadInt32();
+                                            float duration = reader.ReadSingle();
+                                            consumptionStruct = new ConsumptionStruct(consumpI_index, consumptionType, heal_amount, energy_amount, duration);
+                                            consumptionStructs[i, j] = consumptionStruct;
+                                            break;
+                                        case ItemType.Equipmentable:
+                                            int weapon_index = reader.ReadInt32();
+                                            WeaponType weaponType = (WeaponType)reader.ReadInt32();
+                                            int attack_damage = reader.ReadInt32();
+                                            float attack_speed= reader.ReadSingle();
+                                            int max_ammo = reader.ReadInt32();
+                                            int durability = reader.ReadInt32();
+                                            weaponStruct = new WeaponStruct(weapon_index, weaponType,attack_damage,attack_speed,max_ammo,durability);
+                                            weaponStructs[i, j] = weaponStruct;
+                                            break;
+                                        case ItemType.Wearable:
+                                            int armor_index = reader.ReadInt32();
+                                            SlotType armorType = (SlotType)reader.ReadInt32();
+                                            int defense = reader.ReadInt32();
+                                            int durabiliry = reader.ReadInt32();
+                                            int move_speed = reader.ReadInt32();
+                                            int armor_damage = reader.ReadInt32();
+                                            int carrying_capacity = reader.ReadInt32();
+                                            int key_index = reader.ReadInt32();
+                                            armorStruct = new ArmorStruct(armor_index, armorType, defense, durabiliry, carrying_capacity, move_speed, armor_damage, key_index);
+                                            armorStructs[i, j] = armorStruct;
+
+                                            break;
+                                    
+                                    }
 
 
+                                }
+                            }
+                            
+
+                            BoxStruct boxStruct = new BoxStruct(itemStructs, consumptionStructs, weaponStructs, armorStructs);
+
+
+                            //로드
+                            ItemBox itemBox = GameInstance.Instance.housingSystem.GetFurniture(x, y).GetComponent<ItemBox>();
+                            itemBox.LoadItem(boxStruct);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     //적 정보 로드
     public static bool LoadEnemyInfo()

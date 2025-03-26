@@ -86,6 +86,9 @@ public class AssetLoader : MonoBehaviour
     [NonSerialized]
     public Dictionary<int, ArmorStruct> armors = new Dictionary<int, ArmorStruct>();
 
+    [NonSerialized]
+    public Dictionary<int, CraftStruct> crafts = new Dictionary<int, CraftStruct>();
+
     public Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
     public Dictionary<string, Sprite> loadedSprites = new Dictionary<string, Sprite>();
 
@@ -130,6 +133,8 @@ public class AssetLoader : MonoBehaviour
     public string enemyContent;
     [NonSerialized]
     public string armorContent;
+    [NonSerialized]
+    public string craftContent;
 
     //설치물 키
     [NonSerialized]
@@ -232,6 +237,15 @@ public class AssetLoader : MonoBehaviour
                 {
                     TextAsset armorTextAsset = (TextAsset)armorrequest.asset;
                     armorContent = armorTextAsset.text;
+                }
+
+                AssetBundleRequest craftrequest = bundle.LoadAssetAsync<TextAsset>("craft");
+                yield return craftrequest;
+
+                if (craftrequest != null)
+                {
+                    TextAsset craftTextAsset = (TextAsset)craftrequest.asset;
+                    craftContent = craftTextAsset.text;
                 }
 
                 //프리팹 에셋 로드
@@ -350,10 +364,12 @@ public class AssetLoader : MonoBehaviour
             List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
             enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
             List<ArmorStruct> armorTable = SaveLoadSystem.GetArmorData(armorContent);
+            List<CraftStruct> craftStructs = SaveLoadSystem.GetCraftData(craftContent);
 
             for (int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
             for (int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
             for (int i = 0; i < armorTable.Count; i++) armors[armorTable[i].item_index] = armorTable[i];
+            for(int i = 0; i< craftStructs.Count; i++) crafts[craftStructs[i].index] = craftStructs[i];
 
             ItemData.ItemDatabaseSetup();
            // GameInstance.Instance.creatableUISystem
@@ -535,7 +551,7 @@ public class AssetLoader : MonoBehaviour
 
                 int xx = x + 25;
                 int yy = y + 25;
-                Debug.Log("Check");
+
                 GameObject furniture = GameInstance.Instance.housingSystem.GetFurniture(xx, yy);
                 if (furniture != null)
                 {
@@ -782,7 +798,7 @@ public class AssetLoader : MonoBehaviour
         }
         
     }
-    public void LoadFurniture(BuildWallDirection buildWallDirection, int x, int y, string assetName, bool forecedBuild = false)
+    public void LoadFurniture(BuildWallDirection buildWallDirection, int x, int y, int assetID, bool forecedBuild = false)
     {
         if (CheckAssetLoaded())
         {
@@ -792,7 +808,7 @@ public class AssetLoader : MonoBehaviour
             int locX = 0;
             int locY = 0;
             BuildDirectionWithOffset buildDirectionWithOffset = Utility.GetWallDirectionWithOffset(buildWallDirection, x, y);
-
+           
             offsetX = buildDirectionWithOffset.offsetX;
             offsetY = buildDirectionWithOffset.offsetY;
             offsetZ = buildDirectionWithOffset.offsetZ;
@@ -807,7 +823,8 @@ public class AssetLoader : MonoBehaviour
                 {
                     if (preLoadedObject != null) Destroy(preLoadedObject);
                     GameObject go;
-                    go = Instantiate(loadedAssets[assetName], root.transform);
+                    go = Instantiate(loadedAssets[AssetLoader.itemAssetkeys[assetID]], root.transform);
+                    go.GetComponent<InstallableObject>().assetID = assetID;
                     float xx = 0;
                     float yy = 0;
                     if (offsetX == -1) xx = 0.5f;

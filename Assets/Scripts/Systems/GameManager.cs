@@ -129,17 +129,30 @@ public class GameManager : MonoBehaviour
             for (int i = 0; i < infos.Count; i++)
             {
                 HousingInfo info = infos[i];
-                if (info.materialsType == MaterialsType.Floor)
-                {
-                    GameInstance.Instance.assetLoader.LoadFloor(info.x + minx, info.y + miny, true);
 
-                }
-                else
+                switch (info.materialsType)
                 {
-                    BuildWallDirection buildWallDirection = info.z == 0 ? BuildWallDirection.Left : BuildWallDirection.Bottom;
-                    GameInstance.Instance.assetLoader.LoadWall(buildWallDirection, info.x + minx, info.y + miny, info.materialsType == MaterialsType.Wall ? true : false, true);
+                    case MaterialsType.None:
+                        break;
+                    case MaterialsType.Floor:
+                        GameInstance.Instance.assetLoader.LoadFloor(info.x + minx, info.y + miny, true);
+                        break;
+                    case MaterialsType.Wall: case MaterialsType.Door:
+                        BuildWallDirection buildWallDirection = info.z == 0 ? BuildWallDirection.Left : BuildWallDirection.Bottom;
+                        GameInstance.Instance.assetLoader.LoadWall(buildWallDirection, info.x + minx, info.y + miny, info.materialsType == MaterialsType.Wall ? true : false, true);
+                        break;
+                    case MaterialsType.Furniture:
+                        GameInstance.Instance.assetLoader.LoadFurniture((BuildWallDirection)info.z, info.x + minx, info.y + miny, info.id, true);
+                        break;
                 }
+
             }
+
+            SaveLoadSystem.LoadItemBox();
+
+           // if()
+
+
 
             GameInstance.Instance.housingSystem.CheckRoofInWorld();
         }
