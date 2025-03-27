@@ -21,7 +21,8 @@ public class PlayerStatusDetailsUI : MonoBehaviour
    
     public void Setup(PlayerStruct player)
     {
-        UpdateHP(player.hp, player.maxHP);
+        CharacterAbilityManager characterAbility = GameInstance.Instance.characterAbilityManager;
+        UpdateHP(player.hp, player.maxHP + characterAbility.maxHp);
         UpdateDefense(player.defense);
         UpdateDamage(player.attackDamage);
         UpdateAttackSpeed(player.attackSpeed);

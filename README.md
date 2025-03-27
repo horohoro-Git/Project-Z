@@ -226,3 +226,6 @@ Implementation features of itembox (placement and storage functions)
 
 03/26
 Added the crafting unlock system to unlock multiple crafting items
+
+03/27
+Added character ability system, improved addition and deletion of production system

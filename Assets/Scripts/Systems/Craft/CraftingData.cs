@@ -7,6 +7,9 @@ using UnityEngine.UI;
 
 public class CraftingData : MonoBehaviour
 {
+    RectTransform rectTransform;
+    public RectTransform GetRectTransform {  get { if (rectTransform == null) rectTransform = GetComponent<RectTransform>(); return rectTransform; } }
+
     public LearnType type;
 
     public Image icon;
@@ -18,11 +21,12 @@ public class CraftingData : MonoBehaviour
 
     public CraftingLearnSystem learnSystem;
 
-    public void Setup(ItemStruct itemStruct)
+    public void Setup(ItemStruct itemStruct, bool learned)
     {
         item = itemStruct;
         icon.sprite = itemStruct.image;
         icon_name.text = itemStruct.item_name;
+        this.learned = learned;
     }
     private void OnEnable()
     {
@@ -38,8 +42,12 @@ public class CraftingData : MonoBehaviour
     {
         if (!learned)
         {
-            learned = true;
-            learnSystem.Learn(this);
+           
+            learnSystem.AddLearn(this);
+        }
+        else
+        {
+            learnSystem.RemoveLearn(this);
         }
     }
 }

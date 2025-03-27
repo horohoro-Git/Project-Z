@@ -143,6 +143,13 @@ public class SaveLoadSystem
         return JsonConvert.DeserializeObject<List<CraftStruct>>(data);
     }
 
+    //특성 정보 가져오기
+    public static List<AbilityStruct> GetAbilityData(string content)
+    {
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+        return JsonConvert.DeserializeObject<List<AbilityStruct>>(data);
+    }
+
     //서버 불러오기
     public static string LoadServerURL()
     {
@@ -273,6 +280,23 @@ public class SaveLoadSystem
                 writer.Write(energyLevel);
                 writer.Write(weightLevel);
                 writer.Write(backpackLevel);
+
+
+                //제작 정보
+                CraftingLearnSystem craftingLearnSystem = GameInstance.Instance.craftingLearnSystem;
+                writer.Write(craftingLearnSystem.learnedDatas.Count);
+                for (int i = 0; i < craftingLearnSystem.learnedDatas.Count; i++)
+                {
+                    writer.Write(craftingLearnSystem.learnedDatas[i].item.item_index);
+                }
+
+                //플레이어 특성
+                CharacterAbilitySystem characterAbilitySystem = GameInstance.Instance.characterAbilitySystem;
+                writer.Write(characterAbilitySystem.learnedAbilities.Count);
+                for (int i = 0; i < characterAbilitySystem.learnedAbilities.Count; i++)
+                {
+                    writer.Write(characterAbilitySystem.learnedAbilities[i].item.item_index);
+                }
             }
             File.WriteAllBytes(p, ms.ToArray());
 
@@ -345,8 +369,30 @@ public class SaveLoadSystem
                             pc.SetPlayerData(Vector3.zero, rot, playerStruct);
                         }
                         List<CraftStruct> craftStructs = new List<CraftStruct>();
+                        List<AbilityStruct> abilityStructs = new List<AbilityStruct>();
+                        //제작 정보
+                        int craftNum = reader.ReadInt32();
+                        for(int i = 0; i < craftNum; i++)
+                        {
+                            int index = reader.ReadInt32();
+                            CraftStruct craftStruct = new CraftStruct();
+                            craftStruct.index = index;
+                            craftStructs.Add(craftStruct);
+                        }
+
+                        //플레이어 특성
+                        int abilityNum = reader.ReadInt32();
+                        for (int i = 0; i < abilityNum; i++)
+                        {
+                            int index = reader.ReadInt32();
+                            AbilityStruct abilityStruct = new AbilityStruct();
+                            abilityStruct.index = index;
+                            abilityStructs.Add(abilityStruct);
+                        }
+
                         GameInstance.Instance.craftingLearnSystem.LoadLearns(craftStructs);
-                        //
+                    
+                        GameInstance.Instance.characterAbilitySystem.LoadLearns(abilityStructs);
                     }
                 }
             }
@@ -354,7 +400,11 @@ public class SaveLoadSystem
         }
         else
         {
-            
+            List<CraftStruct> craftStructs = new List<CraftStruct>();
+            List<AbilityStruct> abilityStructs = new List<AbilityStruct>();
+            GameInstance.Instance.craftingLearnSystem.LoadLearns(craftStructs);
+
+            GameInstance.Instance.characterAbilitySystem.LoadLearns(abilityStructs);
             return false;
         }
     }

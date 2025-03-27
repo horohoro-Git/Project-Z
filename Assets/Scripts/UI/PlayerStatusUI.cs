@@ -35,11 +35,12 @@ public class PlayerStatusUI : MonoBehaviour
 
     public void UpdateUI(PlayerStruct playerStruct)
     {
+        CharacterAbilityManager characterAbility = GameInstance.Instance.characterAbilityManager;
         this.hp = playerStruct.hp;
-        this.maxHp = playerStruct.maxHP;
+        this.maxHp = playerStruct.maxHP + characterAbility.maxHp;
         hp_Text.text = this.hp.ToString();
         
-        hpProgress.fillAmount = (float)this.hp / this.maxHp;
+        hpProgress.fillAmount = (float)this.hp / (this.maxHp + characterAbility.maxHp);
 
         this.energy = playerStruct.energy;
         this.maxEnergy = playerStruct.maxEnergy;
@@ -58,9 +59,10 @@ public class PlayerStatusUI : MonoBehaviour
 
     public void ChangeHP(int hp)
     {
+        CharacterAbilityManager characterAbility = GameInstance.Instance.characterAbilityManager;
         this.hp = hp;
         hp_Text.text = hp.ToString();
-        targetHP = (float)this.hp / this.maxHp;
+        targetHP = (float)this.hp / (this.maxHp + characterAbility.maxHp);
         //hpProgress.fillAmount = (float)this.hp / this.maxHp;
         if (hpCoroutine != null) StopCoroutine(hpCoroutine);
         hpCoroutine = StartCoroutine(SmoothHP());

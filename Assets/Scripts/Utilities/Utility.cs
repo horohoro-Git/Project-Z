@@ -469,7 +469,12 @@ public struct CraftStruct
     public int index;
 
 }
+//특성 정보
+public struct AbilityStruct
+{
+    public int index;
 
+}
 
 public class Utility
 {
@@ -541,5 +546,15 @@ public interface IDamageable
 {
     
     public bool Damaged(int damage, int layer);
+}
+
+public interface IAbility
+{
+    public void Setup(RectTransform rectTransform);
+    public void Work();
+
+    public void Release();
+    public void DestroyAbility();
+
 }
 

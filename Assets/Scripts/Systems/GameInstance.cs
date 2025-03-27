@@ -37,6 +37,8 @@ public class GameInstance
     public EditMode editMode;
     public EnemySpawner enemySpawner;
     public CraftingLearnSystem craftingLearnSystem;
+    public CharacterAbilitySystem characterAbilitySystem;
+    public CharacterAbilityManager characterAbilityManager;
     List<PlayerController> players = new List<PlayerController>();
 
     public List<PlayerController> GetPlayers { get { return players; } }
@@ -65,6 +67,8 @@ public class GameInstance
         enemySpawner.enabled = false;
         boxInventorySystem.enabled = false;
         craftingLearnSystem.enabled = false;
+        characterAbilitySystem.enabled = false;
+        characterAbilityManager.enabled = false;
 
         playerStatusDetailsUI = null;
         characterProfileUI = null;
@@ -89,6 +93,8 @@ public class GameInstance
         enemySpawner = null;
         boxInventorySystem = null;
         craftingLearnSystem = null;
+        characterAbilitySystem = null;
+        characterAbilityManager = null;
     }
 
     public void AddPlayer(PlayerController pc)
