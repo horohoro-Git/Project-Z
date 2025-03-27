@@ -35,17 +35,20 @@ public class Player : MonoBehaviour
     {
         if (healBuffTimer < Time.time)
         {
-            if(playerStruct.hp > playerStruct.maxHP)
+            CharacterAbilityManager characterAbilityManager = GameInstance.Instance.characterAbilityManager;
+            if (playerStruct.hp > playerStruct.maxHP + characterAbilityManager.maxHp)
             {
-                playerStruct.hp = playerStruct.maxHP;
+              
+                playerStruct.hp = playerStruct.maxHP + characterAbilityManager.maxHp;
             }
         }
     }
     public void GetDamage(int damage)
     {
+        CharacterAbilityManager characterAbilityManager = GameInstance.Instance.characterAbilityManager;
         playerStruct.hp -= damage;
         GameInstance.Instance.playerStatusUI.ChangeHP(playerStruct.hp);
-        GameInstance.Instance.playerStatusDetailsUI.UpdateHP(playerStruct.hp, playerStruct.maxHP);
+        GameInstance.Instance.playerStatusDetailsUI.UpdateHP(playerStruct.hp, playerStruct.maxHP + characterAbilityManager.maxHp);
     }
 
     public void SpendEnergy(int energy)
@@ -96,6 +99,12 @@ public class Player : MonoBehaviour
         GameInstance.Instance.playerStatusDetailsUI.Setup(playerStruct);
     }
 
+    public void Renewal()
+    {
+        GameInstance.Instance.playerStatusUI.UpdateUI(playerStruct);
+        GameInstance.Instance.playerStatusDetailsUI.Setup(playerStruct);
+    }
+
 
     void CreateBuff(ref GameObject go, string name)
     {
@@ -126,6 +135,7 @@ public class Player : MonoBehaviour
 
     IEnumerator HPRecovery(float duration, int recoveryAmount)
     {
+        CharacterAbilityManager characterAbilityManager = GameInstance.Instance.characterAbilityManager;
         healBuff.SetActive(true);
         float currentTimer = 0;
         float timer = 0;
@@ -140,13 +150,13 @@ public class Player : MonoBehaviour
             timer = 0;
          
             playerStruct.hp += (int)(recoveryAmount / duration);
-            if(playerStruct.hp > playerStruct.maxHP)
+            if(playerStruct.hp > playerStruct.maxHP + characterAbilityManager.maxHp)
             {
-                playerStruct.hp = playerStruct.maxHP;
+                playerStruct.hp = playerStruct.maxHP + characterAbilityManager.maxHp;
                 healBuffTimer = Time.time + 10f;
             }
             GameInstance.Instance.playerStatusUI.ChangeHP(playerStruct.hp);
-            GameInstance.Instance.playerStatusDetailsUI.UpdateHP(playerStruct.hp, playerStruct.maxHP);
+            GameInstance.Instance.playerStatusDetailsUI.UpdateHP(playerStruct.hp, playerStruct.maxHP + characterAbilityManager.maxHp);
         }
 
         buffStruct.healBuff.Dequeue();

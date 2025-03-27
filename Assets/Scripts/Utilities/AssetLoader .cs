@@ -36,12 +36,12 @@ public class AssetLoader : MonoBehaviour
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "grasses",
       "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup","enemy_zombie",
-      "human_male", "male", "UMA_GLIB", "cardboardbox","cardboardbox_preview"
+      "human_male", "male", "UMA_GLIB", "cardboardbox","cardboardbox_preview","MaxHPUp"
     };
 
     [NonSerialized]
     public static List<string> itemAssetkeys = new List<string> {
-    "log", "wooden Axe", "apple", "cardboardbox"
+    "log", "wooden Axe", "apple", "cardboardbox", "","","","","","","MaxHPUp"
     };
 
     public static List<string> previewAssetKeys = new List<string>
@@ -52,7 +52,7 @@ public class AssetLoader : MonoBehaviour
     [NonSerialized]
     public static List<string> spriteAssetkeys = new List<string> {
         "log_Sprite", "axe_Sprite", "apple_Sprite", "cardboardbox_sprite", "HatLeatherM_Sprite", "GambesonM_Sprite",
-        "GlovesLinenM_Sprite","KnickerbockerBlackM_Sprite", "SchoesLaceUpBlackM_Sprite",  "SamplePack01_M_Sprite",
+        "GlovesLinenM_Sprite","KnickerbockerBlackM_Sprite", "SchoesLaceUpBlackM_Sprite",  "SamplePack01_M_Sprite", "MaxHPUp_Sprite"
         
     };
     [NonSerialized]
@@ -88,6 +88,8 @@ public class AssetLoader : MonoBehaviour
 
     [NonSerialized]
     public Dictionary<int, CraftStruct> crafts = new Dictionary<int, CraftStruct>();
+    [NonSerialized]
+    public Dictionary<int, AbilityStruct> abilities = new Dictionary<int, AbilityStruct>();
 
     public Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
     public Dictionary<string, Sprite> loadedSprites = new Dictionary<string, Sprite>();
@@ -135,6 +137,8 @@ public class AssetLoader : MonoBehaviour
     public string armorContent;
     [NonSerialized]
     public string craftContent;
+    [NonSerialized]
+    public string abilityContent;
 
     //설치물 키
     [NonSerialized]
@@ -248,6 +252,15 @@ public class AssetLoader : MonoBehaviour
                     craftContent = craftTextAsset.text;
                 }
 
+                AssetBundleRequest abilityrequest = bundle.LoadAssetAsync<TextAsset>("ability");
+                yield return abilityrequest;
+
+                if (abilityrequest != null)
+                {
+                    TextAsset abilityTextAsset = (TextAsset)abilityrequest.asset;
+                    abilityContent = abilityTextAsset.text;
+                }
+
                 //프리팹 에셋 로드
                 foreach (string key in assetkeys)
                 {
@@ -356,7 +369,6 @@ public class AssetLoader : MonoBehaviour
 
         if (unloadNum == 0)
         {
-            assetLoadSuccessful = true;
 
             levelData = SaveLoadSystem.GetLevelData(levelContent);
             items = SaveLoadSystem.GetItemData(itemContent);
@@ -365,13 +377,16 @@ public class AssetLoader : MonoBehaviour
             enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
             List<ArmorStruct> armorTable = SaveLoadSystem.GetArmorData(armorContent);
             List<CraftStruct> craftStructs = SaveLoadSystem.GetCraftData(craftContent);
+            List<AbilityStruct> abilityStructs = SaveLoadSystem.GetAbilityData(abilityContent);
 
             for (int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
             for (int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
             for (int i = 0; i < armorTable.Count; i++) armors[armorTable[i].item_index] = armorTable[i];
             for(int i = 0; i< craftStructs.Count; i++) crafts[craftStructs[i].index] = craftStructs[i];
+            for(int i=0; i< abilityStructs.Count; i++) abilities[abilityStructs[i].index] = abilityStructs[i];
 
             ItemData.ItemDatabaseSetup();
+            assetLoadSuccessful = true;
            // GameInstance.Instance.creatableUISystem
         }
     }
@@ -874,7 +889,7 @@ public class AssetLoader : MonoBehaviour
         if (GameInstance.Instance.gameManager.glib != null) Destroy(GameInstance.Instance.gameManager.glib);
 
         GameInstance instance = GameInstance.Instance;
-
+        instance.characterAbilityManager.ClearAbility();
         if (instance.enemySpawner.loaded) SaveLoadSystem.SaveEnemyInfo();
         if (instance.GetPlayers.Count > 0 && instance.GetPlayers[0].loaded) SaveLoadSystem.SavePlayerData(instance.GetPlayers[0].GetPlayer); 
         ItemData.Clear();

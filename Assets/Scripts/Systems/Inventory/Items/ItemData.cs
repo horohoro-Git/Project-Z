@@ -17,7 +17,7 @@ public class ItemData : MonoBehaviour
         {
             Sprite sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[i]];
             GameObject go = null;
-            if (itemStructs[i].item_type == ItemType.Equipmentable) go = GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[i]];
+            if (GameInstance.Instance.assetLoader.loadedAssets.ContainsKey(AssetLoader.itemAssetkeys[i])) go = GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[i]];
             ItemStruct item = itemStructs[i];
             item.image = sprite;
             item.itemGO = go;

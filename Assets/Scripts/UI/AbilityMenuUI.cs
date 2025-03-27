@@ -61,6 +61,7 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
         weightPlusBtn.onClick.RemoveAllListeners();
         weightMinusBtn.onClick.RemoveAllListeners();
         applyBtn.onClick.RemoveAllListeners();
+        Revert();
     }
 
     public void GetPoint(int point)
@@ -189,13 +190,23 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
         GetPoint(currentStruct.skillPoint);
     }
 
+    void Revert()
+    {
+        if (GameInstance.Instance.GetPlayers.Count > 0)
+        {
+            ShowChanges(GameInstance.Instance.GetPlayers[0].GetPlayer);
+        }
+    }
+
+
     void ApplyData()
     {
         playerStruct = currentStruct;
 
         player.playerStruct = playerStruct;
         ChangeBefore();
-
+        GameInstance.Instance.characterAbilitySystem.Apply();
+        GameInstance.Instance.craftingLearnSystem.Apply();
         SaveLoadSystem.SavePlayerData(player);
     }
 }
