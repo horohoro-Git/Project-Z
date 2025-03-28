@@ -89,6 +89,7 @@ public class PlayerController : Controller, IDamageable
 
     public GameObject testEffect;
 
+
     public void SetController(GameObject go, bool load, bool human = true)
     {
         if (human)
@@ -111,7 +112,7 @@ public class PlayerController : Controller, IDamageable
             Inputs.actions["OpenInventory"].performed += OpenInventory;
             Inputs.actions["ZoomIn"].performed += ZoomIn;
             Inputs.actions["ZoomOut"].performed += ZoomOut;
-
+            Inputs.actions["Interaction"].performed += Interact;
             //테스트
             Inputs.actions["TestInventory"].performed += JustTest;
 
@@ -133,7 +134,6 @@ public class PlayerController : Controller, IDamageable
                     //플레이어 초기 값
 
                     PlayerStruct playerStruct = new PlayerStruct(100, 100, 100, 100, 0,0, 100, 1, 0, 0, 200, 20 , 0, 1, 1, 1, 0);
-
                     GetPlayer.playerStruct = playerStruct;
                     GetPlayer.UpdatePlayer();
                 }
@@ -143,6 +143,15 @@ public class PlayerController : Controller, IDamageable
                 SaveLoadSystem.LoadPlayerData(this);
             }
             equipSlotIndex = 0;
+
+            if(GetPlayer.playerStruct.weight < GameInstance.Instance.inventorySystem.inventoryWeight)
+            {
+                moveSpeedMutiplier = 0.5f;
+            }
+            else
+            {
+                moveSpeedMutiplier = 1;
+            }
 
             GameInstance.Instance.characterProfileUI.CreateCharacter(load, go);
             GameInstance.Instance.inventorySystem.UseItem(this, equipSlotIndex);
@@ -222,6 +231,7 @@ public class PlayerController : Controller, IDamageable
         Inputs.actions["ZoomIn"].performed -= ZoomIn;
         Inputs.actions["ZoomOut"].performed -= ZoomOut;
         Inputs.actions["TestInventory"].performed -= JustTest;
+        Inputs.actions["Interaction"].performed -= Interact;
         // lastHandler.Clear();
     }
 
@@ -245,7 +255,6 @@ public class PlayerController : Controller, IDamageable
         Inputs.actions["WASD"].canceled += MoveStop;
         Inputs.actions["Run"].performed += Run;
         Inputs.actions["Run"].canceled += RunStop;
-        Inputs.actions["Interaction"].performed += Interact;
         Inputs.actions["Attack"].performed += Attack;
         Inputs.actions["Attack"].canceled += EndAttack;
        
@@ -259,7 +268,6 @@ public class PlayerController : Controller, IDamageable
         Inputs.actions["WASD"].performed -= MoveStop;
         Inputs.actions["Run"].performed -= Run;
         Inputs.actions["Run"].canceled -= RunStop;
-        Inputs.actions["Interaction"].performed -= Interact;
         Inputs.actions["Attack"].performed -= Attack;
         Inputs.actions["Attack"].canceled -= EndAttack;
         for (int i = 0; i < 10; i++)
@@ -278,6 +286,7 @@ public class PlayerController : Controller, IDamageable
     // Update is called once per frame
     void Update()
     {
+       
         if (state == PlayerState.Dead)
         {
           //  modelAnimator.SetFloat("lookAround", 0);
@@ -486,12 +495,6 @@ public class PlayerController : Controller, IDamageable
           //  GetRightHand.GetWeaponTrail.Trail(true);
         }
     }
-
-    void InputTimer()
-    {
-       // reinput = true;
-    }
-    bool attackAgain;
  
     void Interact(InputAction.CallbackContext callback)
     {

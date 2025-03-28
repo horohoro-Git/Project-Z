@@ -269,13 +269,15 @@ public struct ItemStruct
     public SlotType slot_type;  //방어구 용
     public ItemType item_type;
     public bool used;
+    public float weight;
     public GameObject itemGO;
 
-    public ItemStruct(int itemIndex, Sprite image, string itemName, SlotType slotType, ItemType itemType, GameObject itemGO)
+    public ItemStruct(int itemIndex, Sprite image, string itemName, float weight, SlotType slotType, ItemType itemType, GameObject itemGO)
     {
         this.item_index = itemIndex;
         this.image = image;
         this.item_name = itemName;
+        this.weight = weight;
         this.slot_type = slotType;
         this.item_type = itemType;
         used = true;
@@ -386,14 +388,14 @@ public struct PlayerStruct
     public int attackDamage;
     public float attackSpeed;
     public float moveSpeed;
-    public int weight;
+    public float weight;
     public int skillPoint;
     public int hpLevel;
     public int energyLevel;
     public int weightLevel;
     public int backpackLevel;
 
-    public PlayerStruct(int hp, int maxHP, int energy, int maxEnergy, int defense, int exp, int requireEXP, int level, int attackDamage, float attackSpeed, float moveSpeed, int weight, int skillPoint, int hpLevel, int energyLevel, int weightLevel, int backpackLevel)
+    public PlayerStruct(int hp, int maxHP, int energy, int maxEnergy, int defense, int exp, int requireEXP, int level, int attackDamage, float attackSpeed, float moveSpeed, float weight, int skillPoint, int hpLevel, int energyLevel, int weightLevel, int backpackLevel)
     {
         this.hp = hp;
         this.maxHP = maxHP;

@@ -63,7 +63,8 @@ public class Controller : MonoBehaviour
     [NonSerialized]
     public bool directionPlayer;
 
-
+    [NonSerialized]
+    public float moveSpeedMutiplier;
     void FixedUpdate()
     {
         if (!lookAround) Rotate();
@@ -77,7 +78,7 @@ public class Controller : MonoBehaviour
         {
             viewVelocity = 0;
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
-            Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
+            Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed * moveSpeedMutiplier;
             viewSpeed = currentMoveSpeed;
             return;
         }
@@ -85,15 +86,15 @@ public class Controller : MonoBehaviour
         {
             viewDir = moveDir;
             viewSpeed = currentMoveSpeed;
-            currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed, ref velocity, 0.2f);
-            Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
+            currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed * moveSpeedMutiplier, ref velocity, 0.2f);
+            Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed * moveSpeedMutiplier;
 
         }
         else
         {
             viewVelocity = 0;
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, 0, ref velocity, 0.2f);
-            Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed;
+            Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed * moveSpeedMutiplier;
             viewSpeed = currentMoveSpeed;
         }
 
@@ -135,7 +136,7 @@ public class Controller : MonoBehaviour
             Vector3 direction = worldMousePosition - Transforms.position;
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             targetRotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0);
-            Transforms.rotation = Quaternion.Slerp(Transforms.rotation, targetRotation, 5 * Time.deltaTime);
+            Transforms.rotation = Quaternion.Slerp(Transforms.rotation, targetRotation, 5 * Time.deltaTime * moveSpeedMutiplier);
 
             float dot = Vector3.Dot(transform.forward, viewDir);
             Vector3 cross = Vector3.Cross(transform.forward, viewDir);

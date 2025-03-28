@@ -229,3 +229,6 @@ Added the crafting unlock system to unlock multiple crafting items
 
 03/27
 Added character ability system, improved addition and deletion of production system
+
+03/28
+Armor's defense is affected by enemy attacks, and the weight of the item affects the player's movement speed

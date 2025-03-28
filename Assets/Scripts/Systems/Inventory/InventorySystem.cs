@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -50,9 +51,12 @@ public class InventorySystem : MonoBehaviour, IUIComponent
     Image playerView;
     [SerializeField]
     Sprite trashcan;
-
-
+    [SerializeField]
+    TMP_Text inventoryWeight_Text;
     int currentSlotIndex = 0;
+
+    [NonSerialized]
+    public float inventoryWeight = 0;
     private void Awake()
     {
         //GameInstance.Instance.inventorySystem = this;
@@ -112,7 +116,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
                     }
 
                     inventoryArray[i, j].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, false);
-
+                    PlayerController pc = GameInstance.Instance.GetPlayers[0];
                     GameInstance.Instance.boxInventorySystem.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, armorStruct, i, j);
                     if(i == 0)
                     {
@@ -120,7 +124,6 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
                         if (GameInstance.Instance.GetPlayers.Count > 0)
                         {
-                            PlayerController pc = GameInstance.Instance.GetPlayers[0];
                             if(pc.equipSlotIndex == j)
                             {
                                 UseItem(pc, j);
@@ -128,7 +131,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
                             }
                         }
                     }
-
+                    InventoryWeight(item.itemStruct.weight);
                     SaveLoadSystem.SaveInventoryData();
                     return true;
                 }
@@ -140,6 +143,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     public void UseItem(PlayerController pc ,int index)
     {
+        Debug.Log("C");
         inventoryArray[0, currentSlotIndex].itemImage.gameObject.SetActive(true);
         GameInstance.Instance.quickSlotUI.slots[currentSlotIndex].itemImage.gameObject.SetActive(true);
         inventoryArray[0, currentSlotIndex].image.sprite = defaultSlot;
@@ -272,6 +276,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
             player.equipmentStats.attackDamage += item.weapon.attack_damage;
             player.equipmentStats.attackSpeed += item.weapon.attack_speed;
             GameInstance.Instance.playerStatusDetailsUI.UpdateDamage(player.playerStruct.attackDamage);
+            GameInstance.Instance.playerStatusDetailsUI.UpdateDamage(player.playerStruct.attackDamage);
             GameInstance.Instance.playerStatusDetailsUI.UpdateAttackSpeed(player.playerStruct.attackSpeed);
         }
         else
@@ -303,10 +308,12 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         itemStruct.itemGO = item.itemGO;
         itemStruct.image = item.image;
         itemStruct.used = true;
+        
         if(x == 0)
         {
             GameInstance.Instance.quickSlotUI.UpdateSlot(itemStruct, weaponStruct, consumptionStruct, armorStruct, y, false);
         }
+        InventoryWeight(item.weight);
         inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, true);
     }
 
@@ -327,6 +334,20 @@ public class InventorySystem : MonoBehaviour, IUIComponent
             RemoveSlot(0, i);
         }
         GameInstance.Instance.boxInventorySystem.ResetInventory();
+    }
+
+    public void InventoryWeight(float weight)
+    {
+        inventoryWeight += weight;
+        if (GameInstance.Instance.GetPlayers[0].GetPlayer.playerStruct.weight < inventoryWeight)
+        {
+            GameInstance.Instance.GetPlayers[0].moveSpeedMutiplier = 0.5f;
+        }
+        else
+        {
+            GameInstance.Instance.GetPlayers[0].moveSpeedMutiplier = 1;
+        }
+        inventoryWeight_Text.text = inventoryWeight.ToString("F1");
     }
 
     private void OnDestroy()

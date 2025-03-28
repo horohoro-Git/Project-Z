@@ -62,11 +62,15 @@ public class SlotInfo : MonoBehaviour
     [SerializeField]
     TMP_Text carrySize;
 
+
+    [SerializeField]
+    TMP_Text weight;
+
     public void UpdateSlotInfo(ItemStruct itemStruct, ConsumptionStruct consumptionStruct, WeaponStruct weaponStruct, ArmorStruct armorStruct)
     {
         text.text = itemStruct.item_name;
         image.sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[itemStruct.item_index - 1]];
-
+        weight.text = itemStruct.weight.ToString("F1");
         switch (itemStruct.item_type)
         {
             case ItemType.None:

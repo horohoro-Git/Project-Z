@@ -384,7 +384,10 @@ public class AssetLoader : MonoBehaviour
             for (int i = 0; i < armorTable.Count; i++) armors[armorTable[i].item_index] = armorTable[i];
             for(int i = 0; i< craftStructs.Count; i++) crafts[craftStructs[i].index] = craftStructs[i];
             for(int i=0; i< abilityStructs.Count; i++) abilities[abilityStructs[i].index] = abilityStructs[i];
-
+            for(int i=0; i<items.Count; i++)
+            {
+                Debug.Log(items[i].item_type + " " + items[i].item_index);
+            }
             ItemData.ItemDatabaseSetup();
             assetLoadSuccessful = true;
            // GameInstance.Instance.creatableUISystem
