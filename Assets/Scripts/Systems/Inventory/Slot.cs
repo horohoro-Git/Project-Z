@@ -214,12 +214,44 @@ public class Slot : MonoBehaviour, IUIComponent
 
                     if(GetComponentInParent<BoxInventorySystem>())
                     {
-                        if(s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
+                        
+
+                        if (transform.parent.parent == GameInstance.Instance.boxInventorySystem.list && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2)
+                        {
+                            GameInstance.Instance.inventorySystem.InventoryWeight(-item.weight);
+                            GameInstance.Instance.inventorySystem.RemoveSlot(slotX, slotY);
+                            GameInstance.Instance.boxInventorySystem.currentItemBox.AddItem(s.item, s.weapon, s.consumption, s. armor ,s.slotX, s.slotY);
+                        }
+                        else if(transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2 && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
+                        {
+                            GameInstance.Instance.inventorySystem.InventoryWeight(s.item.weight);
+                            //   GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
+                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
+                            GameInstance.Instance.boxInventorySystem.currentItemBox.AddItem(item, weapon, consumption, armor, slotX, slotY);
+
+                        }
+                        else
+                        {
+                            if (transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2 && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2)
+                            {
+                                GameInstance.Instance.boxInventorySystem.currentItemBox.AddItem(item, weapon, consumption, armor, slotX, slotY);
+                                GameInstance.Instance.boxInventorySystem.currentItemBox.AddItem(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
+                            }
+                            else
+                            {
+                                GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, armor, slotX, slotY);
+                                GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
+
+                            }
+                        }
+
+                        if (s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
                         {
 
                             if (s.slotX == 0)
                             {
                                 GameInstance.Instance.quickSlotUI.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotY, false);
+
                                 if (s.slotY == pc.equipSlotIndex)
                                 {
                                     pc.Unequipment();
@@ -235,34 +267,6 @@ public class Slot : MonoBehaviour, IUIComponent
                                 {
                                     pc.Unequipment();
                                 }
-                            }
-                        }
-
-                        if (transform.parent.parent == GameInstance.Instance.boxInventorySystem.list && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2)
-                        {
-                            GameInstance.Instance.inventorySystem.RemoveSlot(slotX, slotY);
-                            GameInstance.Instance.boxInventorySystem.currentItemBox.AddItem(s.item, s.weapon, s.consumption, s. armor ,s.slotX, s.slotY);
-                        }
-                        else if(transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2 && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list)
-                        {
-                            //   GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, slotX, slotY);
-                            GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
-                            GameInstance.Instance.boxInventorySystem.currentItemBox.AddItem(item, weapon, consumption, armor, slotX, slotY);
-                        }
-                        else
-                        {
-                         
-                            if (transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2 && s.transform.parent.parent == GameInstance.Instance.boxInventorySystem.list2)
-                            {
-                                GameInstance.Instance.boxInventorySystem.currentItemBox.AddItem(item, weapon, consumption, armor, slotX, slotY);
-                                GameInstance.Instance.boxInventorySystem.currentItemBox.AddItem(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
-
-                            }
-                            else
-                            {
-                                GameInstance.Instance.inventorySystem.UpdateSlot(item, weapon, consumption, armor, slotX, slotY);
-                                GameInstance.Instance.inventorySystem.UpdateSlot(s.item, s.weapon, s.consumption, s.armor, s.slotX, s.slotY);
-
                             }
                         }
                     }
@@ -388,6 +392,7 @@ public class Slot : MonoBehaviour, IUIComponent
 
     public void RemoveItem()
     {
+        GameInstance.Instance.inventorySystem.InventoryWeight(-item.weight);
         ItemStruct itemS = new ItemStruct();
         item.Clear();
         item = itemS;

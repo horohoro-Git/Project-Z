@@ -14,6 +14,8 @@ public class PlayerStatusDetailsUI : MonoBehaviour
     public TMP_Text energy;
     public TMP_Text exp;
 
+    public TMP_Text inventoryWeigth;
+
     private void Awake()
     {
         GameInstance.Instance.playerStatusDetailsUI = this;
@@ -52,9 +54,9 @@ public class PlayerStatusDetailsUI : MonoBehaviour
     {
         this.moveSpeed.text = moveSpeed.ToString("F1");
     }
-    public void UpdateWeight(int weight)
-    {
-        this.weight.text = weight.ToString();
+    public void UpdateWeight(float weight)
+    { 
+        this.weight.text = weight.ToString("F1");
     }
     public void UpdateEnergy(int currentEnergy, int maxEnergy)
     {
@@ -64,5 +66,9 @@ public class PlayerStatusDetailsUI : MonoBehaviour
     {
         this.exp.text = currentEXP.ToString() + " / " + requireEXP.ToString();
 
+    }
+    public void UpdateInventoryWeight(float weight)
+    {
+       // this.
     }
 }

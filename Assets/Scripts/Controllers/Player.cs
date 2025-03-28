@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UMA;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -8,7 +9,7 @@ public class Player : MonoBehaviour
 {
     public PlayerStruct playerStruct; //플레이어의 능력치
     public PlayerStruct equipmentStats; //장비로 오른 능력치
-
+    float weight;
     Transform transforms;
     public Transform Transforms
     {
@@ -43,9 +44,19 @@ public class Player : MonoBehaviour
             }
         }
     }
+
     public void GetDamage(int damage)
     {
         CharacterAbilityManager characterAbilityManager = GameInstance.Instance.characterAbilityManager;
+        int defense = playerStruct.defense;
+        if (defense > damage)
+        {
+            damage = damage / 2;
+        }
+        float damagePercent = (float)((float)100.0f / (float)(defense + 100));
+        Debug.Log(damagePercent);
+        damage = (int)(damagePercent * damage);
+        if (damage == 0) damage = 1;
         playerStruct.hp -= damage;
         GameInstance.Instance.playerStatusUI.ChangeHP(playerStruct.hp);
         GameInstance.Instance.playerStatusDetailsUI.UpdateHP(playerStruct.hp, playerStruct.maxHP + characterAbilityManager.maxHp);
@@ -91,8 +102,9 @@ public class Player : MonoBehaviour
 
         //레벨 업 이펙트
         CreateBuff(ref levelupBuff, LoadURL.LevelUp);
-       
+
         //  playerStruct.skillPoint += 10;
+ 
         GameInstance.Instance.playerStatusUI.UpdateUI(playerStruct);
         GameInstance.Instance.abilityMenuUI.GetPoint(playerStruct.skillPoint);
         GameInstance.Instance.abilityMenuUI.ShowChanges(this);
