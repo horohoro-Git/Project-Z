@@ -61,6 +61,10 @@ public class UMACharacterAvatar : MonoBehaviour
         }
     }
 
+    public string GetClothes(string slotName)
+    {
+        return avatar.GetWardrobeItemName(slotName);
+    }
     void RemoveClothes()
     {
        // avatar.ClearSlot("Cape");
@@ -72,6 +76,14 @@ public class UMACharacterAvatar : MonoBehaviour
     {
 
         avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.recipeKeys[recipeIndex]]);
+
+        avatar.BuildCharacter();
+    }
+
+    public void AddCloth(string recipeString)
+    {
+
+        avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[recipeString]);
 
         avatar.BuildCharacter();
     }

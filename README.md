@@ -232,3 +232,6 @@ Added character ability system, improved addition and deletion of production sys
 
 03/28
 Armor's defense is affected by enemy attacks, and the weight of the item affects the player's movement speed
+
+03/29
+Zombified players now wear clothes upon loading

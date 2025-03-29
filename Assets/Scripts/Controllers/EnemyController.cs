@@ -12,7 +12,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
     public RightHand GetRightHand { get { if (rightHand == null) rightHand = GetComponentInChildren<RightHand>(); return rightHand; } }
 
-
+    public GameObject model;
     enum EnemyType
     {
         Roaming,
@@ -35,7 +35,11 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     Coroutine coroutine;
     List<Vector3> destinations = new List<Vector3>();
     public CapsuleCollider capsuleCollider;
-    Animator modelAnimator;
+
+    Animator animator;
+    public Animator modelAnimator { get { if (animator == null) { animator = model.GetComponent<Animator>(); animator.applyRootMotion = true; } return animator; } }
+
+
     int animationWorking;
     public Collider attackColider;
 
@@ -59,7 +63,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         bDead = false;
      //   if (theta) MoveCalculator.SetBlockArea();
         agent = GetComponent<NavMeshAgent>();
-        modelAnimator = GetComponentInChildren<Animator>();
+        animator = GetComponentInChildren<Animator>();
         moveSpeed = 100;
       //  agent.speed = moveSpeed;
     }
@@ -89,6 +93,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     {
         gameObject.layer = 0b1010;
         ChangeTagLayer(Transforms, "Enemy", 0b1010);
+     //   modelAnimator = GetComponentInChildren<Animator>();
     }
     void ChangeTagLayer(Transform parent, string newTag, int layerName)
     {
@@ -112,7 +117,6 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         int index = 0;
         while (players.Count > index)
         {
-           
             PlayerController pc = players[index++];
             float distance = Vector3.Distance(pc.Transforms.position, Transforms.position);
 
@@ -226,8 +230,6 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
             if (itemStructs.Count > 0)
             {
                 Debug.Log("Inventory Recovery");
-             
-        
             }
         }
         else
@@ -244,7 +246,6 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
                     Rigidbody itemRigid = item.AddComponent<Rigidbody>();
                     itemRigid.AddForce(Vector3.up * 10f);
-
                 }
             }
 
@@ -327,5 +328,29 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         {
             itemStructs[i].Clear();
         }
+    }
+
+    public void SetController(GameObject model)
+    {
+        this.model = model;
+        Invoke("ZombieSet", 0.5f);
+       /* modelAnimator.SetLayerWeight(1, 0);
+        modelAnimator.SetLayerWeight(2, 0);
+        modelAnimator.SetLayerWeight(3, 0);
+        modelAnimator.SetLayerWeight(4, 1);
+        modelAnimator.SetFloat("zombieTimer", 1);
+        modelAnimator.SetTrigger("standup");*/
+    }
+
+    void ZombieSet()
+    {
+        // Debug.Log("AA");
+        modelAnimator.SetFloat("zombieTimer", 1);
+        modelAnimator.SetTrigger("standup");
+        modelAnimator.SetLayerWeight(1, 0);
+        modelAnimator.SetLayerWeight(2, 0);
+        modelAnimator.SetLayerWeight(3, 0);
+        modelAnimator.SetLayerWeight(4, 1);
+        //  modelAnimator.SetLayerWeight(0, 0);
     }
 }

@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
         Invoke("PlayerSetting", 0.5f);
         Invoke("LoadBuilds", 0.5f);
         Invoke("LoadEnvironments", 0.5f);
-        Invoke("LoadEnemies", 0.5f);
+    //    Invoke("LoadEnemies", 0.5f);
         Invoke("TestItem", 0.5f);
     }
 
@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
         glib = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.UMA_GLIB]);
 
         PlayerSettings(true);
-
+        LoadEnemies();
         Invoke("LoadInventory", 0.5f);
     }
 
@@ -101,8 +101,8 @@ public class GameManager : MonoBehaviour
 
 
          pc.SetController(human);*/
-      //  GameObject human = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Male]);
-        GameObject human = Instantiate(test);
+        GameObject human = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Male]);
+      //  GameObject human = Instantiate(test);
         human.transform.SetParent(pc.Transforms);
         human.transform.localPosition = Vector3.zero;
         human.GetComponent<UMACharacterAvatar>().SetDefault();
