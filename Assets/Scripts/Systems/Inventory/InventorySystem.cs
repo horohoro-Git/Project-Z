@@ -143,7 +143,6 @@ public class InventorySystem : MonoBehaviour, IUIComponent
 
     public void UseItem(PlayerController pc ,int index)
     {
-        Debug.Log("C");
         inventoryArray[0, currentSlotIndex].itemImage.gameObject.SetActive(true);
         GameInstance.Instance.quickSlotUI.slots[currentSlotIndex].itemImage.gameObject.SetActive(true);
         inventoryArray[0, currentSlotIndex].image.sprite = defaultSlot;

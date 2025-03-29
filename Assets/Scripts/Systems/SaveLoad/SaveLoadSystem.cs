@@ -951,25 +951,40 @@ public class SaveLoadSystem
 
                             int type = reader.ReadInt32();
                             int modelType = reader.ReadInt32();
-                            int count = reader.ReadInt32();
-
-                            List<ItemStruct> itemStructs = new List<ItemStruct>();
-                            for(int i = 0; i< count; i++)
-                            {
-                                int index = reader.ReadInt32();
-                                string name = reader.ReadString();
-                                float weight = reader.ReadSingle();
-                                int slotType = reader.ReadInt32();
-                                int itemType = reader.ReadInt32();
-                                ItemStruct item = new ItemStruct(index, null, name, weight, (SlotType)slotType, (ItemType)itemType, null);
-                                itemStructs.Add(item);
-
-                            }
-
                             Vector3 position = new Vector3(x, y, z);
                             Quaternion rotation = new Quaternion(rx, ry, rz, rw);
+                            if (modelType > 0)
+                            {
+                                string helmet = reader.ReadString();
+                                string chest = reader.ReadString();
+                                string arms = reader.ReadString();
+                                string legs = reader.ReadString();
+                                string feet = reader.ReadString();
+                                string cape = reader.ReadString();
 
-                            GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, type, itemStructs, modelType);
+                                int count = reader.ReadInt32();
+
+                                List<ItemStruct> itemStructs = new List<ItemStruct>();
+                                for (int i = 0; i < count; i++)
+                                {
+                                    int index = reader.ReadInt32();
+                                    string name = reader.ReadString();
+                                    float weight = reader.ReadSingle();
+                                    int slotType = reader.ReadInt32();
+                                    int itemType = reader.ReadInt32();
+                                    ItemStruct item = new ItemStruct(index, null, name, weight, (SlotType)slotType, (ItemType)itemType, null);
+                                    itemStructs.Add(item);
+
+                                }
+
+                                GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, type, itemStructs, modelType, helmet, chest, arms, legs, feet, cape);
+                            }
+                            else
+                            {
+
+                                GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, type, new List<ItemStruct>(), modelType);
+                            }
+
                         }
                         GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
                     }
@@ -1020,24 +1035,42 @@ public class SaveLoadSystem
                     writer.Write(type);
                     writer.Write(modelType);
 
-                    writer.Write(EC.itemStructs.Count);
-                    //적의 인벤토리
-                    for (int i = 0; i < EC.itemStructs.Count; i++)
+                    if (modelType > 0)
                     {
-                        int item_index = EC.itemStructs[i].item_index;
-                        string item_name = EC.itemStructs[i].item_name;
-                        float item_weight = EC.itemStructs[i].weight;
+                        UMACharacterAvatar avatar = EC.GetComponentInChildren<UMACharacterAvatar>();
 
-                        int slotType = (int)EC.itemStructs[i].slot_type;
-                        int itemType = (int)EC.itemStructs[i].item_type;
+                        string helmet = avatar.GetClothes("Helmet");
+                        string chest = avatar.GetClothes("Chest");
+                        string arms = avatar.GetClothes("Arms");
+                        string legs = avatar.GetClothes("Legs");
+                        string feet = avatar.GetClothes("Feet");
+                        string cape = avatar.GetClothes("Cape");
 
-                        writer.Write(item_index);
-                        writer.Write(item_name);
-                        writer.Write(item_weight);
-                        writer.Write(slotType);
-                        writer.Write(itemType);
+                        writer.Write(helmet);
+                        writer.Write(chest);
+                        writer.Write(arms);
+                        writer.Write(legs);
+                        writer.Write(feet);
+                        writer.Write(cape);
+
+                        writer.Write(EC.itemStructs.Count);
+                        //적의 인벤토리
+                        for (int i = 0; i < EC.itemStructs.Count; i++)
+                        {
+                            int item_index = EC.itemStructs[i].item_index;
+                            string item_name = EC.itemStructs[i].item_name;
+                            float item_weight = EC.itemStructs[i].weight;
+
+                            int slotType = (int)EC.itemStructs[i].slot_type;
+                            int itemType = (int)EC.itemStructs[i].item_type;
+
+                            writer.Write(item_index);
+                            writer.Write(item_name);
+                            writer.Write(item_weight);
+                            writer.Write(slotType);
+                            writer.Write(itemType);
+                        }
                     }
-
                 }
             }
             File.WriteAllBytes(p, ms.ToArray());

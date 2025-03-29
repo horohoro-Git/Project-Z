@@ -36,7 +36,7 @@ public class AssetLoader : MonoBehaviour
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "grasses",
       "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup","enemy_zombie",
-      "human_male", "male", "UMA_GLIB", "cardboardbox","cardboardbox_preview","MaxHPUp"
+      "male", "UMA_GLIB", "cardboardbox","cardboardbox_preview","MaxHPUp"
     };
 
     [NonSerialized]
@@ -61,7 +61,7 @@ public class AssetLoader : MonoBehaviour
     };
     [NonSerialized]
     public static List<string> humankeys = new List<string> {
-    "human_male"
+    "male"
     };
     [NonSerialized]
     public static List<string> recipeKeys = new List<string> {

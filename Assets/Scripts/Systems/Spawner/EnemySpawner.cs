@@ -59,7 +59,7 @@ public class EnemySpawner : MonoBehaviour
         GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
     }
 
-    public void LoadEnemies(Vector3 position, Quaternion rotation, int type, List<ItemStruct> itemStructs, int modelType)
+    public void LoadEnemies(Vector3 position, Quaternion rotation, int type, List<ItemStruct> itemStructs, int modelType, string helmet = "", string chest = "", string arms = "", string legs = "", string feet = "", string cape = "")
     {
         if(modelType > 0)
         {
@@ -71,6 +71,8 @@ public class EnemySpawner : MonoBehaviour
             pc.Rigid.constraints = RigidbodyConstraints.FreezeAll;
             pc.state = PlayerState.Dead;
             GameObject model = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.humankeys[modelType - 1]]);
+            //GameObject model = Instantiate(GameInstance.Instance.gameManager.test);
+            //Destroy(model.GetComponentInChildren<Animator>());
             model.transform.SetParent(pc.Transforms);
             model.transform.localPosition = Vector3.zero;
             pc.SetController(model, true, false);
@@ -89,13 +91,13 @@ public class EnemySpawner : MonoBehaviour
             pc.GetRightHand.boxCollider.excludeLayers = 0b10000000000;
 
             //애니메이션 적으로 변환
-            pc.modelAnimator.SetFloat("zombieTimer", 1);
-            pc.modelAnimator.SetTrigger("standup");
+         
             pc.modelAnimator.SetLayerWeight(1, 0);
             pc.modelAnimator.SetLayerWeight(2, 0);
             //죽은 시체에 인벤토리의 아이템 적용
             pc.gameObject.AddComponent<NavMeshAgent>();
             EnemyController enemyController = pc.gameObject.AddComponent<EnemyController>();
+            enemyController.SetController(model);
             enemyController.capsuleCollider = GetComponent<CapsuleCollider>();
             enemyController.itemStructs = itemStructs;
             enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
@@ -104,6 +106,13 @@ public class EnemySpawner : MonoBehaviour
             enemyController.playerType = modelType;
 
             enemyController.Setup();
+            if(helmet.Length > 0) pc.GetAvatar.AddCloth(helmet);
+            if(chest.Length > 0) pc.GetAvatar.AddCloth(chest);
+            if(arms.Length > 0) pc.GetAvatar.AddCloth(arms);
+            if(legs.Length > 0) pc.GetAvatar.AddCloth(legs);
+            if(feet.Length > 0) pc.GetAvatar.AddCloth(feet);
+            if(cape.Length > 0) pc.GetAvatar.AddCloth(cape);
+            
             Destroy(pc);
         }
         else

@@ -162,6 +162,8 @@ public class PlayerController : Controller, IDamageable
         else
         {
             model = go;
+            //modelAnimator.SetFloat("zombieTimer", 1);
+          // modelAnimator.SetTrigger("standup");
         }
 
         Destroy(go.GetComponent<Rigidbody>());  
