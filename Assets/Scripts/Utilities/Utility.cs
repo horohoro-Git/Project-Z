@@ -221,6 +221,14 @@ public enum FurnitureType
     ItemBox
 }
 
+//업적 타입
+public enum AchievementType
+{
+    None,
+    ItemCollected,
+    EnemyKilled
+
+}
 
 
 //하우징에 사용되는 모드
@@ -559,4 +567,5 @@ public interface IAbility
     public void DestroyAbility();
 
 }
+
 

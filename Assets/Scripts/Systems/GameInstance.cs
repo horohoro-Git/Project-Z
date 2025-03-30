@@ -39,6 +39,7 @@ public class GameInstance
     public CraftingLearnSystem craftingLearnSystem;
     public CharacterAbilitySystem characterAbilitySystem;
     public CharacterAbilityManager characterAbilityManager;
+    public AchievementSystem achievementSystem;
     List<PlayerController> players = new List<PlayerController>();
 
     public List<PlayerController> GetPlayers { get { return players; } }
@@ -69,6 +70,7 @@ public class GameInstance
         craftingLearnSystem.enabled = false;
         characterAbilitySystem.enabled = false;
         characterAbilityManager.enabled = false;
+        achievementSystem.enabled = false;
 
         playerStatusDetailsUI = null;
         characterProfileUI = null;
@@ -95,6 +97,7 @@ public class GameInstance
         craftingLearnSystem = null;
         characterAbilitySystem = null;
         characterAbilityManager = null;
+        achievementSystem = null;
     }
 
     public void AddPlayer(PlayerController pc)

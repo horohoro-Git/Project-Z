@@ -235,3 +235,6 @@ Armor's defense is affected by enemy attacks, and the weight of the item affects
 
 03/29
 Zombified players now wear clothes upon loading
+
+03/30
+Fix and improve enemies movement malfunctions

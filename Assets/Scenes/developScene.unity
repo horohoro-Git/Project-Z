@@ -158,6 +158,7 @@ MonoBehaviour:
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   equippedPlayer: {fileID: 0}
   itemInteractionColider: {fileID: 0}
@@ -770,6 +771,7 @@ MonoBehaviour:
   turn: 0
   longturn: 0
   sprint: 0
+  model: {fileID: 0}
   theta: 0
   agent: {fileID: 413314384}
   capsuleCollider: {fileID: 0}
@@ -1086,6 +1088,7 @@ GameObject:
   - component: {fileID: 795207438}
   - component: {fileID: 795207439}
   - component: {fileID: 795207440}
+  - component: {fileID: 795207441}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -1185,6 +1188,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d4940bb28355b5498a7521b5ccc92da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 0
+--- !u!114 &795207441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 795207434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b084794feeb199f48b7da189fc5764b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &829955489
