@@ -56,6 +56,13 @@ public class EnemySpawner : MonoBehaviour
 
             }
         }
+
+        /*EnemyController enemy = Instantiate(assetLoader.loadedAssets[AssetLoader.enemykeys[1 - 1]]).GetComponent<EnemyController>();
+        enemy.Transforms.position = new Vector3(4, 0, 4);
+        enemy.enemyStruct = assetLoader.enemies[1 - 1];
+        GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
+        enemy.Setup();*/
+
         GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
     }
 

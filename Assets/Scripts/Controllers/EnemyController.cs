@@ -72,21 +72,88 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     {
         agent.speed = 1.5f;
         agent.angularSpeed = 500f;
-
+        //agent.autoRepath = true;
+        //agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+       // Physics.IgnoreLayerCollision(LayerMask.NameToLayer("Enemy"), LayerMask.NameToLayer("Enemy"), true);
+        //  agent.radius = 0.3f;
+        //  agent.acceleration = 0;
+        //  GetComponent<Rigidbody>().isKinematic = true;
     }
-
+    float last;
+    float next;
     // Update is called once per frame
     void Update()
     {
-        if(bDead) return;
-     //   if (LastPosition != Transforms.position)
-        {
-       //     LastPosition = Transforms.position;
-            DetectPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms, ref pcs));
+        if (animationWorking > 0) return;
+        if (bDead) return;
+        //   if (LastPosition != Transforms.position)
+        /*    {
+           //     LastPosition = Transforms.position;
+                DetectPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms, ref pcs));
 
-            modelAnimator.SetFloat("speed", agent.velocity.magnitude);
+            }*/
+        if (next + last < Time.time)
+        {
+            last = Time.time;
+            next = UnityEngine.Random.Range(0.3f, 0.8f);
+
+            if (target == null)
+            {
+                FindPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms, ref pcs));
+                return;
+            }
+
+            float distance = Vector3.Distance(transform.position, target.transform.position);
+
+
+            if (distance <= 1.5f)
+            {
+                StartAnimation("scratch", 2);
+                //   GetRightHand.Attack(enemyStruct.attack);
+                agent.isStopped = true;
+            }
+            else if (distance > 20)
+            {
+                agent.isStopped = true;
+            }
+            else
+            {
+                agent.isStopped = false;
+                agent.SetDestination(target.Transforms.position);
+            }
+
         }
-       
+      
+        modelAnimator.SetFloat("speed", agent.velocity.magnitude);
+        
+    }
+
+
+    void FindPlayer(List<PlayerController> players, bool skipAngle = false)
+    {
+        int index = 0;
+
+        while (players.Count > index)
+        {
+            PlayerController pc = players[index++];
+            float distance = Vector3.Distance(pc.Transforms.position, Transforms.position);
+
+            Vector3 dir = (pc.Transforms.position - Transforms.position).normalized;
+            float angle = Vector3.Angle(Transforms.forward, dir);   // 적의 전면부에서 110도 까지 탐지 
+
+            if (angle < 110 / 2 || skipAngle)
+            {
+                if (!target) target = pc;
+                else
+                {
+                    float dis = Vector3.Distance(target.Transforms.position, Transforms.position);
+                    if (distance < dis)
+                    {
+                        target = pc;
+                    }
+                }
+            }
+        }
     }
 
     public void Setup()
@@ -120,7 +187,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
             PlayerController pc = players[index++];
             float distance = Vector3.Distance(pc.Transforms.position, Transforms.position);
 
-            if (distance < 10)
+        //    if (distance < 20)
             {
                 Vector3 dir = (pc.Transforms.position - Transforms.position).normalized;
                 float angle = Vector3.Angle(Transforms.forward, dir);   // 적의 전면부에서 110도 까지 탐지 
@@ -150,18 +217,20 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
              //   GetRightHand.Attack(enemyStruct.attack);
                 agent.isStopped = true;
             }
-            else if(distance < 6)
-            {
-                agent.isStopped = false;
-                agent.SetDestination(target.Transforms.position);
-            }
             else if(distance > 20)
             {
                 agent.isStopped = true;
             }
+            else
+            {
+                Debug.Log(target.Transforms.position);
+                agent.isStopped = false;
+                agent.SetDestination(target.Transforms.position);
+            }
         }
         else
         {
+            Debug.Log("L");
             agent.isStopped = true;
         }
     }

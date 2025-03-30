@@ -22,6 +22,7 @@ public class WorldGrids : MonoBehaviour
     int sizeX;
     int sizeY;
     List<PlayerController>[,] players;
+    int layerMask = 1 << 3; 
     int[] findX = new int[9] {0, 1, 1, 0,-1,-1,-1,0,1 };
     int[] findY = new int[9] {0, 0, -1, -1,-1, 0, 1, 1, 1 };
 
@@ -112,7 +113,7 @@ public class WorldGrids : MonoBehaviour
                     Vector3 dir = controller.Transforms.position - currentPosition;
                     float distance = dir.magnitude;
                     dir = Vector3.Normalize(dir);
-                    if (!Physics.Raycast(currentPosition,dir,distance,1 << 3)) lists.RemoveAt(j); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
+                    if (!Physics.Raycast(currentPosition,dir,distance,layerMask)) lists.RemoveAt(j); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
                 }
             }
         }
