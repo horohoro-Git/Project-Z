@@ -139,6 +139,8 @@ public class AssetLoader : MonoBehaviour
     public string craftContent;
     [NonSerialized]
     public string abilityContent;
+    [NonSerialized]
+    public string achievementContent;
 
     //설치물 키
     [NonSerialized]
@@ -261,6 +263,15 @@ public class AssetLoader : MonoBehaviour
                     abilityContent = abilityTextAsset.text;
                 }
 
+                AssetBundleRequest achievementrequest = bundle.LoadAssetAsync<TextAsset>("achievement");
+                yield return achievementrequest;
+
+                if (achievementrequest != null)
+                {
+                    TextAsset achievementTextAsset = (TextAsset)achievementrequest.asset;
+                    achievementContent = achievementTextAsset.text;
+                }
+
                 //프리팹 에셋 로드
                 foreach (string key in assetkeys)
                 {
@@ -378,16 +389,16 @@ public class AssetLoader : MonoBehaviour
             List<ArmorStruct> armorTable = SaveLoadSystem.GetArmorData(armorContent);
             List<CraftStruct> craftStructs = SaveLoadSystem.GetCraftData(craftContent);
             List<AbilityStruct> abilityStructs = SaveLoadSystem.GetAbilityData(abilityContent);
+            List<AchievementStruct> achievementStructs = SaveLoadSystem.LoadAchievement(achievementContent);
 
             for (int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
             for (int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
             for (int i = 0; i < armorTable.Count; i++) armors[armorTable[i].item_index] = armorTable[i];
             for(int i = 0; i< craftStructs.Count; i++) crafts[craftStructs[i].index] = craftStructs[i];
             for(int i=0; i< abilityStructs.Count; i++) abilities[abilityStructs[i].index] = abilityStructs[i];
-            for(int i=0; i<items.Count; i++)
-            {
-                Debug.Log(items[i].item_type + " " + items[i].item_index);
-            }
+
+            AchievementHandler.LoadEvent(achievementStructs);
+
             ItemData.ItemDatabaseSetup();
             assetLoadSuccessful = true;
            // GameInstance.Instance.creatableUISystem

@@ -206,6 +206,13 @@ public class SaveLoadSystem
         return dropStructs;
     }
 
+    //드랍 테이블
+    public static List<AchievementStruct> LoadAchievement(string content)
+    {
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+        return JsonConvert.DeserializeObject<List<AchievementStruct>>(data);
+    }
+
 
     //플레이어 데이터 저장
     public static void SavePlayerData(Player player)
