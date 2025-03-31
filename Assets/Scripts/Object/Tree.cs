@@ -61,7 +61,7 @@ public class Tree : EnvironmentObject
     }
 
 
-    void TreeInteraction(PlayerController pc)
+ /*   void TreeInteraction(PlayerController pc)
     {
         if(dead) return;
         pc.CutTree();
@@ -83,9 +83,10 @@ public class Tree : EnvironmentObject
         else if (angle >= 135f) animator.SetInteger("state", 1);
         else if (angle < -135f) animator.SetInteger("state", 1);
         else if (angle >= -135f && angle < -45f) animator.SetInteger("state", 2);
-     
+
+        
         Invoke("AddReward", 1.5f);
-    }
+    }*/
 
     public void ChopDown(Transform transforms, Player player)
     {
@@ -105,7 +106,7 @@ public class Tree : EnvironmentObject
         else if (angle < -135f) animator.SetInteger("state", 1);
         else if (angle >= -135f && angle < -45f) animator.SetInteger("state", 2);
         rewardsPlayer.GetExperience(exp);
-
+        AchievementHandler.Publish(100001);
         Invoke("AddReward", 1.5f);
     }
 

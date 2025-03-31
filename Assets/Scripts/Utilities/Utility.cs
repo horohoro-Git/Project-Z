@@ -486,6 +486,16 @@ public struct AbilityStruct
 
 }
 
+//업적 정보
+public struct AchievementStruct
+{
+    public uint id;
+    public string quest_name;
+    public int progress;
+    public int target;
+}
+
+
 public class Utility
 {
 
