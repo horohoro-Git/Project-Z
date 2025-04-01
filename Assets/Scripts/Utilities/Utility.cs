@@ -166,7 +166,8 @@ public enum UIType
     Inventory,
     AbilityMenu,
     BoxInventory,
-    QuickSlot
+    QuickSlot,
+    Achievement
 
 }
 
@@ -493,6 +494,10 @@ public struct AchievementStruct
     public string quest_name;
     public int progress;
     public int target;
+    public bool complete;
+    public int reward_id;
+    public int reward_num;
+    public bool reward_complete;
 }
 
 

@@ -40,6 +40,7 @@ public class GameInstance
     public CharacterAbilitySystem characterAbilitySystem;
     public CharacterAbilityManager characterAbilityManager;
     public AchievementSystem achievementSystem;
+    public AchievementUI achievementUI;
     List<PlayerController> players = new List<PlayerController>();
 
     public List<PlayerController> GetPlayers { get { return players; } }
@@ -71,6 +72,7 @@ public class GameInstance
         characterAbilitySystem.enabled = false;
         characterAbilityManager.enabled = false;
         achievementSystem.enabled = false;
+        achievementUI.enabled = false;
 
         playerStatusDetailsUI = null;
         characterProfileUI = null;
@@ -98,6 +100,7 @@ public class GameInstance
         characterAbilitySystem = null;
         characterAbilityManager = null;
         achievementSystem = null;
+        achievementUI = null;
     }
 
     public void AddPlayer(PlayerController pc)
