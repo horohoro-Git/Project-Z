@@ -25,6 +25,7 @@ public class AchievementSystem : MonoBehaviour
             Debug.Log(achievementStruct.id + " worked");
             achievementStruct.progress += 1;
             AchievementHandler.UpdateAchievement(achievementStruct);
+           
         }
     }
 }

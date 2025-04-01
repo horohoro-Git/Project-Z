@@ -16,6 +16,8 @@ public class MenuUI : MonoBehaviour, IUIComponent
     Button inventoryBtn;
     [SerializeField]
     Button upgradeBtn;
+    [SerializeField]
+    Button achievementBtn;
     Coroutine menuCoroutine;
     [SerializeField]
     Sprite defaultSprite;
@@ -32,11 +34,13 @@ public class MenuUI : MonoBehaviour, IUIComponent
     UnityAction createClick;
     UnityAction inventoryClick;
     UnityAction upgradeClick;
+    UnityAction achievementClick;
 
     EventTrigger menuTrigger;
     EventTrigger createTrigger;
     EventTrigger inventoryTrigger;
     EventTrigger upgradeTrigger;
+    EventTrigger achievementTrigger;
 
     EventTrigger.Entry menuEnterEntry;
     EventTrigger.Entry menuExitEntry;
@@ -46,6 +50,8 @@ public class MenuUI : MonoBehaviour, IUIComponent
     EventTrigger.Entry inventoryExitEntry;
     EventTrigger.Entry upgradeEnterEntry;
     EventTrigger.Entry upgradeExitEntry;
+    EventTrigger.Entry achievementEnterEntry;
+    EventTrigger.Entry achievementExitEntry;
 
     // Start is called before the first frame update
     void Start()
@@ -61,17 +67,20 @@ public class MenuUI : MonoBehaviour, IUIComponent
         createClick = () => GameInstance.Instance.uiManager.SwitchUI(UIType.Housing);
         inventoryClick = () => GameInstance.Instance.uiManager.SwitchUI(UIType.Inventory);
         upgradeClick = () => GameInstance.Instance.uiManager.SwitchUI(UIType.AbilityMenu);
+        achievementClick = () => GameInstance.Instance.uiManager.SwitchUI(UIType.Achievement);
 
         menuBtn.onClick.AddListener(menuClick);
         createBtn.onClick.AddListener(createClick);
         inventoryBtn.onClick.AddListener(inventoryClick);
         upgradeBtn.onClick.AddListener(upgradeClick);
+        achievementBtn.onClick.AddListener(achievementClick);
 
         //메뉴 버튼의 호버 기능
         SetupButtonHoverEvent(menuBtn, ref menuTrigger, ref menuEnterEntry, ref menuExitEntry);
         SetupButtonHoverEvent(createBtn, ref createTrigger, ref createEnterEntry, ref createExitEntry);
         SetupButtonHoverEvent(inventoryBtn, ref inventoryTrigger, ref inventoryEnterEntry, ref inventoryExitEntry);
         SetupButtonHoverEvent(upgradeBtn, ref upgradeTrigger, ref upgradeEnterEntry, ref upgradeExitEntry);
+        SetupButtonHoverEvent(achievementBtn, ref achievementTrigger, ref achievementEnterEntry, ref achievementExitEntry);
     }
 
     private void OnDisable()
@@ -81,11 +90,13 @@ public class MenuUI : MonoBehaviour, IUIComponent
         createBtn.onClick.RemoveListener(createClick);
         inventoryBtn.onClick.RemoveListener(inventoryClick);
         upgradeBtn.onClick.RemoveListener(upgradeClick);
+        achievementBtn.onClick.RemoveListener(achievementClick);
 
         RemoveButtonHoverEvent(menuBtn, menuTrigger, menuEnterEntry, menuExitEntry);
         RemoveButtonHoverEvent(createBtn, createTrigger, createEnterEntry, createExitEntry);
         RemoveButtonHoverEvent(inventoryBtn, inventoryTrigger, inventoryEnterEntry, inventoryExitEntry);
         RemoveButtonHoverEvent(upgradeBtn, upgradeTrigger, upgradeEnterEntry, upgradeExitEntry);
+        RemoveButtonHoverEvent(achievementBtn, achievementTrigger, achievementEnterEntry, achievementExitEntry);
     }
 
     void SetupButtonHoverEvent(Button btn, ref EventTrigger eventTrigger, ref EventTrigger.Entry enterEntry, ref EventTrigger.Entry exitEntry)
