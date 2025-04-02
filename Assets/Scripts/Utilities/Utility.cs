@@ -495,11 +495,39 @@ public struct AchievementStruct
     public int progress;
     public int target;
     public bool complete;
-    public int reward_id;
-    public int reward_num;
+    public string reward;
     public bool reward_complete;
+    public uint achievement_chain;
+    public int level;
+    public List<AchievementRewardStruct> rewardStruct;
+   
+    public AchievementStruct(uint id, string quest_name, int progress, int target, bool complete, string reward, bool reward_complete, uint achievement_chain, int level, List<AchievementRewardStruct> rewardStruct)
+    {
+        this.id = id;
+        this.quest_name = quest_name;
+        this.progress = progress;
+        this.target = target;
+        this.complete = complete;
+        this.reward = reward;
+        this.reward_complete = reward_complete;
+        this.achievement_chain = achievement_chain;
+        this.level = level;
+        this.rewardStruct = rewardStruct;
+    }
 }
 
+//업적 보상 정보
+public struct AchievementRewardStruct
+{
+    public int reward_item;
+    public int reward_num;
+
+    public AchievementRewardStruct(int reward_item, int reward_num)
+    {
+        this.reward_item = reward_item;
+        this.reward_num = reward_num;
+    }
+}
 
 public class Utility
 {

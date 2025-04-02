@@ -206,11 +206,24 @@ public class SaveLoadSystem
         return dropStructs;
     }
 
-    //드랍 테이블
+    //업적 테이블
     public static List<AchievementStruct> LoadAchievement(string content)
     {
         string data = EncryptorDecryptor.Decyptor(content, "AAA");
-        return JsonConvert.DeserializeObject<List<AchievementStruct>>(data);
+        List<AchievementStruct> achievements = JsonConvert.DeserializeObject<List<AchievementStruct>>(data);
+
+        for(int i = 0; i < achievements.Count; i++)
+        {
+            string d = achievements[i].reward;
+            d = d.Replace("reward_id", "\"reward_id\"");
+            d = d.Replace("reward_num", "\"reward_num\"");
+            List<AchievementRewardStruct> rewardStructs = JsonConvert.DeserializeObject<List<AchievementRewardStruct>>(d);
+            AchievementStruct achievement = achievements[i];
+            achievement.rewardStruct = rewardStructs;
+            achievements[i] = achievement;
+        }
+
+        return achievements;
     }
 
 

@@ -39,12 +39,26 @@ public class AchievementUI : MonoBehaviour, IUIComponent
 
     public void ClearData(AchievementData achievementData)
     {
-        
+        bool completeClear = false; // ¿¬¼â ¾÷Àû 
+
+        if (achievementData.achievementStruct.achievement_chain == 0) completeClear = true;
+
+        AchievementStruct newAchievement = achievementData.achievementStruct;
         ongoingDatas.Remove(achievementData.achievementStruct.id);
-        ongoingBorder.sizeDelta = new Vector2(ongoingBorder.sizeDelta.x, 100f + ongoingDatas.Count);
-        clearDatas[achievementData.achievementStruct.id] = achievementData;
-        achievementData.GetRectTransform.SetParent(clearBorder);
-        clearBorder.sizeDelta = new Vector2(clearBorder.sizeDelta.x, 100f + clearDatas.Count);
+   
+     
+        if(!completeClear)
+        {
+            AchievementHandler.UpgradeNewData(newAchievement);
+            Destroy(achievementData.gameObject);
+        }
+        else
+        {
+            clearDatas[achievementData.achievementStruct.id] = achievementData;
+            ongoingBorder.sizeDelta = new Vector2(ongoingBorder.sizeDelta.x, 100f + ongoingDatas.Count);
+            achievementData.GetRectTransform.SetParent(clearBorder);
+            clearBorder.sizeDelta = new Vector2(clearBorder.sizeDelta.x, 100f + clearDatas.Count);
+        }
     }
 
     public void Setup()

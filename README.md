@@ -244,3 +244,6 @@ Added the ID-based Achievement Management System
 
 04/01
 Added achievement system ui and get reward 
+
+04/02
+Add chain achievements show the level of the achievement

@@ -94,19 +94,25 @@ public class Tree : EnvironmentObject
         dead = true;
         rewardsPlayer = player;
 
+        //에너지 소비
         rewardsPlayer.SpendEnergy(1);
 
+        //베어 쓰러지는 나무 방향
         Vector3 dir = transform.position - transforms.position;
         Debug.Log(dir);
         float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
-
         if (angle >= -45f && angle < 45f) animator.SetInteger("state", 3);
         else if (angle >= 45f && angle < 135f) animator.SetInteger("state", 4);
         else if (angle >= 135f) animator.SetInteger("state", 1);
         else if (angle < -135f) animator.SetInteger("state", 1);
         else if (angle >= -135f && angle < -45f) animator.SetInteger("state", 2);
+
+        //경험치 획득
         rewardsPlayer.GetExperience(exp);
-        AchievementHandler.Publish(100001);
+
+        //업적 이벤트
+        AchievementHandler.Publish(100001); 
+        AchievementHandler.Publish(100002);
         Invoke("AddReward", 1.5f);
     }
 

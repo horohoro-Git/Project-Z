@@ -15,11 +15,18 @@ public class AchievementData : MonoBehaviour
     public Image icon;
     public Button button;
     UnityAction clearAtion;
+
+    public List<GameObject> stars = new List<GameObject>();
     public void Setup()
     {
         button.enabled = false;
         string mainText = achievementStruct.quest_name + " " + achievementStruct.progress + "/" + achievementStruct.target;
         description.text = mainText;
+
+        for(int i = 0; i<achievementStruct.level; i++)
+        {
+            stars[i].SetActive(true);
+        }
     }
 
     private void OnEnable()
