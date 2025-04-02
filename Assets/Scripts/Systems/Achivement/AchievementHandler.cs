@@ -26,11 +26,8 @@ public static class AchievementHandler
         {
             if (!achieveEvents[flag].complete)
             {
-                if (!achievements.ContainsKey(flag))
-                {
-                    achievements[flag] = callback;
-                    GameInstance.Instance.achievementUI.AddEventUI(achieveEvents[flag], true);
-                }
+                achievements[flag] = callback;
+                GameInstance.Instance.achievementUI.AddEventUI(achieveEvents[flag], true);
             }
             else
             {
@@ -70,5 +67,17 @@ public static class AchievementHandler
         }
         achieveEvents[achievementStruct.id] = achievementStruct;
         GameInstance.Instance.achievementUI.UpdateUI(achievementStruct);
+
+    }
+
+    public static AchievementStruct UpgradeNewData(AchievementStruct currentData)
+    {
+        if (achieveEvents.ContainsKey(currentData.achievement_chain))
+        {
+            GameInstance.Instance.achievementSystem.NewEvent(currentData.achievement_chain);
+            
+            return achieveEvents[currentData.achievement_chain];
+        }
+        return new AchievementStruct();
     }
 }
