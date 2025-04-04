@@ -247,3 +247,6 @@ Added achievement system ui and get reward
 
 04/02
 Add chain achievements show the level of the achievement
+
+04/03
+Item Table Structure Modification
