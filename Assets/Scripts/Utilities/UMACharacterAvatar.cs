@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UMA;
 using UMA.CharacterSystem;
 using UnityEngine;
@@ -20,6 +21,7 @@ public class UMACharacterAvatar : MonoBehaviour
 
     private void Start()
     {
+  
         // avatar.Save
 
         /*  avatar.SetSlot("Cape", "SamplePack01_M_Recipe");
@@ -36,9 +38,9 @@ public class UMACharacterAvatar : MonoBehaviour
         // avatar.SetSlot("Hair", "HairStyle1");
         /*    avatar.umaData = collectionList;
             ApplyClothes();*/
-     //   avatar.SetSlot(recipe);
-       // avatar.BuildCharacter();
-       // Invoke("AddClothes", 2f);
+        //   avatar.SetSlot(recipe);
+        // avatar.BuildCharacter();
+        // Invoke("AddClothes", 2f);
     }
     void AddClothes()
     {

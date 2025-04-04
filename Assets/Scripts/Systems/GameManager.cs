@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
         Invoke("LoadBuilds", 0.5f);
         Invoke("LoadEnvironments", 0.5f);
     //    Invoke("LoadEnemies", 0.5f);
-        Invoke("TestItem", 0.5f);
+      //  Invoke("TestItem", 0.5f);
     }
 
     void TestItem()

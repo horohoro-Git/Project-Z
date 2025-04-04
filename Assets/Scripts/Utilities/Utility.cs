@@ -275,17 +275,19 @@ public struct ItemStruct
     public int item_index;
     public Sprite image;
     public string item_name;
+    public string asset_name;
     public SlotType slot_type;  //방어구 용
     public ItemType item_type;
     public bool used;
     public float weight;
     public GameObject itemGO;
 
-    public ItemStruct(int itemIndex, Sprite image, string itemName, float weight, SlotType slotType, ItemType itemType, GameObject itemGO)
+    public ItemStruct(int itemIndex, Sprite image, string itemName, string asset_name, float weight, SlotType slotType, ItemType itemType, GameObject itemGO)
     {
         this.item_index = itemIndex;
         this.image = image;
         this.item_name = itemName;
+        this.asset_name = asset_name;
         this.weight = weight;
         this.slot_type = slotType;
         this.item_type = itemType;

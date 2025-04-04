@@ -105,12 +105,19 @@ public class SaveLoadSystem
     }
 
     //아이템 데이터 테이블 불러오기
-    public static List<ItemStruct> GetItemData(string content)
+    public static Dictionary<int, ItemStruct> GetItemData(string content)
     {
         string data = EncryptorDecryptor.Decyptor(content, "AAA");
 
-        return JsonConvert.DeserializeObject<List<ItemStruct>>(data);
+        List<ItemStruct> items = JsonConvert.DeserializeObject<List<ItemStruct>>(data);
 
+        Dictionary<int, ItemStruct> itemDictionary = new Dictionary<int, ItemStruct>();
+        for (int i = 0; i < items.Count; i++)
+        {
+            itemDictionary[items[i].item_index] = items[i];
+        }
+
+        return itemDictionary;
     }
 
     //무기 데이터 불러오기
@@ -459,6 +466,7 @@ public class SaveLoadSystem
                             writer.Write(slot.slotY);
                             writer.Write(item.item_index);
                             writer.Write(item.item_name);
+                            writer.Write(item.asset_name);
                             writer.Write(item.weight);
                             writer.Write((int)item.slot_type);
                             writer.Write((int)item.item_type);
@@ -531,11 +539,12 @@ public class SaveLoadSystem
                             int Y = reader.ReadInt32();
                             int index = reader.ReadInt32();
                             string name = reader.ReadString();
+                            string assetName = reader.ReadString();
                             float weight = reader.ReadSingle();
                             int slotType = reader.ReadInt32();
                             int itemType = reader.ReadInt32();
 
-                            ItemStruct item = new ItemStruct(index, null, name, weight, (SlotType)slotType, (ItemType)itemType, null);
+                            ItemStruct item = new ItemStruct(index, null, name, assetName, weight, (SlotType)slotType, (ItemType)itemType, null);
 
                             WeaponStruct weaponStruct = new WeaponStruct();
                             ConsumptionStruct consumptionStruct = new ConsumptionStruct();
@@ -782,6 +791,7 @@ public class SaveLoadSystem
 
                                         writer.Write(item.item_index);
                                         writer.Write(item.item_name);
+                                        writer.Write(item.asset_name);
                                         writer.Write(item.weight);
                                         writer.Write((int)item.slot_type);
                                         writer.Write((int)item.item_type);
@@ -878,11 +888,12 @@ public class SaveLoadSystem
                                     if (!used) continue;
                                     int index = reader.ReadInt32();
                                     string name = reader.ReadString();
+                                    string assetName = reader.ReadString();
                                     float weight = reader.ReadSingle();
                                     SlotType slotType = (SlotType)reader.ReadInt32();
                                     ItemType itemType = (ItemType)reader.ReadInt32();
 
-                                    itemStruct = new ItemStruct(index,null,name, weight, slotType,itemType,null);
+                                    itemStruct = new ItemStruct(index,null,name, assetName, weight, slotType,itemType,null);
                                     itemStructs[i, j] = itemStruct;
                                     switch (itemType)
                                     {
@@ -989,10 +1000,11 @@ public class SaveLoadSystem
                                 {
                                     int index = reader.ReadInt32();
                                     string name = reader.ReadString();
+                                    string assetName = reader.ReadString();
                                     float weight = reader.ReadSingle();
                                     int slotType = reader.ReadInt32();
                                     int itemType = reader.ReadInt32();
-                                    ItemStruct item = new ItemStruct(index, null, name, weight, (SlotType)slotType, (ItemType)itemType, null);
+                                    ItemStruct item = new ItemStruct(index, null, name, assetName, weight, (SlotType)slotType, (ItemType)itemType, null);
                                     itemStructs.Add(item);
 
                                 }
@@ -1079,6 +1091,7 @@ public class SaveLoadSystem
                         {
                             int item_index = EC.itemStructs[i].item_index;
                             string item_name = EC.itemStructs[i].item_name;
+                            string asset_name = EC.itemStructs[i].asset_name;
                             float item_weight = EC.itemStructs[i].weight;
 
                             int slotType = (int)EC.itemStructs[i].slot_type;
@@ -1086,6 +1099,7 @@ public class SaveLoadSystem
 
                             writer.Write(item_index);
                             writer.Write(item_name);
+                            writer.Write(asset_name);
                             writer.Write(item_weight);
                             writer.Write(slotType);
                             writer.Write(itemType);

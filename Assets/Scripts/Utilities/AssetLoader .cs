@@ -36,25 +36,30 @@ public class AssetLoader : MonoBehaviour
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "grasses",
       "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup","enemy_zombie",
-      "male", "UMA_GLIB", "cardboardbox","cardboardbox_preview","MaxHPUp"
+      "male", "UMA_GLIB", "item_box","item_box_preview","max_hp_up"
     };
 
     [NonSerialized]
-    public static List<string> itemAssetkeys = new List<string> {
+    public static Dictionary<int, string> itemAssetkeys = new Dictionary<int, string>();
+   /* public static List<string> itemAssetkeys = new List<string> {
     "log", "wooden Axe", "apple", "cardboardbox", "","","","","","","MaxHPUp"
-    };
+    };*/
 
     public static List<string> previewAssetKeys = new List<string>
     {
-        "","","", "cardboardbox_preview"
+        "","","", "item_box_preview"
     };
 
+    /* [NonSerialized]
+     public static List<string> spriteAssetkeys = new List<string> {
+         "log_Sprite", "axe_Sprite", "apple_Sprite", "cardboardbox_sprite", "HatLeatherM_Sprite", "GambesonM_Sprite",
+         "GlovesLinenM_Sprite","KnickerbockerBlackM_Sprite", "SchoesLaceUpBlackM_Sprite",  "SamplePack01_M_Sprite", "MaxHPUp_Sprite"
+
+     };*/
+
     [NonSerialized]
-    public static List<string> spriteAssetkeys = new List<string> {
-        "log_Sprite", "axe_Sprite", "apple_Sprite", "cardboardbox_sprite", "HatLeatherM_Sprite", "GambesonM_Sprite",
-        "GlovesLinenM_Sprite","KnickerbockerBlackM_Sprite", "SchoesLaceUpBlackM_Sprite",  "SamplePack01_M_Sprite", "MaxHPUp_Sprite"
-        
-    };
+    public static Dictionary<int, string> spriteAssetkeys = new Dictionary<int, string>();
+
     [NonSerialized]
     public static List<string> enemykeys = new List<string> {
     "enemy_zombie"
@@ -65,15 +70,15 @@ public class AssetLoader : MonoBehaviour
     };
     [NonSerialized]
     public static List<string> recipeKeys = new List<string> {
-         "HatLeatherM_Recipe", "GambesonM_Recipe", "GlovesLinenM_Recipe", "KnickerbockerBlackM_Recipe", "SchoesLaceUpBlackM_Recipe",
-         "SamplePack01_M_Recipe"
+         "hat_leather_m_Recipe", "gambeson_m_Recipe", "gloves_linen_m_Recipe", "knickerbocker_black_m_Recipe", "schoes_laceup_black_m_Recipe",
+         "green_backpack_Recipe"
     };
     
 
     [NonSerialized]
     public List<LevelData> levelData;
     [NonSerialized]
-    public List<ItemStruct> items;
+    public Dictionary<int, ItemStruct> items;
     
     public List<EnemyStruct> enemies;
 
@@ -272,6 +277,16 @@ public class AssetLoader : MonoBehaviour
                     achievementContent = achievementTextAsset.text;
                 }
 
+                items = SaveLoadSystem.GetItemData(itemContent);
+
+
+                foreach(KeyValuePair<int, ItemStruct> keyValuePair in items)
+                {
+                    spriteAssetkeys[keyValuePair.Key] = keyValuePair.Value.item_name + "_Sprite";
+                    Debug.Log(spriteAssetkeys[keyValuePair.Key]);
+                    assetkeys[keyValuePair.Key] = keyValuePair.Value.item_name;
+                }
+
                 //프리팹 에셋 로드
                 foreach (string key in assetkeys)
                 {
@@ -289,12 +304,12 @@ public class AssetLoader : MonoBehaviour
                 }
 
                 //이미지 에셋 로드
-                foreach (string key in spriteAssetkeys)
+                foreach (KeyValuePair<int, string> key in spriteAssetkeys)
                 {
-                    Sprite asset = bundle.LoadAsset<Sprite>(key);
+                    Sprite asset = bundle.LoadAsset<Sprite>(key.Value);
                     if (asset != null)
                     {
-                        loadedSprites[key] = asset;
+                        loadedSprites[key.Value] = asset;
                         Debug.Log(key + " loaded");
                     }
                     else
@@ -320,8 +335,6 @@ public class AssetLoader : MonoBehaviour
                     }
                 }
             }
-
-           
         }
         else
         {
@@ -382,7 +395,7 @@ public class AssetLoader : MonoBehaviour
         {
 
             levelData = SaveLoadSystem.GetLevelData(levelContent);
-            items = SaveLoadSystem.GetItemData(itemContent);
+           
             List<WeaponStruct> weaponTable = SaveLoadSystem.GetWeaponData(weaponContent);
             List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
             enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
@@ -405,12 +418,6 @@ public class AssetLoader : MonoBehaviour
         }
     }
 
-    public void ClearAsset()
-    {
-        //AssetBundle.UnloadAllAssetBundles(true);
-        //Addressables.Release(handle);
-    }
-   
     public bool CheckAssetLoaded()
     {
         if (!assetLoadSuccessful)
@@ -876,28 +883,6 @@ public class AssetLoader : MonoBehaviour
 
     }
 
-    public void LoadAsset()
-    {
-        if (bundle != null)
-        {
-       //     floor = bundle.LoadAsset<GameObject>(floor_url);
-       //     wall = bundle.LoadAsset<GameObject>(wall_url);
-         //   door = bundle.LoadAsset<GameObject>(door_url);
-         //   roof = bundle.LoadAsset<GameObject>(roof_url);
-      //      preFloor = bundle.LoadAsset<GameObject>(preFloor_url);
-        //    preWall = bundle.LoadAsset<GameObject>(preWall_url);
-       //     preDoor = bundle.LoadAsset<GameObject>(preDoor_url);
-          //  possibleMat = bundle.LoadAsset<Material>(possibleMat_url);
-         //   impossibleMat = bundle.LoadAsset<Material>(impossibleMat_url);
-         //   flowerOrange = bundle.LoadAsset<GameObject>(flowerOrange_url);
-        //    flowerYellow = bundle.LoadAsset<GameObject>(flowerYellow_url);
-           // flowerPink = bundle.LoadAsset<GameObject>(flowerPink_url);
-      //      grasses = bundle.LoadAsset<GameObject>(grasses_url);
-       //     tree03 = bundle.LoadAsset<GameObject>(tree03_url);
-     //       human = bundle.LoadAsset<GameObject>(human_url);
-        }
-    }
-
     public void Clear()
     {
         if (GameInstance.Instance.gameManager.glib != null) Destroy(GameInstance.Instance.gameManager.glib);
@@ -921,7 +906,9 @@ public class AssetLoader : MonoBehaviour
         {
             loadedSprites[keyss.ElementAt(i)] = null;
         }
-     
+      
+        foreach(KeyValuePair<int, ItemStruct> item in items) item.Value.Clear();
+       
         loadedAssets.Clear();
 
 
