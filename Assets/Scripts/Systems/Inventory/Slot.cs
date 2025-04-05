@@ -422,7 +422,7 @@ public class Slot : MonoBehaviour, IUIComponent
         if (item.used)
         {
    //         itemImage.gameObject.SetActive(true);
-            itemImage.sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[item.item_index - 1]];
+            itemImage.sprite = AssetLoader.loadedSprites[AssetLoader.spriteAssetkeys[item.item_index].Name];
         }
         else
         {

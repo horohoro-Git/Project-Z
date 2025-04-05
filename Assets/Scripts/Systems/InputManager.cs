@@ -124,7 +124,7 @@ public class InputManager : MonoBehaviour
                                 if (GameInstance.Instance.editMode != EditMode.None) assetLoader.PreLoadWall(hit.point, x, y, false);
                                 break;
                             case StructureState.Furniture:
-                                if (GameInstance.Instance.editMode != EditMode.None) assetLoader.PreviewFurniture(hit.point, x, y, AssetLoader.previewAssetKeys[selectedInstallableItem.item_index - 1]);
+                                if (GameInstance.Instance.editMode != EditMode.None) assetLoader.PreviewFurniture(hit.point, x, y, "preview_" + selectedInstallableItem.asset_name);
                                  break;
                         }
                     }
@@ -166,7 +166,7 @@ public class InputManager : MonoBehaviour
                                 break;
                             case StructureState.Furniture:
                                 BuildWallDirection buildfurnitureDirection = housing.GetWallDirection(hit.point, x, y);
-                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) assetLoader.LoadFurniture(buildfurnitureDirection, x, y, selectedInstallableItem.item_index - 1, false);
+                                if (GameInstance.Instance.editMode == EditMode.CreativeMode) assetLoader.LoadFurniture(buildfurnitureDirection, x, y, selectedInstallableItem.item_index, false);
                                 else if (GameInstance.Instance.editMode == EditMode.DestroyMode) housing.RemoveFurniture(x, y);
                                 break;
                         }

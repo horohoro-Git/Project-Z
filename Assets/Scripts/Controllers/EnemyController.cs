@@ -309,7 +309,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
                 if (random <= enemyStruct.dropStruct[i].item_chance)
                 {
                     int index = enemyStruct.dropStruct[i].item_index - 1;
-                    GameObject item = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[index]]);
+                    GameObject item = Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[index].ID]);
                     item.transform.position = new Vector3(Transforms.position.x, Transforms.position.y + 1, Transforms.position.z);
                     GettableItem gettableItem = item.AddComponent<GettableItem>();
 

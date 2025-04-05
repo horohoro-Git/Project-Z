@@ -250,3 +250,6 @@ Add chain achievements show the level of the achievement
 
 04/03
 Item Table Structure Modification
+
+04/04
+Optimized the code for loading data tables using generics

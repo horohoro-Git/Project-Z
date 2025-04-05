@@ -34,7 +34,7 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
     PlayerStruct currentStruct;
     PlayerStruct playerStruct;
 
-    List<LevelData> levelData = new List<LevelData>();
+    Dictionary<int, LevelStruct> levelData = new Dictionary<int, LevelStruct>();
     Player player;
     public void Setup()
     {
@@ -91,9 +91,9 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
         weightUpgradeBefore.text = playerStruct.weightLevel.ToString();
 
         //플레이어 스텟 변화 정보
-        healthChangeBefore.text = levelData[playerStruct.hpLevel - 1].heal.ToString() + "%";
-        energyChangeBefore.text = levelData[playerStruct.energyLevel - 1].energy_regain.ToString() + "%";
-        weightChangeBefore.text = levelData[playerStruct.weightLevel - 1].weight.ToString();
+        healthChangeBefore.text = levelData[playerStruct.hpLevel].heal.ToString() + "%";
+        energyChangeBefore.text = levelData[playerStruct.energyLevel].energy_regain.ToString() + "%";
+        weightChangeBefore.text = levelData[playerStruct.weightLevel].weight.ToString();
     }
 
     void ChangeAfter()
@@ -109,13 +109,13 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
         //  else weightUpgradeAfter.text = currentStruct.weightLevel.ToString();
 
         //플레이어 스텟 변화 정보
-        if (currentStruct.hpLevel <= 20) healthChangeAfter.text = levelData[currentStruct.hpLevel - 1].heal.ToString() + "%";
+        if (currentStruct.hpLevel <= 20) healthChangeAfter.text = levelData[currentStruct.hpLevel].heal.ToString() + "%";
         //  else healthChangeAfter.text = levelData[currentStruct.hpLevel - 1].heal.ToString();
 
-        if (currentStruct.energyLevel <= 20) energyChangeAfter.text = levelData[currentStruct.energyLevel - 1].energy_regain.ToString() + "%";
+        if (currentStruct.energyLevel <= 20) energyChangeAfter.text = levelData[currentStruct.energyLevel].energy_regain.ToString() + "%";
         //     else energyChangeAfter.text = levelData[currentStruct.energyLevel - 1].energy_regain.ToString();
 
-        if (currentStruct.weightLevel <= 20) weightChangeAfter.text = levelData[currentStruct.weightLevel - 1].weight.ToString();
+        if (currentStruct.weightLevel <= 20) weightChangeAfter.text = levelData[currentStruct.weightLevel].weight.ToString();
         //  else weightChangeAfter.text = levelData[currentStruct.weightLevel - 1].weight.ToString();
     }
 

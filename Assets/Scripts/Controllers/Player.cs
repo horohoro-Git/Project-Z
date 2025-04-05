@@ -95,7 +95,7 @@ public class Player : MonoBehaviour
     public void UpdatePlayer()
     {
         equipmentStats = new PlayerStruct();
-        playerStruct.requireEXP = GameInstance.Instance.assetLoader.levelData[playerStruct.level - 1].exp;
+        playerStruct.requireEXP = GameInstance.Instance.assetLoader.levelData[playerStruct.level].exp;
 
         //Èú ¹öÇÁ ÀÌÆåÆ®
         CreateBuff(ref healBuff, LoadURL.Heal);
@@ -120,7 +120,7 @@ public class Player : MonoBehaviour
 
     void CreateBuff(ref GameObject go, string name)
     {
-        go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[name]);
+        go = Instantiate(AssetLoader.loadedAssets[name]);
         go.transform.SetParent(Transforms);
         go.transform.localPosition = Vector3.zero;
         go.SetActive(false);
