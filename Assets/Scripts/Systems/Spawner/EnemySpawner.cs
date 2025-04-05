@@ -48,7 +48,7 @@ public class EnemySpawner : MonoBehaviour
                 for (int k = 0; k < 8; k++) objectChecks[x + sizeCheckX[k], y + sizeCheckY[k]] = true;
                 objectChecks[x, y] = true;
                 int type = UnityEngine.Random.Range(1, 2);
-                EnemyController enemy = Instantiate(assetLoader.loadedAssets[AssetLoader.enemykeys[type - 1]]).GetComponent<EnemyController>();
+                EnemyController enemy = Instantiate(AssetLoader.loadedAssets[AssetLoader.enemykeys[type - 1]]).GetComponent<EnemyController>();
                 enemy.Transforms.position = new Vector3(x - 49, 0, y - 49);
                 enemy.enemyStruct = assetLoader.enemies[type - 1];
                 GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
@@ -77,7 +77,7 @@ public class EnemySpawner : MonoBehaviour
             pc.Rigid.interpolation = RigidbodyInterpolation.None;
             pc.Rigid.constraints = RigidbodyConstraints.FreezeAll;
             pc.state = PlayerState.Dead;
-            GameObject model = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.humankeys[modelType - 1]]);
+            GameObject model = Instantiate(AssetLoader.loadedAssets[AssetLoader.humankeys[modelType - 1]]);
             //GameObject model = Instantiate(GameInstance.Instance.gameManager.test);
             //Destroy(model.GetComponentInChildren<Animator>());
             model.transform.SetParent(pc.Transforms);
@@ -124,7 +124,7 @@ public class EnemySpawner : MonoBehaviour
         }
         else
         {
-            EnemyController enemyController = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.enemykeys[type - 1]]).GetComponent<EnemyController>();
+            EnemyController enemyController = Instantiate(AssetLoader.loadedAssets[AssetLoader.enemykeys[type - 1]]).GetComponent<EnemyController>();
             enemyController.transform.position = position;
             enemyController.transform.rotation = rotation;
             enemyController.itemStructs = itemStructs;

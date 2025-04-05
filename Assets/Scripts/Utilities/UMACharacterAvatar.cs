@@ -77,7 +77,7 @@ public class UMACharacterAvatar : MonoBehaviour
     public void AddCloth(int recipeIndex)
     {
 
-        avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[AssetLoader.recipeKeys[recipeIndex]]);
+        avatar.SetSlot(AssetLoader.loadedRecipes[AssetLoader.recipes[recipeIndex].recipe_name]);
 
         avatar.BuildCharacter();
     }
@@ -85,7 +85,7 @@ public class UMACharacterAvatar : MonoBehaviour
     public void AddCloth(string recipeString)
     {
 
-        avatar.SetSlot(GameInstance.Instance.assetLoader.loadedRecipes[recipeString]);
+        avatar.SetSlot(AssetLoader.loadedRecipes[recipeString]);
 
         avatar.BuildCharacter();
     }

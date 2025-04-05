@@ -73,7 +73,7 @@ public class EnvironmentSpawner : MonoBehaviour
             {
                 for (int k = 0; k < 8; k++) objectChecks[x + sizeCheckX[k], y + sizeCheckY[k]] = true;
                 objectChecks[x, y] = true;
-                EnvironmentObject tree = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Tree], terrain.transform).GetComponent<EnvironmentObject>();
+                EnvironmentObject tree = Instantiate(AssetLoader.loadedAssets[LoadURL.Tree], terrain.transform).GetComponent<EnvironmentObject>();
                 tree.transform.position = new Vector3(x - 49, 0, y - 49);
                 tree.environmentType = EnvironmentType.Tree;
                 tree.X = x;
@@ -107,7 +107,7 @@ public class EnvironmentSpawner : MonoBehaviour
                     int rand = UnityEngine.Random.Range(0, 100);
                     if(rand < 70)
                     {
-                        EnvironmentObject grass = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Grasses], terrain.transform).GetComponent<EnvironmentObject>();
+                        EnvironmentObject grass = Instantiate(AssetLoader.loadedAssets[LoadURL.Grasses], terrain.transform).GetComponent<EnvironmentObject>();
                         grass.transform.position = new Vector3(i - 49f, 0, j - 49f);
                         grass.environmentType = EnvironmentType.Grasses;
                         grass.X = i;
@@ -116,7 +116,7 @@ public class EnvironmentSpawner : MonoBehaviour
                     }
                     else if(rand < 80)
                     {
-                        EnvironmentObject flower = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Flower_Orange], terrain.transform).GetComponent<EnvironmentObject>();
+                        EnvironmentObject flower = Instantiate(AssetLoader.loadedAssets[LoadURL.Flower_Orange], terrain.transform).GetComponent<EnvironmentObject>();
                         flower.transform.position = new Vector3(i - 49f, 0, j - 49f);
                         flower.transform.rotation = Quaternion.Euler(0, -90, 0);
                         flower.environmentType = EnvironmentType.Flower_Orange;
@@ -127,7 +127,7 @@ public class EnvironmentSpawner : MonoBehaviour
                     }
                     else if(rand < 90)
                     {
-                        EnvironmentObject flower = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Flower_Pink], terrain.transform).GetComponent<EnvironmentObject>();
+                        EnvironmentObject flower = Instantiate(AssetLoader.loadedAssets[LoadURL.Flower_Pink], terrain.transform).GetComponent<EnvironmentObject>();
                         flower.transform.position = new Vector3(i - 49f, 0, j - 49f);
                         flower.transform.rotation = Quaternion.Euler(0, -90, 0);
                         flower.environmentType = EnvironmentType.Flower_Pink;
@@ -138,7 +138,7 @@ public class EnvironmentSpawner : MonoBehaviour
                     }
                     else if(rand < 100)
                     {
-                        EnvironmentObject flower = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Flower_Yellow], terrain.transform).GetComponent<EnvironmentObject>();
+                        EnvironmentObject flower = Instantiate(AssetLoader.loadedAssets[LoadURL.Flower_Yellow], terrain.transform).GetComponent<EnvironmentObject>();
                         flower.transform.position = new Vector3(i - 49f, 0, j - 49f);
                         flower.transform.rotation = Quaternion.Euler(0, -90, 0);
                         flower.environmentType = EnvironmentType.Flower_Yellow;
@@ -164,23 +164,23 @@ public class EnvironmentSpawner : MonoBehaviour
             case EnvironmentType.None:
                 break;
             case EnvironmentType.Flower_Pink:
-                EnvironmentObject flower_Pink = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Flower_Pink], terrain.transform).GetComponent<EnvironmentObject>();
+                EnvironmentObject flower_Pink = Instantiate(AssetLoader.loadedAssets[LoadURL.Flower_Pink], terrain.transform).GetComponent<EnvironmentObject>();
                 LoadObjectSetting(flower_Pink, info);
                 break;
             case EnvironmentType.Flower_Orange:
-                EnvironmentObject flower_Orange = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Flower_Orange], terrain.transform).GetComponent<EnvironmentObject>();
+                EnvironmentObject flower_Orange = Instantiate(AssetLoader.loadedAssets[LoadURL.Flower_Orange], terrain.transform).GetComponent<EnvironmentObject>();
                 LoadObjectSetting(flower_Orange, info);
                 break;
             case EnvironmentType.Flower_Yellow:
-                EnvironmentObject flower_Yellow = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Flower_Yellow], terrain.transform).GetComponent<EnvironmentObject>();
+                EnvironmentObject flower_Yellow = Instantiate(AssetLoader.loadedAssets[LoadURL.Flower_Yellow], terrain.transform).GetComponent<EnvironmentObject>();
                 LoadObjectSetting(flower_Yellow, info);
                 break;
             case EnvironmentType.Grasses:
-                EnvironmentObject grasses = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Grasses], terrain.transform).GetComponent<EnvironmentObject>();
+                EnvironmentObject grasses = Instantiate(AssetLoader.loadedAssets[LoadURL.Grasses], terrain.transform).GetComponent<EnvironmentObject>();
                 LoadObjectSetting(grasses, info);
                 break;
             case EnvironmentType.Tree:
-                EnvironmentObject tree = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Tree], terrain.transform).GetComponent<EnvironmentObject>();
+                EnvironmentObject tree = Instantiate(AssetLoader.loadedAssets[LoadURL.Tree], terrain.transform).GetComponent<EnvironmentObject>();
                 LoadObjectSetting(tree, info);
                 break;
         }

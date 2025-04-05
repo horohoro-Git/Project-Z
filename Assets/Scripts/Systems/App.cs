@@ -10,7 +10,8 @@ public class App : MonoBehaviour
     Scene scene;
     private void Awake()
     {
-        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+        //Application.targetFrameRate = 60;
         SceneManager.sceneUnloaded += OnSceneUnloaded;
         SceneManager.sceneLoaded += SceneManager_sceneLoaded;
         DontDestroyOnLoad(this.gameObject);

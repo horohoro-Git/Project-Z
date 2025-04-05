@@ -42,14 +42,14 @@ public class GameManager : MonoBehaviour
         Invoke("LoadBuilds", 0.5f);
         Invoke("LoadEnvironments", 0.5f);
     //    Invoke("LoadEnemies", 0.5f);
-      //  Invoke("TestItem", 0.5f);
+        Invoke("TestItem", 0.5f);
     }
 
     void TestItem()
     {
         for (int i = 0; i < 10; i++)
         {
-            Item go = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[AssetLoader.itemAssetkeys[1]]).GetComponent<Item>();
+            Item go = Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[100001].Name]).GetComponent<Item>();
 
             go.transform.position = new Vector3(0, 1, 0);
 
@@ -61,14 +61,14 @@ public class GameManager : MonoBehaviour
           //  go.AddComponent<Rigidbody>().excludeLayers = go.itemInteractionColider.excludeLayers;
            // go.GetComponent<BoxCollider>().enabled = true;
             if(go.TryGetComponent<WeaponTrail>(out WeaponTrail trail)) Destroy(trail);
-            gettable.itemStruct = ItemData.GetItem(2);
+            gettable.itemStruct = ItemData.GetItem(100001);
             Destroy(go);
         }
     }
 
     void PlayerSetting()
     {
-        glib = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.UMA_GLIB]);
+        glib = Instantiate(AssetLoader.loadedAssets[LoadURL.UMA_GLIB]);
 
         PlayerSettings(true);
         LoadEnemies();
@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
 
 
          pc.SetController(human);*/
-        GameObject human = Instantiate(GameInstance.Instance.assetLoader.loadedAssets[LoadURL.Male]);
+        GameObject human = Instantiate(AssetLoader.loadedAssets[LoadURL.Male]);
       //  GameObject human = Instantiate(test);
         human.transform.SetParent(pc.Transforms);
         human.transform.localPosition = Vector3.zero;

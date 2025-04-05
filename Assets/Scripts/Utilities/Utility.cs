@@ -267,10 +267,25 @@ public struct HousingChangeInfo
     }
 }
 
+// 레벨업 정보
+public struct LevelStruct : ITableID<int>
+{
+    public int id;
+    public int level;
+    public int exp;
+    public int heal;
+    public int energy_regain;
+    public int weight;
+
+    public readonly int ID => id;
+
+    public readonly string Name => throw new System.NotImplementedException();
+}
+
 
 //아이템 정보
 [System.Serializable]
-public struct ItemStruct
+public struct ItemStruct : ITableID<int>
 {
     public int item_index;
     public Sprite image;
@@ -295,6 +310,10 @@ public struct ItemStruct
         this.itemGO = itemGO;
     }
 
+    public readonly int ID => item_index;
+
+    public readonly string Name => throw new System.NotImplementedException();
+
     public void Clear()
     {
         image = null;
@@ -304,7 +323,7 @@ public struct ItemStruct
 
 //소비 아이템의 정보
 [System.Serializable]
-public struct ConsumptionStruct
+public struct ConsumptionStruct : ITableID<int>
 {
     public int item_index;
     public ConsumptionType consumption_type;
@@ -320,10 +339,14 @@ public struct ConsumptionStruct
         this.energy_amount = energy_amount;
         this.duration = duration;
     }
+
+    public readonly int ID => item_index;
+
+    public readonly string Name => throw new System.NotImplementedException();
 }
 
 //무기 아이템 정보
-public struct WeaponStruct
+public struct WeaponStruct : ITableID<int>
 {
     public int item_index;
     public WeaponType weapon_type;
@@ -341,10 +364,14 @@ public struct WeaponStruct
         this.max_ammo = max_ammo;
         this.durability = durability;
     }
+
+    public readonly int ID => item_index;
+
+    public readonly string Name => throw new System.NotImplementedException();
 }
 
 //방어구 아이템 정보
-public struct ArmorStruct
+public struct ArmorStruct : ITableID<int>
 {
     public int item_index;
     public SlotType armor_type;
@@ -366,6 +393,10 @@ public struct ArmorStruct
         this.attack_damage = attack_damage;
         this.key_index = key_index;
     }
+
+    public readonly int ID => item_index;
+
+    public readonly string Name => throw new System.NotImplementedException();
 }
 
 
@@ -477,16 +508,22 @@ public struct BoxStruct
 }
 
 //제작 정보
-public struct CraftStruct
+public struct CraftStruct : ITableID<int>
 {
     public int index;
 
+    public readonly int ID => index;
+
+    public readonly string Name => throw new System.NotImplementedException();
 }
 //특성 정보
-public struct AbilityStruct
+public struct AbilityStruct : ITableID<int>
 {
     public int index;
 
+    public readonly int ID => index;
+
+    public readonly string Name => throw new System.NotImplementedException();
 }
 
 //업적 정보
@@ -530,6 +567,55 @@ public struct AchievementRewardStruct
         this.reward_num = reward_num;
     }
 }
+
+//UMA 레시피 정보
+public struct RecipeStruct : ITableID<int>
+{
+    public int id;
+    public int index;
+    public string recipe_name;
+
+    public RecipeStruct(int id, int index, string recipe_name)
+    {
+        this .id = id;
+        this .index = index;
+        this.recipe_name = recipe_name;
+    }
+
+    public readonly int ID => id;
+
+    public readonly string Name => recipe_name;
+}
+
+//NPC 정보
+public struct NPCStruct : ITableID<int>
+{
+    public int id;
+    public int npc_index;   
+    public string npc_name;
+    public string npc_asset;
+    public int npc_hair;
+
+    public readonly int ID => id;
+
+    public readonly string Name => npc_asset;
+}
+
+public struct StringStruct : ITableID<string>
+{
+    public string str;
+
+    public readonly string Name => str;
+
+  
+    public readonly string ID => throw new System.NotImplementedException();
+
+    public StringStruct(string str)
+    {
+        this.str = str;
+    }
+}
+
 
 public class Utility
 {
@@ -612,5 +698,12 @@ public interface IAbility
     public void DestroyAbility();
 
 }
+
+public interface ITableID<K>
+{
+     K ID { get; }
+     public string Name { get; }
+}
+
 
 

@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 using System.IO;
 using System.Linq;
 using UMA.CharacterSystem;
+using Newtonsoft.Json;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -14,51 +15,25 @@ public class AssetLoader : MonoBehaviour
     [NonSerialized]
     public AssetBundle bundle;
 
-    public string floor_url = "Assets/Edited/Floor/Floor.prefab";
-    public string wall_url = "Assets/Edited/wall/wall.prefab";
-    public string door_url = "Assets/Edited/wall/door.prefab";
-    public string roof_url = "Assets/Edited/roof/roof.prefab";
-    public string preFloor_url = "Assets/Edited/Floor/PreloadFloor.prefab";
-    public string preWall_url = "Assets/Edited/wall/PreloadWall.prefab";
-    public string preDoor_url = "Assets/Edited/wall/PreloadDoor.prefab";
-    public string possibleMat_url = "Assets/Edited/PreLoadMaterial_Possible.mat";
-    public string impossibleMat_url = "Assets/Edited/PreLoadMaterial_Impossible.mat";
-    public string flowerOrange_url = "Assets/Edited/flower/flower_orange.prefab";
-    public string flowerYellow_url = "Assets/Edited/flower/flower_yellow.prefab";
-    public string flowerPink_url = "Assets/Edited/flower/flower_pink.prefab";
-    public string grasses_url = "Assets/Edited/grass/grasses.prefab";
-    public string tree03_url = "Assets/Edited/Tree/Tree_03.prefab";
-    public string human_url = "Assets/Edited/Player/Model/human_male.prefab";
-
-    [NonSerialized]
+   /* [NonSerialized]
     public List<string> assetkeys = new List<string> {
     "floor", "wall", "door", "roof",
     "preview_floor", "preview_wall", "preview_door",
      "flower_orange", "flower_yellow",  "flower_pink", "grasses",
-      "tree", "human_male", "log", "wooden Axe", "apple", "heal", "levelup","enemy_zombie",
+      "tree", "human_male", "log", "wooden_axe", "apple", "heal", "levelup","enemy_zombie",
       "male", "UMA_GLIB", "item_box","item_box_preview","max_hp_up"
-    };
+    };*/
 
     [NonSerialized]
-    public static Dictionary<int, string> itemAssetkeys = new Dictionary<int, string>();
-   /* public static List<string> itemAssetkeys = new List<string> {
-    "log", "wooden Axe", "apple", "cardboardbox", "","","","","","","MaxHPUp"
-    };*/
+    public static Dictionary<int, StringStruct> itemAssetkeys = new Dictionary<int, StringStruct>();
 
     public static List<string> previewAssetKeys = new List<string>
     {
         "","","", "item_box_preview"
     };
 
-    /* [NonSerialized]
-     public static List<string> spriteAssetkeys = new List<string> {
-         "log_Sprite", "axe_Sprite", "apple_Sprite", "cardboardbox_sprite", "HatLeatherM_Sprite", "GambesonM_Sprite",
-         "GlovesLinenM_Sprite","KnickerbockerBlackM_Sprite", "SchoesLaceUpBlackM_Sprite",  "SamplePack01_M_Sprite", "MaxHPUp_Sprite"
-
-     };*/
-
     [NonSerialized]
-    public static Dictionary<int, string> spriteAssetkeys = new Dictionary<int, string>();
+    public static Dictionary<int, StringStruct> spriteAssetkeys = new Dictionary<int, StringStruct>();
 
     [NonSerialized]
     public static List<string> enemykeys = new List<string> {
@@ -68,15 +43,12 @@ public class AssetLoader : MonoBehaviour
     public static List<string> humankeys = new List<string> {
     "male"
     };
+   /* [NonSerialized]
+    public static Dictionary<int, RecipeStruct> recipeKeys = new Dictionary<int, RecipeStruct>();
+*/
     [NonSerialized]
-    public static List<string> recipeKeys = new List<string> {
-         "hat_leather_m_Recipe", "gambeson_m_Recipe", "gloves_linen_m_Recipe", "knickerbocker_black_m_Recipe", "schoes_laceup_black_m_Recipe",
-         "green_backpack_Recipe"
-    };
-    
-
-    [NonSerialized]
-    public List<LevelData> levelData;
+    public Dictionary<int, LevelStruct> levelData;
+    //public List<LevelData> levelData;
     [NonSerialized]
     public Dictionary<int, ItemStruct> items;
     
@@ -96,10 +68,16 @@ public class AssetLoader : MonoBehaviour
     [NonSerialized]
     public Dictionary<int, AbilityStruct> abilities = new Dictionary<int, AbilityStruct>();
 
-    public Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
-    public Dictionary<string, Sprite> loadedSprites = new Dictionary<string, Sprite>();
+    [NonSerialized]
+    public Dictionary<int, NPCStruct> npcs = new Dictionary<int, NPCStruct>();
 
-    public Dictionary<string, UMAWardrobeRecipe> loadedRecipes = new Dictionary<string, UMAWardrobeRecipe>();
+   
+    public static Dictionary<int, RecipeStruct> recipes = new Dictionary<int, RecipeStruct>();
+
+    public static Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
+    public static Dictionary<string, Sprite> loadedSprites = new Dictionary<string, Sprite>();
+
+    public static Dictionary<string, UMAWardrobeRecipe> loadedRecipes = new Dictionary<string, UMAWardrobeRecipe>();
 
     [SerializeField]
     Shader holoShader;
@@ -121,13 +99,13 @@ public class AssetLoader : MonoBehaviour
     Shader standard;
 
     Vector3 hitPoint = new Vector3(-100,-100,-100);
-//    AsyncOperationHandle<IList<GameObject>> handle;
-//    AsyncOperationHandle<IList<Sprite>> spritehandle;
-
   
     Shader Standard { get { if (standard == null) standard = Shader.Find("Standard"); return standard; } }
 
-    //데이터 테이블 문자열
+    string[] tables = new string[11] 
+    { "level", "item", "weapon", "consumption", "enemy", "armor", "craft", "ability", "achievement", "recipes", "npc" };
+    Dictionary<string, string> tableContents = new Dictionary<string, string>();
+   /* //데이터 테이블 문자열
     [NonSerialized]
     public string levelContent;
     [NonSerialized] 
@@ -146,12 +124,15 @@ public class AssetLoader : MonoBehaviour
     public string abilityContent;
     [NonSerialized]
     public string achievementContent;
-
+    [NonSerialized]
+    public string recipesContent;
+*/
     //설치물 키
     [NonSerialized]
     public static List<int> furnituresKey = new List<int>
     { 4 };
 
+    int unloadNum = 0;
     public void Awake()
     {
     
@@ -165,9 +146,6 @@ public class AssetLoader : MonoBehaviour
     }
     public IEnumerator DownloadAssetBundle(string url, bool justShader)
     {
-      //  Caching.ClearCache();
-        int unloadNum = 0;
-
         string homeUrl = Path.Combine(SaveLoadSystem.LoadServerURL(), "home");
         Hash128 bundleHash = SaveLoadSystem.ComputeHash128(System.Text.Encoding.UTF8.GetBytes(homeUrl));
 
@@ -198,142 +176,29 @@ public class AssetLoader : MonoBehaviour
             if (!bundle.isStreamedSceneAssetBundle)
             {
                 //데이터 테이블 로드
-                AssetBundleRequest levelrequest = bundle.LoadAssetAsync<TextAsset>("level");
-                yield return levelrequest;
+                yield return StartCoroutine(DatatableLoad());
 
-                if (levelrequest != null)
+                items = SaveLoadSystem.GetDictionaryData<int, ItemStruct>(tableContents["item"]);
+                weapons = SaveLoadSystem.GetDictionaryData<int, WeaponStruct>(tableContents["weapon"]);
+                armors = SaveLoadSystem.GetDictionaryData<int, ArmorStruct>(tableContents["armor"]);
+                consumptions = SaveLoadSystem.GetDictionaryData<int, ConsumptionStruct>(tableContents["consumption"]);
+                crafts = SaveLoadSystem.GetDictionaryData<int, CraftStruct>(tableContents["craft"]);
+                abilities = SaveLoadSystem.GetDictionaryData<int, AbilityStruct>(tableContents["ability"]);
+                levelData = SaveLoadSystem.GetDictionaryData<int, LevelStruct>(tableContents["level"]);
+                npcs = SaveLoadSystem.GetDictionaryData<int, NPCStruct>(tableContents["npc"]);
+                recipes = SaveLoadSystem.GetDictionaryData<int, RecipeStruct>(tableContents["recipes"]);
+
+                foreach (KeyValuePair<int, ItemStruct> keyValuePair in items)
                 {
-                    TextAsset levelTextAsset = (TextAsset)levelrequest.asset;
-                    levelContent = levelTextAsset.text;
+                    string spriteName = keyValuePair.Value.asset_name + "_Sprite";
+                    spriteAssetkeys[keyValuePair.Key] = new StringStruct(spriteName);
+                    itemAssetkeys[keyValuePair.Key] = new StringStruct(keyValuePair.Value.asset_name);
                 }
+               
+                yield return StartCoroutine(LoadAsync<GameObject, StringStruct, string>(itemAssetkeys, loadedAssets));
+                yield return StartCoroutine(LoadAsync<Sprite, StringStruct, string>(spriteAssetkeys, loadedSprites));
+                yield return StartCoroutine(LoadAsync<UMAWardrobeRecipe, RecipeStruct, int>(recipes, loadedRecipes));
 
-                AssetBundleRequest itemrequest = bundle.LoadAssetAsync<TextAsset>("item");
-                yield return itemrequest;
-
-                if (itemrequest != null)
-                {
-                    TextAsset itemTextAsset = (TextAsset)itemrequest.asset;
-                    itemContent = itemTextAsset.text;
-                }
-                AssetBundleRequest weaponrequest = bundle.LoadAssetAsync<TextAsset>("weapon");
-
-                yield return weaponrequest;
-
-                if (weaponrequest != null)
-                {
-                    TextAsset weaponTextAsset = (TextAsset)weaponrequest.asset;
-                    weaponContent = weaponTextAsset.text;
-                }
-                AssetBundleRequest consumptionrequest = bundle.LoadAssetAsync<TextAsset>("consumption");
-
-                yield return consumptionrequest;
-
-                if (consumptionrequest != null)
-                {
-                    TextAsset consumptionTextAsset = (TextAsset)consumptionrequest.asset;
-                    consumptionContent = consumptionTextAsset.text;
-                }
-
-                AssetBundleRequest enemyrequest = bundle.LoadAssetAsync<TextAsset>("enemy");
-                yield return enemyrequest;
-                if (enemyrequest != null)
-                {
-                    TextAsset enemyTextAsset = (TextAsset)enemyrequest.asset;
-                    enemyContent = enemyTextAsset.text;
-                }
-
-                AssetBundleRequest armorrequest = bundle.LoadAssetAsync<TextAsset>("armor");
-                yield return armorrequest;
-                if (armorrequest != null)
-                {
-                    TextAsset armorTextAsset = (TextAsset)armorrequest.asset;
-                    armorContent = armorTextAsset.text;
-                }
-
-                AssetBundleRequest craftrequest = bundle.LoadAssetAsync<TextAsset>("craft");
-                yield return craftrequest;
-
-                if (craftrequest != null)
-                {
-                    TextAsset craftTextAsset = (TextAsset)craftrequest.asset;
-                    craftContent = craftTextAsset.text;
-                }
-
-                AssetBundleRequest abilityrequest = bundle.LoadAssetAsync<TextAsset>("ability");
-                yield return abilityrequest;
-
-                if (abilityrequest != null)
-                {
-                    TextAsset abilityTextAsset = (TextAsset)abilityrequest.asset;
-                    abilityContent = abilityTextAsset.text;
-                }
-
-                AssetBundleRequest achievementrequest = bundle.LoadAssetAsync<TextAsset>("achievement");
-                yield return achievementrequest;
-
-                if (achievementrequest != null)
-                {
-                    TextAsset achievementTextAsset = (TextAsset)achievementrequest.asset;
-                    achievementContent = achievementTextAsset.text;
-                }
-
-                items = SaveLoadSystem.GetItemData(itemContent);
-
-
-                foreach(KeyValuePair<int, ItemStruct> keyValuePair in items)
-                {
-                    spriteAssetkeys[keyValuePair.Key] = keyValuePair.Value.item_name + "_Sprite";
-                    Debug.Log(spriteAssetkeys[keyValuePair.Key]);
-                    assetkeys[keyValuePair.Key] = keyValuePair.Value.item_name;
-                }
-
-                //프리팹 에셋 로드
-                foreach (string key in assetkeys)
-                {
-                    GameObject asset = bundle.LoadAsset<GameObject>(key);
-                    if(asset != null)
-                    {
-                        loadedAssets[key] = asset;
-                        Debug.Log(key + " loaded");
-                    }
-                    else
-                    {
-                        Debug.Log(key + " loaded fail");
-                        unloadNum++;
-                    }
-                }
-
-                //이미지 에셋 로드
-                foreach (KeyValuePair<int, string> key in spriteAssetkeys)
-                {
-                    Sprite asset = bundle.LoadAsset<Sprite>(key.Value);
-                    if (asset != null)
-                    {
-                        loadedSprites[key.Value] = asset;
-                        Debug.Log(key + " loaded");
-                    }
-                    else
-                    {
-                        Debug.Log(key + " loaded fail");
-                        unloadNum++;
-                    }
-                }
-
-                //레시피 로드
-                foreach(string key in recipeKeys)
-                {
-                    UMAWardrobeRecipe wardrobeRecipe = bundle.LoadAsset<UMAWardrobeRecipe>(key);
-                    if (wardrobeRecipe != null)
-                    {
-                        loadedRecipes[key] = wardrobeRecipe;
-                        Debug.Log(key + " loaded");
-                    }
-                    else
-                    {
-                        Debug.Log(key + " loaded fail");
-                        unloadNum++;
-                    }
-                }
             }
         }
         else
@@ -342,79 +207,34 @@ public class AssetLoader : MonoBehaviour
             Debug.Log("Error"); 
         }
 
-        /*    Debug.Log(levelContent);
-
-            Debug.Log("Loading");
-            //호스팅 서버에 Remote Load Path로 연결 후
-
-            handle = Addressables.LoadAssetsAsync<GameObject>(
-                 assetkeys, 
-                 asset => { Debug.Log("Loaded: " + asset.name); },
-                 Addressables.MergeMode.Union,
-                 false); // false: 모든 에셋이 로드될 때까지 기다림
-
-            yield return handle;
-
-            if(handle.Status == AsyncOperationStatus.Succeeded)
-            {
-                foreach (var asset in handle.Result)
-                {
-                    Debug.Log("Loaded " + asset.name);
-                    loadedAssets[asset.name] = asset;   //에셋을 사용할 때에는 해당 에셋의 이름으로 호출
-                }
-                loadNum++;
-            }
-            else
-            {
-                Debug.Log("error");
-            }
-
-
-            spritehandle = Addressables.LoadAssetsAsync<Sprite>(spriteAssetkeys,
-                spriteAsset => { Debug.Log("Loaded: " + spriteAsset.name); },
-                Addressables.MergeMode.Union,
-                false);
-
-            yield return spritehandle;
-
-            if (spritehandle.Status == AsyncOperationStatus.Succeeded)
-            {
-                foreach (var asset in spritehandle.Result)
-                {
-                    Debug.Log(asset.name);
-                    loadedSprites[asset.name] = asset;
-                }
-                loadNum++;
-            }
-            else
-            {
-                Debug.Log("error");
-            }*/
-
         if (unloadNum == 0)
         {
+            enemies = SaveLoadSystem.GetListData<EnemyStruct>(tableContents["enemy"]); 
 
-            levelData = SaveLoadSystem.GetLevelData(levelContent);
-           
-            List<WeaponStruct> weaponTable = SaveLoadSystem.GetWeaponData(weaponContent);
-            List<ConsumptionStruct> consumptionTable = SaveLoadSystem.GetConsumptionData(consumptionContent);
-            enemies = SaveLoadSystem.LoadEnemyData(enemyContent);
-            List<ArmorStruct> armorTable = SaveLoadSystem.GetArmorData(armorContent);
-            List<CraftStruct> craftStructs = SaveLoadSystem.GetCraftData(craftContent);
-            List<AbilityStruct> abilityStructs = SaveLoadSystem.GetAbilityData(abilityContent);
-            List<AchievementStruct> achievementStructs = SaveLoadSystem.LoadAchievement(achievementContent);
-
-            for (int i = 0; i < weaponTable.Count; i++) weapons[weaponTable[i].item_index] = weaponTable[i];
-            for (int i = 0; i < consumptionTable.Count; i++) consumptions[consumptionTable[i].item_index] = consumptionTable[i];
-            for (int i = 0; i < armorTable.Count; i++) armors[armorTable[i].item_index] = armorTable[i];
-            for(int i = 0; i< craftStructs.Count; i++) crafts[craftStructs[i].index] = craftStructs[i];
-            for(int i=0; i< abilityStructs.Count; i++) abilities[abilityStructs[i].index] = abilityStructs[i];
-
+            for (int i=0; i< enemies.Count; i++)
+            {
+                string itemData = enemies[i].drop_item;
+                itemData = itemData.Replace("item_index", "\"item_index\"");
+                itemData = itemData.Replace("item_chance", "\"item_chance\"");
+                EnemyStruct enemy = enemies[i];
+                enemy.dropStruct = JsonConvert.DeserializeObject<List<DropStruct>>(itemData);
+                enemies[i] = enemy;
+            }
+            List<AchievementStruct> achievementStructs = SaveLoadSystem.GetListData<AchievementStruct>(tableContents["achievement"]);
+            for(int i=0; i<achievementStructs.Count;i++)
+            {
+                string d = achievementStructs[i].reward;
+                d = d.Replace("reward_id", "\"reward_id\"");
+                d = d.Replace("reward_num", "\"reward_num\"");
+                List<AchievementRewardStruct> achievementRewardStructs = JsonConvert.DeserializeObject<List<AchievementRewardStruct>>(d);
+                AchievementStruct achievement = achievementStructs[i];
+                achievement.rewardStruct = achievementRewardStructs;
+                achievementStructs[i] = achievement;
+            }
             AchievementHandler.LoadEvent(achievementStructs);
 
             ItemData.ItemDatabaseSetup();
             assetLoadSuccessful = true;
-           // GameInstance.Instance.creatableUISystem
         }
     }
 
@@ -859,7 +679,7 @@ public class AssetLoader : MonoBehaviour
                 {
                     if (preLoadedObject != null) Destroy(preLoadedObject);
                     GameObject go;
-                    go = Instantiate(loadedAssets[AssetLoader.itemAssetkeys[assetID]], root.transform);
+                    go = Instantiate(loadedAssets[AssetLoader.itemAssetkeys[assetID].Name], root.transform);
                     go.GetComponent<InstallableObject>().assetID = assetID;
                     float xx = 0;
                     float yy = 0;
@@ -883,6 +703,45 @@ public class AssetLoader : MonoBehaviour
 
     }
 
+    IEnumerator DatatableLoad()
+    {
+        for (int i = 0; i < tables.Length; i++)
+        {
+            AssetBundleRequest request = bundle.LoadAssetAsync<TextAsset>(tables[i]);
+            yield return request;
+
+            if (request != null)
+            {
+                TextAsset itemTextAsset = (TextAsset)request.asset;
+                tableContents.Add(tables[i], itemTextAsset.text);
+            }
+        }
+    }
+
+    IEnumerator LoadAsync<T, K, V>(Dictionary<int, K> keyValues, Dictionary<string, T> outputs) where K : struct, ITableID<V>
+    {
+        foreach (KeyValuePair<int, K> keyValue in keyValues)
+        {
+            if (bundle.Contains(keyValue.Value.Name))
+            {
+                AssetBundleRequest assetRequest = bundle.LoadAssetAsync<T>(keyValue.Value.Name);
+                yield return assetRequest;
+                if (assetRequest != null)
+                {
+                    if (assetRequest.asset is T castedAsset)
+                    {
+                        outputs[keyValue.Value.Name] = castedAsset;
+                        Debug.Log(keyValue + " loaded");
+                    }
+                }
+                else
+                {
+                    Debug.Log(keyValue + " loaded fail");
+                    unloadNum++;
+                }
+            }
+        }
+    }
     public void Clear()
     {
         if (GameInstance.Instance.gameManager.glib != null) Destroy(GameInstance.Instance.gameManager.glib);

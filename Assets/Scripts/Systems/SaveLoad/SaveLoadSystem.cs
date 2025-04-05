@@ -114,10 +114,30 @@ public class SaveLoadSystem
         Dictionary<int, ItemStruct> itemDictionary = new Dictionary<int, ItemStruct>();
         for (int i = 0; i < items.Count; i++)
         {
-            itemDictionary[items[i].item_index] = items[i];
+         //   itemDictionary[items[i].item_index] = items[i];
+            itemDictionary.Add(items[i].item_index, items[i]);
         }
 
         return itemDictionary;
+    }
+
+    public static List<T> GetListData<T>(string content)
+    {
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+
+        return JsonConvert.DeserializeObject<List<T>>(data);
+    }
+
+    public static Dictionary<K, V> GetDictionaryData<K, V>(string content) where V : struct, ITableID<K>
+    {
+        string data = EncryptorDecryptor.Decyptor(content, "AAA");
+        List<V> vList = JsonConvert.DeserializeObject<List<V>>(data);
+        Dictionary<K, V> d = new Dictionary<K, V>(); 
+        foreach (var item in vList)
+        {
+            d.Add(item.ID, item);
+        }
+        return d;
     }
 
     //무기 데이터 불러오기

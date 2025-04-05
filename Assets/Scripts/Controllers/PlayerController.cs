@@ -584,7 +584,6 @@ public class PlayerController : Controller, IDamageable
 
         bool equip = true;
         equipSlotIndex = index;
-        AssetLoader loader = GameInstance.Instance.assetLoader;
         //무기
         if (equipItem.item.item_type == ItemType.Equipmentable)
         {
@@ -593,7 +592,7 @@ public class PlayerController : Controller, IDamageable
                 Destroy(this.equipItem.gameObject);
                 this.equipItem = null;
             }
-            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
+            this.equipItem = Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index].Name]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
             this.equipItem.transform.SetParent(attachItem.transform);
@@ -606,7 +605,7 @@ public class PlayerController : Controller, IDamageable
 
 
             GameInstance.Instance.characterProfileUI.UnEquipItem();
-            GameInstance.Instance.characterProfileUI.EquipItem(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]);
+            GameInstance.Instance.characterProfileUI.EquipItem(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index].Name]);
         }
         else if (equipItem.item.item_type == ItemType.Consumable)     //음식을 손에 듬
         {
@@ -615,7 +614,7 @@ public class PlayerController : Controller, IDamageable
                 Destroy(this.equipItem.gameObject);
                 this.equipItem = null;
             }
-            this.equipItem = Instantiate(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]).GetComponent<Item>();
+            this.equipItem = Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index].Name]).GetComponent<Item>();
             this.equipItem.equippedPlayer = GetPlayer;
             AttachItem attachItem = GetComponentInChildren<AttachItem>();
             this.equipItem.transform.SetParent(attachItem.transform);
@@ -629,7 +628,7 @@ public class PlayerController : Controller, IDamageable
 
 
             GameInstance.Instance.characterProfileUI.UnEquipItem();
-            GameInstance.Instance.characterProfileUI.EquipItem(loader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index - 1]]);
+            GameInstance.Instance.characterProfileUI.EquipItem(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index].Name]);
         }
         else
         {

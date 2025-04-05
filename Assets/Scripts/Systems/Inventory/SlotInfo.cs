@@ -69,7 +69,7 @@ public class SlotInfo : MonoBehaviour
     public void UpdateSlotInfo(ItemStruct itemStruct, ConsumptionStruct consumptionStruct, WeaponStruct weaponStruct, ArmorStruct armorStruct)
     {
         text.text = itemStruct.item_name;
-        image.sprite = GameInstance.Instance.assetLoader.loadedSprites[AssetLoader.spriteAssetkeys[itemStruct.item_index - 1]];
+        image.sprite = AssetLoader.loadedSprites[AssetLoader.spriteAssetkeys[itemStruct.item_index].Name];
         weight.text = itemStruct.weight.ToString("F1");
         switch (itemStruct.item_type)
         {
