@@ -595,6 +595,11 @@ public struct NPCStruct : ITableID<int>
     public string npc_name;
     public string npc_asset;
     public int npc_hair;
+    public int npc_helmet;
+    public int npc_armor;
+    public int npc_arm;
+    public int npc_leg;
+    public int npc_boots;
 
     public readonly int ID => id;
 
@@ -664,7 +669,7 @@ public class Utility
 //UI 인터페이스
 public interface IUIComponent
 {
-    void Setup();
+    void Setup(bool init);
 }
 
 //구조물 인터페이스

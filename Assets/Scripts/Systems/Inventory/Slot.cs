@@ -34,6 +34,8 @@ public class Slot : MonoBehaviour, IUIComponent
     public int slotY;
     public bool justView;
 
+    bool inited;
+
     EventTrigger eventTrigger;
     EventTrigger.Entry entryHover;
     EventTrigger.Entry entryExit;
@@ -46,53 +48,38 @@ public class Slot : MonoBehaviour, IUIComponent
 
     private void OnEnable()
     {
-        if (eventTrigger == null)
+        //Debug.Log("LL");
+       //Setup(false);
+      /*  Debug.Log("Enable");
+        if (eventTrigger != null)
         {
-            eventTrigger = gameObject.AddComponent<EventTrigger>();
 
-            entryHover = new EventTrigger.Entry();
-            entryHover.eventID = EventTriggerType.PointerEnter;
-            hoverEnter = (eventData) => OnHoverEnter();
+            //호버
+            entryHover.callback.AddListener(hoverEnter);
+            eventTrigger.triggers.Add(entryHover);
 
-            entryExit = new EventTrigger.Entry();
-            entryExit.eventID = EventTriggerType.PointerExit;
-            hoverExit = (eventData) => OnHoverExit();
+            //호버 종료
 
-            if (!justView)
-            {
-                dragStart = new EventTrigger.Entry();
-                dragStart.eventID = EventTriggerType.PointerDown;
-                dragEnter = (eventData) => OnDragEnter();
+            entryExit.callback.AddListener(hoverExit);
+            eventTrigger.triggers.Add(entryExit);
 
-                dragEnd = new EventTrigger.Entry();
-                dragEnd.eventID = EventTriggerType.PointerUp;
-                dragExit = (eventData) => OnDragExit();
-            }
-        }
-        //호버
-        entryHover.callback.AddListener(hoverEnter);
-        eventTrigger.triggers.Add(entryHover);
+            if (justView) return;
 
-        //호버 종료
-      
-        entryExit.callback.AddListener(hoverExit);
-        eventTrigger.triggers.Add(entryExit);
+            //상호작용 가능 슬롯
 
-        if (justView) return;
+            //드래그 시작
+            dragStart.callback.AddListener(dragEnter);
+            eventTrigger.triggers.Add(dragStart);
 
-        //상호작용 가능 슬롯
-
-        //드래그 시작
-        dragStart.callback.AddListener(dragEnter);
-        eventTrigger.triggers.Add(dragStart);
-
-        //드래그 종료
-        dragEnd.callback.AddListener(dragExit);
-        eventTrigger.triggers.Add(dragEnd);
+            //드래그 종료
+            dragEnd.callback.AddListener(dragExit);
+            eventTrigger.triggers.Add(dragEnd);
+        }*/
     }
 
     private void OnDisable()
     {
+            Debug.Log("Disable");
         if (eventTrigger != null)
         {
             entryHover.callback.RemoveListener(hoverEnter);
@@ -111,6 +98,10 @@ public class Slot : MonoBehaviour, IUIComponent
             eventTrigger.triggers.Remove(dragEnd);
 
             if (info != null) Destroy(info.gameObject);
+
+            EventTriggersPool.ReturnTrigger(eventTrigger); 
+
+            eventTrigger = null;
         }
     }
     void OnDragEnter()
@@ -492,18 +483,68 @@ public class Slot : MonoBehaviour, IUIComponent
      
     }
 
-    public void Setup()
+    public void Setup(bool init)
     {
-        image = GetComponent<Image>();
-
-        slotBtn = GetComponent<Button>();
-        self = GetComponent<RectTransform>();
-        Image[] images = GetComponentsInChildren<Image>(true);
-        foreach (Image i in images)
+        if (init)
         {
-            if (image != i) itemImage = i;
+            image = GetComponent<Image>();
+
+            slotBtn = GetComponent<Button>();
+            self = GetComponent<RectTransform>();
+            Image[] images = GetComponentsInChildren<Image>(true);
+            foreach (Image i in images)
+            {
+                if (image != i) itemImage = i;
+            }
+            itemImage.sprite = originImage;
         }
-        itemImage.sprite = originImage;
+        else
+        {
+            if (eventTrigger == null)
+            {
+                Debug.Log("Enable");
+                eventTrigger = EventTriggersPool.GetEventTrigger(); // gameObject.AddComponent<EventTrigger>();
+
+                entryHover = new EventTrigger.Entry();
+                entryHover.eventID = EventTriggerType.PointerEnter;
+                hoverEnter = (eventData) => OnHoverEnter();
+
+                entryExit = new EventTrigger.Entry();
+                entryExit.eventID = EventTriggerType.PointerExit;
+                hoverExit = (eventData) => OnHoverExit();
+
+                if (!justView)
+                {
+                    dragStart = new EventTrigger.Entry();
+                    dragStart.eventID = EventTriggerType.PointerDown;
+                    dragEnter = (eventData) => OnDragEnter();
+
+                    dragEnd = new EventTrigger.Entry();
+                    dragEnd.eventID = EventTriggerType.PointerUp;
+                    dragExit = (eventData) => OnDragExit();
+                }
+            }
+            //호버
+            entryHover.callback.AddListener(hoverEnter);
+            eventTrigger.triggers.Add(entryHover);
+
+            //호버 종료
+
+            entryExit.callback.AddListener(hoverExit);
+            eventTrigger.triggers.Add(entryExit);
+
+            if (justView) return;
+
+            //상호작용 가능 슬롯
+
+            //드래그 시작
+            dragStart.callback.AddListener(dragEnter);
+            eventTrigger.triggers.Add(dragStart);
+
+            //드래그 종료
+            dragEnd.callback.AddListener(dragExit);
+            eventTrigger.triggers.Add(dragEnd);
+        }
        // itemImage.gameObject.SetActive(false);
        // itemImage.sprite = originImage;
     }

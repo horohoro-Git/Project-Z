@@ -22,7 +22,7 @@ public class InstallableItem : Item, IUIComponent
     {
         btn.onClick.RemoveListener(clickAction);
     }
-    public void Setup()
+    public void Setup(bool init)
     {
         
         image.sprite = itemStruct.image;

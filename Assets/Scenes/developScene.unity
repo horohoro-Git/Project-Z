@@ -155,6 +155,7 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
@@ -487,7 +488,7 @@ MeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 289681151}
   m_Enabled: 1
-  m_CastShadows: 1
+  m_CastShadows: 0
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
   m_StaticShadowCaster: 0
@@ -1721,21 +1722,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb3a8c93adeda3f428084c96885b7858, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  floor_url: Assets/Edited/Floor/Floor.prefab
-  wall_url: Assets/Edited/wall/wall.prefab
-  door_url: Assets/Edited/wall/doorSwitch.prefab
-  roof_url: Assets/Edited/roof/roof.prefab
-  preFloor_url: Assets/Edited/Floor/PreloadFloor.prefab
-  preWall_url: Assets/Edited/wall/PreloadWall.prefab
-  preDoor_url: Assets/Edited/wall/PreloadDoor.prefab
-  possibleMat_url: Assets/Edited/PreLoadMaterial_Possible.mat
-  impossibleMat_url: Assets/Edited/PreLoadMaterial_Impossible.mat
-  flowerOrange_url: Assets/Edited/flower/flower_orange.prefab
-  flowerYellow_url: Assets/Edited/flower/flower_yellow.prefab
-  flowerPink_url: Assets/Edited/flower/flower_pink.prefab
-  grasses_url: Assets/Edited/grass/grasses.prefab
-  tree03_url: Assets/Edited/Tree/Tree_03.prefab
-  human_url: Assets/Edited/Player/Model/human_male.prefab
   holoShader: {fileID: 4800000, guid: a166432d860235948b85a5f272237532, type: 3}
   lastSelectedMaterial: {fileID: 0}
 --- !u!114 &1906076319
@@ -1839,6 +1825,7 @@ GameObject:
   - component: {fileID: 2122266775}
   - component: {fileID: 2122266774}
   - component: {fileID: 2122266773}
+  - component: {fileID: 2122266776}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -1896,6 +1883,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2122266776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2122266772}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13bd84547046453409ca88c32b786885, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

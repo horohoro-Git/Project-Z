@@ -55,7 +55,7 @@ public class UIManager : MonoBehaviour
         rect.sizeDelta = new Vector2(target.rect.width, target.rect.height);
         uiDictionary.Add(type, uiGO);
 
-        uiGO.GetComponent<IUIComponent>().Setup();
+        uiGO.GetComponent<IUIComponent>().Setup(true);
     }
 
     public bool SwitchUI(UIType type, bool forcedUpdate = false)
@@ -75,6 +75,7 @@ public class UIManager : MonoBehaviour
             if (ui.Key == type)
             {
                 ui.Value.SetActive(true);
+                ui.Value.GetComponent<IUIComponent>().Setup(false);
                 returnValue = true;  
             }
             else ui.Value.SetActive(false);

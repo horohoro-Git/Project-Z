@@ -166,8 +166,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &2607864035556119629
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -378,8 +396,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &6706955674144574952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -515,8 +551,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &5984305975354147844
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -652,8 +706,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &6214470430216790359
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -795,6 +867,7 @@ MonoBehaviour:
   - {fileID: 7572901721728791813}
   - {fileID: 6335564788586616383}
   slotIndex: 0
+  slotX: 0
 --- !u!1 &1885562463830604775
 GameObject:
   m_ObjectHideFlags: 0
@@ -886,8 +959,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &4723838411812342474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1098,8 +1189,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &8381697998619785778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1310,8 +1419,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &4146071742539408921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1522,8 +1649,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &9135908781739627614
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1659,8 +1804,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &8401016795709952279
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1946,8 +2109,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   originImage: {fileID: 21300000, guid: 3897b5bcefa13e341aeced19705e0aaa, type: 3}
+  slotType: 0
+  item:
+    item_index: 0
+    image: {fileID: 0}
+    item_name: 
+    asset_name: 
+    slot_type: 0
+    item_type: 0
+    used: 0
+    weight: 0
+    itemGO: {fileID: 0}
+  consumption:
+    item_index: 0
+    consumption_type: 0
+    heal_amount: 0
+    energy_amount: 0
+    duration: 0
   slotX: 0
   slotY: 0
+  justView: 0
 --- !u!114 &2456470022936510762
 MonoBehaviour:
   m_ObjectHideFlags: 0

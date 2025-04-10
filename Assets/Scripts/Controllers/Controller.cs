@@ -73,7 +73,6 @@ public class Controller : MonoBehaviour
             LookAround();
         }
 
-
         if (canMove > 0)
         {
             viewVelocity = 0;
@@ -88,7 +87,7 @@ public class Controller : MonoBehaviour
             viewSpeed = currentMoveSpeed;
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed * moveSpeedMutiplier, ref velocity, 0.2f);
             Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed * moveSpeedMutiplier;
-
+            Debug.Log(Time.fixedDeltaTime + " " + currentMoveSpeed + " " + moveSpeedMutiplier);
         }
         else
         {
@@ -98,8 +97,9 @@ public class Controller : MonoBehaviour
             viewSpeed = currentMoveSpeed;
         }
 
-        if(currentMoveSpeed < 50) viewDir = Vector3.zero;
-       
+        if (currentMoveSpeed < 50) viewDir = Vector3.zero;
+
+      
      //   Debug.Log(viewDir);
 
     }

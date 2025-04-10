@@ -64,15 +64,22 @@ public class GameManager : MonoBehaviour
             gettable.itemStruct = ItemData.GetItem(100001);
             Destroy(go);
         }
+
+        NPCStruct nPCStruct = GameInstance.Instance.assetLoader.npcs[1];
+
+        NPCAvatar npc = Instantiate(AssetLoader.loadedAssets[nPCStruct.npc_asset]).GetComponent<NPCAvatar>();
+        npc.Setup(nPCStruct);
+        npc.transform.position = new Vector3(2, 0, 1);
     }
 
     void PlayerSetting()
     {
         glib = Instantiate(AssetLoader.loadedAssets[LoadURL.UMA_GLIB]);
 
+       // LoadInventory();
         PlayerSettings(true);
+        Invoke("LoadInventory", 0.5f); 
         LoadEnemies();
-        Invoke("LoadInventory", 0.5f);
     }
 
     public void PlayerSettings(bool load)
@@ -116,7 +123,7 @@ public class GameManager : MonoBehaviour
         weapon.transform.localPosition = new Vector3(0, 0, 0);
         weapon.transform.localRotation = Quaternion.Euler(-90, 120, 0);
         pc.equipWeapon = weapon;*/
-
+        //LoadInventory();
     }
     void LoadBuilds()
     {

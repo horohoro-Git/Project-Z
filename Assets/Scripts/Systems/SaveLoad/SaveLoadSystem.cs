@@ -328,7 +328,7 @@ public class SaveLoadSystem
                 writer.Write(weightLevel);
                 writer.Write(backpackLevel);
 
-
+                Debug.Log(moveSpeed + " Save");
                 //제작 정보
                 CraftingLearnSystem craftingLearnSystem = GameInstance.Instance.craftingLearnSystem;
                 writer.Write(craftingLearnSystem.learnedDatas.Count);
@@ -402,7 +402,7 @@ public class SaveLoadSystem
                         int energyLevel = reader.ReadInt32();
                         int weightLevel = reader.ReadInt32();
                         int backpackLevel = reader.ReadInt32();
-
+                        Debug.Log(moveSpeed + " Load");
                         if (!dead)
                         {
                             PlayerStruct playerStruct = new PlayerStruct(hp, maxHP, energy, maxEnergy, defense, exp, requireEXP, level, attackDamage, attackSpeed, moveSpeed, weight, skillPoint, hpLevel, energyLevel, weightLevel, backpackLevel);
@@ -438,7 +438,6 @@ public class SaveLoadSystem
                         }
 
                         GameInstance.Instance.craftingLearnSystem.LoadLearns(craftStructs);
-                    
                         GameInstance.Instance.characterAbilitySystem.LoadLearns(abilityStructs);
                     }
                 }

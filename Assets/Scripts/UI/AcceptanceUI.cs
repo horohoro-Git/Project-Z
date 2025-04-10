@@ -11,7 +11,7 @@ public class AcceptanceUI : MonoBehaviour, IUIComponent
     Button okBtn;
     [SerializeField]
     Button cancelBtn;
-    public void Setup()
+    public void Setup(bool init)
     {
     }
 

@@ -152,7 +152,7 @@ public class PlayerController : Controller, IDamageable
             {
                 moveSpeedMutiplier = 1;
             }
-
+           // Debug.Log(GetPlayer.playerStruct.weight + " " + GameInstance.Instance.inventorySystem.inventoryWeight);
             GameInstance.Instance.characterProfileUI.CreateCharacter(load, go);
             GameInstance.Instance.inventorySystem.UseItem(this, equipSlotIndex);
 
@@ -315,7 +315,6 @@ public class PlayerController : Controller, IDamageable
             state = PlayerState.Default;  
             
         }
-
         if(lookAround)
         {
             float dot = Vector3.Dot(transform.forward, viewDir);

@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,7 +34,7 @@ public class LoadURL : MonoBehaviour
         AssetLoader loader = GetComponent<AssetLoader>();
         // StartCoroutine(loader.DownloadAssetBundle(bundleUrl, true));
         //  StartCoroutine(loader.DownloadAssetBundle(bundleUrl2, false));
-        StartCoroutine(loader.DownloadAssetBundle("AAA",false));
+        UniTask.Void(async () => { await loader.DownloadAssetBundle(); });
     }
 
 }

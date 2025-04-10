@@ -253,3 +253,6 @@ Item Table Structure Modification
 
 04/04
 Optimized the code for loading data tables using generics
+
+04/09
+Added NPC Character

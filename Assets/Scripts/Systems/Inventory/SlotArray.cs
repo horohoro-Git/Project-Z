@@ -10,14 +10,20 @@ public class SlotArray : MonoBehaviour, IUIComponent
  //   [NonSerialized] 
     public int slotIndex = 0;
     public int slotX;
-    public void Setup()
+    public void Setup(bool init)
     {
-        for (int i = 0; i < slots.Count; i++)
+        if (init)
         {
+            for (int i = 0; i < slots.Count; i++)
+            {
 
-            slots[i].slotX = slotX; //GameInstance.Instance.inventorySystem.slotNum;
-            slots[i].slotY = i;
-            slots[i].Setup();
+                slots[i].slotX = slotX; //GameInstance.Instance.inventorySystem.slotNum;
+                slots[i].slotY = i;
+                slots[i].Setup(true);
+            }
+        }
+        else
+        { 
         }
     }
 

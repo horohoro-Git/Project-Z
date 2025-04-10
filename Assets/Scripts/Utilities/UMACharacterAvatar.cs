@@ -96,6 +96,12 @@ public class UMACharacterAvatar : MonoBehaviour
         avatar.BuildCharacter();
     }
 
+    public void AttachHair(string recipeString)
+    {
+        avatar.SetSlot(AssetLoader.loadedRecipes[recipeString]);
+        avatar.BuildCharacter();
+    }
+
     public void AddItem(GameObject itemGO)
     {
         itemObject = Instantiate(itemGO);

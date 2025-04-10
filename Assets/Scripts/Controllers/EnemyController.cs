@@ -87,11 +87,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         if (animationWorking > 0) return;
         if (bDead) return;
         //   if (LastPosition != Transforms.position)
-        /*    {
-           //     LastPosition = Transforms.position;
-                DetectPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms, ref pcs));
 
-            }*/
         if (next + last < Time.time)
         {
             last = Time.time;
@@ -123,9 +119,9 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
             }
 
         }
-      
+
         modelAnimator.SetFloat("speed", agent.velocity.magnitude);
-        
+
     }
 
 

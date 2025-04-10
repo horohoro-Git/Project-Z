@@ -223,7 +223,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 {
                     InstallableItem spawnItem = Instantiate(installableItem);
                     spawnItem.SetItemStruct(floors[i], StructureState.Floor);
-                    spawnItem.Setup();
+                    spawnItem.Setup(true);
                     spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
                     items.Add(spawnItem);
                 }
@@ -233,7 +233,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 {
                     InstallableItem spawnItem = Instantiate(installableItem);
                     spawnItem.SetItemStruct(walls[i], StructureState.Wall);
-                    spawnItem.Setup();
+                    spawnItem.Setup(true);
                     spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
                     items.Add(spawnItem);
                 }
@@ -243,7 +243,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 {
                     InstallableItem spawnItem = Instantiate(installableItem);
                     spawnItem.SetItemStruct(doors[i], StructureState.Door);
-                    spawnItem.Setup();
+                    spawnItem.Setup(true);
                     spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
                     items.Add(spawnItem);
                 }
@@ -256,7 +256,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
                 {
                     InstallableItem spawnItem = Instantiate(installableItem);
                     spawnItem.SetItemStruct(craftingDatas[i].item, StructureState.Furniture);
-                    spawnItem.Setup();
+                    spawnItem.Setup(true);
                     spawnItem.GetComponent<RectTransform>().SetParent(detailsTab);
                     items.Add(spawnItem);
                 }
@@ -265,7 +265,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
       
     }
 
-    public void Setup()
+    public void Setup(bool init)
     {
     }
 

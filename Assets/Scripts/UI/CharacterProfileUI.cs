@@ -34,7 +34,7 @@ public class CharacterProfileUI : MonoBehaviour
     {
         if (eventTrigger == null)
         {
-            eventTrigger = gameObject.AddComponent<EventTrigger>();
+            eventTrigger = EventTriggersPool.GetEventTrigger();// gameObject.AddComponent<EventTrigger>();
             dragStart = new EventTrigger.Entry();
             dragStart.eventID = EventTriggerType.PointerDown;
             dragEnter = (eventData) => OnDragEnter();
@@ -61,6 +61,9 @@ public class CharacterProfileUI : MonoBehaviour
 
             dragEnd.callback.RemoveListener(dragExit);
             eventTrigger.triggers.Remove(dragEnd);
+
+            EventTriggersPool.ReturnTrigger(eventTrigger);
+            eventTrigger = null;
         }
         if(avatar != null)
         {
