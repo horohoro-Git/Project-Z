@@ -79,7 +79,7 @@ public class InventorySystem : MonoBehaviour, IUIComponent
             //Debug.Log(inventoryArray[slotNum, i]);
         }
         slots.slotX = slotNum;
-        slots.Setup();
+        slots.Setup(true);
         slotNum++;
     }
 
@@ -192,26 +192,33 @@ public class InventorySystem : MonoBehaviour, IUIComponent
         if (on) playerView.gameObject.SetActive(false); //playerView.sprite = null;
         else playerView.gameObject.SetActive(true); //playerView.sprite = trashcan;
     }
-    public void Setup()
+    public void Setup(bool init)
     {
-        GameInstance.Instance.inventorySystem = this;
-        SlotArray slots = GetComponentInChildren<SlotArray>();
-        InventoryExtends(slots);
-        slotArrays.Add(slots);
-       /* for (int i = 0; i < 5; i++)
+        if (init)
         {
-            SlotArray newSlots = Instantiate(inventoryList);
-            newSlots.GetComponent<RectTransform>().SetParent(list);
-            InventoryExtends(newSlots);
-            slotArrays.Add(newSlots);
-        }*/
-        head.Setup();
-        chest.Setup();
-        arm.Setup();
-        leg.Setup();
-        foot.Setup();
-        backpack.Setup();
-        equipedItem.Setup();
+            GameInstance.Instance.inventorySystem = this;
+            SlotArray slots = GetComponentInChildren<SlotArray>();
+            InventoryExtends(slots);
+            slotArrays.Add(slots);
+            /* for (int i = 0; i < 5; i++)
+             {
+                 SlotArray newSlots = Instantiate(inventoryList);
+                 newSlots.GetComponent<RectTransform>().SetParent(list);
+                 InventoryExtends(newSlots);
+                 slotArrays.Add(newSlots);
+             }*/
+            head.Setup(init);
+            chest.Setup(init);
+            arm.Setup(init);
+            leg.Setup(init);
+            foot.Setup(init);
+            backpack.Setup(init);
+            equipedItem.Setup(init);
+        }
+        else
+        {
+           // for (int i = 0;
+        }
     }
 
     public void ExpandSlot(int num)

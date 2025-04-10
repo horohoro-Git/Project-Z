@@ -61,7 +61,7 @@ public class AchievementUI : MonoBehaviour, IUIComponent
         }
     }
 
-    public void Setup()
+    public void Setup(bool init)
     {
         
     }

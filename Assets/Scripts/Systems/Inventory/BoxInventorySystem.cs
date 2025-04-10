@@ -30,25 +30,28 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
     public ItemBox currentItemBox;
 
     List<SlotArray> slotArrays = new List<SlotArray>();
-    public void Setup()
+    public void Setup(bool init)
     {
-        GameInstance.Instance.boxInventorySystem = this;
-        SlotArray slots = list.gameObject.GetComponentInChildren<SlotArray>();
-        InventoryExtends(slots, inventoryArray, ref slotNum);
-        slotArrays.Add(slots);
-     /*   for (int i = 0; i < 6; i++)
+        if (init)
         {
-            SlotArray newSlots = Instantiate(inventoryList);
-            newSlots.GetComponent<RectTransform>().SetParent(list);
-            InventoryExtends(newSlots, inventoryArray, ref slotNum);
-            slotArrays.Add(newSlots);
-        }*/
+            GameInstance.Instance.boxInventorySystem = this;
+            SlotArray slots = list.gameObject.GetComponentInChildren<SlotArray>();
+            InventoryExtends(slots, inventoryArray, ref slotNum);
+            slotArrays.Add(slots);
+            /*   for (int i = 0; i < 6; i++)
+               {
+                   SlotArray newSlots = Instantiate(inventoryList);
+                   newSlots.GetComponent<RectTransform>().SetParent(list);
+                   InventoryExtends(newSlots, inventoryArray, ref slotNum);
+                   slotArrays.Add(newSlots);
+               }*/
 
-        for (int i = 0; i < 7; i++)
-        {
-            SlotArray newSlots = Instantiate(inventoryList);
-            newSlots.GetComponent<RectTransform>().SetParent(list2);
-            InventoryExtends(newSlots, boxInventoryArray, ref boxSlotNum);
+            for (int i = 0; i < 7; i++)
+            {
+                SlotArray newSlots = Instantiate(inventoryList);
+                newSlots.GetComponent<RectTransform>().SetParent(list2);
+                InventoryExtends(newSlots, boxInventoryArray, ref boxSlotNum);
+            }
         }
     }
 
@@ -91,7 +94,7 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
             //Debug.Log(inventoryArray[slotNum, i]);
         }
         slots.slotX = num;
-        slots.Setup();
+        slots.Setup(true);
         num++;
     }
     /*public void AddItem(ItemStruct )

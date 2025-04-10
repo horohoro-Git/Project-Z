@@ -36,9 +36,13 @@ public class AbilityMenuUI : MonoBehaviour, IUIComponent
 
     Dictionary<int, LevelStruct> levelData = new Dictionary<int, LevelStruct>();
     Player player;
-    public void Setup()
+    public void Setup(bool init)
     {
-        GameInstance.Instance.abilityMenuUI = this;   
+        if (init)
+        {
+            GameInstance.Instance.abilityMenuUI = this;
+        }
+      
     }
 
     private void OnEnable()

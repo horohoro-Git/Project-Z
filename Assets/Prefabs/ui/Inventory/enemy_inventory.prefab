@@ -168,9 +168,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0
@@ -502,6 +504,7 @@ MonoBehaviour:
   list2: {fileID: 6955621050904524900}
   border1: {fileID: 4522248430141766423}
   border2: {fileID: 5339945908253016072}
+  currentItemBox: {fileID: 0}
 --- !u!1 &822709398617399249
 GameObject:
   m_ObjectHideFlags: 0
@@ -868,9 +871,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0
@@ -977,9 +982,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0
@@ -1240,9 +1247,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0
@@ -1543,9 +1552,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0
@@ -1870,9 +1881,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0
@@ -2023,9 +2036,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0
@@ -2211,9 +2226,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0
@@ -2510,9 +2527,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0
@@ -2738,9 +2757,11 @@ MonoBehaviour:
     item_index: 0
     image: {fileID: 0}
     item_name: 
+    asset_name: 
     slot_type: 0
     item_type: 0
     used: 0
+    weight: 0
     itemGO: {fileID: 0}
   consumption:
     item_index: 0

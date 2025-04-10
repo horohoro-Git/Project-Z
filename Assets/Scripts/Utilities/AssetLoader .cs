@@ -7,6 +7,9 @@ using System.IO;
 using System.Linq;
 using UMA.CharacterSystem;
 using Newtonsoft.Json;
+using Cysharp.Threading.Tasks;
+using System.Threading;
+using UnityEngine.EventSystems;
 public class AssetLoader : MonoBehaviour
 {
 
@@ -144,11 +147,22 @@ public class AssetLoader : MonoBehaviour
         root.name = "root";
         root.transform.position = Vector3.zero;
     }
-    public IEnumerator DownloadAssetBundle(string url, bool justShader)
+    void Update()
+    {
+      //  if (Time.frameCount % 100 == 0)
+        {
+        //    int count = FindObjectsOfType<EventTrigger>(true).Length;
+        //    Debug.Log($"전체 EventTrigger 수: {count}");
+        }
+    }
+    //  public async UniTas
+
+    // public async UniTask
+
+    public async UniTask DownloadAssetBundle()
     {
         string homeUrl = Path.Combine(SaveLoadSystem.LoadServerURL(), "home");
         Hash128 bundleHash = SaveLoadSystem.ComputeHash128(System.Text.Encoding.UTF8.GetBytes(homeUrl));
-
         if (Caching.IsVersionCached(homeUrl, bundleHash))
         {
             Debug.Log("Asset Found");
@@ -156,37 +170,43 @@ public class AssetLoader : MonoBehaviour
         else
         {
             Debug.Log("Asset Not Found");
-          
         }
         UnityWebRequest www = UnityWebRequestAssetBundle.GetAssetBundle(homeUrl, bundleHash, 0);
-        yield return www.SendWebRequest();
+        await www.SendWebRequest();
 
         if (www.result == UnityWebRequest.Result.Success)
         {
 
             bundle = DownloadHandlerAssetBundle.GetContent(www);
-            yield return bundle;
+           /* var dependencies = AssetBundle.GetAllLoadedAssetBundles(bundleName);
+            await UniTask.WhenAll(dependencies.Select(d =>
+                AssetBundle.LoadFromFileAsync(d).ToUniTask()));
+            await UniTask.Yield();*/
+          // await bundle;
 
             if (Caching.IsVersionCached(homeUrl, bundleHash))
             {
                 Debug.Log("AssetBundle Cached Successfully");
             }
-
-
+     
             if (!bundle.isStreamedSceneAssetBundle)
             {
                 //데이터 테이블 로드
-                yield return StartCoroutine(DatatableLoad());
+                //    yield return StartCoroutine(DatatableLoad());
+                await DatatableLoad();
 
-                items = SaveLoadSystem.GetDictionaryData<int, ItemStruct>(tableContents["item"]);
-                weapons = SaveLoadSystem.GetDictionaryData<int, WeaponStruct>(tableContents["weapon"]);
-                armors = SaveLoadSystem.GetDictionaryData<int, ArmorStruct>(tableContents["armor"]);
-                consumptions = SaveLoadSystem.GetDictionaryData<int, ConsumptionStruct>(tableContents["consumption"]);
-                crafts = SaveLoadSystem.GetDictionaryData<int, CraftStruct>(tableContents["craft"]);
-                abilities = SaveLoadSystem.GetDictionaryData<int, AbilityStruct>(tableContents["ability"]);
-                levelData = SaveLoadSystem.GetDictionaryData<int, LevelStruct>(tableContents["level"]);
-                npcs = SaveLoadSystem.GetDictionaryData<int, NPCStruct>(tableContents["npc"]);
-                recipes = SaveLoadSystem.GetDictionaryData<int, RecipeStruct>(tableContents["recipes"]);
+                await UniTask.RunOnThreadPool(() => {
+                    items = SaveLoadSystem.GetDictionaryData<int, ItemStruct>(tableContents["item"]);
+                    weapons = SaveLoadSystem.GetDictionaryData<int, WeaponStruct>(tableContents["weapon"]);
+                    armors = SaveLoadSystem.GetDictionaryData<int, ArmorStruct>(tableContents["armor"]);
+                    consumptions = SaveLoadSystem.GetDictionaryData<int, ConsumptionStruct>(tableContents["consumption"]);
+                    crafts = SaveLoadSystem.GetDictionaryData<int, CraftStruct>(tableContents["craft"]);
+                    abilities = SaveLoadSystem.GetDictionaryData<int, AbilityStruct>(tableContents["ability"]);
+                    levelData = SaveLoadSystem.GetDictionaryData<int, LevelStruct>(tableContents["level"]);
+                    npcs = SaveLoadSystem.GetDictionaryData<int, NPCStruct>(tableContents["npc"]);
+                    recipes = SaveLoadSystem.GetDictionaryData<int, RecipeStruct>(tableContents["recipes"]);
+                });
+               
 
                 foreach (KeyValuePair<int, ItemStruct> keyValuePair in items)
                 {
@@ -195,9 +215,9 @@ public class AssetLoader : MonoBehaviour
                     itemAssetkeys[keyValuePair.Key] = new StringStruct(keyValuePair.Value.asset_name);
                 }
                
-                yield return StartCoroutine(LoadAsync<GameObject, StringStruct, string>(itemAssetkeys, loadedAssets));
-                yield return StartCoroutine(LoadAsync<Sprite, StringStruct, string>(spriteAssetkeys, loadedSprites));
-                yield return StartCoroutine(LoadAsync<UMAWardrobeRecipe, RecipeStruct, int>(recipes, loadedRecipes));
+                await LoadAsync<GameObject, StringStruct, string>(itemAssetkeys, loadedAssets);
+                await LoadAsync<Sprite, StringStruct, string>(spriteAssetkeys, loadedSprites);
+                await LoadAsync<UMAWardrobeRecipe, RecipeStruct, int>(recipes, loadedRecipes);
 
             }
         }
@@ -231,7 +251,7 @@ public class AssetLoader : MonoBehaviour
                 achievement.rewardStruct = achievementRewardStructs;
                 achievementStructs[i] = achievement;
             }
-            AchievementHandler.LoadEvent(achievementStructs);
+          //  AchievementHandler.LoadEvent(achievementStructs);
 
             ItemData.ItemDatabaseSetup();
             assetLoadSuccessful = true;
@@ -703,12 +723,13 @@ public class AssetLoader : MonoBehaviour
 
     }
 
-    IEnumerator DatatableLoad()
+    async UniTask DatatableLoad()
     {
         for (int i = 0; i < tables.Length; i++)
         {
             AssetBundleRequest request = bundle.LoadAssetAsync<TextAsset>(tables[i]);
-            yield return request;
+            //  yield return request;
+            await request;
 
             if (request != null)
             {
@@ -718,14 +739,14 @@ public class AssetLoader : MonoBehaviour
         }
     }
 
-    IEnumerator LoadAsync<T, K, V>(Dictionary<int, K> keyValues, Dictionary<string, T> outputs) where K : struct, ITableID<V>
+    async UniTask LoadAsync<T, K, V>(Dictionary<int, K> keyValues, Dictionary<string, T> outputs) where K : struct, ITableID<V>
     {
         foreach (KeyValuePair<int, K> keyValue in keyValues)
         {
             if (bundle.Contains(keyValue.Value.Name))
             {
                 AssetBundleRequest assetRequest = bundle.LoadAssetAsync<T>(keyValue.Value.Name);
-                yield return assetRequest;
+                await assetRequest;
                 if (assetRequest != null)
                 {
                     if (assetRequest.asset is T castedAsset)

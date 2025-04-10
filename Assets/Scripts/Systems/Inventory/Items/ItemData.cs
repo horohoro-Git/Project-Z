@@ -23,6 +23,7 @@ public class ItemData : MonoBehaviour
             if (AssetLoader.loadedAssets.ContainsKey(AssetLoader.itemAssetkeys[pair.Key].Name))
             {
                 go = AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[pair.Key].Name];
+             //   Instantiate(go);
             }
             ItemStruct newItem = new ItemStruct(pair.Key, sprite, pair.Value.item_name, pair.Value.asset_name, pair.Value.weight, pair.Value.slot_type, pair.Value.item_type, go);
             items[pair.Key] = newItem;

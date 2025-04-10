@@ -196,7 +196,7 @@ public class MenuUI : MonoBehaviour, IUIComponent
 
     }
 
-    public void Setup()
+    public void Setup(bool init)
     {
 
     }

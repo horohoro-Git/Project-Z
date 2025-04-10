@@ -74,7 +74,6 @@ public class PlayerCamera : MonoBehaviour
             {
                 targetPos += move;
             }
-
         //    Debug.Log(checkPosition);
         }
 
