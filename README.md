@@ -259,3 +259,6 @@ Added NPC Character
 
 04/10
 NPC reputation events, now the NPC fights the zombies
+
+04/11
+The NPC, having become hostile to the player, attacks the player

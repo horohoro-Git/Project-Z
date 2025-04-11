@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.AI;
-public class NPCController : MonoBehaviour
+using UnityEngine.UIElements;
+public class NPCController : MonoBehaviour, IDamageable
 {
     Transform transforms;
     Transform GetTransform {  get { if (transforms == null) transforms = transform;  return transforms; } }
@@ -21,7 +22,7 @@ public class NPCController : MonoBehaviour
     [NonSerialized]
     public bool bDead;
     int animationWorking;
-    NPCEventStruct eventStruct;
+    public NPCEventStruct eventStruct;
     float last;
     float next;
     float equip;
@@ -31,6 +32,8 @@ public class NPCController : MonoBehaviour
     List<EnemyController> enemyControllers = new List<EnemyController>();
 
     public RuntimeAnimatorController newAnimator;
+
+    bool focus;
     private void Start()
     {
         ChangeTagLayer(GetTransform, "NPC", 0b1110);
@@ -42,33 +45,58 @@ public class NPCController : MonoBehaviour
     //  List<Vector3> positions = new List<Vector3>();
     private void Update()
     {
+        Quaternion targetRotation = new Quaternion();
+
         if (animationWorking > 0) return;
         if (bDead) return;
         //   if (LastPosition != Transforms.position)
-
+        if (target != null &&  focus)
+        {
+            Vector3 direction = target.transform.position - GetTransform.position;
+            targetRotation = Quaternion.LookRotation(direction);
+            targetRotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0);
+            GetTransform.rotation = Quaternion.Slerp(GetTransform.rotation, targetRotation, 5 * Time.deltaTime);
+        }
         if (next + last < Time.time)
         {
             last = Time.time;
             next = UnityEngine.Random.Range(0.3f, 0.8f);
 
-            if (target == null)
+            /* if (target == null)
+             {
+                 Debug.Log(eventStruct.npc_disposition);
+                 switch (eventStruct.npc_disposition)
+                 {
+                     case NPCDispositionType.None:
+                         break;
+                     case NPCDispositionType.Netural:
+                         NeturalAction();
+                         break;
+                     case NPCDispositionType.Friendly:
+                         FriendlyAction(); 
+                         break;
+                     case NPCDispositionType.Hostile:
+                         HositleAction();
+                         break;
+                 }
+                 return;
+             }*/
+
+            target = null;
+            Debug.Log(eventStruct.npc_disposition);
+            switch (eventStruct.npc_disposition)
             {
-                Debug.Log(eventStruct.npc_disposition);
-                switch (eventStruct.npc_disposition)
-                {
-                    case NPCDispositionType.None:
-                        break;
-                    case NPCDispositionType.Netural:
-                        NeturalAction();
-                        break;
-                    case NPCDispositionType.Friendly:
-                        FriendlyAction(); 
-                        break;
-                    case NPCDispositionType.Hostile:
-                        HositleAction();
-                        break;
-                }
-                return;
+                case NPCDispositionType.None:
+                    break;
+                case NPCDispositionType.Netural:
+                    NeturalAction();
+                    break;
+                case NPCDispositionType.Friendly:
+                    FriendlyAction();
+                    break;
+                case NPCDispositionType.Hostile:
+                    HositleAction();
+                    break;
             }
 
             float distance = Vector3.Distance(transform.position, target.transform.position);
@@ -76,10 +104,19 @@ public class NPCController : MonoBehaviour
 
             if (distance <= 1.5f)
             {
-
-                StartAnimation("attack", 2);
-                //   GetRightHand.Attack(enemyStruct.attack);
                 GetAgent.isStopped = true;
+                focus = true;
+/*              
+
+                Vector3 direction = (target.transform.position - GetTransform.position).normalized;
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                GetTransform.rotation = Quaternion.Slerp(GetTransform.rotation, lookRotation, Time.deltaTime * 5);*/
+                float angledifference = Quaternion.Angle(GetTransform.rotation, targetRotation);
+
+                if(angledifference < 10)
+                {
+                    StartAnimation("attack", 2);
+                }
             }
         /*    else if (distance > 20)
             {
@@ -87,6 +124,7 @@ public class NPCController : MonoBehaviour
             }*/
             else
             {
+                focus = false;
                 GetAgent.isStopped = false;
                 GetAgent.SetDestination(target.transform.position);
             }
@@ -95,6 +133,7 @@ public class NPCController : MonoBehaviour
         modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
         modelAnimator.SetFloat("equip", equip);
         modelAnimator.SetFloat("another", another);
+    
     }
     void ChangeTagLayer(Transform parent, string newTag, int layerName)
     {
@@ -199,9 +238,10 @@ public class NPCController : MonoBehaviour
     {
         GameInstance.Instance.worldGrids.FindPlayersInGrid(GetTransform, ref playerControllers);
         Dictionary<string, GameObject> list = GameInstance.Instance.worldGrids.FindEnemiesInGrid();
-        FindPlayer(playerControllers);
+        //FindPlayer(playerControllers);
         int index = 0;
 
+        Debug.Log(playerControllers.Count);
         while (playerControllers.Count > index)
         {
             PlayerController pc = playerControllers[index++];
@@ -215,7 +255,7 @@ public class NPCController : MonoBehaviour
                 if (!target) target = pc.gameObject;
                 else
                 {
-                    float dis = Vector3.Distance(target.transform.position, transform.position);
+                    float dis = Vector3.Distance(target.transform.position, GetTransform.position);
                     if (distance < dis)
                     {
                         target = pc.gameObject;
@@ -240,5 +280,21 @@ public class NPCController : MonoBehaviour
             }
         }
 
+    }
+
+    void GetDamage(int damage, int layer)
+    {
+        if (layer == 0b0011)
+        {
+            Debug.Log("Hostile");
+            NPCEventHandler.Publish(1000003, this);
+        }
+    }
+
+    public bool Damaged(int damage, int layer)
+    {
+        if (gameObject.layer != layer) GetDamage(damage , layer);
+        else return false;
+        return true;
     }
 }
