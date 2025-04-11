@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class RightHand : MonoBehaviour
 {
@@ -49,18 +50,57 @@ public class RightHand : MonoBehaviour
         foreach (var collider in hitColliders)
         {
             int layer = gameObject.layer;
+            int colliderLayer = collider.gameObject.layer;
 
-            IDamageable damageable = collider.GetComponent<IDamageable>();
-            if (damageable != null)
+            NPCController npc = GetComponentInParent<NPCController>();
+            if (npc != null)
             {
-                if(damageable.Damaged(damage, layer))
+                switch (npc.eventStruct.npc_disposition)
                 {
-                    attacking = false;
-                    return;
+                    case NPCDispositionType.None:
+                        break;
+                    case NPCDispositionType.Netural:
+                        if(colliderLayer == 0b1010)
+                        {
+                            if (Attack(collider, layer)) return;
+                        }
+                        break;
+                    case NPCDispositionType.Friendly:
+                        if (colliderLayer == 0b1010)
+                        {
+                            if (Attack(collider, layer)) return;
+                        }
+                        break;
+                    case NPCDispositionType.Hostile:
+                        if(colliderLayer == 0b1010 ||  colliderLayer == 0b0011)
+                        {
+                            if (Attack(collider, layer)) return;
+                        }
+                        break;
                 }
-                
+
+                return;
             }
+
+            if (Attack(collider, layer)) return;
+          
         }
+    }
+
+
+    public bool Attack(Collider collider, int layer)
+    {
+        IDamageable damageable = collider.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            if (damageable.Damaged(damage, layer))
+            {
+                attacking = false;
+                return true;
+            }
+
+        }
+        return false;
     }
  /*   private void OnTriggerEnter(Collider other)
     {

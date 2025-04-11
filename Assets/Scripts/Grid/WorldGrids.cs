@@ -94,14 +94,13 @@ public class WorldGrids : MonoBehaviour
         lists.Clear();
         Vector3 currentPosition = transforms.position;   
         int x = Mathf.FloorToInt(currentPosition.x /10)- indexingMinX;
-        int y = Mathf.FloorToInt(currentPosition.y /10)- indexingMinY;
+        int y = Mathf.FloorToInt(currentPosition.z /10)- indexingMinY;
 
         for (int i = 0; i < 9; i++) // 현재 위치부터 8방향 탐색 
         {
             int posX = x + findX[i];
             int posY = y + findY[i];
 
-          
             if (ValidCheck(posX, posY)) //인덱스 유효성 체크
             {
                 List<PlayerController> controllers = players[posX, posY];
@@ -114,7 +113,7 @@ public class WorldGrids : MonoBehaviour
                     Vector3 dir = controller.Transforms.position - currentPosition;
                     float distance = dir.magnitude;
                     dir = Vector3.Normalize(dir);
-                    if (!Physics.Raycast(currentPosition,dir,distance,layerMask)) lists.RemoveAt(j); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
+                   // if (!Physics.Raycast(currentPosition,dir,distance,layerMask)) lists.RemoveAt(j); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
                 }
             }
         }
