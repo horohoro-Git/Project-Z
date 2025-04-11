@@ -256,3 +256,6 @@ Optimized the code for loading data tables using generics
 
 04/09
 Added NPC Character
+
+04/10
+NPC reputation events, now the NPC fights the zombies

@@ -54,7 +54,7 @@ public class Player : MonoBehaviour
             damage = damage / 2;
         }
         float damagePercent = (float)((float)100.0f / (float)(defense + 100));
-        Debug.Log(damagePercent);
+
         damage = (int)(damagePercent * damage);
         if (damage == 0) damage = 1;
         playerStruct.hp -= damage;

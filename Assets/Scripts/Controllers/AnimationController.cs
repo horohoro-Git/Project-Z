@@ -10,27 +10,63 @@ public class AnimationController : MonoBehaviour
     EnemyController enemyController;
     public EnemyController GetEnemyController {  get { if (enemyController == null) enemyController = GetComponentInParent<EnemyController>(); return enemyController; } }
 
+    NPCController npcController;
+    public NPCController GetNPCController { get { if (npcController == null) npcController = GetComponent<NPCController>(); return npcController; } }
+
     public void StartLeftPunch()
     {
-        GetPlayerController.GetLeftHand.Attack(GetPlayerController.GetPlayer.playerStruct.attackDamage);
-        GetPlayerController.GetLeftHand.Trail(true);
+        if (GetPlayerController != null)
+        {
+            GetPlayerController.GetLeftHand.Attack(GetPlayerController.GetPlayer.playerStruct.attackDamage);
+            GetPlayerController.GetLeftHand.Trail(true);
+        }
+
+        if(GetNPCController != null)
+        {
+            GetNPCController.GetLeftHand.Attack(50);
+            GetNPCController.GetLeftHand.Trail(true);
+        }
     }
     public void StopLeftPunch()
     {
-        GetPlayerController.GetLeftHand.StopAttack();
-        GetPlayerController.GetLeftHand.Trail(false);
+        if (GetPlayerController != null)
+        {
+            GetPlayerController.GetLeftHand.StopAttack();
+            GetPlayerController.GetLeftHand.Trail(false);
+        }
+        if (GetNPCController != null)
+        {
+            GetNPCController.GetLeftHand.StopAttack();
+            GetNPCController.GetLeftHand.Trail(false);
+        }
     }
 
     public void StartRightPunch()
     {
-        GetPlayerController.GetRightHand.Attack(GetPlayerController.GetPlayer.playerStruct.attackDamage);
-        GetPlayerController.GetRightHand.Trail(true);
+        if (GetPlayerController != null)
+        {
+            GetPlayerController.GetRightHand.Attack(GetPlayerController.GetPlayer.playerStruct.attackDamage);
+            GetPlayerController.GetRightHand.Trail(true);
+        }
+        if (GetNPCController != null)
+        {
+            GetNPCController.GetRightHand.Attack(50);
+            GetNPCController.GetRightHand.Trail(true);
+        }
     }
 
     public void StopRightPunch()
     {
-        GetPlayerController.GetRightHand.StopAttack();
-        GetPlayerController.GetRightHand.Trail(false);
+        if (GetPlayerController != null)
+        {
+            GetPlayerController.GetRightHand.StopAttack();
+            GetPlayerController.GetRightHand.Trail(false);
+        }
+        if (GetNPCController != null)
+        {
+            GetNPCController.GetRightHand.StopAttack();
+            GetNPCController.GetRightHand.Trail(false);
+        }
     }
 
     public void StartScratch()

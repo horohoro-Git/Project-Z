@@ -87,7 +87,6 @@ public class Controller : MonoBehaviour
             viewSpeed = currentMoveSpeed;
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed * moveSpeedMutiplier, ref velocity, 0.2f);
             Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed * moveSpeedMutiplier;
-            Debug.Log(Time.fixedDeltaTime + " " + currentMoveSpeed + " " + moveSpeedMutiplier);
         }
         else
         {
