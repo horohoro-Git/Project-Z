@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - CinemachineTarget
   - UMAIgnore
+  - NPC
   layers:
   - Default
   - TransparentFX
@@ -24,7 +25,7 @@ TagManager:
   - Plane
   - Environment
   - Furniture
-  - 
+  - NPC
   - 
   - 
   - 

@@ -105,8 +105,8 @@ public class AssetLoader : MonoBehaviour
   
     Shader Standard { get { if (standard == null) standard = Shader.Find("Standard"); return standard; } }
 
-    string[] tables = new string[11] 
-    { "level", "item", "weapon", "consumption", "enemy", "armor", "craft", "ability", "achievement", "recipes", "npc" };
+    string[] tables = new string[12] 
+    { "level", "item", "weapon", "consumption", "enemy", "armor", "craft", "ability", "achievement", "recipes", "npc", "npc_event" };
     Dictionary<string, string> tableContents = new Dictionary<string, string>();
    /* //데이터 테이블 문자열
     [NonSerialized]
@@ -251,8 +251,9 @@ public class AssetLoader : MonoBehaviour
                 achievement.rewardStruct = achievementRewardStructs;
                 achievementStructs[i] = achievement;
             }
-          //  AchievementHandler.LoadEvent(achievementStructs);
-
+            AchievementHandler.LoadEvent(achievementStructs);
+            List<NPCEventStruct> npceventStructs = SaveLoadSystem.GetListData<NPCEventStruct>(tableContents["npc_event"]);
+            NPCEventHandler.LoadEvent(npceventStructs);
             ItemData.ItemDatabaseSetup();
             assetLoadSuccessful = true;
         }

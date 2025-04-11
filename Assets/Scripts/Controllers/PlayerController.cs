@@ -152,18 +152,12 @@ public class PlayerController : Controller, IDamageable
             {
                 moveSpeedMutiplier = 1;
             }
-           // Debug.Log(GetPlayer.playerStruct.weight + " " + GameInstance.Instance.inventorySystem.inventoryWeight);
             GameInstance.Instance.characterProfileUI.CreateCharacter(load, go);
             GameInstance.Instance.inventorySystem.UseItem(this, equipSlotIndex);
-
-          //  Debug.Log(lastGridX + " " + lastGridY);
-            //   GameInstance.Instance.
         }
         else
         {
             model = go;
-            //modelAnimator.SetFloat("zombieTimer", 1);
-          // modelAnimator.SetTrigger("standup");
         }
 
         Destroy(go.GetComponent<Rigidbody>());  
@@ -289,22 +283,12 @@ public class PlayerController : Controller, IDamageable
     void Update()
     {
        
-        if (state == PlayerState.Dead)
-        {
-          //  modelAnimator.SetFloat("lookAround", 0);
-            return;
-        }
-        
+        if (state == PlayerState.Dead) return;
+      
         LastPosition = Transforms.position;
         GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY, false);
     
-        if (LastPosition != Transforms.position)
-        {
-    //        LastPosition = Transforms.position;
-      //      GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY, false);
-            
-        }
-
+       
         if(animationWorking > 0)
         {
             modelAnimator.SetFloat("lookAround", 0);

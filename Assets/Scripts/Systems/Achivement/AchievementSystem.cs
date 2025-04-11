@@ -6,7 +6,8 @@ using UnityEngine;
 public class AchievementSystem : MonoBehaviour
 {
 
-    Dictionary<uint, Action<AchievementStruct>> achieveEvents = new Dictionary<uint, Action<AchievementStruct>>();
+   // Dictionary<uint, Delegate> customEvents = new Dictionary<uint, Delegate>();
+   
 
     private void Awake()
     {
@@ -16,20 +17,20 @@ public class AchievementSystem : MonoBehaviour
     public void Start()
     {
         //나무를 베었을 때 발생할 이벤트
-        achieveEvents[100001] = CutTree;
-        achieveEvents[100002] = CutTree;
+        AllEventManager.customEvents[100001] = (Action<AchievementStruct>)(CutTree);
+        AllEventManager.customEvents[100002] = (Action<AchievementStruct>)(CutTree);
     }
 
     //초기 이벤트
     public void CreateEvents()
     {
-        AchievementHandler.Subscribe(100001, achieveEvents[100001]);
+        AchievementHandler.Subscribe(100001, (Action<AchievementStruct>)AllEventManager.customEvents[100001]);
     }
 
     //이후에 연계되는 업적 추가
     public void NewEvent(uint id)
     {
-        AchievementHandler.Subscribe(id, achieveEvents[id]);
+        AchievementHandler.Subscribe(id, (Action<AchievementStruct>)AllEventManager.customEvents[id]);
 
     }
 

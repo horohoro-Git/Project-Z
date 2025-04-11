@@ -70,6 +70,8 @@ public class GameManager : MonoBehaviour
         NPCAvatar npc = Instantiate(AssetLoader.loadedAssets[nPCStruct.npc_asset]).GetComponent<NPCAvatar>();
         npc.Setup(nPCStruct);
         npc.transform.position = new Vector3(2, 0, 1);
+        NPCController nPCController = npc.GetComponent<NPCController>();
+        NPCEventHandler.Publish(1000001, nPCController);
     }
 
     void PlayerSetting()

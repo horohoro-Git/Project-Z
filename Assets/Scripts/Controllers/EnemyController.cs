@@ -108,10 +108,10 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
                 //   GetRightHand.Attack(enemyStruct.attack);
                 agent.isStopped = true;
             }
-            else if (distance > 20)
+            /*else if (distance > 20)
             {
                 agent.isStopped = true;
-            }
+            }*/
             else
             {
                 agent.isStopped = false;

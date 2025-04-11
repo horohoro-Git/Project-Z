@@ -96,6 +96,15 @@ public enum EnvironmentType
     Tree
 }
 
+//NPC 성향 타입
+public enum NPCDispositionType
+{
+    None,
+    Netural,
+    Friendly,
+    Hostile
+}
+
 //환경 오브젝트 정보
 public struct EnvironmentObjectInfo
 {
@@ -606,6 +615,12 @@ public struct NPCStruct : ITableID<int>
     public readonly string Name => npc_asset;
 }
 
+public struct NPCEventStruct
+{
+    public uint id;
+    public string event_name;
+    public NPCDispositionType npc_disposition;
+}
 public struct StringStruct : ITableID<string>
 {
     public string str;
@@ -621,6 +636,16 @@ public struct StringStruct : ITableID<string>
     }
 }
 
+public struct CustomEvent<T>
+{
+    public T cEvent;
+
+    public CustomEvent(T cEvent)
+    {
+        this.cEvent = cEvent;
+    }
+
+}
 
 public class Utility
 {
