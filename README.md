@@ -262,3 +262,6 @@ NPC reputation events, now the NPC fights the zombies
 
 04/11
 The NPC, having become hostile to the player, attacks the player
+
+04/12
+Added NPC behavior type: friendly

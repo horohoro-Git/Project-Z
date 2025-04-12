@@ -162,14 +162,14 @@ public class PlayerController : Controller, IDamageable
 
         Destroy(go.GetComponent<Rigidbody>());  
         Destroy(go.GetComponent<Collider>());
-       /* GameInstance.Instance.inventorySystem.LoadInvetory(0, 0, ItemData.GetItem(10), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[10]);
-        GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 0, ItemData.GetItem(10), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[10]);
-        GameInstance.Instance.inventorySystem.LoadInvetory(0, 1, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
-        GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 1, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
+        /* GameInstance.Instance.inventorySystem.LoadInvetory(0, 0, ItemData.GetItem(10), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[10]);
+         GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 0, ItemData.GetItem(10), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[10]);
+         GameInstance.Instance.inventorySystem.LoadInvetory(0, 1, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
+         GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 1, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
 
-        GameInstance.Instance.inventorySystem.LoadInvetory(0, 2, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
-        GameInstance.Instance.boxInventorySystem.LoadInvetory(0,2, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
-*/
+         GameInstance.Instance.inventorySystem.LoadInvetory(0, 2, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
+         GameInstance.Instance.boxInventorySystem.LoadInvetory(0,2, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
+ */
         /*GameInstance.Instance.inventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
         GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
 
@@ -187,6 +187,7 @@ public class PlayerController : Controller, IDamageable
 
          GameInstance.Instance.inventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
          GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);*/
+        GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY, true);
     }
 
     public void ChangeTagLayer(Transform parent, string newTag, int layerName)

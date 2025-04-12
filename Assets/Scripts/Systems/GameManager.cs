@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
         npc.Setup(nPCStruct);
         npc.transform.position = new Vector3(2, 0, 1);
         NPCController nPCController = npc.GetComponent<NPCController>();
-        NPCEventHandler.Publish(1000001, nPCController);
+        NPCEventHandler.Publish(1000002, nPCController);
     }
 
     void PlayerSetting()

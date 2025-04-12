@@ -10,15 +10,8 @@ public class App : MonoBehaviour
     Scene scene;
     private void Awake()
     {
-        /*  Graphics.ClearRandomWriteTargets();  // GPU 명령 버퍼 강제 초기화
-          GL.InvalidateState();               // OpenGL 상태 캐시 무효화
-          System.GC.Collect();*/
-        // QualitySettings.shadows = ShadowQuality.Disable;
-        //QualitySettings.shadowDistance = 30;
-        //  QualitySettings.shadowCascades = 2;
-        //  QualitySettings.shadowResolution = ShadowResolution.Low;
 #if UNITY_EDITOR
-        QualitySettings.vSyncCount = 0;  // 에디터에서만 VSync 강제 해제
+        QualitySettings.vSyncCount = 0;  
         Application.targetFrameRate = -1;
 #endif
      //   QualitySettings.vSyncCount = 0;
