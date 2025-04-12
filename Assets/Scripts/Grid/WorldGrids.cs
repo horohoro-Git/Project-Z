@@ -23,7 +23,8 @@ public class WorldGrids : MonoBehaviour
     int sizeX;
     int sizeY;
     List<PlayerController>[,] players;
-    int layerMask = 1 << 3; 
+    Dictionary<int, PlayerController> playerControllersDic = new Dictionary<int, PlayerController>();
+  //  int layerMask = 1 << 3; 
     int[] findX = new int[9] {0, 1, 1, 0,-1,-1,-1,0,1 };
     int[] findY = new int[9] {0, 0, -1, -1,-1, 0, 1, 1, 1 };
 
@@ -60,9 +61,11 @@ public class WorldGrids : MonoBehaviour
         //10f 간격으로 배열에 배치
         Vector3 playerLoc = pc.Transforms.position;
         int x = Mathf.FloorToInt(playerLoc.x / 10) - indexingMinX;
-        int y = Mathf.FloorToInt(playerLoc.y / 10) - indexingMinY;
+        int y = Mathf.FloorToInt(playerLoc.z / 10) - indexingMinY;
         if (init)
         {
+            playerControllersDic[pc.GetInstanceID()] = pc;
+
             refX = x;
             refY = y;
             players[x, y].Add(pc);
@@ -83,8 +86,9 @@ public class WorldGrids : MonoBehaviour
     {
         Vector3 playerLoc = pc.Transforms.position;
         int x = Mathf.FloorToInt(playerLoc.x / 10) - indexingMinX;
-        int y = Mathf.FloorToInt(playerLoc.y / 10) - indexingMinY;
+        int y = Mathf.FloorToInt(playerLoc.z / 10) - indexingMinY;
 
+        playerControllersDic.Remove(pc.GetInstanceID());
         players[refX, refY].Remove(pc);
     }
 
@@ -123,36 +127,14 @@ public class WorldGrids : MonoBehaviour
     //적을 탐색
     public Dictionary<string, GameObject> FindEnemiesInGrid()
     {
-       // List <GameObject> list = new List<GameObject>();
-   /*     Vector3 currentPosition = transforms.position;
-        int x = Mathf.FloorToInt(currentPosition.x / 10) - indexingMinX;
-        int y = Mathf.FloorToInt(currentPosition.y / 10) - indexingMinY;
-
-        for (int i = 0; i < 9; i++) // 현재 위치부터 8방향 탐색 
-        {
-            int posX = x + findX[i];
-            int posY = y + findY[i];
-
-
-            if (ValidCheck(posX, posY)) //인덱스 유효성 체크
-            {
-                List<PlayerController> controllers = players[posX, posY];
-                int preCount = lists.Count;
-                lists.AddRange(controllers);
-
-                for (int j = lists.Count - 1; j >= preCount; j--)
-                {
-                    PlayerController controller = controllers[j];
-                    Vector3 dir = controller.Transforms.position - currentPosition;
-                    float distance = dir.magnitude;
-                    dir = Vector3.Normalize(dir);
-                    if (!Physics.Raycast(currentPosition, dir, distance, layerMask)) lists.RemoveAt(j); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
-                }
-            }
-        }
-   */
 
         return lives;
+    }
+
+    public Dictionary<int, PlayerController> FindPlayerDictinary()
+    {
+
+        return playerControllersDic;
     }
 
     bool ValidCheck(int x, int y)
