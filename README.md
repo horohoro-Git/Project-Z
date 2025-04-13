@@ -265,3 +265,6 @@ The NPC, having become hostile to the player, attacks the player
 
 04/12
 Added NPC behavior type: friendly
+
+04/13
+Rotate the player towards the attack direction, and prevent the NPC from pushing the target while moving
