@@ -29,12 +29,14 @@ public class NPCController : MonoBehaviour, IDamageable
     float equip;
     float another;
     GameObject target;
+    bool moveStop;
     List<PlayerController> playerControllers = new List<PlayerController>();
     List<EnemyController> enemyControllers = new List<EnemyController>();
 
     public RuntimeAnimatorController newAnimator;
 
     bool focus;
+    float attackRange = 1.2f;
     private void Start()
     {
         ChangeTagLayer(GetTransform, "NPC", 0b1110);
@@ -42,15 +44,21 @@ public class NPCController : MonoBehaviour, IDamageable
         GetAgent.acceleration = 4;
         GetAgent.angularSpeed = 360;
         modelAnimator.runtimeAnimatorController = newAnimator;
+        GetAgent.stoppingDistance = 1.2f;
     }
     //  List<Vector3> positions = new List<Vector3>();
     private void Update()
     {
+        if (bDead) return;
+        if(moveStop)
+        {
+            agent.velocity = Vector3.Lerp(agent.velocity, Vector3.zero, Time.deltaTime * 10);
+        }
+
         targetRotation = new Quaternion();
 
         if (animationWorking > 0) return;
-        if (bDead) return;
-        //   if (LastPosition != Transforms.position)
+
         if (target != null &&  focus)
         {
             Vector3 direction = target.transform.position - GetTransform.position;
@@ -61,28 +69,8 @@ public class NPCController : MonoBehaviour, IDamageable
         if (next + last < Time.time)
         {
             last = Time.time;
-            next = UnityEngine.Random.Range(0.3f, 0.8f);
-
-            /* if (target == null)
-             {
-                 Debug.Log(eventStruct.npc_disposition);
-                 switch (eventStruct.npc_disposition)
-                 {
-                     case NPCDispositionType.None:
-                         break;
-                     case NPCDispositionType.Netural:
-                         NeturalAction();
-                         break;
-                     case NPCDispositionType.Friendly:
-                         FriendlyAction(); 
-                         break;
-                     case NPCDispositionType.Hostile:
-                         HositleAction();
-                         break;
-                 }
-                 return;
-             }*/
-
+            //  next = UnityEngine.Random.Range(0.3f, 0.8f);
+            next = 0.1f * Time.deltaTime;
             target = null;
 
             switch (eventStruct.npc_disposition)
@@ -99,55 +87,10 @@ public class NPCController : MonoBehaviour, IDamageable
                     HositleAction();
                     break;
             }
-
-          //  if (target == null) return;
-          //  float distance = Vector3.Distance(transform.position, target.transform.position);
-
-
-        /*    if (distance <= 1.5f)
-            {
-                GetAgent.isStopped = true;
-                focus = true;
-*//*              
-
-                Vector3 direction = (target.transform.position - GetTransform.position).normalized;
-                Quaternion lookRotation = Quaternion.LookRotation(direction);
-                GetTransform.rotation = Quaternion.Slerp(GetTransform.rotation, lookRotation, Time.deltaTime * 5);*//*
-                float angledifference = Quaternion.Angle(GetTransform.rotation, targetRotation);
-
-                if(angledifference < 10)
-                {
-                    if (eventStruct.npc_disposition != NPCDispositionType.None && eventStruct.npc_disposition != NPCDispositionType.Friendly)
-                    {
-                        another = UnityEngine.Random.Range(0, 2);
-                        StartAnimation("attack", 2);
-                    }
-                    else if (eventStruct.npc_disposition == NPCDispositionType.Friendly)
-                    {
-                        if (target.layer != 0b0011)
-                        {
-                            another = UnityEngine.Random.Range(0, 2);
-                            StartAnimation("attack", 2);
-                        }
-                    }
-                }
-            }
-            else if (distance > 40)
-            {
-                GetAgent.isStopped = true;
-            }
-            else
-            {
-                focus = false;
-                GetAgent.isStopped = false;
-                GetAgent.SetDestination(target.transform.position);
-            }*/
-
         }
         modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
         modelAnimator.SetFloat("equip", equip);
         modelAnimator.SetFloat("another", another);
-    
     }
     void ChangeTagLayer(Transform parent, string newTag, int layerName)
     {
@@ -349,12 +292,13 @@ public class NPCController : MonoBehaviour, IDamageable
 
     bool NPCBehavior_Attack(float distance, bool hostile)
     {
-        if (distance <= 1.5f)
+        if (distance <= attackRange)
         {
             if (target.layer != 0b0011 || hostile)
             {
                 GetAgent.isStopped = true;
                 focus = true;
+                moveStop = true;
 
                 float angledifference = Quaternion.Angle(GetTransform.rotation, targetRotation);
 
@@ -372,20 +316,30 @@ public class NPCController : MonoBehaviour, IDamageable
     }
     bool NPCBehavior_Follow(float distance, bool friendly)
     {
-        if(distance > 1.5f && distance <= 40 || friendly)
+        if(distance > 1.2f && distance <= 40 || friendly && distance > 1.2f)
         {
             focus = false;
             GetAgent.isStopped = false;
+            moveStop = false;
             GetAgent.SetDestination(target.transform.position);
             return true;
         }
-        return false;
+        else
+        {
+            GetAgent.isStopped = true;
+            focus = false;
+            moveStop = true;
+            //agent.velocity = Vector3.zero;
+            return true;
+        }
+    //    return false;
     }
     bool NPCBehavior_Pause(float distance, bool friendly)
     {
         if(distance > 40 && !friendly)
         {
             GetAgent.isStopped = true;
+            moveStop = true;
             focus = false;
             return true;
         }

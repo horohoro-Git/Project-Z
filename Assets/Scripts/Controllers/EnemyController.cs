@@ -58,6 +58,8 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     List<PlayerController> pcs = new List<PlayerController>(10);
     public string ID { get; set; }
 
+    bool moveStop = false;
+
     private void Awake()
     {
         bDead = false;
@@ -84,8 +86,12 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     // Update is called once per frame
     void Update()
     {
-        if (animationWorking > 0) return;
         if (bDead) return;
+        if (moveStop)
+        {
+            agent.velocity = Vector3.Lerp(agent.velocity, Vector3.zero, Time.deltaTime * 10);
+        }
+        if (animationWorking > 0) return;
         //   if (LastPosition != Transforms.position)
 
         if (next + last < Time.time)
@@ -107,14 +113,17 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
                 StartAnimation("scratch", 2);
                 //   GetRightHand.Attack(enemyStruct.attack);
                 agent.isStopped = true;
+                moveStop = true;
             }
-            /*else if (distance > 20)
+            else if (distance > 20)
             {
                 agent.isStopped = true;
-            }*/
+                moveStop = true;
+            }
             else
             {
                 agent.isStopped = false;
+                moveStop = false;
                 agent.SetDestination(target.Transforms.position);
             }
 
@@ -207,27 +216,30 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         if(target != null)
         {
             float distance = Vector3.Distance(target.Transforms.position, Transforms.position);
-            if (distance <= 1.5f)
+            if (distance <= 1.2f)
             {
                 StartAnimation("scratch", 2);
-             //   GetRightHand.Attack(enemyStruct.attack);
+                //   GetRightHand.Attack(enemyStruct.attack);
                 agent.isStopped = true;
+                moveStop = true;
             }
             else if(distance > 20)
             {
                 agent.isStopped = true;
+                moveStop = true;
             }
             else
             {
                 Debug.Log(target.Transforms.position);
                 agent.isStopped = false;
+                moveStop = false;
                 agent.SetDestination(target.Transforms.position);
             }
         }
         else
         {
-            Debug.Log("L");
             agent.isStopped = true;
+            moveStop = true;
         }
     }
 
@@ -274,16 +286,20 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
             bDead = true;
 
             agent.isStopped = true;
-
+/*
             capsuleCollider = GetComponent<CapsuleCollider>();
-            capsuleCollider.excludeLayers = 0b1000;
-           
-         
+            capsuleCollider.excludeLayers = 0b111111111111110;
+            gameObject.layer = 0b1111;
+            ChangeTagLayer(Transforms, "Enemy", 0b1111);*/
+
             //   Destroy(Rigid);
             GameInstance.Instance.worldGrids.RemoveObjects(ID, MinimapIconType.Enemy);
             
             modelAnimator.SetTrigger("zombieDead");
             Reward();
+
+            Destroy(agent);
+            Destroy(capsuleCollider);
         }
     }
 
@@ -302,16 +318,17 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         {
             for (int i = 0; i < enemyStruct.dropStruct.Count; i++)
             {
-                int random = UnityEngine.Random.Range(1, 101);
+                int random = UnityEngine.Random.Range(1, 11);
                 if (random <= enemyStruct.dropStruct[i].item_chance)
                 {
-                    int index = enemyStruct.dropStruct[i].item_index - 1;
-                    GameObject item = Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[index].ID]);
+                    int index = enemyStruct.dropStruct[i].item_index;
+                  //  ItemData.GetItem(index).itemGO;
+                    GameObject item = Instantiate(ItemData.GetItem(index).itemGO); //Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[index].ID]);
                     item.transform.position = new Vector3(Transforms.position.x, Transforms.position.y + 1, Transforms.position.z);
                     GettableItem gettableItem = item.AddComponent<GettableItem>();
 
                     Rigidbody itemRigid = item.AddComponent<Rigidbody>();
-                    itemRigid.AddForce(Vector3.up * 10f);
+                   // itemRigid.AddForce(Vector3.up * 10f);
                 }
             }
 

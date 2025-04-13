@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class RightHand : MonoBehaviour
 {
@@ -51,6 +50,8 @@ public class RightHand : MonoBehaviour
         {
             int layer = gameObject.layer;
             int colliderLayer = collider.gameObject.layer;
+
+            if (colliderLayer == 0b1111) continue;
 
             NPCController npc = GetComponentInParent<NPCController>();
             if (npc != null)

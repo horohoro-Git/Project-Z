@@ -65,12 +65,34 @@ public class Controller : MonoBehaviour
 
     [NonSerialized]
     public float moveSpeedMutiplier;
+
+    protected bool turnRotate;
+    protected Vector3 rotateVector;
     void FixedUpdate()
     {
-        if (!lookAround) Rotate();
+        if (turnRotate)
+        {
+            Vector3 r = (rotateVector - Transforms.position);
+
+            Quaternion quaternion = Quaternion.LookRotation(r);
+            quaternion = Quaternion.Euler(0, quaternion.eulerAngles.y, 0);
+            Transforms.rotation = Quaternion.Slerp(Transforms.rotation, quaternion, 10 * Time.fixedDeltaTime * moveSpeedMutiplier);
+
+            float angle = Vector3.Dot(Transforms.forward, r.normalized);
+
+            if (Vector3.Dot(Transforms.forward, r.normalized) > 0.999f)
+            {
+                viewDir = Vector3.zero;
+                turnRotate = false;
+            }
+        }
         else
         {
-            LookAround();
+            if (!lookAround) Rotate();
+            else
+            {
+                LookAround();
+            }
         }
 
         if (canMove > 0)

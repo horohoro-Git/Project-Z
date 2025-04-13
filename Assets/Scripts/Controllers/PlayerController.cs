@@ -412,6 +412,16 @@ public class PlayerController : Controller, IDamageable
         raycastResults.Clear();
         raycaster.Raycast(eventData, raycastResults);
         if (raycastResults.Count > 0) return;
+
+        Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if(Physics.Raycast(r, out RaycastHit h, float.MaxValue, 0b100000000000))
+        {
+            turnRotate = true;
+            rotateVector = h.point;
+        }
+       
+
         if (equipItem != null)
         {
             if (equipItem.itemStruct.item_type == ItemType.Equipmentable)  //¹«±â
