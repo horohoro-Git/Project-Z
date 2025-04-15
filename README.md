@@ -268,3 +268,6 @@ Added NPC behavior type: friendly
 
 04/13
 Rotate the player towards the attack direction, and prevent the NPC from pushing the target while moving
+
+04/14
+The slot's event trigger is changed to an interface, adding life hover UI and death UI

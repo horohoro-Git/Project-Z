@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CraftingData : MonoBehaviour
+public class CraftingData : MonoBehaviour, IPointerDownHandler
 {
     RectTransform rectTransform;
     public RectTransform GetRectTransform {  get { if (rectTransform == null) rectTransform = GetComponent<RectTransform>(); return rectTransform; } }
@@ -16,7 +17,7 @@ public class CraftingData : MonoBehaviour
     public TMP_Text icon_name;
     public ItemStruct item;
     public Button btn;
-    UnityAction btnAction;
+   // UnityAction btnAction;
     public bool learned;
 
     public CraftingLearnSystem learnSystem;
@@ -28,7 +29,7 @@ public class CraftingData : MonoBehaviour
         icon_name.text = itemStruct.item_name;
         this.learned = learned;
     }
-    private void OnEnable()
+   /* private void OnEnable()
     {
         if(btnAction == null) btnAction = Learn;
         btn.onClick.AddListener(btnAction);
@@ -36,7 +37,7 @@ public class CraftingData : MonoBehaviour
     private void OnDisable()
     {
         btn.onClick.RemoveListener(btnAction);
-    }
+    }*/
 
     void Learn()
     {
@@ -49,5 +50,10 @@ public class CraftingData : MonoBehaviour
         {
             learnSystem.RemoveLearn(this);
         }
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        Learn();
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine.Experimental.Rendering;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
-public class Slot : MonoBehaviour, IUIComponent
+public class Slot : MonoBehaviour, IUIComponent, IPointerEnterHandler, IPointerExitHandler, IPointerUpHandler, IPointerDownHandler
 {
     Button slotBtn;
     RectTransform self;
@@ -36,6 +36,7 @@ public class Slot : MonoBehaviour, IUIComponent
 
     bool inited;
 
+    /*
     EventTrigger eventTrigger;
     EventTrigger.Entry entryHover;
     EventTrigger.Entry entryExit;
@@ -45,7 +46,7 @@ public class Slot : MonoBehaviour, IUIComponent
     UnityAction<BaseEventData> hoverExit;
     UnityAction<BaseEventData> dragEnter;
     UnityAction<BaseEventData> dragExit;
-
+    */
     private void OnEnable()
     {
         //Debug.Log("LL");
@@ -79,6 +80,7 @@ public class Slot : MonoBehaviour, IUIComponent
 
     private void OnDisable()
     {
+        /*
             Debug.Log("Disable");
         if (eventTrigger != null)
         {
@@ -99,10 +101,9 @@ public class Slot : MonoBehaviour, IUIComponent
 
             if (info != null) Destroy(info.gameObject);
 
-            EventTriggersPool.ReturnTrigger(eventTrigger); 
-
-            eventTrigger = null;
         }
+        */
+        if (info != null) Destroy(info.gameObject);
     }
     void OnDragEnter()
     {
@@ -500,10 +501,10 @@ public class Slot : MonoBehaviour, IUIComponent
         }
         else
         {
-            if (eventTrigger == null)
+            /*if (eventTrigger == null)
             {
                 Debug.Log("Enable");
-                eventTrigger = EventTriggersPool.GetEventTrigger(); // gameObject.AddComponent<EventTrigger>();
+                eventTrigger = gameObject.AddComponent<EventTrigger>();
 
                 entryHover = new EventTrigger.Entry();
                 entryHover.eventID = EventTriggerType.PointerEnter;
@@ -543,7 +544,7 @@ public class Slot : MonoBehaviour, IUIComponent
 
             //드래그 종료
             dragEnd.callback.AddListener(dragExit);
-            eventTrigger.triggers.Add(dragEnd);
+            eventTrigger.triggers.Add(dragEnd);*/
         }
        // itemImage.gameObject.SetActive(false);
        // itemImage.sprite = originImage;
@@ -551,5 +552,25 @@ public class Slot : MonoBehaviour, IUIComponent
     private void OnDestroy()
     {
         item.Clear();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        OnHoverEnter();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        OnHoverExit();
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        OnDragExit();
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        OnDragEnter();
     }
 }

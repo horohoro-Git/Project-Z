@@ -58,6 +58,9 @@ public class AssetLoader : MonoBehaviour
     public List<EnemyStruct> enemies;
 
     [NonSerialized]
+    public Dictionary<int, EnemyStruct> enemyParams = new Dictionary<int, EnemyStruct>();
+
+    [NonSerialized]
     public Dictionary<int, WeaponStruct> weapons = new Dictionary<int, WeaponStruct>(); //List<WeaponStruct> weapons;
 
     [NonSerialized]
@@ -239,6 +242,9 @@ public class AssetLoader : MonoBehaviour
                 EnemyStruct enemy = enemies[i];
                 enemy.dropStruct = JsonConvert.DeserializeObject<List<DropStruct>>(itemData);
                 enemies[i] = enemy;
+
+                enemyParams[enemy.id] = enemy;
+                Debug.Log(enemy.id);
             }
             List<AchievementStruct> achievementStructs = SaveLoadSystem.GetListData<AchievementStruct>(tableContents["achievement"]);
             for(int i=0; i<achievementStructs.Count;i++)

@@ -66,11 +66,13 @@ public class GameManager : MonoBehaviour
         }
 
         NPCStruct nPCStruct = GameInstance.Instance.assetLoader.npcs[1];
-
+        Debug.Log(nPCStruct.npc_param_index + " NPCStruct nPCStruct = GameInstance.Instance.assetLoader.npcs[1];");
+        EnemyStruct npcParam = GameInstance.Instance.assetLoader.enemyParams[nPCStruct.npc_param_index];
         NPCAvatar npc = Instantiate(AssetLoader.loadedAssets[nPCStruct.npc_asset]).GetComponent<NPCAvatar>();
         npc.Setup(nPCStruct);
         npc.transform.position = new Vector3(2, 0, 1);
         NPCController nPCController = npc.GetComponent<NPCController>();
+        nPCController.Setup(npcParam);
         NPCEventHandler.Publish(1000002, nPCController);
     }
 

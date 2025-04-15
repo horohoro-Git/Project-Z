@@ -69,6 +69,8 @@ public class InputManager : MonoBehaviour
   
     private void Update()
     {
+        LivesHover();
+
         if (GameInstance.Instance.editMode != EditMode.None)
         {
             GraphicRaycaster raycaster = GameInstance.Instance.uiManager.graphicRaycaster;
@@ -172,6 +174,46 @@ public class InputManager : MonoBehaviour
                         }
                     }
                 }
+            }
+        }
+    }
+
+
+    //살아있는 오브젝트 호버
+    float livesHoverTimer;
+
+    void LivesHover()
+    {
+        if (livesHoverTimer + 0.2f < Time.time)
+        {
+            livesHoverTimer = Time.time;
+
+            Ray hoverRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            Physics.Raycast(hoverRay, out RaycastHit hitInfo, float.MaxValue);
+
+            if (Physics.Raycast(hoverRay, out RaycastHit hoverHit, float.MaxValue, 0b100010000000000))
+            {
+                if (Utility.TryGetComponentInParent<EnemyController>(hoverHit.collider, out EnemyController hoveredEnemy))
+                {
+                    EnemyStruct es = hoveredEnemy.enemyStruct;
+                    string n = es.enemy_name;
+                    int maxHP = es.max_health;
+                    int hp = es.health;
+                    if (AllEventManager.customEvents.TryGetValue(1, out var events)) ((Action<string, int, int>)events)?.Invoke(n, maxHP, hp);
+                }
+                if (Utility.TryGetComponentInParent<NPCController>(hoverHit.collider, out NPCController npcController))
+                {
+                    EnemyStruct ns = npcController.npcStruct;
+                    string n = ns.enemy_name;
+                    int maxHP = ns.max_health;
+                    int hp = ns.health;
+                    if (AllEventManager.customEvents.TryGetValue(1, out var events)) ((Action<string, int, int>)events)?.Invoke(n, maxHP, hp);
+                }
+            }
+            else
+            {
+                if(AllEventManager.customEvents.TryGetValue(2, out var events)) ((Action)events)?.Invoke();
             }
         }
     }

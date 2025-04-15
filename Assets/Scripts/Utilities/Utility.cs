@@ -176,7 +176,8 @@ public enum UIType
     AbilityMenu,
     BoxInventory,
     QuickSlot,
-    Achievement
+    Achievement,
+    Dead
 
 }
 
@@ -475,15 +476,17 @@ public struct EnemyStruct
     public int id;
     public string enemy_name;
     public int health;
+    public int max_health;
     public int attack;
     public string drop_item;
     
     public List<DropStruct> dropStruct;
-    public EnemyStruct(int id, string enemy_name, int health, int attack, string drop_item, List<DropStruct> dropStructs)
+    public EnemyStruct(int id, string enemy_name, int health, int max_health, int attack, string drop_item, List<DropStruct> dropStructs)
     {
         this.id = id;
         this.enemy_name = enemy_name;
         this.health = health;
+        this.max_health = max_health;
         this.attack = attack;
         this.drop_item = drop_item;
         this.dropStruct = dropStructs;
@@ -609,7 +612,7 @@ public struct NPCStruct : ITableID<int>
     public int npc_arm;
     public int npc_leg;
     public int npc_boots;
-
+    public int npc_param_index;
     public readonly int ID => id;
 
     public readonly string Name => npc_asset;
@@ -689,6 +692,12 @@ public class Utility
         }
         return bytes;
     }
+
+    public static bool TryGetComponentInParent<T>(Component component, out T t) where T : Component
+    {
+        t = component.GetComponentInParent<T>();
+        return t != null;
+    }
 }
 
 //UI 인터페이스
@@ -734,6 +743,4 @@ public interface ITableID<K>
      K ID { get; }
      public string Name { get; }
 }
-
-
 

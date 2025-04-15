@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public class CharacterProfileUI : MonoBehaviour
+public class CharacterProfileUI : MonoBehaviour, IPointerUpHandler, IPointerDownHandler
 {
     [NonSerialized]
     public UMACharacterAvatar avatar;
@@ -16,11 +16,11 @@ public class CharacterProfileUI : MonoBehaviour
 
     public RawImage characterImage;
 
-    EventTrigger eventTrigger;
+  /*  EventTrigger eventTrigger;
     EventTrigger.Entry dragStart;
     EventTrigger.Entry dragEnd;
     UnityAction<BaseEventData> dragEnter;
-    UnityAction<BaseEventData> dragExit;
+    UnityAction<BaseEventData> dragExit;*/
     bool dragModel;
     Vector3 dragPosition = Vector3.zero;
     Vector3 positionDelta;
@@ -32,9 +32,9 @@ public class CharacterProfileUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (eventTrigger == null)
+    /*    if (eventTrigger == null)
         {
-            eventTrigger = EventTriggersPool.GetEventTrigger();// gameObject.AddComponent<EventTrigger>();
+            eventTrigger = gameObject.AddComponent<EventTrigger>();
             dragStart = new EventTrigger.Entry();
             dragStart.eventID = EventTriggerType.PointerDown;
             dragEnter = (eventData) => OnDragEnter();
@@ -49,12 +49,12 @@ public class CharacterProfileUI : MonoBehaviour
 
         //드래그 종료
         dragEnd.callback.AddListener(dragExit);
-        eventTrigger.triggers.Add(dragEnd);
+        eventTrigger.triggers.Add(dragEnd);*/
     }
 
     private void OnDisable()
     {
-        if(eventTrigger != null)
+   /*     if(eventTrigger != null)
         {
             dragStart.callback.RemoveListener(dragEnter);
             eventTrigger.triggers.Remove(dragStart);
@@ -62,9 +62,8 @@ public class CharacterProfileUI : MonoBehaviour
             dragEnd.callback.RemoveListener(dragExit);
             eventTrigger.triggers.Remove(dragEnd);
 
-            EventTriggersPool.ReturnTrigger(eventTrigger);
-            eventTrigger = null;
         }
+   */
         if(avatar != null)
         {
             avatar.transform.rotation = Quaternion.Euler(0, 180, 0);
@@ -110,7 +109,7 @@ public class CharacterProfileUI : MonoBehaviour
             Camera camera = newCamera.AddComponent<Camera>();
             camera.targetDisplay = 2;
             camera.targetTexture = renderTexture;   
-            newCamera.transform.position = new Vector3(1000, 1.65f, 998.7f);
+            newCamera.transform.position = new Vector3(1000, 2.12f, 998.4f);
             newCamera.transform.rotation = Quaternion.Euler(30, 0, 0);
 
             characterImage.texture = camera.targetTexture;
@@ -140,5 +139,15 @@ public class CharacterProfileUI : MonoBehaviour
     public void UnEquipItem()
     {
         avatar.RemoveItem();
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        OnDragExit();
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        OnDragEnter();
     }
 }
