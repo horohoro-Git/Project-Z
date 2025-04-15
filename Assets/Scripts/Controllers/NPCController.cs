@@ -23,6 +23,7 @@ public class NPCController : MonoBehaviour, IDamageable
   [NonSerialized]
     public bool bDead;
     int animationWorking;
+    public EnemyStruct npcStruct;
     public NPCEventStruct eventStruct;
     float last;
     float next;
@@ -362,4 +363,11 @@ public class NPCController : MonoBehaviour, IDamageable
         else return false;
         return true;
     }
+
+    public void Setup(EnemyStruct npcStruct)
+    {
+        this.npcStruct = npcStruct;
+        this.npcStruct.health = npcStruct.max_health;
+    }
+
 }

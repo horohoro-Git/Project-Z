@@ -163,6 +163,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
     public void Setup()
     {
+        enemyStruct.health = enemyStruct.max_health;
         gameObject.layer = 0b1010;
         ChangeTagLayer(Transforms, "Enemy", 0b1010);
      //   modelAnimator = GetComponentInChildren<Animator>();
@@ -327,7 +328,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
                     item.transform.position = new Vector3(Transforms.position.x, Transforms.position.y + 1, Transforms.position.z);
                     GettableItem gettableItem = item.AddComponent<GettableItem>();
 
-                    Rigidbody itemRigid = item.AddComponent<Rigidbody>();
+                   // Rigidbody itemRigid = item.AddComponent<Rigidbody>();
                    // itemRigid.AddForce(Vector3.up * 10f);
                 }
             }

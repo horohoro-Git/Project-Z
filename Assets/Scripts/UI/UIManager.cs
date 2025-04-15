@@ -22,6 +22,8 @@ public class UIManager : MonoBehaviour
     GameObject boxInventoryUI;
     [SerializeField]
     GameObject achievementUI;
+    [SerializeField]
+    GameObject playerDeadUI;
     public GameObject acceptanceUI;
 
     UIType uiType = UIType.None;
@@ -40,6 +42,7 @@ public class UIManager : MonoBehaviour
         CreateUI(quickSlotUI, rectTransform, UIType.QuickSlot);
         CreateUI(boxInventoryUI, rectTransform, UIType.BoxInventory);
         CreateUI(achievementUI, rectTransform, UIType.Achievement);
+        CreateUI(playerDeadUI, rectTransform, UIType.Dead);
         CreateUI(menuUI, rectTransform, UIType.Menu);
         SwitchUI(UIType.QuickSlot, true);
     }

@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class AchievementData : MonoBehaviour
+public class AchievementData : MonoBehaviour, IPointerDownHandler
 {
     RectTransform rectTransform;
     public RectTransform GetRectTransform {  get { if (rectTransform == null) rectTransform = GetComponent<RectTransform>(); return rectTransform; } }
@@ -14,7 +15,7 @@ public class AchievementData : MonoBehaviour
     public TMP_Text description;
     public Image icon;
     public Button button;
-    UnityAction clearAtion;
+  //  UnityAction clearAtion;
 
     public List<GameObject> stars = new List<GameObject>();
     public void Setup()
@@ -29,7 +30,7 @@ public class AchievementData : MonoBehaviour
         }
     }
 
-    private void OnEnable()
+   /* private void OnEnable()
     {
         if (clearAtion == null) clearAtion = GetReward;
 
@@ -40,7 +41,7 @@ public class AchievementData : MonoBehaviour
     private void OnDisable()
     {
         button.onClick.RemoveListener(clearAtion);
-    }
+    }*/
 
     void GetReward()
     {
@@ -63,5 +64,10 @@ public class AchievementData : MonoBehaviour
         string mainText = achievementStruct.quest_name + " " + achievementStruct.progress + "/" + achievementStruct.target;
         description.text = mainText;
         if (achievement.complete) button.enabled = true;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        GetReward();
     }
 }

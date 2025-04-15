@@ -50,7 +50,7 @@ public class EnemySpawner : MonoBehaviour
                 int type = UnityEngine.Random.Range(1, 2);
                 EnemyController enemy = Instantiate(AssetLoader.loadedAssets[AssetLoader.enemykeys[type - 1]]).GetComponent<EnemyController>();
                 enemy.Transforms.position = new Vector3(x - 49, 0, y - 49);
-                enemy.enemyStruct = assetLoader.enemies[type - 1];
+                enemy.enemyStruct = assetLoader.enemyParams[type];
                 GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
                 enemy.Setup();
 
@@ -107,7 +107,7 @@ public class EnemySpawner : MonoBehaviour
             enemyController.SetController(model);
             enemyController.capsuleCollider = GetComponent<CapsuleCollider>();
             enemyController.itemStructs = itemStructs;
-            enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
+            enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemyParams[1];
             GameInstance.Instance.worldGrids.AddObjects(enemyController.gameObject, MinimapIconType.Enemy, true);
 
             enemyController.playerType = modelType;

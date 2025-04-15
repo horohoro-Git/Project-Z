@@ -1,14 +1,17 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[Obsolete("사용되지 않음")]
 public class EventTriggersPool : MonoBehaviour
 {
+
     static Queue<EventTrigger> eventTriggers = new Queue<EventTrigger>();
     // Start is called before the first frame update
 
-    private void Awake()
+ /*   private void Awake()
     {
         for (int i = 0; i < 200; i++)
         {
@@ -19,14 +22,14 @@ public class EventTriggersPool : MonoBehaviour
             a.SetActive(false);
             eventTriggers.Enqueue(eventTrigger);
         }
-    }
+    }*/
 
     public static EventTrigger GetEventTrigger()
     {
         EventTrigger e = eventTriggers.Dequeue();
         e.enabled = true;
         e.gameObject.SetActive(true);
-        return e; 
+        return e;
     }
     public static void ReturnTrigger(EventTrigger eventTrigger)
     {
@@ -34,4 +37,5 @@ public class EventTriggersPool : MonoBehaviour
         eventTrigger.gameObject.SetActive(false);
         eventTriggers.Enqueue(eventTrigger);
     }
+
 }

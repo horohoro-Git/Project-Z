@@ -718,6 +718,7 @@ public class PlayerController : Controller, IDamageable
 
             // GameInstance.Instance.enemySpawner.enemies.Add(enemyController);
 
+            GameInstance.Instance.uiManager.SwitchUI(UIType.Dead);
 
             Invoke("Infected",2f);
         }

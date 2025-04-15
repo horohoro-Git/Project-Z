@@ -65,7 +65,8 @@ public class PlayerStatusUI : MonoBehaviour
         targetHP = (float)this.hp / (this.maxHp + characterAbility.maxHp);
         //hpProgress.fillAmount = (float)this.hp / this.maxHp;
         if (hpCoroutine != null) StopCoroutine(hpCoroutine);
-        hpCoroutine = StartCoroutine(SmoothHP());
+        if(gameObject.activeSelf) hpCoroutine = StartCoroutine(SmoothHP());
+        else hpProgress.fillAmount = targetHP;
     }
 
     public void ChangeEnergy(int energy)
@@ -74,7 +75,8 @@ public class PlayerStatusUI : MonoBehaviour
         energy_Text.text = energy.ToString();
         targetEnergy = (float)this.energy / this.maxEnergy;
         if(energyCoroutine != null) StopCoroutine(energyCoroutine);
-        energyCoroutine = StartCoroutine(SmoothEnergy());
+        if (gameObject.activeSelf) energyCoroutine = StartCoroutine(SmoothEnergy());
+        else energyProgress.fillAmount = targetEnergy;
     }
 
 
@@ -113,8 +115,9 @@ public class PlayerStatusUI : MonoBehaviour
             this.exp = exp;
             targetEXP = (float)this.exp / this.maxEXP;
 
-            if (expCoroutine != null) StopCoroutine(expCoroutine); 
-            expCoroutine = StartCoroutine(SmoothEXP());
+            if (expCoroutine != null) StopCoroutine(expCoroutine);
+            if (gameObject.activeSelf) expCoroutine = StartCoroutine(SmoothEXP());
+            else expPrograss.fillAmount = targetEXP;
         } 
     }
 
