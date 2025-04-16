@@ -4,12 +4,15 @@ using System;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
 using Unity.VisualScripting;
-public class NPCController : MonoBehaviour, IDamageable
+public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 {
+    UMACharacterAvatar characterAvatar;
+    public UMACharacterAvatar GetCharacterAvatar {  get { if (characterAvatar == null) characterAvatar = GetComponent<UMACharacterAvatar>(); return characterAvatar; } }
+
     Transform transforms;
-    Transform GetTransform {  get { if (transforms == null) transforms = transform;  return transforms; } }
+    public Transform GetTransform {  get { if (transforms == null) transforms = transform;  return transforms; } }
     Animator animator;
-    public Animator modelAnimator { get { if (animator == null) { animator = GetComponent<Animator>(); animator.applyRootMotion = true; } return animator; } }
+    public Animator modelAnimator { get { if (animator == null) { animator = GetComponentInChildren<Animator>(); animator.applyRootMotion = true; } return animator; } }
 
     NavMeshAgent agent;
     public NavMeshAgent GetAgent { get { if (agent == null) { agent = GetComponent<NavMeshAgent>(); } return agent; } }
@@ -19,11 +22,17 @@ public class NPCController : MonoBehaviour, IDamageable
 
     LeftHand leftHand;
     public LeftHand GetLeftHand { get { if (leftHand == null) leftHand = GetComponentInChildren<LeftHand>(); return leftHand; } }
+
+    Rigidbody rigid;
+    public Rigidbody GetRigidbody { get { if (rigid == null) rigid = GetComponent<Rigidbody>(); return rigid; } }
+
+    public int ID { get; set; }
+
     Quaternion targetRotation;
-  [NonSerialized]
+    [NonSerialized]
     public bool bDead;
     int animationWorking;
-    public EnemyStruct npcStruct;
+    public NPCCombatStruct npcStruct;
     public NPCEventStruct eventStruct;
     float last;
     float next;
@@ -34,18 +43,18 @@ public class NPCController : MonoBehaviour, IDamageable
     List<PlayerController> playerControllers = new List<PlayerController>();
     List<EnemyController> enemyControllers = new List<EnemyController>();
 
-    public RuntimeAnimatorController newAnimator;
+    [NonSerialized]
+    public List<ItemStruct> itemStructs = new List<ItemStruct>();
 
     bool focus;
-    float attackRange = 1.2f;
+
     private void Start()
     {
-        ChangeTagLayer(GetTransform, "NPC", 0b1110);
-        GetAgent.speed = 3f;
+    //    ChangeTagLayer(GetTransform, "NPC", 0b1110);
+       
         GetAgent.acceleration = 4;
         GetAgent.angularSpeed = 360;
-        modelAnimator.runtimeAnimatorController = newAnimator;
-        GetAgent.stoppingDistance = 1.2f;
+     
     }
     //  List<Vector3> positions = new List<Vector3>();
     private void Update()
@@ -71,7 +80,7 @@ public class NPCController : MonoBehaviour, IDamageable
         {
             last = Time.time;
             //  next = UnityEngine.Random.Range(0.3f, 0.8f);
-            next = 0.1f * Time.deltaTime;
+            next = 0.1f;
             target = null;
 
             switch (eventStruct.npc_disposition)
@@ -87,13 +96,24 @@ public class NPCController : MonoBehaviour, IDamageable
                 case NPCDispositionType.Hostile:
                     HositleAction();
                     break;
+                case NPCDispositionType.Infected:
+                    ZombieAction();
+                    break;
             }
         }
-        modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
-        modelAnimator.SetFloat("equip", equip);
-        modelAnimator.SetFloat("another", another);
+
+        if (npcStruct.infected)
+        {
+            modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
+        }
+        else
+        {
+            modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
+            modelAnimator.SetFloat("equip", equip);
+            modelAnimator.SetFloat("another", another);
+        }
     }
-    void ChangeTagLayer(Transform parent, string newTag, int layerName)
+    public void ChangeTagLayer(Transform parent, string newTag, int layerName)
     {
         if (parent != null)
         {
@@ -154,8 +174,8 @@ public class NPCController : MonoBehaviour, IDamageable
 
     void NeturalAction()
     {
-        Dictionary<string, GameObject> list = GameInstance.Instance.worldGrids.FindEnemiesInGrid();
-        foreach (KeyValuePair<string, GameObject> kvp in list)
+        Dictionary<int, GameObject> list = GameInstance.Instance.worldGrids.FindEnemiesInGrid();
+        foreach (KeyValuePair<int, GameObject> kvp in list)
         {
             GameObject go = kvp.Value;
             float distance = Vector3.Distance(go.transform.position, GetTransform.position);
@@ -213,9 +233,9 @@ public class NPCController : MonoBehaviour, IDamageable
         }
         if (d < 10)
         {
-            Dictionary<string, GameObject> list = GameInstance.Instance.worldGrids.FindEnemiesInGrid();
+            Dictionary<int, GameObject> list = GameInstance.Instance.worldGrids.FindEnemiesInGrid();
             float minDistance = 999;
-            foreach (KeyValuePair<string, GameObject> kvp in list)
+            foreach (KeyValuePair<int, GameObject> kvp in list)
             {
                 GameObject go = kvp.Value;
                 float distance = Vector3.Distance(go.transform.position, GetTransform.position);
@@ -251,7 +271,7 @@ public class NPCController : MonoBehaviour, IDamageable
     {
         Dictionary<int, PlayerController> players = GameInstance.Instance.worldGrids.FindPlayerDictinary();
 
-        Dictionary<string, GameObject> list = GameInstance.Instance.worldGrids.FindEnemiesInGrid();
+        Dictionary<int, GameObject> list = GameInstance.Instance.worldGrids.FindEnemiesInGrid();
        
         foreach (KeyValuePair<int, PlayerController> player in players)
         {
@@ -269,7 +289,7 @@ public class NPCController : MonoBehaviour, IDamageable
             }
         }
 
-        foreach(KeyValuePair<string, GameObject> kvp in list)
+        foreach(KeyValuePair<int, GameObject> kvp in list)
         {
             GameObject go = kvp.Value;
             float distance = Vector3.Distance(go.transform.position, GetTransform.position);
@@ -291,9 +311,35 @@ public class NPCController : MonoBehaviour, IDamageable
         if (NPCBehavior_Pause(targetDistance, false)) return;
     }
 
+
+    void ZombieAction()
+    {
+        Dictionary<int, PlayerController> players = GameInstance.Instance.worldGrids.FindPlayerDictinary();
+        foreach (KeyValuePair<int, PlayerController> player in players)
+        {
+            PlayerController pc = player.Value;
+            float distance = Vector3.Distance(pc.Transforms.position, GetTransform.position);
+
+            if (!target) target = pc.gameObject;
+            else
+            {
+                float dis = Vector3.Distance(target.transform.position, GetTransform.position);
+                if (distance < dis)
+                {
+                    target = pc.gameObject;
+                }
+            }
+        }
+        if (target == null) return;
+        float targetDistance = Vector3.Distance(transform.position, target.transform.position);
+        if (NPCBehavior_Attack(targetDistance, true)) return;
+        if (NPCBehavior_Follow(targetDistance, false)) return;
+        if (NPCBehavior_Pause(targetDistance, false)) return;
+    }
+
     bool NPCBehavior_Attack(float distance, bool hostile)
     {
-        if (distance <= attackRange)
+        if (distance <= npcStruct.attack_range)
         {
             if (target.layer != 0b0011 || hostile)
             {
@@ -306,7 +352,15 @@ public class NPCController : MonoBehaviour, IDamageable
                 if (angledifference < 10)
                 {
                     another = UnityEngine.Random.Range(0, 2);
-                    StartAnimation("attack", 2);
+                    if(eventStruct.npc_disposition == NPCDispositionType.Infected)
+                    {
+                        StartAnimation("scratch", 2);
+                    }
+                    else
+                    {
+
+                        StartAnimation("attack", 2);
+                    }
                    
                 }
                 return true;
@@ -350,7 +404,7 @@ public class NPCController : MonoBehaviour, IDamageable
 
     void GetDamage(int damage, int layer)
     {
-        if (layer == 0b0011)
+        if (layer == 0b0011 && eventStruct.npc_disposition != NPCDispositionType.Infected)
         {
             Debug.Log("Hostile");
             NPCEventHandler.Publish(1000003, this);
@@ -364,10 +418,26 @@ public class NPCController : MonoBehaviour, IDamageable
         return true;
     }
 
-    public void Setup(EnemyStruct npcStruct)
+    public void Setup(NPCCombatStruct npcStruct, bool init)
     {
         this.npcStruct = npcStruct;
-        this.npcStruct.health = npcStruct.max_health;
+        GetAgent.speed = npcStruct.speed;
+        if (npcStruct.infected)
+        {
+            modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[2].animator_name];
+            gameObject.layer = 0b1010;
+            gameObject.tag = "Enemy";
+            ChangeTagLayer(GetTransform, "Enemy", 0b1010);
+        }
+        else
+        {
+            modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[1].animator_name];
+            gameObject.layer = 0b1110;
+            gameObject.tag = "NPC";
+            ChangeTagLayer(GetTransform, "NPC", 0b1110);
+        }
+        GetAgent.stoppingDistance = npcStruct.attack_range;
+        if (init) this.npcStruct.health = npcStruct.max_health;
     }
 
 }

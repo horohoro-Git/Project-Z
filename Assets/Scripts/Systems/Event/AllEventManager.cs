@@ -1,6 +1,6 @@
 // 1 : 생명체 호버기능 동작
 // 2 : 호버 기능 중지
-
+// 3 : 장비 착용
 
 using System;
 using System.Collections;

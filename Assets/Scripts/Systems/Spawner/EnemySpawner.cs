@@ -28,7 +28,6 @@ public class EnemySpawner : MonoBehaviour
 
     public void SpawnEnemies()
     {
-        AssetLoader assetLoader = GameInstance.Instance.assetLoader;
         for (int i = 0; i < num; i++)
         {
             int x = UnityEngine.Random.Range(0, 100);
@@ -48,94 +47,91 @@ public class EnemySpawner : MonoBehaviour
                 for (int k = 0; k < 8; k++) objectChecks[x + sizeCheckX[k], y + sizeCheckY[k]] = true;
                 objectChecks[x, y] = true;
                 int type = UnityEngine.Random.Range(1, 2);
-                EnemyController enemy = Instantiate(AssetLoader.loadedAssets[AssetLoader.enemykeys[type - 1]]).GetComponent<EnemyController>();
-                enemy.Transforms.position = new Vector3(x - 49, 0, y - 49);
-                enemy.enemyStruct = assetLoader.enemyParams[type];
-                GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
-                enemy.Setup();
-
+                Vector3 pos = new Vector3(x - 49, 0, y - 49);
+                SpawnEnemy(pos, type);
             }
         }
 
-        /*EnemyController enemy = Instantiate(assetLoader.loadedAssets[AssetLoader.enemykeys[1 - 1]]).GetComponent<EnemyController>();
-        enemy.Transforms.position = new Vector3(4, 0, 4);
-        enemy.enemyStruct = assetLoader.enemies[1 - 1];
-        GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
-        enemy.Setup();*/
-
         GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
     }
-
-    public void LoadEnemies(Vector3 position, Quaternion rotation, int type, List<ItemStruct> itemStructs, int modelType, string helmet = "", string chest = "", string arms = "", string legs = "", string feet = "", string cape = "")
+    
+    public void LoadEnemies(Vector3 position, Quaternion rotation, NPCCombatStruct npcCombatStruct, List<ItemStruct> itemStructs, string helmet = "", string chest = "", string arms = "", string legs = "", string feet = "", string cape = "")
     {
-        if(modelType > 0)
+        if(npcCombatStruct.infected_player)
         {
             //감염된 플레이어 
-            PlayerController pc = Instantiate(GameInstance.Instance.gameManager.player);
 
-            pc.RemoveAction();
-            pc.Rigid.interpolation = RigidbodyInterpolation.None;
-            pc.Rigid.constraints = RigidbodyConstraints.FreezeAll;
-            pc.state = PlayerState.Dead;
-            GameObject model = Instantiate(AssetLoader.loadedAssets[AssetLoader.humankeys[modelType - 1]]);
-            //GameObject model = Instantiate(GameInstance.Instance.gameManager.test);
-            //Destroy(model.GetComponentInChildren<Animator>());
-            model.transform.SetParent(pc.Transforms);
-            model.transform.localPosition = Vector3.zero;
-            pc.SetController(model, true, false);
+            GameObject model = Instantiate(AssetLoader.loadedAssets[AssetLoader.humankeys[0]]);
+            NPCController enemy = model.AddComponent<NPCController>();
 
             //위치 조정
-            pc.Transforms.position = position;
-            pc.Transforms.rotation = rotation;
+            enemy.GetTransform.position = position;
+            enemy.GetTransform.rotation = rotation;
 
             //적의 타입으로 충돌 변경
-            pc.gameObject.tag = "Enemy";
-            pc.gameObject.layer = 0b1010;
-            pc.Rigid.excludeLayers = 0;
-            pc.ChangeTagLayer(pc.Transforms, "Enemy", 0b1010);
-            pc.GetComponent<CapsuleCollider>().excludeLayers = 0;
-            pc.GetLeftHand.boxCollider.excludeLayers = 0b10000000000;
-            pc.GetRightHand.boxCollider.excludeLayers = 0b10000000000;
+            model.tag = "Enemy";
+            model.layer = 0b1010;
+            enemy.GetRigidbody.excludeLayers = 0;
+            enemy.ChangeTagLayer(enemy.GetTransform, "Enemy", 0b1010);
+            enemy.GetComponent<CapsuleCollider>().excludeLayers = 0;
+            enemy.GetLeftHand.boxCollider.excludeLayers = 0b10000000000;
+            enemy.GetRightHand.boxCollider.excludeLayers = 0b10000000000;
 
-            //애니메이션 적으로 변환
-         
-            pc.modelAnimator.SetLayerWeight(1, 0);
-            pc.modelAnimator.SetLayerWeight(2, 0);
-            //죽은 시체에 인벤토리의 아이템 적용
-            pc.gameObject.AddComponent<NavMeshAgent>();
-            EnemyController enemyController = pc.gameObject.AddComponent<EnemyController>();
-            enemyController.SetController(model);
-            enemyController.capsuleCollider = GetComponent<CapsuleCollider>();
-            enemyController.itemStructs = itemStructs;
-            enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemyParams[1];
-            GameInstance.Instance.worldGrids.AddObjects(enemyController.gameObject, MinimapIconType.Enemy, true);
+            model.AddComponent<NavMeshAgent>();
 
-            enemyController.playerType = modelType;
+            enemy.itemStructs = itemStructs;
+            enemy.Setup(npcCombatStruct, false);
+            GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
 
-            enemyController.Setup();
-            if(helmet.Length > 0) pc.GetAvatar.AddCloth(helmet);
-            if(chest.Length > 0) pc.GetAvatar.AddCloth(chest);
-            if(arms.Length > 0) pc.GetAvatar.AddCloth(arms);
-            if(legs.Length > 0) pc.GetAvatar.AddCloth(legs);
-            if(feet.Length > 0) pc.GetAvatar.AddCloth(feet);
-            if(cape.Length > 0) pc.GetAvatar.AddCloth(cape);
-            
-            Destroy(pc);
+            if (enemy.GetCharacterAvatar == null) return; 
+            if(helmet.Length > 0) enemy.GetCharacterAvatar.AddCloth(helmet);
+            if(chest.Length > 0) enemy.GetCharacterAvatar.AddCloth(chest);
+            if(arms.Length > 0) enemy.GetCharacterAvatar.AddCloth(arms);
+            if(legs.Length > 0) enemy.GetCharacterAvatar.AddCloth(legs);
+            if(feet.Length > 0) enemy.GetCharacterAvatar.AddCloth(feet);
+            if(cape.Length > 0) enemy.GetCharacterAvatar.AddCloth(cape);
         }
         else
         {
-            EnemyController enemyController = Instantiate(AssetLoader.loadedAssets[AssetLoader.enemykeys[type - 1]]).GetComponent<EnemyController>();
-            enemyController.transform.position = position;
-            enemyController.transform.rotation = rotation;
-            enemyController.itemStructs = itemStructs;
-            enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[type - 1];
-            GameInstance.Instance.worldGrids.AddObjects(enemyController.gameObject, MinimapIconType.Enemy, true);
+            
+            NPCController enemy = Instantiate(AssetLoader.loadedAssets[npcCombatStruct.asset_name]).GetComponent<NPCController>();
+            enemy.transform.position = position;
+            enemy.transform.rotation = rotation;
 
-            enemyController.Setup();
+            enemy.Setup(npcCombatStruct, false);
+            GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
+
+            //enemyController.Setup();
+            if (enemy.GetCharacterAvatar == null) return;
+            if (helmet.Length > 0) enemy.GetCharacterAvatar.AddCloth(helmet);
+            if (chest.Length > 0) enemy.GetCharacterAvatar.AddCloth(chest);
+            if (arms.Length > 0) enemy.GetCharacterAvatar.AddCloth(arms);
+            if (legs.Length > 0) enemy.GetCharacterAvatar.AddCloth(legs);
+            if (feet.Length > 0) enemy.GetCharacterAvatar.AddCloth(feet);
+            if (cape.Length > 0) enemy.GetCharacterAvatar.AddCloth(cape);
         }
-     
+    
     }
 
+
+    void SpawnEnemy(Vector3 pos, int type)
+    {
+        NPCCombatStruct npcStruct = AssetLoader.npcCombatStructs[type];
+        NPCController enemy = Instantiate(AssetLoader.loadedAssets[npcStruct.asset_name]).GetComponent<NPCController>();
+        enemy.GetTransform.position = pos;
+        GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
+        enemy.Setup(npcStruct, true);
+        
+        NPCEventHandler.Publish(1000004, enemy);
+    }
+
+    void SpawnNPC(Vector3 pos, int type)
+    {
+        NPCCombatStruct npcStruct = AssetLoader.npcCombatStructs[type];
+        NPCController enemy = Instantiate(AssetLoader.loadedAssets[npcStruct.asset_name]).GetComponent<NPCController>();
+        GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
+        enemy.Setup(npcStruct, true);
+    }
     bool CheckSize(int a, int b)
     {
         return a >= 0 && a < 100 && b >= 0 && b < 100;

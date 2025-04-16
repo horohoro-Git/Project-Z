@@ -271,3 +271,6 @@ Rotate the player towards the attack direction, and prevent the NPC from pushing
 
 04/14
 The slot's event trigger is changed to an interface, adding life hover UI and death UI
+
+04/15
+Unified enemy and NPC control, modularized event-based functions

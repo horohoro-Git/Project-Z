@@ -13,6 +13,7 @@ public class NPCEvent : MonoBehaviour
         AllEventManager.customEvents[1000001] = (Action<NPCEventStruct, NPCController>)(Natural);
         AllEventManager.customEvents[1000002] = (Action<NPCEventStruct, NPCController>)(Friendly);
         AllEventManager.customEvents[1000003] = (Action<NPCEventStruct, NPCController>)(Hostile);
+        AllEventManager.customEvents[1000004] = (Action<NPCEventStruct, NPCController>)(Zombie);
 
     }
     //초기 이벤트
@@ -21,11 +22,11 @@ public class NPCEvent : MonoBehaviour
         NPCEventHandler.Subscribe(1000001, (Action<NPCEventStruct, NPCController>)AllEventManager.customEvents[1000001]);
         NPCEventHandler.Subscribe(1000002, (Action<NPCEventStruct, NPCController>)AllEventManager.customEvents[1000002]);
         NPCEventHandler.Subscribe(1000003, (Action<NPCEventStruct, NPCController>)AllEventManager.customEvents[1000003]);
+        NPCEventHandler.Subscribe(1000004, (Action<NPCEventStruct, NPCController>)AllEventManager.customEvents[1000004]);
 
        // NPCEventHandler.Publish(1000001, null);
     }
 
-    //이후에 연계되는 업적 추가
     public void NewEvent(uint id)
     {
         NPCEventHandler.Subscribe(id, (Action<NPCEventStruct, NPCController>)AllEventManager.customEvents[id]);
@@ -41,6 +42,10 @@ public class NPCEvent : MonoBehaviour
     }
 
     void Hostile(NPCEventStruct nPCEventStruct, NPCController controller)
+    {
+        controller.ChangeEvent(nPCEventStruct);
+    }
+    void Zombie(NPCEventStruct nPCEventStruct, NPCController controller)
     {
         controller.ChangeEvent(nPCEventStruct);
     }

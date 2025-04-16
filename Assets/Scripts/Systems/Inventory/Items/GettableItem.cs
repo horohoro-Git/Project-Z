@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class GettableItem : Item, IIdentifiable
 {
-    public string ID { get; set; }
+    public int ID { get; set; }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -45,7 +45,7 @@ public class GettableItem : Item, IIdentifiable
     void GetItemComplete(PlayerController pc)
     {
         if(!GameInstance.Instance.inventorySystem.AddItem(this)) return;
-        GameInstance.Instance.worldGrids.RemoveObjects(ID, MinimapIconType.Object);
+        GameInstance.Instance.worldGrids.RemoveObjects(GetInstanceID(), MinimapIconType.Object);
         pc.RemoveAction(GetItem);
         Destroy(this.gameObject);
     }
@@ -53,6 +53,11 @@ public class GettableItem : Item, IIdentifiable
     public void Spawned(bool load)
     {
         GameInstance.Instance.worldGrids.AddObjects(this.gameObject, MinimapIconType.Object, load);
-
+        if (GetItemInteractionColider != null)
+        {
+            GetItemInteractionColider.enabled = true;
+            GetItemInteractionColider.isTrigger = true;
+            GetItemInteractionColider.excludeLayers &= 0b1111111111110111;
+        }
     }
 }

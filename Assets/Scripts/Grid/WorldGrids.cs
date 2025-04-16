@@ -28,9 +28,9 @@ public class WorldGrids : MonoBehaviour
     int[] findX = new int[9] {0, 1, 1, 0,-1,-1,-1,0,1 };
     int[] findY = new int[9] {0, 0, -1, -1,-1, 0, 1, 1, 1 };
 
-    Dictionary<string, GameObject> objects = new Dictionary<string, GameObject>(); //아이템
-    Dictionary<string, GameObject> lives = new Dictionary<string, GameObject>(); //적대적 생명체
-    Dictionary<string, GameObject> itemBoxes = new Dictionary<string, GameObject>(); //아이템 슬롯
+    Dictionary<int, GameObject> objects = new Dictionary<int, GameObject>(); //아이템
+    Dictionary<int, GameObject> lives = new Dictionary<int, GameObject>(); //적대적 생명체
+    Dictionary<int, GameObject> itemBoxes = new Dictionary<int, GameObject>(); //아이템 슬롯
     //NativeHashMap<string>
 
     private void Awake()
@@ -125,7 +125,7 @@ public class WorldGrids : MonoBehaviour
     }
 
     //적을 탐색
-    public Dictionary<string, GameObject> FindEnemiesInGrid()
+    public Dictionary<int, GameObject> FindEnemiesInGrid()
     {
 
         return lives;
@@ -149,7 +149,7 @@ public class WorldGrids : MonoBehaviour
     }
     public void AddObjects(GameObject ob, MinimapIconType type, bool load)
     {
-        Dictionary<string, GameObject> dic = new Dictionary<string, GameObject>();
+        Dictionary<int, GameObject> dic = new Dictionary<int, GameObject>();
         switch(type)
         {
             case MinimapIconType.None:
@@ -164,10 +164,11 @@ public class WorldGrids : MonoBehaviour
                 dic = itemBoxes;
                 break;
         }
+        dic[ob.GetInstanceID()] = ob;
 
-
-        IIdentifiable identifiable = ob.GetComponent<IIdentifiable>();
-        if (identifiable.ID == null)
+      //  IIdentifiable identifiable = ob.GetComponent<IIdentifiable>();
+      //  identifiable.ID = 
+      /*  if (identifiable.ID == null)
         {
             while (true)
             {
@@ -203,11 +204,11 @@ public class WorldGrids : MonoBehaviour
                     }
                 }
             }
-        }
+        }*/
         if (!load) GameInstance.Instance.minimapUI.ChangeList(type);
     }
 
-    public void RemoveObjects(string id, MinimapIconType type)
+    public void RemoveObjects(int id, MinimapIconType type)
     {
       
         switch (type)
@@ -219,6 +220,7 @@ public class WorldGrids : MonoBehaviour
                 GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Object);
                 break;
             case MinimapIconType.Enemy:
+                Debug.Log(id);
                 lives.Remove(id);
                 GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
                 break;
@@ -233,7 +235,7 @@ public class WorldGrids : MonoBehaviour
 
     public List<GameObject> ReturnObjects(MinimapIconType type)
     {
-        Dictionary<string, GameObject> dic = new Dictionary<string, GameObject>();
+        Dictionary<int, GameObject> dic = new Dictionary<int, GameObject>();
         switch (type)
         {
             case MinimapIconType.None:
@@ -325,9 +327,9 @@ public class WorldGrids : MonoBehaviour
 
     public void Clear()
     {
-        foreach(var livingObject in lives) Destroy(livingObject.Value);
+       /* foreach(var livingObject in lives) Destroy(livingObject.Value);
         foreach(var objectItem in objects) Destroy(objectItem.Value);
-        foreach(var boxes in itemBoxes) Destroy(boxes.Value);
+        foreach(var boxes in itemBoxes) Destroy(boxes.Value);*/
         lives.Clear();
         objects.Clear();
         itemBoxes.Clear();

@@ -78,6 +78,12 @@ public class RightHand : MonoBehaviour
                             if (Attack(collider, layer)) return;
                         }
                         break;
+                    case NPCDispositionType.Infected:
+                        if (colliderLayer == 0b1110 || colliderLayer == 0b0011)
+                        {
+                            if (Attack(collider, layer)) return;
+                        }
+                        break;
                 }
 
                 return;

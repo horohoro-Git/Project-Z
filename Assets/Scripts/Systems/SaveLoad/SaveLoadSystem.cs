@@ -193,7 +193,7 @@ public class SaveLoadSystem
     }
 
     //적의 정보 데이터 테이블
-    public static List<EnemyStruct> LoadEnemyData(string content)
+   /* public static List<EnemyStruct> LoadEnemyData(string content)
     {
         //받아온 데이터 복호화
         string data = EncryptorDecryptor.Decyptor(content, "AAA");
@@ -212,7 +212,7 @@ public class SaveLoadSystem
         }
         
         return enemyStruct;
-    }
+    }*/
 
     //드랍 테이블
     public static List<DropStruct> LoadDropData(string content)
@@ -1000,10 +1000,21 @@ public class SaveLoadSystem
 
 
                             int type = reader.ReadInt32();
-                            int modelType = reader.ReadInt32();
+                            string npc_name = reader.ReadString();
+                            string asset_name = reader.ReadString();
+                            int hp = reader.ReadInt32();
+                            int maxHP = reader.ReadInt32();
+                            int attck = reader.ReadInt32();
+                            bool infected = reader.ReadBoolean();
+                            float speed = reader.ReadSingle();
+                            float attack_range = reader.ReadSingle();
+                            string drop_item = reader.ReadString();
+                            bool infected_player = reader.ReadBoolean();
+
+                            NPCCombatStruct combatStruct = new NPCCombatStruct(type, npc_name, asset_name, hp, maxHP, attck, infected, speed, attack_range, drop_item, infected_player, null); ;
                             Vector3 position = new Vector3(x, y, z);
                             Quaternion rotation = new Quaternion(rx, ry, rz, rw);
-                            if (modelType > 0)
+                            if (type > 1000)
                             {
                                 string helmet = reader.ReadString();
                                 string chest = reader.ReadString();
@@ -1028,14 +1039,13 @@ public class SaveLoadSystem
 
                                 }
 
-                                GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, type, itemStructs, modelType, helmet, chest, arms, legs, feet, cape);
+                                GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, combatStruct, itemStructs, helmet, chest, arms, legs, feet, cape);
                             }
                             else
                             {
 
-                                GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, type, new List<ItemStruct>(), modelType);
+                                GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, combatStruct, new List<ItemStruct>());
                             }
-
                         }
                         GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
                     }
@@ -1064,31 +1074,47 @@ public class SaveLoadSystem
                 foreach (GameObject enemy in GameInstance.Instance.worldGrids.ReturnObjects(MinimapIconType.Enemy))
                 {
                     
-                    EnemyController EC = enemy.GetComponent<EnemyController>();
+                    NPCController NC = enemy.GetComponent<NPCController>();
                     //위치
-                    Vector3 position = EC.Transforms.position;
+                    Vector3 position = NC.GetTransform.position;
 
                     //방향
-                    Quaternion rotation = EC.Transforms.rotation;
+                    Quaternion rotation = NC.GetTransform.rotation;
+                   
+                    int type = NC.npcStruct.id;
+                    string npc_name = NC.npcStruct.npc_name;
+                    string asset_name = NC.npcStruct.asset_name;
+                    int hp = NC.npcStruct.health;
+                    int maxHP = NC.npcStruct.max_health;
+                    int attck = NC.npcStruct.attack;
+                    bool infected = NC.npcStruct.infected;
+                    float speed=  NC.npcStruct.speed;
+                    float attack_range = NC.npcStruct.attack_range;
+                    string drop_item = NC.npcStruct.drop_item;
+                    bool infected_Player = NC.npcStruct.infected_player;
 
-                    //적의 타입
-                    int type = EC.enemyStruct.id;
-                    int modelType = EC.playerType;
+                    writer.Write(NC.GetTransform.position.x);
+                    writer.Write(NC.GetTransform.position.y);
+                    writer.Write(NC.GetTransform.position.z);
 
-                    writer.Write(EC.Transforms.position.x);
-                    writer.Write(EC.Transforms.position.y);
-                    writer.Write(EC.Transforms.position.z);
-
-                    writer.Write(EC.Transforms.rotation.x);
-                    writer.Write(EC.Transforms.rotation.y);
-                    writer.Write(EC.Transforms.rotation.z);
-                    writer.Write(EC.Transforms.rotation.w);
+                    writer.Write(NC.GetTransform.rotation.x);
+                    writer.Write(NC.GetTransform.rotation.y);
+                    writer.Write(NC.GetTransform.rotation.z);
+                    writer.Write(NC.GetTransform.rotation.w);
                     writer.Write(type);
-                    writer.Write(modelType);
-
-                    if (modelType > 0)
+                    writer.Write(npc_name);
+                    writer.Write(asset_name);
+                    writer.Write(hp);
+                    writer.Write(maxHP);
+                    writer.Write(attck);
+                    writer.Write(infected);
+                    writer.Write(speed);
+                    writer.Write(attack_range);
+                    writer.Write(drop_item);
+                    writer.Write(infected_Player);
+                    if (type > 1000)
                     {
-                        UMACharacterAvatar avatar = EC.GetComponentInChildren<UMACharacterAvatar>();
+                        UMACharacterAvatar avatar = NC.GetComponentInChildren<UMACharacterAvatar>();
 
                         string helmet = avatar.GetClothes("Helmet");
                         string chest = avatar.GetClothes("Chest");
@@ -1104,21 +1130,21 @@ public class SaveLoadSystem
                         writer.Write(feet);
                         writer.Write(cape);
 
-                        writer.Write(EC.itemStructs.Count);
+                        writer.Write(NC.itemStructs.Count);
                         //적의 인벤토리
-                        for (int i = 0; i < EC.itemStructs.Count; i++)
+                        for (int i = 0; i < NC.itemStructs.Count; i++)
                         {
-                            int item_index = EC.itemStructs[i].item_index;
-                            string item_name = EC.itemStructs[i].item_name;
-                            string asset_name = EC.itemStructs[i].asset_name;
-                            float item_weight = EC.itemStructs[i].weight;
+                            int item_index = NC.itemStructs[i].item_index;
+                            string item_name = NC.itemStructs[i].item_name;
+                            string asset_names = NC.itemStructs[i].asset_name;
+                            float item_weight = NC.itemStructs[i].weight;
 
-                            int slotType = (int)EC.itemStructs[i].slot_type;
-                            int itemType = (int)EC.itemStructs[i].item_type;
+                            int slotType = (int)NC.itemStructs[i].slot_type;
+                            int itemType = (int)NC.itemStructs[i].item_type;
 
                             writer.Write(item_index);
                             writer.Write(item_name);
-                            writer.Write(asset_name);
+                            writer.Write(asset_names);
                             writer.Write(item_weight);
                             writer.Write(slotType);
                             writer.Write(itemType);
