@@ -42,6 +42,7 @@ public class GameInstance
     public AchievementSystem achievementSystem;
     public AchievementUI achievementUI;
     public NPCEvent npcEvent;
+    public LifeObjectHoverUI lifeObjectHoverUI;
     List<PlayerController> players = new List<PlayerController>();
 
     public List<PlayerController> GetPlayers { get { return players; } }
@@ -75,6 +76,7 @@ public class GameInstance
         achievementSystem.enabled = false;
         achievementUI.enabled = false;
         npcEvent.enabled = false;
+        lifeObjectHoverUI.enabled = false;
 
         playerStatusDetailsUI = null;
         characterProfileUI = null;
@@ -104,6 +106,7 @@ public class GameInstance
         achievementSystem = null;
         achievementUI = null;
         npcEvent = null;
+        lifeObjectHoverUI = null;
     }
 
     public void AddPlayer(PlayerController pc)

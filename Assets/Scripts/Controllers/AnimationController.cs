@@ -11,7 +11,7 @@ public class AnimationController : MonoBehaviour
     public EnemyController GetEnemyController {  get { if (enemyController == null) enemyController = GetComponentInParent<EnemyController>(); return enemyController; } }
 
     NPCController npcController;
-    public NPCController GetNPCController { get { if (npcController == null) npcController = GetComponent<NPCController>(); return npcController; } }
+    public NPCController GetNPCController { get { if (npcController == null) npcController = GetComponentInParent<NPCController>(); return npcController; } }
 
     public void StartLeftPunch()
     {
@@ -71,14 +71,14 @@ public class AnimationController : MonoBehaviour
 
     public void StartScratch()
     {
-        GetEnemyController.GetRightHand.Attack(enemyController.enemyStruct.attack);
-        GetEnemyController.GetRightHand.Trail(true);
+        GetNPCController.GetRightHand.Attack(GetNPCController.npcStruct.attack);
+        GetNPCController.GetRightHand.Trail(true);
     }
 
     public void StopScratch()
     {
-        GetEnemyController.GetRightHand.StopAttack();
-        GetEnemyController.GetRightHand.Trail(false);
+        GetNPCController.GetRightHand.StopAttack();
+        GetNPCController.GetRightHand.Trail(false);
     }
 
 

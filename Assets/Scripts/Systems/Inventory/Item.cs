@@ -17,7 +17,10 @@ public class Item : MonoBehaviour
 
     public Player equippedPlayer;
 
-    public Collider itemInteractionColider;
+    Collider itemInteractionColider;
+
+    public Collider GetItemInteractionColider {   get { if (itemInteractionColider == null) itemInteractionColider = GetComponent<CapsuleCollider>(); return itemInteractionColider; } }
+
 
     private void OnDestroy()
     {

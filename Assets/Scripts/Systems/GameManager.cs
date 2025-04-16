@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     public GameMode gameMode;
     public bool loaded;
     public GameObject glib;
+   
 
     private void Awake()
     {
@@ -55,25 +56,20 @@ public class GameManager : MonoBehaviour
 
             GettableItem gettable = go.AddComponent<GettableItem>();
             gettable.Spawned(false);
-            go.itemInteractionColider.enabled = true;
-      //      go.itemInteractionColider.excludeLayers = 0;
-            go.itemInteractionColider.isTrigger = true;
-          //  go.AddComponent<Rigidbody>().excludeLayers = go.itemInteractionColider.excludeLayers;
-           // go.GetComponent<BoxCollider>().enabled = true;
             if(go.TryGetComponent<WeaponTrail>(out WeaponTrail trail)) Destroy(trail);
             gettable.itemStruct = ItemData.GetItem(100001);
             Destroy(go);
         }
 
-        NPCStruct nPCStruct = GameInstance.Instance.assetLoader.npcs[1];
+    /*    NPCStruct nPCStruct = GameInstance.Instance.assetLoader.npcs[1];
         Debug.Log(nPCStruct.npc_param_index + " NPCStruct nPCStruct = GameInstance.Instance.assetLoader.npcs[1];");
-        EnemyStruct npcParam = GameInstance.Instance.assetLoader.enemyParams[nPCStruct.npc_param_index];
+        NPCCombatStruct npcParam = AssetLoader.npcCombatStructs[nPCStruct.npc_param_index];
         NPCAvatar npc = Instantiate(AssetLoader.loadedAssets[nPCStruct.npc_asset]).GetComponent<NPCAvatar>();
         npc.Setup(nPCStruct);
         npc.transform.position = new Vector3(2, 0, 1);
         NPCController nPCController = npc.GetComponent<NPCController>();
-        nPCController.Setup(npcParam);
-        NPCEventHandler.Publish(1000002, nPCController);
+        nPCController.Setup(npcParam, true);
+        NPCEventHandler.Publish(1000002, nPCController);*/
     }
 
     void PlayerSetting()

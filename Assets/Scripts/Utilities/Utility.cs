@@ -102,7 +102,8 @@ public enum NPCDispositionType
     None,
     Netural,
     Friendly,
-    Hostile
+    Hostile,
+    Infected
 }
 
 //환경 오브젝트 정보
@@ -470,25 +471,33 @@ public struct PlayerStruct
 
 }
 
-//적의 정보
-public struct EnemyStruct
+public struct NPCCombatStruct
 {
     public int id;
-    public string enemy_name;
+    public string npc_name;
+    public string asset_name;
     public int health;
     public int max_health;
     public int attack;
+    public bool infected;
+    public float speed;
+    public float attack_range;
     public string drop_item;
-    
+    public bool infected_player;
     public List<DropStruct> dropStruct;
-    public EnemyStruct(int id, string enemy_name, int health, int max_health, int attack, string drop_item, List<DropStruct> dropStructs)
+    public NPCCombatStruct(int id, string npc_name, string asset_name, int health, int max_health, int attack, bool infected, float speed, float attack_range, string drop_item, bool infected_player, List<DropStruct> dropStructs)
     {
         this.id = id;
-        this.enemy_name = enemy_name;
+        this.npc_name = npc_name;
+        this.asset_name = asset_name;
         this.health = health;
         this.max_health = max_health;
         this.attack = attack;
+        this.infected = infected;
+        this.speed = speed;
+        this.attack_range = attack_range;
         this.drop_item = drop_item;
+        this.infected_player = infected_player;
         this.dropStruct = dropStructs;
     }
 
@@ -639,6 +648,16 @@ public struct StringStruct : ITableID<string>
     }
 }
 
+public struct AnimatorStruct : ITableID<int>
+{
+    public int id;
+    public string animator_name;
+
+    public readonly int ID => id;
+
+    public readonly string Name => animator_name;
+}
+
 public struct CustomEvent<T>
 {
     public T cEvent;
@@ -718,7 +737,7 @@ public interface IBuildMaterials
 //객체 인터페이스
 public interface IIdentifiable
 {
-    public string ID { get; set; }
+    public int ID { get; set; }
    
 }
 
@@ -726,6 +745,8 @@ public interface IDamageable
 {
     
     public bool Damaged(int damage, int layer);
+
+   // public void Dead();
 }
 
 public interface IAbility
@@ -743,4 +764,3 @@ public interface ITableID<K>
      K ID { get; }
      public string Name { get; }
 }
-

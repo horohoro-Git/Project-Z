@@ -11,13 +11,16 @@ public class LifeObjectHoverUI : MonoBehaviour
 
     public LifeObjectHoverInfoUI hoverUI;
 
+    void Awake()
+    {
+        GameInstance.Instance.lifeObjectHoverUI = this;
+    }
     public void Start()
     {
        
-        AllEventManager.customEvents[1] = (Action<string, int, int>)(Hover);
-        AllEventManager.customEvents[2] = (Action)(Hide);
+        
     }
-    public void Hover(string objectName, int maxHP, int hp)
+/*    public void Hover(string objectName, int maxHP, int hp)
     {
         hoverUI.gameObject.SetActive(true);
         hoverUI.Setup(objectName, maxHP, hp);
@@ -26,5 +29,5 @@ public class LifeObjectHoverUI : MonoBehaviour
     public void Hide()
     {
         hoverUI.gameObject.SetActive(false);
-    }
+    }*/
 }

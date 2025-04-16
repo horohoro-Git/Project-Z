@@ -18,7 +18,7 @@ public class PlayerController : Controller, IDamageable
     public LeftHand GetLeftHand { get { if (leftHand == null) leftHand = GetComponentInChildren<LeftHand>(); return leftHand; } }
 
     PlayerInput input;
-    PlayerInput Inputs
+    public PlayerInput Inputs
     {
         get
         {
@@ -51,8 +51,10 @@ public class PlayerController : Controller, IDamageable
 
     public event Action<PlayerController> InteractionEvent;
     Action<PlayerController> lastAction;
-    int lastGridX; 
-    int lastGridY;
+    [NonSerialized]
+    public int lastGridX; 
+    [NonSerialized]
+    public int lastGridY;
     float motion;
 
     //  [NonSerialized]
@@ -109,6 +111,12 @@ public class PlayerController : Controller, IDamageable
 
             //입력 설정
             AddAction();
+            Inputs.actions["OpenInventory"].performed -= OpenInventory;
+            Inputs.actions["ZoomIn"].performed -= ZoomIn;
+            Inputs.actions["ZoomOut"].performed -= ZoomOut;
+            Inputs.actions["Interaction"].performed -= Interact;
+            //테스트
+            Inputs.actions["TestInventory"].performed -= JustTest;
             Inputs.actions["OpenInventory"].performed += OpenInventory;
             Inputs.actions["ZoomIn"].performed += ZoomIn;
             Inputs.actions["ZoomOut"].performed += ZoomOut;
@@ -154,11 +162,13 @@ public class PlayerController : Controller, IDamageable
             }
             GameInstance.Instance.characterProfileUI.CreateCharacter(load, go);
             GameInstance.Instance.inventorySystem.UseItem(this, equipSlotIndex);
+            GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY, true);
         }
         else
         {
             model = go;
         }
+        modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[0].animator_name];
 
         Destroy(go.GetComponent<Rigidbody>());  
         Destroy(go.GetComponent<Collider>());
@@ -187,7 +197,6 @@ public class PlayerController : Controller, IDamageable
 
          GameInstance.Instance.inventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
          GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);*/
-        GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY, true);
     }
 
     public void ChangeTagLayer(Transform parent, string newTag, int layerName)
@@ -242,7 +251,17 @@ public class PlayerController : Controller, IDamageable
         if (!Application.isPlaying) return;
         if (inputEnabled) return;
         inputEnabled = true;
-
+        for (int i = 0; i < 10; i++)
+        {
+            int slotNumber = i + 1;
+            Inputs.actions[$"Item{slotNumber}"].performed -= slotHandlers[i];
+        }
+        Inputs.actions["WASD"].performed -= MoveHandle;
+        Inputs.actions["WASD"].canceled -= MoveStop;
+        Inputs.actions["Run"].performed -= Run;
+        Inputs.actions["Run"].canceled -= RunStop;
+        Inputs.actions["Attack"].performed -= Attack;
+        Inputs.actions["Attack"].canceled -= EndAttack;
         for (int i = 0; i < 10; i++)
         {
             int slotNumber = i + 1;
@@ -262,7 +281,7 @@ public class PlayerController : Controller, IDamageable
         if (!inputEnabled) return;
         inputEnabled = false;
         Inputs.actions["WASD"].performed -= MoveHandle;
-        Inputs.actions["WASD"].performed -= MoveStop;
+        Inputs.actions["WASD"].canceled -= MoveStop;
         Inputs.actions["Run"].performed -= Run;
         Inputs.actions["Run"].canceled -= RunStop;
         Inputs.actions["Attack"].performed -= Attack;
@@ -356,6 +375,7 @@ public class PlayerController : Controller, IDamageable
     }
     void MoveStop(InputAction.CallbackContext callback)
     {
+        Debug.Log("MoveStop");
         modelAnimator.SetInteger("state", 0);
         moveDir = Vector3.zero;
     }
@@ -449,26 +469,6 @@ public class PlayerController : Controller, IDamageable
             CancelInvoke("StopMotion");
             Invoke("StopMotion", 1);
         }
-        //attack = true;
-     /*   if (equipWeapon != null)    //무기로 공격
-        {
-            switch(equipWeapon.type)
-            {
-                case WeaponType.None:
-                    break;
-                case WeaponType.Axe:
-                    StartAnimation("cut", 1);
-                    equipWeapon.Attack(0.35f, 0.6f);
-                *//*    equipWeapon.GetComponent<Axe>().EndAttack();*//*
-                    break;
-            }
-        }
-        else //주먹으로 공격
-        {
-            Punch();
-            CancelInvoke("StopMotion");
-            Invoke("StopMotion", 1);
-        }*/
         combatTimer = Time.time + 5f;
         state = PlayerState.Combat;
     }
@@ -557,7 +557,7 @@ public class PlayerController : Controller, IDamageable
         }
     }
 
-    void OpenInventory(InputAction.CallbackContext callback)
+    public void OpenInventory(InputAction.CallbackContext callback)
     {
         if (animationWorking > 0) return;
         InventorySystem inventorySystem = GameInstance.Instance.inventorySystem;
@@ -576,67 +576,9 @@ public class PlayerController : Controller, IDamageable
     {
         if (animationWorking > 0 && !forcedEquip) return;
 
-        bool equip = true;
         equipSlotIndex = index;
-        //무기
-        if (equipItem.item.item_type == ItemType.Equipmentable)
-        {
-            if(this.equipItem != null)
-            {
-                Destroy(this.equipItem.gameObject);
-                this.equipItem = null;
-            }
-            this.equipItem = Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index].Name]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
-            this.equipItem.equippedPlayer = GetPlayer;
-            AttachItem attachItem = GetComponentInChildren<AttachItem>();
-            this.equipItem.transform.SetParent(attachItem.transform);
-            this.equipItem.itemStruct = equipItem.item;
-            this.equipItem.GetComponent<Weapon>().weaponStruct = equipItem.weapon;
-            this.equipItem.itemInteractionColider.enabled = false;
-            this.equipItem.transform.localPosition = Vector3.zero;
-            this.equipItem.transform.localRotation = Quaternion.Euler(-90, -90, 0);
-            modelAnimator.SetFloat("equip", 1);
 
-
-            GameInstance.Instance.characterProfileUI.UnEquipItem();
-            GameInstance.Instance.characterProfileUI.EquipItem(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index].Name]);
-        }
-        else if (equipItem.item.item_type == ItemType.Consumable)     //음식을 손에 듬
-        {
-            if (this.equipItem != null)
-            {
-                Destroy(this.equipItem.gameObject);
-                this.equipItem = null;
-            }
-            this.equipItem = Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index].Name]).GetComponent<Item>();
-            this.equipItem.equippedPlayer = GetPlayer;
-            AttachItem attachItem = GetComponentInChildren<AttachItem>();
-            this.equipItem.transform.SetParent(attachItem.transform);
-            this.equipItem.itemStruct = equipItem.item;
-            this.equipItem.GetComponent<ConsumptionItem>().consumtionStruct = equipItem.consumption;
-            this.equipItem.itemInteractionColider.enabled = false;
-            this.equipItem.transform.localPosition = Vector3.zero;
-            this.equipItem.transform.localRotation = Quaternion.Euler(-90, -90, 0);
-            modelAnimator.SetFloat("equip", 0);
-
-
-
-            GameInstance.Instance.characterProfileUI.UnEquipItem();
-            GameInstance.Instance.characterProfileUI.EquipItem(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index].Name]);
-        }
-        else
-        {
-            if (this.equipItem != null)
-            {
-                Destroy(this.equipItem.gameObject);
-                this.equipItem = null;
-            }
-            modelAnimator.SetFloat("equip", 0);
-            equip = false;
-            GameInstance.Instance.characterProfileUI.UnEquipItem();
-        }
-
-        GameInstance.Instance.inventorySystem.EquipItem(equipItem, equip);
+        if (AllEventManager.customEvents.TryGetValue(3, out var events)) ((Action<PlayerController, Slot, int, bool>)events)?.Invoke(this, equipItem, index, forcedEquip);
     }
 
     public void Unequipment()
@@ -666,61 +608,64 @@ public class PlayerController : Controller, IDamageable
         animationWorking--;
     }
 
-    public void GetDamage(int damage)
+    public void GetDamage(int damage, int opponentLayer)
     {
         if (state == PlayerState.Dead) return;
         //GetPlayer.playerStruct.hp -= damage;
         GetPlayer.GetDamage(damage);
         if (GetPlayer.playerStruct.hp <= 0)
-        {    
-          
-            modelAnimator.SetTrigger("dead");
+        {
+            if (AllEventManager.customEvents.TryGetValue(4, out var events)) ((Action<PlayerController, int>)events)?.Invoke(this, opponentLayer);
+           /* modelAnimator.SetTrigger("dead");
             GetPlayer.dead = true;
             state = PlayerState.Dead;
             playerCamera.lookAround = false;
             lookAround = false;
-            GameInstance.Instance.worldGrids.RemovePlayer(this, ref lastGridX, ref lastGridY);
-            gameObject.tag = "Enemy";
-            gameObject.layer = 0b1010;
-            Rigid.excludeLayers = 0;
-            ChangeTagLayer(Transforms, "Enemy", 0b1010);
-            GetComponent<CapsuleCollider>().excludeLayers = 0;
-            GetLeftHand.boxCollider.excludeLayers = 0b10000000000;
-            GetRightHand.boxCollider.excludeLayers = 0b10000000000;
-            Rigid.interpolation = RigidbodyInterpolation.None;
-            //죽은 시체에 인벤토리의 아이템 적용
-            gameObject.AddComponent<NavMeshAgent>();
-            EnemyController enemyController = gameObject.AddComponent<EnemyController>();
-            enemyController.playerType = 1;
-            enemyController.capsuleCollider = GetComponent<CapsuleCollider>();
-            enemyController.bDead = true;
-            enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
-            GameInstance.Instance.worldGrids.AddObjects(enemyController.gameObject, MinimapIconType.Enemy, false);
-            for (int i = 0; i < GameInstance.Instance.inventorySystem.slotNum; i++)
+            GameInstance.Instance.worldGrids.RemovePlayer(this, ref lastGridX, ref lastGridY);*/
+
+        /*    if (opponentLayer == 0b1010)
             {
-                for (int j = 0; j < 10; j++)
+                gameObject.tag = "Enemy";
+                gameObject.layer = 0b1010;
+                Rigid.excludeLayers = 0;
+                ChangeTagLayer(Transforms, "Enemy", 0b1010);
+                GetComponent<CapsuleCollider>().excludeLayers = 0;
+                GetLeftHand.boxCollider.excludeLayers = 0b10000000000;
+                GetRightHand.boxCollider.excludeLayers = 0b10000000000;
+                Rigid.interpolation = RigidbodyInterpolation.None;
+                //죽은 시체에 인벤토리의 아이템 적용
+                gameObject.AddComponent<NavMeshAgent>();
+                EnemyController enemyController = gameObject.AddComponent<EnemyController>();
+                enemyController.playerType = 1;
+                enemyController.capsuleCollider = GetComponent<CapsuleCollider>();
+                enemyController.bDead = true;
+                enemyController.enemyStruct = GameInstance.Instance.assetLoader.enemies[0];
+                GameInstance.Instance.worldGrids.AddObjects(enemyController.gameObject, MinimapIconType.Enemy, false);
+                for (int i = 0; i < GameInstance.Instance.inventorySystem.slotNum; i++)
                 {
-                    ItemStruct itemStruct = GameInstance.Instance.inventorySystem.inventoryArray[i, j].item;
-                    if (itemStruct.item_index == 0) continue;
-                    enemyController.itemStructs.Add(itemStruct);
+                    for (int j = 0; j < 10; j++)
+                    {
+                        ItemStruct itemStruct = GameInstance.Instance.inventorySystem.inventoryArray[i, j].item;
+                        if (itemStruct.item_index == 0) continue;
+                        enemyController.itemStructs.Add(itemStruct);
+                    }
                 }
+
+                SaveLoadSystem.SavePlayerData(GetPlayer);
+
+
+                //인벤토리 초기화
+                GameInstance.Instance.inventorySystem.ResetInventory();
+
+                //인벤토리와 적 데이터 저장
+                SaveLoadSystem.SaveEnemyInfo();
+                SaveLoadSystem.SaveInventoryData();
+
+                Invoke("Infected", 2f);
             }
 
-            SaveLoadSystem.SavePlayerData(GetPlayer);
+            GameInstance.Instance.uiManager.SwitchUI(UIType.Dead);*/
 
-
-            //인벤토리 초기화
-            GameInstance.Instance.inventorySystem.ResetInventory();
-
-            //인벤토리와 적 데이터 저장
-            SaveLoadSystem.SaveEnemyInfo();
-            SaveLoadSystem.SaveInventoryData();
-
-            // GameInstance.Instance.enemySpawner.enemies.Add(enemyController);
-
-            GameInstance.Instance.uiManager.SwitchUI(UIType.Dead);
-
-            Invoke("Infected",2f);
         }
         else
         {
@@ -744,13 +689,6 @@ public class PlayerController : Controller, IDamageable
 
     void BecomeToZombie()
     {
-       // model.transform.localPosition = new Vector3(0, 0,0);
-      //  modelAnimator.SetLayerWeight(1, 0);
-     //   modelAnimator.SetLayerWeight(2, 0);
-      //  modelAnimator.SetLayerWeight(3, 0);
-     //   modelAnimator.SetLayerWeight(4, 1);
-      //  modelAnimator.SetLayerWeight(0, 0);
-
         StartCoroutine(ZombieUpdate());
     }
 
@@ -769,21 +707,47 @@ public class PlayerController : Controller, IDamageable
         model.transform.localPosition = target;
         modelAnimator.SetTrigger("standup");
 
-        modelAnimator.SetLayerWeight(1, 0);
-        modelAnimator.SetLayerWeight(2, 0);
+      //  modelAnimator.SetLayerWeight(1, 0);
+       // modelAnimator.SetLayerWeight(2, 0);
 
         Rigid.constraints = RigidbodyConstraints.FreezeAll;
        
-        EnemyController enemyController = GetComponent<EnemyController>();
+        NPCController enemyController = GetComponent<NPCController>();
+        enemyController.Setup(enemyController.npcStruct, false);
+        NPCEventHandler.Publish(1000004, enemyController);
         enemyController.bDead = false;
-      
-        Destroy(GetComponent<PlayerInput>());
 
-        RemoveAction();
-        Inputs.actions["OpenInventory"].performed -= OpenInventory;
+      /*  Inputs.actions["OpenInventory"].performed -= OpenInventory;
+        Inputs.actions["ZoomIn"].performed -= ZoomIn;
+        Inputs.actions["ZoomOut"].performed -= ZoomOut;
+        Inputs.actions["Interaction"].performed -= Interact;
+        //테스트
+        Inputs.actions["TestInventory"].performed -= JustTest;
+
+        for (int i = 0; i < 10; i++)
+        {
+            int slotNumber = i + 1;
+            Inputs.actions[$"Item{slotNumber}"].performed -= slotHandlers[i];
+        }
+        Inputs.actions["WASD"].performed -= MoveHandle;
+        Inputs.actions["WASD"].canceled -= MoveStop;
+        Inputs.actions["Run"].performed -= Run;
+        Inputs.actions["Run"].canceled -= RunStop;
+        Inputs.actions["Attack"].performed -= Attack;
+        Inputs.actions["Attack"].canceled -= EndAttack;*/
+        //   Inputs.DeactivateInput();
+         Destroy(GetComponent<PlayerInput>());
+
+         RemoveAction();
+         Inputs.actions["OpenInventory"].performed -= OpenInventory;
+      
         GameInstance.Instance.gameManager.PlayerSettings(false);
 
+
+      
+
         if (playerCamera != null) playerCamera.ResetPlayer();
+        Destroy(GetPlayer);
         Destroy(this);
     }
     
@@ -825,7 +789,7 @@ public class PlayerController : Controller, IDamageable
 
     public bool Damaged(int damage, int layer)
     {
-        if(gameObject.layer != layer) GetDamage(damage);
+        if(gameObject.layer != layer) GetDamage(damage, layer);
         else return false;
         return true;
     }

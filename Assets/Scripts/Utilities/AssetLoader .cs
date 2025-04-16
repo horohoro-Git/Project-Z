@@ -54,12 +54,14 @@ public class AssetLoader : MonoBehaviour
     //public List<LevelData> levelData;
     [NonSerialized]
     public Dictionary<int, ItemStruct> items;
-    
-    public List<EnemyStruct> enemies;
 
+    // public List<EnemyStruct> enemies;
+
+    //[NonSerialized]
+    //public Dictionary<int, EnemyStruct> enemyParams = new Dictionary<int, EnemyStruct>();
     [NonSerialized]
-    public Dictionary<int, EnemyStruct> enemyParams = new Dictionary<int, EnemyStruct>();
-
+    public static Dictionary<int, NPCCombatStruct> npcCombatStructs = new Dictionary<int, NPCCombatStruct>();
+    List<NPCCombatStruct> nPCCombats = new List<NPCCombatStruct>();
     [NonSerialized]
     public Dictionary<int, WeaponStruct> weapons = new Dictionary<int, WeaponStruct>(); //List<WeaponStruct> weapons;
 
@@ -76,8 +78,10 @@ public class AssetLoader : MonoBehaviour
 
     [NonSerialized]
     public Dictionary<int, NPCStruct> npcs = new Dictionary<int, NPCStruct>();
+    [NonSerialized]
+    public Dictionary<int, AnimatorStruct> animatorKeys = new Dictionary<int, AnimatorStruct>();
 
-   
+
     public static Dictionary<int, RecipeStruct> recipes = new Dictionary<int, RecipeStruct>();
 
     public static Dictionary<string, GameObject> loadedAssets = new Dictionary<string, GameObject>();
@@ -85,6 +89,10 @@ public class AssetLoader : MonoBehaviour
 
     public static Dictionary<string, UMAWardrobeRecipe> loadedRecipes = new Dictionary<string, UMAWardrobeRecipe>();
 
+    public static Dictionary<string, RuntimeAnimatorController> animators = new Dictionary<string, RuntimeAnimatorController>();
+    List<string> animatorKey = new List<string> { 
+        "NPCAnimator", "ZombieAnimator"
+    };
     [SerializeField]
     Shader holoShader;
   
@@ -108,8 +116,8 @@ public class AssetLoader : MonoBehaviour
   
     Shader Standard { get { if (standard == null) standard = Shader.Find("Standard"); return standard; } }
 
-    string[] tables = new string[12] 
-    { "level", "item", "weapon", "consumption", "enemy", "armor", "craft", "ability", "achievement", "recipes", "npc", "npc_event" };
+    string[] tables = new string[13] 
+    { "level", "item", "weapon", "consumption", "enemy", "armor", "craft", "ability", "achievement", "recipes", "npc", "npc_event", "animators" };
     Dictionary<string, string> tableContents = new Dictionary<string, string>();
    /* //데이터 테이블 문자열
     [NonSerialized]
@@ -150,17 +158,6 @@ public class AssetLoader : MonoBehaviour
         root.name = "root";
         root.transform.position = Vector3.zero;
     }
-    void Update()
-    {
-      //  if (Time.frameCount % 100 == 0)
-        {
-        //    int count = FindObjectsOfType<EventTrigger>(true).Length;
-        //    Debug.Log($"전체 EventTrigger 수: {count}");
-        }
-    }
-    //  public async UniTas
-
-    // public async UniTask
 
     public async UniTask DownloadAssetBundle()
     {
@@ -208,6 +205,7 @@ public class AssetLoader : MonoBehaviour
                     levelData = SaveLoadSystem.GetDictionaryData<int, LevelStruct>(tableContents["level"]);
                     npcs = SaveLoadSystem.GetDictionaryData<int, NPCStruct>(tableContents["npc"]);
                     recipes = SaveLoadSystem.GetDictionaryData<int, RecipeStruct>(tableContents["recipes"]);
+                    animatorKeys = SaveLoadSystem.GetDictionaryData<int, AnimatorStruct>(tableContents["animators"]);
                 });
                
 
@@ -221,7 +219,7 @@ public class AssetLoader : MonoBehaviour
                 await LoadAsync<GameObject, StringStruct, string>(itemAssetkeys, loadedAssets);
                 await LoadAsync<Sprite, StringStruct, string>(spriteAssetkeys, loadedSprites);
                 await LoadAsync<UMAWardrobeRecipe, RecipeStruct, int>(recipes, loadedRecipes);
-
+                await LoadAsync<RuntimeAnimatorController, AnimatorStruct, int>(animatorKeys, animators);
             }
         }
         else
@@ -232,18 +230,18 @@ public class AssetLoader : MonoBehaviour
 
         if (unloadNum == 0)
         {
-            enemies = SaveLoadSystem.GetListData<EnemyStruct>(tableContents["enemy"]); 
+            nPCCombats = SaveLoadSystem.GetListData<NPCCombatStruct>(tableContents["enemy"]); 
 
-            for (int i=0; i< enemies.Count; i++)
+            for (int i=0; i< nPCCombats.Count; i++)
             {
-                string itemData = enemies[i].drop_item;
+                string itemData = nPCCombats[i].drop_item;
                 itemData = itemData.Replace("item_index", "\"item_index\"");
                 itemData = itemData.Replace("item_chance", "\"item_chance\"");
-                EnemyStruct enemy = enemies[i];
+                NPCCombatStruct enemy = nPCCombats[i];
                 enemy.dropStruct = JsonConvert.DeserializeObject<List<DropStruct>>(itemData);
-                enemies[i] = enemy;
+                nPCCombats[i] = enemy;
 
-                enemyParams[enemy.id] = enemy;
+                npcCombatStructs[enemy.id] = enemy;
                 Debug.Log(enemy.id);
             }
             List<AchievementStruct> achievementStructs = SaveLoadSystem.GetListData<AchievementStruct>(tableContents["achievement"]);

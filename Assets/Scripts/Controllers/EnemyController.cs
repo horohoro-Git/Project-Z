@@ -43,7 +43,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     int animationWorking;
     public Collider attackColider;
 
-    public EnemyStruct enemyStruct;
+   // public EnemyStruct enemyStruct;
 
     [NonSerialized]
     public bool bDead;
@@ -56,7 +56,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     public int playerType = 0; //감염된 플레이어가 아니면 0
 
     List<PlayerController> pcs = new List<PlayerController>(10);
-    public string ID { get; set; }
+    public int ID { get; set; }
 
     bool moveStop = false;
 
@@ -163,7 +163,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
     public void Setup()
     {
-        enemyStruct.health = enemyStruct.max_health;
+//        enemyStruct.health = enemyStruct.max_health;
         gameObject.layer = 0b1010;
         ChangeTagLayer(Transforms, "Enemy", 0b1010);
      //   modelAnimator = GetComponentInChildren<Animator>();
@@ -280,10 +280,10 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
         Debug.Log($"Damaged {damage}");
         modelAnimator.SetTrigger("damaged");
-        enemyStruct.health -= damage;
-        if(enemyStruct.health <= 0)
+//enemyStruct.health -= damage;
+   //     if(enemyStruct.health <= 0)
         {
-            enemyStruct.health = 0;
+  //          enemyStruct.health = 0;
             bDead = true;
 
             agent.isStopped = true;
@@ -294,7 +294,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
             ChangeTagLayer(Transforms, "Enemy", 0b1111);*/
 
             //   Destroy(Rigid);
-            GameInstance.Instance.worldGrids.RemoveObjects(ID, MinimapIconType.Enemy);
+            GameInstance.Instance.worldGrids.RemoveObjects(GetInstanceID(), MinimapIconType.Enemy);
             
             modelAnimator.SetTrigger("zombieDead");
             Reward();
@@ -317,19 +317,24 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
         }
         else
         {
-            for (int i = 0; i < enemyStruct.dropStruct.Count; i++)
+        //    for (int i = 0; i < enemyStruct.dropStruct.Count; i++)
             {
                 int random = UnityEngine.Random.Range(1, 11);
-                if (random <= enemyStruct.dropStruct[i].item_chance)
+       //         if (random <= enemyStruct.dropStruct[i].item_chance)
                 {
-                    int index = enemyStruct.dropStruct[i].item_index;
+        //            int index = enemyStruct.dropStruct[i].item_index;
+       //             ItemStruct itemStruct = ItemData.GetItem(index);
                   //  ItemData.GetItem(index).itemGO;
-                    GameObject item = Instantiate(ItemData.GetItem(index).itemGO); //Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[index].ID]);
-                    item.transform.position = new Vector3(Transforms.position.x, Transforms.position.y + 1, Transforms.position.z);
-                    GettableItem gettableItem = item.AddComponent<GettableItem>();
-
-                   // Rigidbody itemRigid = item.AddComponent<Rigidbody>();
-                   // itemRigid.AddForce(Vector3.up * 10f);
+              //      GameObject item = Instantiate(itemStruct.itemGO); //Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[index].ID]);
+         //           item.transform.position = new Vector3(Transforms.position.x, Transforms.position.y + 1, Transforms.position.z);
+               //     GettableItem gettableItem = item.AddComponent<GettableItem>();
+           // /        gettableItem.itemStruct = itemStruct;
+          //          Debug.Log(itemStruct.itemGO.name + " " + itemStruct.image.name + " " + itemStruct.item_index);
+             //       gettableItem.Spawned(false);
+                  /*  gettableItem.itemInteractionColider.enabled = true;
+                    gettableItem.itemInteractionColider.isTrigger = true;*/
+                    // Rigidbody itemRigid = item.AddComponent<Rigidbody>();
+                    // itemRigid.AddForce(Vector3.up * 10f);
                 }
             }
 

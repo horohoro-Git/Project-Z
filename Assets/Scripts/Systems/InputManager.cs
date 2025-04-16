@@ -62,8 +62,10 @@ public class InputManager : MonoBehaviour
     {
        
         GameInstance.Instance.inputManager = this;
-        mainCamera = Camera.main;   
-        if(debugging) playerInput.actions[debugAction].performed += DebugOn;
+        mainCamera = Camera.main;
+        if (debugging) playerInput.actions[debugAction].performed -= DebugOn;
+        playerInput.actions[aroundAction].performed -= StartAround;
+        if (debugging) playerInput.actions[debugAction].performed += DebugOn;
         playerInput.actions[aroundAction].performed += StartAround;
     //    playerInput.actions[aroundAction].canceled += EndAround;
     }
@@ -196,22 +198,16 @@ public class InputManager : MonoBehaviour
 
             if (Physics.Raycast(hoverRay, out RaycastHit hoverHit, float.MaxValue, 0b100010000000000))
             {
-                if (Utility.TryGetComponentInParent<EnemyController>(hoverHit.collider, out EnemyController hoveredEnemy))
+                if (Utility.TryGetComponentInParent<NPCController>(hoverHit.collider, out NPCController hoveredEnemy))
                 {
-                    EnemyStruct es = hoveredEnemy.enemyStruct;
-                    string n = es.enemy_name;
+                    NPCCombatStruct es = hoveredEnemy.npcStruct;
+                    string n = es.npc_name;
                     int maxHP = es.max_health;
                     int hp = es.health;
+
                     if (AllEventManager.customEvents.TryGetValue(1, out var events)) ((Action<string, int, int>)events)?.Invoke(n, maxHP, hp);
                 }
-                if (Utility.TryGetComponentInParent<NPCController>(hoverHit.collider, out NPCController npcController))
-                {
-                    EnemyStruct ns = npcController.npcStruct;
-                    string n = ns.enemy_name;
-                    int maxHP = ns.max_health;
-                    int hp = ns.health;
-                    if (AllEventManager.customEvents.TryGetValue(1, out var events)) ((Action<string, int, int>)events)?.Invoke(n, maxHP, hp);
-                }
+             
             }
             else
             {
