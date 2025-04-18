@@ -56,6 +56,7 @@ public class AllEventFunctions : MonoBehaviour
                 pc.equipItem = null;
             }
             pc.equipItem = Instantiate(AssetLoader.loadedAssets[AssetLoader.itemAssetkeys[equipItem.item.item_index].Name]).GetComponent<Item>();  //equipItem.itemGO).GetComponent<Item>();
+            Destroy(pc.equipItem.GetComponent<Rigidbody>());
             pc.equipItem.equippedPlayer = pc.GetPlayer;
             AttachItem attachItem = pc.GetComponentInChildren<AttachItem>();
             pc.equipItem.transform.SetParent(attachItem.transform);
@@ -146,7 +147,7 @@ public class AllEventFunctions : MonoBehaviour
     {
         controller.gameObject.tag = "Enemy";
         controller.gameObject.layer = 0b1010;
-        controller.ChangeTagLayer(controller.Transforms, "Enemy", 0b1010);
+        Utility.ChangeTagLayer(controller.Transforms, "Enemy", 0b1010);
         controller.GetLeftHand.boxCollider.excludeLayers = 0b10000000000;
         controller.GetRightHand.boxCollider.excludeLayers = 0b10000000000;
 

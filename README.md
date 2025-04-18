@@ -283,3 +283,6 @@ Unified enemy and NPC control, modularized event-based functions
 
 04/17 
 Focusing on overall optimization, including applying animation instancing to zombies, using a UI atlas, and reducing shadows
+
+04/18
+Zombie's stiffness has been changed to now cancel attacks, and a dummy zombie has been added to add collision detection to attacks

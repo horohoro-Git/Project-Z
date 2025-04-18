@@ -9,7 +9,7 @@ public class LeftHand : MonoBehaviour
     public TrailRenderer GetTrailRenderer { get { if (trailRenderer == null) trailRenderer = GetComponent<TrailRenderer>(); return trailRenderer; } }
     public BoxCollider boxCollider;
     private Collider[] hitColliders;
-
+    public IDamageable Damageable { get { return GetComponentInParent<IDamageable>(); } }
     bool attacking = false;
     int damage;
 
@@ -38,27 +38,90 @@ public class LeftHand : MonoBehaviour
     private void FixedUpdate()
     {
         if (!attacking) return;
+
+        if (Damageable != null)
+        {
+            if(Damageable.DamagedTimer > 0)
+            {
+                CancelAttack();
+                return;
+            }
+        }
+
         Vector3 boxCenter = boxCollider.transform.position;
         Vector3 boxSize = boxCollider.bounds.size;
 
         hitColliders = Physics.OverlapBox(boxCenter, boxSize);
 
+
         foreach (var collider in hitColliders)
         {
             int layer = gameObject.layer;
+            int colliderLayer = collider.gameObject.layer;
 
-            IDamageable damageable = collider.GetComponent<IDamageable>();
-            if (damageable != null)
+            if (colliderLayer == 0b1111) continue;
+
+            NPCController npc = GetComponentInParent<NPCController>();
+            if (npc != null)
             {
-                if (damageable.Damaged(damage, layer))
+                switch (npc.eventStruct.npc_disposition)
                 {
-                    attacking = false;
-                    return;
+                    case NPCDispositionType.None:
+                        break;
+                    case NPCDispositionType.Netural:
+                        if (colliderLayer == 0b1010)
+                        {
+                            if (Attack(collider, layer)) return;
+                        }
+                        break;
+                    case NPCDispositionType.Friendly:
+                        if (colliderLayer == 0b1010)
+                        {
+                            if (Attack(collider, layer)) return;
+                        }
+                        break;
+                    case NPCDispositionType.Hostile:
+                        if (colliderLayer == 0b1010 || colliderLayer == 0b0011)
+                        {
+                            if (Attack(collider, layer)) return;
+                        }
+                        break;
+                    case NPCDispositionType.Infected:
+                        if (colliderLayer == 0b1110 || colliderLayer == 0b0011)
+                        {
+                            if (Attack(collider, layer)) return;
+                        }
+                        break;
                 }
+
+                return;
             }
+
+            if (Attack(collider, layer)) return;
+
         }
     }
 
+    public bool Attack(Collider collider, int layer)
+    {
+        IDamageable damageable = collider.GetComponent<IDamageable>();
+        if (damageable != null)
+        {
+            if (damageable.Damaged(damage, layer))
+            {
+                attacking = false;
+                return true;
+            }
+
+        }
+        return false;
+    }
+
+    void CancelAttack()
+    {
+        Trail(false);
+        StopAttack();
+    }
     void TurnOff()
     {
         attacking = false;

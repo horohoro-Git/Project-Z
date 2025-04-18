@@ -61,6 +61,8 @@ public class PlayerController : Controller, IDamageable
     public Animator animator;
     public Animator modelAnimator { get { if (animator == null) { animator = model.GetComponent<Animator>(); animator.applyRootMotion = true; Equipment(GameInstance.Instance.quickSlotUI.slots[0], 0); } return animator; } }
 
+    public float DamagedTimer { get; set; }
+
     [NonSerialized]
     public PlayerState state = PlayerState.Default;
     float combatTimer;
@@ -129,7 +131,7 @@ public class PlayerController : Controller, IDamageable
             model.layer = 0b0011;
 
 
-            ChangeTagLayer(model.transform, "Player", 0b0011);
+            Utility.ChangeTagLayer(model.transform, "Player", 0b0011);
 
             GetRightHand.boxCollider.excludeLayers = 0b1000;
             GetLeftHand.boxCollider.excludeLayers = 0b1000;
@@ -197,22 +199,6 @@ public class PlayerController : Controller, IDamageable
 
          GameInstance.Instance.inventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
          GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 5, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);*/
-    }
-
-    public void ChangeTagLayer(Transform parent, string newTag, int layerName)
-    {
-        if (parent != null)
-        { 
-            foreach (Transform child in parent)
-            {
-                if (child != null)
-                {
-                    child.gameObject.tag = newTag;
-                    child.gameObject.layer = layerName;
-                    ChangeTagLayer(child, newTag, layerName);
-                }
-            }
-        }
     }
 
     public void SetPlayerData(Vector3 pos, Quaternion rot, PlayerStruct playerStruct)

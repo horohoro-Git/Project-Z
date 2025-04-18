@@ -1,31 +1,21 @@
 ManifestFileVersion: 0
-CRC: 1126862661
+CRC: 3564940622
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 71e3c4a6d429084769c563466c3c75c3
+    Hash: eb9a913d35fdc1ca9f1aa509772fb793
   TypeTreeHash:
     serializedVersion: 2
     Hash: 5ad585dd02dfb5016c0dad519eab8f49
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 71e3c4a6d429084769c563466c3c75c3
+    Hash: eb9a913d35fdc1ca9f1aa509772fb793
 HashAppended: 0
 ClassTypes:
 - Class: 49
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/AnimationTexture/(P) Characters_Zombie_SuitMan_1_3.bytes
-- Assets/AnimationTexture/Zombie1.bytes
-- Assets/AnimationTexture/human_male 1.bytes
-- Assets/AnimationTexture/(P) Characters_Zombie_SuitMan_1_3 1.bytes
-- Assets/AnimationTexture/(P) Characters_Zombie_SuitMan_1 2.bytes
-- Assets/AnimationTexture/max.bytes
-- Assets/AnimationTexture/max 1.bytes
-- Assets/AnimationTexture/SK_Military_Survivalist (1) 1.bytes
-- Assets/AnimationTexture/Zombie_CityStreets_SuitMan_1.bytes
-- Assets/AnimationTexture/(P) Characters_Zombie_SuitMan_1 1.bytes
-- Assets/AnimationTexture/Dude_low_instancing.bytes
+- Assets/Resources/zombie.bytes
 - Assets/AnimationTexture/zombie.bytes
 Dependencies: []

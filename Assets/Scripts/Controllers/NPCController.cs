@@ -31,6 +31,7 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     public AnimationInstancingController GetInstancingController { get { if (animationInstancingController == null) animationInstancingController = GetComponentInParent<AnimationInstancingController>(); return animationInstancingController; } }
 
     public int ID { get; set; }
+    public float DamagedTimer { get; set; }
 
     Quaternion targetRotation;
     [NonSerialized]
@@ -52,7 +53,6 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
     bool focus;
     public bool isAnimationInstancing;
-
     private void Start()
     {
     //    ChangeTagLayer(GetTransform, "NPC", 0b1110);
@@ -69,6 +69,7 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
         {
             agent.velocity = Vector3.Lerp(agent.velocity, Vector3.zero, Time.deltaTime * 10);
         }
+        if(DamagedTimer > 0) SpasticityRecovery();
 
         targetRotation = new Quaternion();
 
@@ -129,26 +130,9 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
             {
                 GetInstancingController.PlayerAnimation("Zombie@Walk01");
             }
-          
         }
     }
 
-
-    public void ChangeTagLayer(Transform parent, string newTag, int layerName)
-    {
-        if (parent != null)
-        {
-            foreach (Transform child in parent)
-            {
-                if (child != null)
-                {
-                    child.gameObject.tag = newTag;
-                    child.gameObject.layer = layerName;
-                    ChangeTagLayer(child, newTag, layerName);
-                }
-            }
-        }
-    }
     public void ChangeEvent(NPCEventStruct eventStruct)
     {
         this.eventStruct = eventStruct;
@@ -429,10 +413,36 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
     void GetDamage(int damage, int layer)
     {
-        if (layer == 0b0011 && eventStruct.npc_disposition != NPCDispositionType.Infected)
+        if (layer == 0b0011 && eventStruct.npc_disposition != NPCDispositionType.Infected && eventStruct.npc_disposition != NPCDispositionType.Hostile)
         {
             Debug.Log("Hostile");
             NPCEventHandler.Publish(1000003, this);
+        }
+
+        if(layer != gameObject.layer)
+        {
+            npcStruct.health -= damage;
+            if (npcStruct.health <= 0)
+            {
+                bDead = true;
+                npcStruct.health = 0;
+                modelAnimator.SetTrigger("zombieDead");
+                if(isAnimationInstancing)
+                {
+                    GetInstancingController.PlayerAnimation("Zombie@Death01_A");
+                }
+                GameInstance.Instance.worldGrids.RemoveObjects(ID, npcStruct.infected ? MinimapIconType.Enemy : MinimapIconType.NPC);
+            }
+            else
+            {
+                StartAnimation("damaged", 0.5f);
+                DamagedTimer = 0.5f;
+               // modelAnimator.SetTrigger("damaged");
+                if (isAnimationInstancing)
+                {
+                    GetInstancingController.PlayerAnimation("Zombie@Damage01");
+                }
+            }
         }
     }
 
@@ -441,6 +451,11 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
         if (gameObject.layer != layer) GetDamage(damage , layer);
         else return false;
         return true;
+    }
+    public void SpasticityRecovery()
+    {
+        DamagedTimer -= Time.deltaTime;
+        if(DamagedTimer <= 0) DamagedTimer = 0;
     }
 
     public void Setup(NPCCombatStruct npcStruct, bool init)
@@ -454,21 +469,21 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
                 modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[2].animator_name];
                 gameObject.layer = 0b1010;
                 gameObject.tag = "Enemy";
-                ChangeTagLayer(GetTransform, "Enemy", 0b1010);
+                Utility.ChangeTagLayer(GetTransform, "Enemy", 0b1010);
             }
             else
             {
                 modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[1].animator_name];
                 gameObject.layer = 0b1110;
                 gameObject.tag = "NPC";
-                ChangeTagLayer(GetTransform, "NPC", 0b1110);
+                Utility.ChangeTagLayer(GetTransform, "NPC", 0b1110);
             }
         }
         else
         {
             GetInstancingController.gameObject.layer = 0b1010; 
             GetInstancingController.gameObject.tag = "Enemy";
-            ChangeTagLayer(GetInstancingController.transform, "Enemy", 0b1010);
+            Utility.ChangeTagLayer(GetInstancingController.transform, "Enemy", 0b1010);
         }
         GetAgent.stoppingDistance = npcStruct.attack_range;
         if (init) this.npcStruct.health = npcStruct.max_health;

@@ -57,6 +57,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
     List<PlayerController> pcs = new List<PlayerController>(10);
     public int ID { get; set; }
+    public float DamagedTimer { get; set; }
 
     bool moveStop = false;
 

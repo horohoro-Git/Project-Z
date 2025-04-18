@@ -4,6 +4,9 @@ using UnityEngine;
 
 using AnimInstancing = AnimationInstancing.AnimationInstancing;
 using AnimInfo = AnimationInstancing.AnimationInfo;
+using AnimationInstancing;
+using static AnimationInstancing.AnimationInstancingMgr;
+using UnityEngine.Rendering;
 
 public class AnimationInstancingController : MonoBehaviour
 {
@@ -11,22 +14,35 @@ public class AnimationInstancingController : MonoBehaviour
 
     public AnimInstancing GetAnimation { get { if (instancing == null) instancing = GetComponentInChildren<AnimInstancing>(); return instancing;  } }
 
-
+    public AnimInstancing a;
+    float currentTime;
     Dictionary<string, AnimInfo> animations = new Dictionary<string, AnimInfo>();
     private void Start()
     {
-        Invoke("NewStart", 1f);
+        Invoke("NewStart", 5f);
+        // GetAnimation.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+        
     }
-
+    int boneIndex;
     void NewStart()
     {
-       /* for (int i = 0; i < GetAnimation.GetAnimationCount(); i++)
-        {
-            AnimInfo info = GetAnimation.aniInfo[i];
-            Debug.Log(info.animationName);
-            animations[info.animationName] = info;
-        }*/
+      
+     //   GetAnimation.AttackItem("hand_l", GetAnimation, new GameObject(), out int boneIndex);
+        /* for (int i = 0; i < GetAnimation.GetAnimationCount(); i++)
+         {
+             AnimInfo info = GetAnimation.aniInfo[i];
+             Debug.Log(info.animationName);
+             animations[info.animationName] = info;
+         }*/
+        //    GetAnimation.AttackItem("hand_l", GetAnimation, a, out boneIndex);
         GetAnimation.PlayAnimation("Zombie@Idle01");
+
+        //Debug.Log(GetAnimation.GetAnimationInfoList().Count);
+    }
+
+    private void LateUpdate()
+    {
+       
     }
 
     public void StopAnimation()
@@ -38,5 +54,11 @@ public class AnimationInstancingController : MonoBehaviour
         GetAnimation.CrossFade(name, 0.25f);
         //GetAnimation.
       //  GetAnimation.PlayAnimation(name);
+    }
+    public void DamagedAnimation(string name)
+    {
+       /* float 
+        if(GetAnimation.GetCurrentAnimationInfo().totalFrame)*/
+        GetAnimation.PlayAnimation(name);
     }
 }
