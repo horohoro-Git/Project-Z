@@ -183,7 +183,6 @@ public class AssetLoader : MonoBehaviour
                 AssetBundle.LoadFromFileAsync(d).ToUniTask()));
             await UniTask.Yield();*/
           // await bundle;
-
             if (Caching.IsVersionCached(homeUrl, bundleHash))
             {
                 Debug.Log("AssetBundle Cached Successfully");
@@ -208,7 +207,6 @@ public class AssetLoader : MonoBehaviour
                     animatorKeys = SaveLoadSystem.GetDictionaryData<int, AnimatorStruct>(tableContents["animators"]);
                 });
                
-
                 foreach (KeyValuePair<int, ItemStruct> keyValuePair in items)
                 {
                     string spriteName = keyValuePair.Value.asset_name + "_Sprite";

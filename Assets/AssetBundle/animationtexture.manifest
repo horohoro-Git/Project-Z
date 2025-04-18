@@ -1,0 +1,20 @@
+ManifestFileVersion: 0
+CRC: 49334288
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 40bbbb21a60c70758386ae2e167bff1f
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5ad585dd02dfb5016c0dad519eab8f49
+  IncrementalBuildHash:
+    serializedVersion: 2
+    Hash: 40bbbb21a60c70758386ae2e167bff1f
+HashAppended: 0
+ClassTypes:
+- Class: 49
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/AnimationTexture/GameObject (1).bytes
+Dependencies: []

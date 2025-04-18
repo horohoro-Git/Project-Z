@@ -14,9 +14,15 @@ Icons made by the following designers from Flaticon:
 #######################################################################
 
 
+##Requirements
+
+UMA2 - https://assetstore.unity.com/packages/3d/characters/uma-2-35611
+Animation Instancing - https://github.com/Unity-Technologies/Animation-Instancing
+
+
+
 # Project-Z
 zombie survival game
-
 
 
 develop123
@@ -274,3 +280,6 @@ The slot's event trigger is changed to an interface, adding life hover UI and de
 
 04/15
 Unified enemy and NPC control, modularized event-based functions
+
+04/17 
+Focusing on overall optimization, including applying animation instancing to zombies, using a UI atlas, and reducing shadows
