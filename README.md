@@ -17,5 +17,12 @@ Icons made by the following designers from Flaticon:
 #######################################################################
 
 
+##Requirements
+
+UMA2 - https://assetstore.unity.com/packages/3d/characters/uma-2-35611
+Animation Instancing - https://github.com/Unity-Technologies/Animation-Instancing
+
+
+
 # Project-Z
 zombie survival game

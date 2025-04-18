@@ -26,6 +26,10 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     Rigidbody rigid;
     public Rigidbody GetRigidbody { get { if (rigid == null) rigid = GetComponent<Rigidbody>(); return rigid; } }
 
+    // 애니메이션 인스턴싱 
+    AnimationInstancingController animationInstancingController;
+    public AnimationInstancingController GetInstancingController { get { if (animationInstancingController == null) animationInstancingController = GetComponentInParent<AnimationInstancingController>(); return animationInstancingController; } }
+
     public int ID { get; set; }
 
     Quaternion targetRotation;
@@ -47,6 +51,7 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     public List<ItemStruct> itemStructs = new List<ItemStruct>();
 
     bool focus;
+    public bool isAnimationInstancing;
 
     private void Start()
     {
@@ -98,10 +103,16 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
                     break;
                 case NPCDispositionType.Infected:
                     ZombieAction();
-                    break;
+                    return;
             }
         }
 
+        UpdateAnimation();
+    }
+
+
+    void UpdateAnimation()
+    {
         if (npcStruct.infected)
         {
             modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
@@ -112,7 +123,17 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
             modelAnimator.SetFloat("equip", equip);
             modelAnimator.SetFloat("another", another);
         }
+        if(isAnimationInstancing)
+        {
+            if(GetInstancingController.GetAnimation.GetCurrentAnimationInfo().animationName != "Zombie@Walk01")
+            {
+                GetInstancingController.PlayerAnimation("Zombie@Walk01");
+            }
+          
+        }
     }
+
+
     public void ChangeTagLayer(Transform parent, string newTag, int layerName)
     {
         if (parent != null)
@@ -361,7 +382,11 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
                         StartAnimation("attack", 2);
                     }
-                   
+                    if(isAnimationInstancing)
+                    {
+                        Debug.Log("A");
+                        GetInstancingController.PlayerAnimation("Zombie@Attack");
+                    }
                 }
                 return true;
             }
@@ -422,22 +447,32 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     {
         this.npcStruct = npcStruct;
         GetAgent.speed = npcStruct.speed;
-        if (npcStruct.infected)
+        if (!isAnimationInstancing)
         {
-            modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[2].animator_name];
-            gameObject.layer = 0b1010;
-            gameObject.tag = "Enemy";
-            ChangeTagLayer(GetTransform, "Enemy", 0b1010);
+            if (npcStruct.infected)
+            {
+                modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[2].animator_name];
+                gameObject.layer = 0b1010;
+                gameObject.tag = "Enemy";
+                ChangeTagLayer(GetTransform, "Enemy", 0b1010);
+            }
+            else
+            {
+                modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[1].animator_name];
+                gameObject.layer = 0b1110;
+                gameObject.tag = "NPC";
+                ChangeTagLayer(GetTransform, "NPC", 0b1110);
+            }
         }
         else
         {
-            modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[1].animator_name];
-            gameObject.layer = 0b1110;
-            gameObject.tag = "NPC";
-            ChangeTagLayer(GetTransform, "NPC", 0b1110);
+            GetInstancingController.gameObject.layer = 0b1010; 
+            GetInstancingController.gameObject.tag = "Enemy";
+            ChangeTagLayer(GetInstancingController.transform, "Enemy", 0b1010);
         }
         GetAgent.stoppingDistance = npcStruct.attack_range;
         if (init) this.npcStruct.health = npcStruct.max_health;
+        modelAnimator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
     }
 
 }

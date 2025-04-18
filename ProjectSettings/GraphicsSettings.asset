@@ -105,3 +105,4 @@ GraphicsSettings:
   m_LogWhenShaderIsCompiled: 1 # Enabled - Useful for debugging shader compile times/issues
   # --- Legacy ---
   m_AllowEnlightenSupportForUpgradedProject: 0
+
