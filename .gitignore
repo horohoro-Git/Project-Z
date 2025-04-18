@@ -85,6 +85,9 @@
 /[Aa]ssets/NewPunch.meta
 /[Aa]ssets/[Aa]niInstancing/
 /[Aa]ssets/AniInstancing.meta
+/[Aa]ssetBundles/
+/[Aa]ssets/[Aa]ssetBundle/
+/[Aa]ssets/AssetBundle.meta
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
