@@ -30,6 +30,7 @@ public class WorldGrids : MonoBehaviour
 
     Dictionary<int, GameObject> objects = new Dictionary<int, GameObject>(); //아이템
     Dictionary<int, GameObject> lives = new Dictionary<int, GameObject>(); //적대적 생명체
+    Dictionary<int, GameObject> npcs = new Dictionary<int, GameObject>(); //npc
     Dictionary<int, GameObject> itemBoxes = new Dictionary<int, GameObject>(); //아이템 슬롯
     //NativeHashMap<string>
 
@@ -160,12 +161,16 @@ public class WorldGrids : MonoBehaviour
             case MinimapIconType.Enemy:
                 dic = lives;
                 break;
+            case MinimapIconType.NPC:
+                dic = npcs;
+                break;
             case MinimapIconType.ItemBox:
                 dic = itemBoxes;
                 break;
         }
-        dic[ob.GetInstanceID()] = ob;
-
+        int id = ob.GetInstanceID();
+        ob.GetComponent<IIdentifiable>().ID = id;
+        dic[id] = ob;
       //  IIdentifiable identifiable = ob.GetComponent<IIdentifiable>();
       //  identifiable.ID = 
       /*  if (identifiable.ID == null)
@@ -220,9 +225,12 @@ public class WorldGrids : MonoBehaviour
                 GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Object);
                 break;
             case MinimapIconType.Enemy:
-                Debug.Log(id);
                 lives.Remove(id);
                 GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
+                break;
+            case MinimapIconType.NPC:
+                npcs.Remove(id);
+                GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.NPC);
                 break;
             case MinimapIconType.ItemBox:
                 itemBoxes.Remove(id);
@@ -255,7 +263,6 @@ public class WorldGrids : MonoBehaviour
         {
             returnObjects.Add(obj.Value);
         }
-
         return returnObjects;
     }
 

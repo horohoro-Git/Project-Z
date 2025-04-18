@@ -188,6 +188,7 @@ public enum MinimapIconType
     None,
     Player,
     Enemy,
+    NPC,
     Object,
     ItemBox
 }
@@ -717,6 +718,23 @@ public class Utility
         t = component.GetComponentInParent<T>();
         return t != null;
     }
+
+
+    public static void ChangeTagLayer(Transform parent, string newTag, int layerName)
+    {
+        if (parent != null)
+        {
+            foreach (Transform child in parent)
+            {
+                if (child != null)
+                {
+                    child.gameObject.tag = newTag;
+                    child.gameObject.layer = layerName;
+                    ChangeTagLayer(child, newTag, layerName);
+                }
+            }
+        }
+    }
 }
 
 //UI 인터페이스
@@ -746,6 +764,7 @@ public interface IDamageable
     
     public bool Damaged(int damage, int layer);
 
+    public float DamagedTimer { get; set; }
    // public void Dead();
 }
 

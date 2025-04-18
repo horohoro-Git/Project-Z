@@ -45,7 +45,8 @@ public class GettableItem : Item, IIdentifiable
     void GetItemComplete(PlayerController pc)
     {
         if(!GameInstance.Instance.inventorySystem.AddItem(this)) return;
-        GameInstance.Instance.worldGrids.RemoveObjects(GetInstanceID(), MinimapIconType.Object);
+        GameInstance.Instance.worldGrids.RemoveObjects(ID, MinimapIconType.Object);
+        Debug.Log(ID);
         pc.RemoveAction(GetItem);
         Destroy(this.gameObject);
     }

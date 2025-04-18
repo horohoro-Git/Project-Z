@@ -68,6 +68,7 @@ public class GameManager : MonoBehaviour
         npc.transform.position = new Vector3(2, 0, 1);
         npc.Setup(npcParam, true);
         NPCEventHandler.Publish(1000002, npc);
+        GameInstance.Instance.worldGrids.AddObjects(npc.gameObject, MinimapIconType.NPC, true);
         /*  NPCAvatar npc = Instantiate(AssetLoader.loadedAssets[nPCStruct.npc_asset]).GetComponent<NPCAvatar>();
           npc.Setup(nPCStruct);
           npc.transform.position = new Vector3(2, 0, 1);

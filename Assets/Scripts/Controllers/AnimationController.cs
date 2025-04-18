@@ -17,14 +17,20 @@ public class AnimationController : MonoBehaviour
     {
         if (GetPlayerController != null)
         {
-            GetPlayerController.GetLeftHand.Attack(GetPlayerController.GetPlayer.playerStruct.attackDamage);
-            GetPlayerController.GetLeftHand.Trail(true);
+            if (GetPlayerController.DamagedTimer == 0)
+            {
+                GetPlayerController.GetLeftHand.Attack(GetPlayerController.GetPlayer.playerStruct.attackDamage);
+                GetPlayerController.GetLeftHand.Trail(true);
+            }
         }
 
         if(GetNPCController != null)
         {
-            GetNPCController.GetLeftHand.Attack(50);
-            GetNPCController.GetLeftHand.Trail(true);
+            if (GetNPCController.DamagedTimer == 0)
+            {
+                GetNPCController.GetLeftHand.Attack(50);
+                GetNPCController.GetLeftHand.Trail(true);
+            }
         }
     }
     public void StopLeftPunch()
@@ -45,13 +51,19 @@ public class AnimationController : MonoBehaviour
     {
         if (GetPlayerController != null)
         {
-            GetPlayerController.GetRightHand.Attack(GetPlayerController.GetPlayer.playerStruct.attackDamage);
-            GetPlayerController.GetRightHand.Trail(true);
+            if (GetPlayerController.DamagedTimer == 0)
+            {
+                GetPlayerController.GetRightHand.Attack(GetPlayerController.GetPlayer.playerStruct.attackDamage);
+                GetPlayerController.GetRightHand.Trail(true);
+            }
         }
         if (GetNPCController != null)
         {
-            GetNPCController.GetRightHand.Attack(50);
-            GetNPCController.GetRightHand.Trail(true);
+            if (GetNPCController.DamagedTimer == 0)
+            { 
+                GetNPCController.GetRightHand.Attack(50);
+                GetNPCController.GetRightHand.Trail(true);
+            }
         }
     }
 
@@ -71,8 +83,11 @@ public class AnimationController : MonoBehaviour
 
     public void StartScratch()
     {
-        GetNPCController.GetRightHand.Attack(GetNPCController.npcStruct.attack);
-        GetNPCController.GetRightHand.Trail(true);
+        if (GetNPCController.DamagedTimer == 0)
+        {
+            GetNPCController.GetRightHand.Attack(GetNPCController.npcStruct.attack);
+            GetNPCController.GetRightHand.Trail(true);
+        }
     }
 
     public void StopScratch()
@@ -84,7 +99,10 @@ public class AnimationController : MonoBehaviour
 
     public void StartAxeSlash()
     {
-        GetPlayerController.equipItem.GetComponent<Weapon>().StartAttack();
+        if (GetPlayerController.DamagedTimer == 0)
+        {
+            GetPlayerController.equipItem.GetComponent<Weapon>().StartAttack();
+        }
      //   GetPlayerController.equipWeapon.GetComponent<WeaponTrail>().Trail(true);
       /*  GameObject slash = Instantiate(GetPlayerController.testEffect);
         slash.transform.position = GetPlayerController.Transforms.position;

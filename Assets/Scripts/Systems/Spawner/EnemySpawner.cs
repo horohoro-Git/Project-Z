@@ -72,7 +72,7 @@ public class EnemySpawner : MonoBehaviour
             model.tag = "Enemy";
             model.layer = 0b1010;
             enemy.GetRigidbody.excludeLayers = 0;
-            enemy.ChangeTagLayer(enemy.GetTransform, "Enemy", 0b1010);
+            Utility.ChangeTagLayer(enemy.GetTransform, "Enemy", 0b1010);
             enemy.GetComponent<CapsuleCollider>().excludeLayers = 0;
             enemy.GetLeftHand.boxCollider.excludeLayers = 0b10000000000;
             enemy.GetRightHand.boxCollider.excludeLayers = 0b10000000000;
