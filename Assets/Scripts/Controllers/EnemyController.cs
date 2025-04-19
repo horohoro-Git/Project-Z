@@ -345,7 +345,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     void OpenInventorySystem(PlayerController pc)
     {
         GameInstance.Instance.uiManager.SwitchUI(UIType.BoxInventory, false);
-        GameInstance.Instance.boxInventorySystem.GetOpponentInventory(itemStructs);
+    //    GameInstance.Instance.boxInventorySystem.GetOpponentInventory(itemStructs);
 
     }
 

@@ -4,6 +4,7 @@ using System.Drawing;
 using UMA;
 using UMA.CharacterSystem;
 using UnityEngine;
+using UnityEngineInternal;
 
 public class UMACharacterAvatar : MonoBehaviour
 {
@@ -105,6 +106,8 @@ public class UMACharacterAvatar : MonoBehaviour
     public void AddItem(GameObject itemGO)
     {
         itemObject = Instantiate(itemGO);
+        Destroy(itemObject.GetComponent<Rigidbody>());
+        
         AttachItem attachItem = GetComponentInChildren<AttachItem>();
         itemObject.transform.SetParent(attachItem.transform);
         itemObject.transform.localPosition = Vector3.zero;
@@ -119,4 +122,15 @@ public class UMACharacterAvatar : MonoBehaviour
             itemObject = null;
         }
     }
+
+    public void ShowCharacter(bool on)
+    {
+        GetComponent<Animator>().enabled = on;
+    }
+
+  /*  public void RemoveController()
+    {
+        GetComponent<Animator>().enabled = false;
+        gameObject.AddComponent<Animation>();
+    }*/
 }

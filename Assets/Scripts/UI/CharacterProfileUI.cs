@@ -32,28 +32,33 @@ public class CharacterProfileUI : MonoBehaviour, IPointerUpHandler, IPointerDown
 
     private void OnEnable()
     {
-    /*    if (eventTrigger == null)
+        /*    if (eventTrigger == null)
+            {
+                eventTrigger = gameObject.AddComponent<EventTrigger>();
+                dragStart = new EventTrigger.Entry();
+                dragStart.eventID = EventTriggerType.PointerDown;
+                dragEnter = (eventData) => OnDragEnter();
+
+                dragEnd = new EventTrigger.Entry();
+                dragEnd.eventID = EventTriggerType.PointerUp;
+                dragExit = (eventData) => OnDragExit();
+            }
+            //드래그 시작
+            dragStart.callback.AddListener(dragEnter);
+            eventTrigger.triggers.Add(dragStart);
+
+            //드래그 종료
+            dragEnd.callback.AddListener(dragExit);
+            eventTrigger.triggers.Add(dragEnd);*/
+        if (avatar != null)
         {
-            eventTrigger = gameObject.AddComponent<EventTrigger>();
-            dragStart = new EventTrigger.Entry();
-            dragStart.eventID = EventTriggerType.PointerDown;
-            dragEnter = (eventData) => OnDragEnter();
-
-            dragEnd = new EventTrigger.Entry();
-            dragEnd.eventID = EventTriggerType.PointerUp;
-            dragExit = (eventData) => OnDragExit();
+            avatar.ShowCharacter(true);
         }
-        //드래그 시작
-        dragStart.callback.AddListener(dragEnter);
-        eventTrigger.triggers.Add(dragStart);
-
-        //드래그 종료
-        dragEnd.callback.AddListener(dragExit);
-        eventTrigger.triggers.Add(dragEnd);*/
     }
 
     private void OnDisable()
     {
+        
    /*     if(eventTrigger != null)
         {
             dragStart.callback.RemoveListener(dragEnter);
@@ -66,6 +71,7 @@ public class CharacterProfileUI : MonoBehaviour, IPointerUpHandler, IPointerDown
    */
         if(avatar != null)
         {
+            avatar.ShowCharacter(false);
             avatar.transform.rotation = Quaternion.Euler(0, 180, 0);
         }
     }
@@ -119,8 +125,9 @@ public class CharacterProfileUI : MonoBehaviour, IPointerUpHandler, IPointerDown
 
         avatar.transform.position = new Vector3(1000, 0, 1000);
         avatar.transform.rotation = Quaternion.Euler(0, 180, 0);
-        
-    
+        //    avatar.Invoke("RemoveController", 0.5f);
+        avatar.ShowCharacter(true);
+
     }
     public void AddCloth(int recipeIndex)
     {

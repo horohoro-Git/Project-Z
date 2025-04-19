@@ -24,6 +24,7 @@ public class Tree : EnvironmentObject
     {
         exp = 1;
         animator = GetComponent<Animator>();
+        animator.enabled = false;
         cuttingPlane = new Plane(Vector3.right, transform.position);
     }
     MeshFilter meshFilter;
@@ -101,6 +102,8 @@ public class Tree : EnvironmentObject
         Vector3 dir = transform.position - transforms.position;
         Debug.Log(dir);
         float angle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+
+        animator.enabled = true;
         if (angle >= -45f && angle < 45f) animator.SetInteger("state", 3);
         else if (angle >= 45f && angle < 135f) animator.SetInteger("state", 4);
         else if (angle >= 135f) animator.SetInteger("state", 1);
@@ -140,9 +143,11 @@ public class Tree : EnvironmentObject
             for (int i = 0; i < 3; i++)
             {
                 GameObject go = Instantiate(AssetLoader.loadedAssets[LoadURL.Log]);
+                GettableItem gettableItem = go.GetComponent<GettableItem>();
                 go.transform.position = spawnLocations[i].transform.position; //new Vector3(corners[i].x, corners[i].y + 5f, corners[i].z);
                 go.transform.rotation = upper.transform.rotation;
-                go.GetComponent<Item>().itemStruct = GameInstance.Instance.assetLoader.items[0]; //.itemIndex = 1;
+                gettableItem.itemStruct = ItemData.GetItem(1);// GameInstance.Instance.assetLoader.items[1]; //.itemIndex = 1;
+                gettableItem.GetCapsuleCollider.enabled = true;
                 GameInstance.Instance.worldGrids.AddObjects(go, MinimapIconType.Object, false);
             }
 

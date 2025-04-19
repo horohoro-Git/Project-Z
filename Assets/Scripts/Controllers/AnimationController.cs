@@ -85,6 +85,7 @@ public class AnimationController : MonoBehaviour
     {
         if (GetNPCController.DamagedTimer == 0)
         {
+            Debug.Log("aa");
             GetNPCController.GetRightHand.Attack(GetNPCController.npcStruct.attack);
             GetNPCController.GetRightHand.Trail(true);
         }

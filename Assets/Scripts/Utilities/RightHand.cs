@@ -9,7 +9,7 @@ public class RightHand : MonoBehaviour
     public TrailRenderer GetTrailRenderer {  get { if (trailRenderer == null) trailRenderer = GetComponent<TrailRenderer>(); return trailRenderer; } }
     public BoxCollider boxCollider;
     private Collider[] hitColliders;
-
+    public IDamageable Damageable { get { return GetComponentInParent<IDamageable>(); } }
     bool attacking = false;
     int damage;
     private void Start()
@@ -40,6 +40,15 @@ public class RightHand : MonoBehaviour
     private void FixedUpdate()
     {
         if (!attacking) return;
+
+        if (Damageable != null)
+        {
+            if (Damageable.DamagedTimer > 0)
+            {
+                CancelAttack();
+                return;
+            }
+        }
         Vector3 boxCenter = boxCollider.transform.position;
         Vector3 boxSize = boxCollider.bounds.size;
 
@@ -109,16 +118,22 @@ public class RightHand : MonoBehaviour
         }
         return false;
     }
- /*   private void OnTriggerEnter(Collider other)
+
+    void CancelAttack()
     {
-        if (attacking)
-        {
-            IDamageable damageable = other.GetComponent<IDamageable>();
-            if (damageable != null)
-            {
-                attacking = false;
-                damageable.Damaged(damage);
-            }
-        }
-    }*/
+        Trail(false);
+        StopAttack();
+    }
+    /*   private void OnTriggerEnter(Collider other)
+       {
+           if (attacking)
+           {
+               IDamageable damageable = other.GetComponent<IDamageable>();
+               if (damageable != null)
+               {
+                   attacking = false;
+                   damageable.Damaged(damage);
+               }
+           }
+       }*/
 }

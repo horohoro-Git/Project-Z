@@ -128,12 +128,12 @@ public class BoxInventorySystem : MonoBehaviour, IUIComponent
         inventoryArray[x, y].AddItem(itemStruct, weaponStruct, consumptionStruct, armorStruct, true);
     }
 
-    public void GetOpponentInventory(List<ItemStruct> itemStructs)
+    public void GetOpponentInventory(List<ItemPackageStruct> itemStructs)
     {
         int index = 0;
         for(int i = 0; i < itemStructs.Count; i++)
         {
-            boxInventoryArray[index / 10, index % 10].AddItem(itemStructs[i], new WeaponStruct(), new ConsumptionStruct(), new ArmorStruct(), true);
+            boxInventoryArray[index / 10, index % 10].AddItem(itemStructs[i].itemStruct, itemStructs[i].weaponStruct, itemStructs[i].consumptionStruct, itemStructs[i].armorStruct, true);
             index++;
         }
     }

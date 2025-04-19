@@ -6,6 +6,8 @@ using UnityEngine.Events;
 
 public class GettableItem : Item, IIdentifiable
 {
+    CapsuleCollider capsuleCollider;
+    public CapsuleCollider GetCapsuleCollider {  get { if (capsuleCollider == null) capsuleCollider = GetComponent<CapsuleCollider>(); return capsuleCollider; } }
     public int ID { get; set; }
 
     private void OnTriggerEnter(Collider other)
