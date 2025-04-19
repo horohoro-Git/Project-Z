@@ -26,6 +26,7 @@ public class AllEventFunctions : MonoBehaviour
         AllEventManager.customEvents[2] = (Action)(Hide);
         AllEventManager.customEvents[3] = (Action<PlayerController, Slot, int, bool>)(Equipment);
         AllEventManager.customEvents[4] = (Action<PlayerController, int>)(Dead_Player);
+        AllEventManager.customEvents[5] = (Action<NPCController>)(Dead_NPC);
     }
 
     //1
@@ -163,9 +164,13 @@ public class AllEventFunctions : MonoBehaviour
         {
             for (int j = 0; j < 10; j++)
             {
-                ItemStruct itemStruct = GameInstance.Instance.inventorySystem.inventoryArray[i, j].item;
+                Slot slot = GameInstance.Instance.inventorySystem.inventoryArray[i, j];
+                ItemStruct itemStruct = slot.item;
+                WeaponStruct weaponStruct = slot.weapon;
+                ConsumptionStruct consumption = slot.consumption;
+                ArmorStruct armor = slot.armor;
                 if (itemStruct.item_index == 0) continue;
-                enemyController.itemStructs.Add(itemStruct);
+                enemyController.itemStructs.Add(new ItemPackageStruct(itemStruct,weaponStruct, consumption, armor));
             }
         }
         SaveLoadSystem.SavePlayerData(controller.GetPlayer);
@@ -198,5 +203,24 @@ public class AllEventFunctions : MonoBehaviour
 
         if (controller.playerCamera != null) controller.playerCamera.ResetPlayer();
         Destroy(controller);
+    }
+
+    //5
+    void Dead_NPC(NPCController controller)
+    {
+        GameInstance.Instance.worldGrids.RemoveObjects(controller.ID, controller.npcStruct.infected ? MinimapIconType.Enemy : MinimapIconType.NPC);
+
+        CapsuleCollider capsule = controller.GetComponent<CapsuleCollider>();
+        if (controller.itemStructs.Count > 0)
+        {
+            capsule.isTrigger = true;
+        }
+        else
+        {
+            capsule.enabled = false;
+        }
+        Rigidbody r = controller.GetComponent<Rigidbody>();
+        r.useGravity = false;
+        r.excludeLayers = 0b111111111111111;
     }
 }

@@ -19,7 +19,7 @@ public class AnimationInstancingController : MonoBehaviour
     Dictionary<string, AnimInfo> animations = new Dictionary<string, AnimInfo>();
     private void Start()
     {
-        Invoke("NewStart", 5f);
+        Invoke("NewStart", 1f);
         // GetAnimation.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
         
     }
@@ -38,11 +38,6 @@ public class AnimationInstancingController : MonoBehaviour
         GetAnimation.PlayAnimation("Zombie@Idle01");
 
         //Debug.Log(GetAnimation.GetAnimationInfoList().Count);
-    }
-
-    private void LateUpdate()
-    {
-       
     }
 
     public void StopAnimation()

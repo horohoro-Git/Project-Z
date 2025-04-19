@@ -55,14 +55,22 @@ public class EnemySpawner : MonoBehaviour
         GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
     }
     
-    public void LoadEnemies(Vector3 position, Quaternion rotation, NPCCombatStruct npcCombatStruct, List<ItemStruct> itemStructs, string helmet = "", string chest = "", string arms = "", string legs = "", string feet = "", string cape = "")
+    public void LoadEnemies(Vector3 position, Quaternion rotation, NPCCombatStruct npcCombatStruct, List<ItemPackageStruct> itemStructs, string helmet = "", string chest = "", string arms = "", string legs = "", string feet = "", string cape = "")
     {
         if(npcCombatStruct.infected_player)
         {
             //감염된 플레이어 
 
             GameObject model = Instantiate(AssetLoader.loadedAssets[AssetLoader.humankeys[0]]);
+            model.AddComponent<Rigidbody>();
+            model.AddComponent<NavMeshAgent>();
+            CapsuleCollider capsuleCollider = model.AddComponent<CapsuleCollider>();
+            capsuleCollider.center = new Vector3(0, 0.9f, 0);
+            capsuleCollider.radius = 0.3f;
+            capsuleCollider.height = 1.8f;
+
             NPCController enemy = model.AddComponent<NPCController>();
+            enemy.Setup(npcCombatStruct, false);
 
             //위치 조정
             enemy.GetTransform.position = position;
@@ -77,19 +85,18 @@ public class EnemySpawner : MonoBehaviour
             enemy.GetLeftHand.boxCollider.excludeLayers = 0b10000000000;
             enemy.GetRightHand.boxCollider.excludeLayers = 0b10000000000;
 
-            model.AddComponent<NavMeshAgent>();
-
             enemy.itemStructs = itemStructs;
             enemy.Setup(npcCombatStruct, false);
+            enemy.Invoke("UpdateController", 0.3f);
             GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
-
-            if (enemy.GetCharacterAvatar == null) return; 
-            if(helmet.Length > 0) enemy.GetCharacterAvatar.AddCloth(helmet);
-            if(chest.Length > 0) enemy.GetCharacterAvatar.AddCloth(chest);
-            if(arms.Length > 0) enemy.GetCharacterAvatar.AddCloth(arms);
-            if(legs.Length > 0) enemy.GetCharacterAvatar.AddCloth(legs);
-            if(feet.Length > 0) enemy.GetCharacterAvatar.AddCloth(feet);
-            if(cape.Length > 0) enemy.GetCharacterAvatar.AddCloth(cape);
+            NPCEventHandler.Publish(1000004, enemy);
+            if (enemy.GetCharacterAvatar == null) return;
+            if (helmet.Length > 0) enemy.GetCharacterAvatar.AddCloth(helmet);
+            if (chest.Length > 0) enemy.GetCharacterAvatar.AddCloth(chest);
+            if (arms.Length > 0) enemy.GetCharacterAvatar.AddCloth(arms);
+            if (legs.Length > 0) enemy.GetCharacterAvatar.AddCloth(legs);
+            if (feet.Length > 0) enemy.GetCharacterAvatar.AddCloth(feet);
+            if (cape.Length > 0) enemy.GetCharacterAvatar.AddCloth(cape);
         }
         else
         {
@@ -101,6 +108,7 @@ public class EnemySpawner : MonoBehaviour
             enemy.Setup(npcCombatStruct, false);
             GameInstance.Instance.worldGrids.AddObjects(enemy.gameObject, MinimapIconType.Enemy, true);
 
+            NPCEventHandler.Publish(1000004, enemy);
             //enemyController.Setup();
             if (enemy.GetCharacterAvatar == null) return;
             if (helmet.Length > 0) enemy.GetCharacterAvatar.AddCloth(helmet);

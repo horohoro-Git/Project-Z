@@ -162,7 +162,9 @@ public class AssetLoader : MonoBehaviour
     public async UniTask DownloadAssetBundle()
     {
         string homeUrl = Path.Combine(SaveLoadSystem.LoadServerURL(), "home");
+      //  string homeUrl = SaveLoadSystem.LoadServerURL() + "/" + "home";
         Hash128 bundleHash = SaveLoadSystem.ComputeHash128(System.Text.Encoding.UTF8.GetBytes(homeUrl));
+        Debug.Log(homeUrl);
         if (Caching.IsVersionCached(homeUrl, bundleHash))
         {
             Debug.Log("Asset Found");
@@ -240,7 +242,6 @@ public class AssetLoader : MonoBehaviour
                 nPCCombats[i] = enemy;
 
                 npcCombatStructs[enemy.id] = enemy;
-                Debug.Log(enemy.id);
             }
             List<AchievementStruct> achievementStructs = SaveLoadSystem.GetListData<AchievementStruct>(tableContents["achievement"]);
             for(int i=0; i<achievementStructs.Count;i++)

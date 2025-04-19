@@ -295,6 +295,35 @@ public struct LevelStruct : ITableID<int>
 }
 
 
+public struct ItemPackageStruct
+{
+    public ItemStruct itemStruct;
+    public WeaponStruct weaponStruct;
+    public ConsumptionStruct consumptionStruct;
+    public ArmorStruct armorStruct;
+    public ItemPackageStruct(ItemStruct itemStruct, WeaponStruct weaponStruct, ConsumptionStruct consumptionStruct, ArmorStruct armorStruct)
+    {
+        this.itemStruct = itemStruct;
+        this.weaponStruct = weaponStruct;
+        this.consumptionStruct = consumptionStruct;
+        this.armorStruct = armorStruct;
+    }
+    public void ChangeWeaponStruct(WeaponStruct weaponStruct)
+    {
+        this.weaponStruct = weaponStruct;
+    }
+    public void ChangeArmorStruct(ArmorStruct armorStruct)
+    {
+        this.armorStruct = armorStruct;
+    }
+    public void ChangeConsumptionStruct(ConsumptionStruct consumptionStruct)
+    {
+        this.consumptionStruct = consumptionStruct;
+    }
+
+
+}
+
 //아이템 정보
 [System.Serializable]
 public struct ItemStruct : ITableID<int>

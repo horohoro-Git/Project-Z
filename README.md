@@ -286,3 +286,6 @@ Focusing on overall optimization, including applying animation instancing to zom
 
 04/18
 Zombie's stiffness has been changed to now cancel attacks, and a dummy zombie has been added to add collision detection to attacks
+
+04/19
+Several bug fixes

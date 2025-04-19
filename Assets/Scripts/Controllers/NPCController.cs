@@ -49,10 +49,13 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     List<EnemyController> enemyControllers = new List<EnemyController>();
 
     [NonSerialized]
-    public List<ItemStruct> itemStructs = new List<ItemStruct>();
+    public List<ItemPackageStruct> itemStructs = new List<ItemPackageStruct>();
 
     bool focus;
     public bool isAnimationInstancing;
+
+    HashSet<string> animationTriggers = new HashSet<string>();
+
     private void Start()
     {
     //    ChangeTagLayer(GetTransform, "NPC", 0b1110);
@@ -67,7 +70,7 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
         if (bDead) return;
         if(moveStop)
         {
-            agent.velocity = Vector3.Lerp(agent.velocity, Vector3.zero, Time.deltaTime * 10);
+            GetAgent.velocity = Vector3.Lerp(GetAgent.velocity, Vector3.zero, Time.deltaTime * 10);
         }
         if(DamagedTimer > 0) SpasticityRecovery();
 
@@ -114,15 +117,18 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
     void UpdateAnimation()
     {
-        if (npcStruct.infected)
+        if (!isAnimationInstancing)
         {
-            modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
-        }
-        else
-        {
-            modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
-            modelAnimator.SetFloat("equip", equip);
-            modelAnimator.SetFloat("another", another);
+            if (npcStruct.infected)
+            {
+                modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
+            }
+            else
+            {
+                modelAnimator.SetFloat("speed", GetAgent.velocity.magnitude);
+                modelAnimator.SetFloat("equip", equip);
+                modelAnimator.SetFloat("another", another);
+            }
         }
         if(isAnimationInstancing)
         {
@@ -168,13 +174,20 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     {
         if (animationWorking > 0) return;
         animationWorking++;
-        modelAnimator.SetTrigger(animationName);
+
+        if (animationTriggers.TryGetValue(animationName, out var trigger))
+        {
+            if (!modelAnimator.enabled) modelAnimator.enabled = true;
+            modelAnimator.SetTrigger(animationName);
+        }
+      
 
         Invoke("StopAnimation", timer);
     }
     void StopAnimation()
     {
         animationWorking--;
+        if(isAnimationInstancing) modelAnimator.enabled = false;
     }
 
     void NeturalAction()
@@ -368,7 +381,6 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
                     }
                     if(isAnimationInstancing)
                     {
-                        Debug.Log("A");
                         GetInstancingController.PlayerAnimation("Zombie@Attack");
                     }
                 }
@@ -422,22 +434,26 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
         if(layer != gameObject.layer)
         {
             npcStruct.health -= damage;
+            DamagedTimer = 0.5f;
             if (npcStruct.health <= 0)
             {
                 bDead = true;
                 npcStruct.health = 0;
-                modelAnimator.SetTrigger("zombieDead");
+                if (AllEventManager.customEvents.TryGetValue(5, out var events)) ((Action<NPCController>)events)?.Invoke(this);
+                StartAnimation("zombieDead", 1f);
                 if(isAnimationInstancing)
                 {
                     GetInstancingController.PlayerAnimation("Zombie@Death01_A");
                 }
-                GameInstance.Instance.worldGrids.RemoveObjects(ID, npcStruct.infected ? MinimapIconType.Enemy : MinimapIconType.NPC);
+                GetAgent.isStopped = true;
+                GetAgent.enabled = false;
+              
             }
             else
             {
                 StartAnimation("damaged", 0.5f);
-                DamagedTimer = 0.5f;
-               // modelAnimator.SetTrigger("damaged");
+             
+                // modelAnimator.SetTrigger("damaged");
                 if (isAnimationInstancing)
                 {
                     GetInstancingController.PlayerAnimation("Zombie@Damage01");
@@ -448,6 +464,7 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
     public bool Damaged(int damage, int layer)
     {
+        damage = 100;
         if (gameObject.layer != layer) GetDamage(damage , layer);
         else return false;
         return true;
@@ -488,6 +505,48 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
         GetAgent.stoppingDistance = npcStruct.attack_range;
         if (init) this.npcStruct.health = npcStruct.max_health;
         modelAnimator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
+
+
+        foreach (var param in modelAnimator.parameters)
+        {
+            if (param.type == AnimatorControllerParameterType.Trigger)
+            {
+                animationTriggers.Add(param.name);
+            }
+        }
     }
 
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (bDead && npcStruct.infected_player && itemStructs.Count > 0)
+        {
+            PlayerController pc = other.GetComponent<PlayerController>();
+            if (pc != null)
+            {
+                Debug.LogWarning("w");
+                pc.RegisterAction(OpenInventorySystem);
+            }
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (bDead && npcStruct.infected_player && itemStructs.Count > 0)
+        {
+            PlayerController pc = other.GetComponent<PlayerController>();
+            if (pc != null)
+            {
+                pc.RemoveAction(OpenInventorySystem);
+            }
+        }
+    }
+    void OpenInventorySystem(PlayerController pc)
+    {
+        GameInstance.Instance.uiManager.SwitchUI(UIType.BoxInventory, false);
+        GameInstance.Instance.boxInventorySystem.GetOpponentInventory(itemStructs);
+    }
+    void UpdateController()
+    {
+        modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[2].animator_name];
+    }
 }

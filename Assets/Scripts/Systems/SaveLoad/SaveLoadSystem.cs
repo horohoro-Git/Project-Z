@@ -1014,7 +1014,7 @@ public class SaveLoadSystem
                             NPCCombatStruct combatStruct = new NPCCombatStruct(type, npc_name, asset_name, hp, maxHP, attck, infected, speed, attack_range, drop_item, infected_player, null); ;
                             Vector3 position = new Vector3(x, y, z);
                             Quaternion rotation = new Quaternion(rx, ry, rz, rw);
-                            if (type > 1000)
+                            if (type > 1000 || type == 0)
                             {
                                 string helmet = reader.ReadString();
                                 string chest = reader.ReadString();
@@ -1025,7 +1025,7 @@ public class SaveLoadSystem
 
                                 int count = reader.ReadInt32();
 
-                                List<ItemStruct> itemStructs = new List<ItemStruct>();
+                                List <ItemPackageStruct> itemStructs = new List<ItemPackageStruct>();
                                 for (int i = 0; i < count; i++)
                                 {
                                     int index = reader.ReadInt32();
@@ -1034,9 +1034,51 @@ public class SaveLoadSystem
                                     float weight = reader.ReadSingle();
                                     int slotType = reader.ReadInt32();
                                     int itemType = reader.ReadInt32();
-                                    ItemStruct item = new ItemStruct(index, null, name, assetName, weight, (SlotType)slotType, (ItemType)itemType, null);
-                                    itemStructs.Add(item);
 
+                                    ItemStruct item = new ItemStruct(index, null, name, assetName, weight, (SlotType)slotType, (ItemType)itemType, null);
+
+                                    WeaponStruct weaponStruct = new WeaponStruct();
+                                    ConsumptionStruct consumptionStruct = new ConsumptionStruct();
+                                    ArmorStruct armorStruct = new ArmorStruct();
+
+                                    if ((ItemType)itemType == ItemType.Consumable)
+                                    {
+                                        int consumption_index = reader.ReadInt32();
+                                        ConsumptionType consumption_type = (ConsumptionType)reader.ReadInt32();
+                                        int heal_amount = reader.ReadInt32();
+                                        int energy_amount = reader.ReadInt32();
+                                        float duration = reader.ReadSingle();
+                                        consumptionStruct = new ConsumptionStruct(consumption_index, consumption_type, heal_amount, energy_amount, duration);
+                                    }
+                                    if ((ItemType)itemType == ItemType.Equipmentable)
+                                    {
+                                        int weapon_index = reader.ReadInt32();
+                                        WeaponType weapon_type = (WeaponType)reader.ReadInt32();
+                                        int attack_damage = reader.ReadInt32();
+                                        float attack_spped = reader.ReadSingle();
+                                        int max_ammo = reader.ReadInt32();
+                                        int durability = reader.ReadInt32();
+
+                                        weaponStruct = new WeaponStruct(weapon_index, weapon_type, attack_damage, attack_spped, max_ammo, durability);
+                                    }
+
+
+                                    if ((ItemType)itemType == ItemType.Wearable)
+                                    {
+                                        int item_index = reader.ReadInt32();
+                                        SlotType armor_type = (SlotType)reader.ReadInt32();
+                                        int defense = reader.ReadInt32();
+                                        int durability = reader.ReadInt32();
+                                        int move_speed = reader.ReadInt32();
+                                        int attack_damage = reader.ReadInt32();
+                                        int carrying_capacity = reader.ReadInt32();
+                                        int key_index = reader.ReadInt32();
+                                        armorStruct = new ArmorStruct(item_index, armor_type, defense, durability, carrying_capacity, move_speed, attack_damage, key_index);
+                                    }
+
+                                    ItemPackageStruct itemPackageStruct = new ItemPackageStruct(item, weaponStruct, consumptionStruct, armorStruct);
+
+                                    itemStructs.Add(itemPackageStruct);
                                 }
 
                                 GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, combatStruct, itemStructs, helmet, chest, arms, legs, feet, cape);
@@ -1044,7 +1086,7 @@ public class SaveLoadSystem
                             else
                             {
 
-                                GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, combatStruct, new List<ItemStruct>());
+                                GameInstance.Instance.enemySpawner.LoadEnemies(position, rotation, combatStruct, new List<ItemPackageStruct>());
                             }
                         }
                         GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Enemy);
@@ -1112,7 +1154,7 @@ public class SaveLoadSystem
                     writer.Write(attack_range);
                     writer.Write(drop_item);
                     writer.Write(infected_Player);
-                    if (type > 1000)
+                    if (type > 1000 || type == 0)
                     {
                         UMACharacterAvatar avatar = NC.GetComponentInChildren<UMACharacterAvatar>();
 
@@ -1131,23 +1173,55 @@ public class SaveLoadSystem
                         writer.Write(cape);
 
                         writer.Write(NC.itemStructs.Count);
+
                         //적의 인벤토리
                         for (int i = 0; i < NC.itemStructs.Count; i++)
                         {
-                            int item_index = NC.itemStructs[i].item_index;
-                            string item_name = NC.itemStructs[i].item_name;
-                            string asset_names = NC.itemStructs[i].asset_name;
-                            float item_weight = NC.itemStructs[i].weight;
+                            ItemStruct item = NC.itemStructs[i].itemStruct;
+                            if (item.item_index == 0) continue;
+                      
+                            writer.Write(item.item_index);
+                            writer.Write(item.item_name);
+                            writer.Write(item.asset_name);
+                            writer.Write(item.weight);
+                            writer.Write((int)item.slot_type);
+                            writer.Write((int)item.item_type);
 
-                            int slotType = (int)NC.itemStructs[i].slot_type;
-                            int itemType = (int)NC.itemStructs[i].item_type;
+                            if ((int)item.item_type == 1)
+                            {
+                                //소비 아이템
+                                ConsumptionStruct consumptionStruct = NC.itemStructs[i].consumptionStruct;
+                                writer.Write(consumptionStruct.item_index);
+                                writer.Write((int)consumptionStruct.consumption_type);
+                                writer.Write(consumptionStruct.heal_amount);
+                                writer.Write(consumptionStruct.energy_amount);
+                                writer.Write(consumptionStruct.duration);
+                            }
+                            if ((int)item.item_type == 2)
+                            {
+                                //무기 아이템
+                                WeaponStruct weaponStruct = NC.itemStructs[i].weaponStruct;
+                                writer.Write(weaponStruct.item_index);
+                                writer.Write((int)weaponStruct.weapon_type);
+                                writer.Write(weaponStruct.attack_damage);
+                                writer.Write(weaponStruct.attack_speed);
+                                writer.Write(weaponStruct.max_ammo);
+                                writer.Write(weaponStruct.durability);
+                            }
+                            if ((int)item.item_type == 3)
+                            {
+                                //방어구 아이템
+                                ArmorStruct armorStruct = NC.itemStructs[i].armorStruct;
 
-                            writer.Write(item_index);
-                            writer.Write(item_name);
-                            writer.Write(asset_names);
-                            writer.Write(item_weight);
-                            writer.Write(slotType);
-                            writer.Write(itemType);
+                                writer.Write(armorStruct.item_index);
+                                writer.Write((int)armorStruct.armor_type);
+                                writer.Write(armorStruct.defense);
+                                writer.Write(armorStruct.durability);
+                                writer.Write(armorStruct.move_speed);
+                                writer.Write(armorStruct.attack_damage);
+                                writer.Write(armorStruct.carrying_capacity);
+                                writer.Write(armorStruct.key_index);
+                            }
                         }
                     }
                 }
