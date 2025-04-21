@@ -7,9 +7,13 @@ using UnityEngine;
 public class DrawGrid : MonoBehaviour
 {
     [SerializeField]
-    Material mat;
+    Material highlightMat;
+    [SerializeField]
+    Material gridMat;
     [SerializeField]
     LineRenderer lineRenderer;
+    [SerializeField]
+    Material planeMat;
 
     List<LineRenderer> lines = new List<LineRenderer>();
    // int min = -10;
@@ -24,20 +28,21 @@ public class DrawGrid : MonoBehaviour
     }
     public void Draw()
     {
-        for (int i = 0; i <= 50; i++)
+        planeMat.SetFloat("_EnableGrid", 1);
+
+
+     /*   for (int i = 0; i <= 50; i++)
         {
             LineRenderer horizontalRender = GridManager.GetLine();
-            horizontalRender.name = string.Format("Horizontal {0}", i); 
+            horizontalRender.name = string.Format("Horizontal {0}", i);
 
-           // horizontalRender.material = default;
-           // horizontalRender.enabled = true;
             horizontalRender.startWidth = 0.05f;
             horizontalRender.endWidth = 0.05f;
 
 
             Vector3[] points = new Vector3[2];
             points[0] = new Vector3(-50, 0, i * 2 - 50);
-            points[1] = new Vector3(50 , 0, i * 2 - 50);
+            points[1] = new Vector3(50, 0, i * 2 - 50);
 
             horizontalRender.positionCount = points.Length;
             horizontalRender.SetPositions(points);
@@ -49,30 +54,30 @@ public class DrawGrid : MonoBehaviour
         {
             LineRenderer verticalRenderer = GridManager.GetLine();
             verticalRenderer.name = string.Format("Vertical {0}", i);
-          
+
             verticalRenderer.startWidth = 0.05f;
             verticalRenderer.endWidth = 0.05f;
 
             Vector3[] points = new Vector3[2];
-            points[0] = new Vector3(i * 2 -50, 0, -50);  // 시작점
-            points[1] = new Vector3(i * 2 -50, 0, 50);  // 끝점
+            points[0] = new Vector3(i * 2 - 50, 0, -50);  // 시작점
+            points[1] = new Vector3(i * 2 - 50, 0, 50);  // 끝점
 
             verticalRenderer.positionCount = points.Length;
             verticalRenderer.material = null;
             verticalRenderer.SetPositions(points);
-
             lines.Add(verticalRenderer);
-        }
+        }*/
     }
 
     public void Remove()
     {
-        for(int i=lines.Count-1; i>=0; i--)
+        planeMat.SetFloat("_EnableGrid", 0);
+     /*   for (int i = lines.Count - 1; i >= 0; i--)
         {
             LineRenderer lineRenderer = lines[i];
             lines.RemoveAt(i);
             GridManager.RemoveLine(lineRenderer);
-        }
+        }*/
         RemoveHighlight();
     }
 
@@ -84,10 +89,6 @@ public class DrawGrid : MonoBehaviour
 
     public bool Select(Vector3 selectedCell, ref int x, ref int y)
     {
-        // Debug.Log(selectedCell);
-
-        //     GameObject GO = new GameObject();
-        // LineRenderer line = GO.AddComponent<LineRenderer>();
         int cellX = Mathf.FloorToInt(selectedCell.x / 2);
         int cellY = Mathf.FloorToInt(selectedCell.z / 2);
 
@@ -120,7 +121,7 @@ public class DrawGrid : MonoBehaviour
         // 선 두께 설정
         currentLineRender.startWidth = 0.2f;  // 선의 두께
         currentLineRender.endWidth = 0.2f;
-        currentLineRender.material = mat;
+        currentLineRender.material = highlightMat;
         currentLineRender.textureMode = LineTextureMode.Stretch;
 
         currentLineRender.numCapVertices = 10; // 끝부분의 버텍스를 설정하여 선 끝이 부드럽게 처리됨

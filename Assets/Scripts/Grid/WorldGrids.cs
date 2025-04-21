@@ -250,6 +250,8 @@ public class WorldGrids : MonoBehaviour
         switch (type)
         {
             case MinimapIconType.None:
+                break;
+            case MinimapIconType.Player:
                 dic = playerControllersDic;
                 break;
             case MinimapIconType.Object:
@@ -257,6 +259,9 @@ public class WorldGrids : MonoBehaviour
                 break;
             case MinimapIconType.Enemy:
                 dic = lives;
+                break;
+            case MinimapIconType.NPC:
+                dic = npcs;
                 break;
             case MinimapIconType.ItemBox:
                 dic = itemBoxes;

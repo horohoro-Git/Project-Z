@@ -225,10 +225,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3718998011920925220, guid: 9e1f94aa14470d34d880fb82eb4a4b68, type: 3}
-      propertyPath: far clip plane
-      value: 120
-      objectReference: {fileID: 0}
     - target: {fileID: 8635406779820216838, guid: 9e1f94aa14470d34d880fb82eb4a4b68, type: 3}
       propertyPath: m_Name
       value: Main Camera
@@ -301,7 +297,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: b8d6e967c9d6afd40957adcf62146fc8, type: 2}
+  - {fileID: 2100000, guid: 5deb7675ae2cbe54ca75cff41eec548b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -907,7 +903,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!114 &795207435
 MonoBehaviour:
@@ -956,8 +952,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fbc9957b0fb33b47b04c18c3cbf2fa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mat: {fileID: 2100000, guid: 5b63aa997df7e27428c3f3b8280d80c4, type: 2}
+  highlightMat: {fileID: 2100000, guid: 564bef68c2356ab42bbd06040ab9f8c0, type: 2}
+  gridMat: {fileID: 2100000, guid: 5deb7675ae2cbe54ca75cff41eec548b, type: 2}
   lineRenderer: {fileID: 4074308007586443094, guid: 1b8a91cc249c5e24999d79b8342883cb, type: 3}
+  planeMat: {fileID: 2100000, guid: 5deb7675ae2cbe54ca75cff41eec548b, type: 2}
 --- !u!114 &795207438
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -189,14 +189,14 @@ public class PlayerController : Controller, IDamageable, IIdentifiable
 
         Destroy(go.GetComponent<Rigidbody>());  
         Destroy(go.GetComponent<Collider>());
-        /* GameInstance.Instance.inventorySystem.LoadInvetory(0, 0, ItemData.GetItem(10), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[10]);
-         GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 0, ItemData.GetItem(10), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[10]);
-         GameInstance.Instance.inventorySystem.LoadInvetory(0, 1, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
-         GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 1, ItemData.GetItem(9), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[9]);
+        GameInstance.Instance.inventorySystem.LoadInvetory(0, 0, ItemData.GetItem(1000001), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[1000001]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 0, ItemData.GetItem(1000001), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[1000001]);
+        GameInstance.Instance.inventorySystem.LoadInvetory(0, 1, ItemData.GetItem(1000002), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[1000002]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 1, ItemData.GetItem(1000002), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[1000002]);
 
-         GameInstance.Instance.inventorySystem.LoadInvetory(0, 2, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
-         GameInstance.Instance.boxInventorySystem.LoadInvetory(0,2, ItemData.GetItem(8), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[8]);
- */
+        GameInstance.Instance.inventorySystem.LoadInvetory(0, 2, ItemData.GetItem(1000003), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[1000003]);
+        GameInstance.Instance.boxInventorySystem.LoadInvetory(0, 2, ItemData.GetItem(1000003), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[1000003]);
+
         /*GameInstance.Instance.inventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
         GameInstance.Instance.boxInventorySystem.LoadInvetory(1, 0, ItemData.GetItem(4), new WeaponStruct(), new ConsumptionStruct(), GameInstance.Instance.assetLoader.armors[4]);
 
@@ -467,8 +467,6 @@ public class PlayerController : Controller, IDamageable, IIdentifiable
             turnRotate = true;
             rotateVector = h.point;
         }
-        //    Utility.ChangeAnimatorLayer(modelAnimator, LayerType.Upper, ref latestLayerType);
-       
        
         if (equipItem != null)
         {
@@ -500,11 +498,11 @@ public class PlayerController : Controller, IDamageable, IIdentifiable
             latestLayerType = LayerType.Upper;
             Punch();
             CancelInvoke("StopMotion");
-            Invoke("StopMotion", 1);
+            Invoke("StopMotion", 0.8f);
         }
         combatTimer = Time.time + 5f;
-       
         state = PlayerState.Combat;
+        
     }
     void EndAttack(InputAction.CallbackContext callback)
     {
@@ -684,7 +682,7 @@ public class PlayerController : Controller, IDamageable, IIdentifiable
     public void GetDamage(int damage, int opponentLayer)
     {
         if (state == PlayerState.Dead) return;
-        //GetPlayer.playerStruct.hp -= damage;
+
         GetPlayer.GetDamage(damage);
         DamagedTimer = 0.5f;
         // Utility.ChangeAnimatorLayer(modelAnimator, LayerType.FullBody, ref latestLayerType);
@@ -885,5 +883,15 @@ public class PlayerController : Controller, IDamageable, IIdentifiable
         if(gameObject.layer != layer) GetDamage(damage, layer);
         else return false;
         return true;
+    }
+    public void AddCameraAction()
+    {
+        lookAround = true;
+        playerCamera.lookAround = true;
+    }
+    public void RemoveCameraAction()
+    {
+        lookAround = false;
+        playerCamera.lookAround = false;
     }
 }

@@ -477,8 +477,8 @@ public class Slot : MonoBehaviour, IUIComponent, IPointerEnterHandler, IPointerE
                 {
                     player.WearingArmor(armor, false);
                 }
-                character.AddCloth(armor.key_index);
-                characterProfileUI.AddCloth(armor.key_index);
+                character.AddCloth(armor.item_index);
+                characterProfileUI.AddCloth(armor.item_index);
             }
         }
      

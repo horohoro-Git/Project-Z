@@ -364,6 +364,23 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
                 }
             }
         }
+
+        List<GameObject> npcs = GameInstance.Instance.worldGrids.ReturnObjects(MinimapIconType.NPC);
+
+        for (int i = 0; i < npcs.Count; i++)
+        {
+            float distance = Vector3.Distance(npcs[i].transform.position, GetTransform.position);
+            if (!target) target = npcs[i];
+            else
+            {
+                float dis = Vector3.Distance(target.transform.position, GetTransform.position);
+                if (distance < dis)
+                {
+                    target = npcs[i];
+                }
+            }
+        }
+
         if (target == null) return;
         float targetDistance = Vector3.Distance(transform.position, target.transform.position);
         if (NPCBehavior_Attack(targetDistance, true)) return;
