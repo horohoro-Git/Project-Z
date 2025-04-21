@@ -110,12 +110,12 @@ public class AllEventFunctions : MonoBehaviour
     //4
     void Dead_Player(PlayerController controller, int opponentLayer)
     {
-        controller.modelAnimator.SetTrigger("dead");
+       
         controller.GetPlayer.dead = true;
         controller.state = PlayerState.Dead;
         controller.playerCamera.lookAround = false;
         controller.lookAround = false;
-        GameInstance.Instance.worldGrids.RemovePlayer(controller, ref controller.lastGridX, ref controller.lastGridY);
+        GameInstance.Instance.worldGrids.RemovePlayer(controller.gameObject, ref controller.lastGridX, ref controller.lastGridY);
         controller.Rigid.excludeLayers = 0;
         controller.GetComponent<CapsuleCollider>().excludeLayers = 0;
         controller.Rigid.interpolation = RigidbodyInterpolation.None;

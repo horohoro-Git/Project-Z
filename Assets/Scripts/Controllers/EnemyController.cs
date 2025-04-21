@@ -55,7 +55,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     [NonSerialized]
     public int playerType = 0; //감염된 플레이어가 아니면 0
 
-    List<PlayerController> pcs = new List<PlayerController>(10);
+    List<GameObject> pcs = new List<GameObject>(10);
     public int ID { get; set; }
     public float DamagedTimer { get; set; }
 
@@ -102,7 +102,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
 
             if (target == null)
             {
-                FindPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms, ref pcs));
+            //    FindPlayer(GameInstance.Instance.worldGrids.FindPlayersInGrid(Transforms, ref pcs));
                 return;
             }
 
@@ -135,7 +135,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
     }
 
 
-    void FindPlayer(List<PlayerController> players, bool skipAngle = false)
+    /*void FindPlayer(List<PlayerController> players, bool skipAngle = false)
     {
         int index = 0;
 
@@ -160,7 +160,7 @@ public class EnemyController : Controller, IIdentifiable, IDamageable
                 }
             }
         }
-    }
+    }*/
 
     public void Setup()
     {

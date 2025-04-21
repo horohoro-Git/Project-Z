@@ -289,3 +289,6 @@ Zombie's stiffness has been changed to now cancel attacks, and a dummy zombie ha
 
 04/19
 Several bug fixes
+
+04/20
+Changed animation layers to activate only when necessary, and optimized minimap icons to avoid reinitializing them every tick

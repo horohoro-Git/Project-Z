@@ -5,8 +5,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.XR;
 using UnityEngine.UI;
-public class PlayerController : Controller, IDamageable
+public class PlayerController : Controller, IDamageable, IIdentifiable
 {
 
     RightHand rightHand;
@@ -62,9 +63,14 @@ public class PlayerController : Controller, IDamageable
     public Animator modelAnimator { get { if (animator == null) { animator = model.GetComponent<Animator>(); animator.applyRootMotion = true; Equipment(GameInstance.Instance.quickSlotUI.slots[0], 0); } return animator; } }
 
     public float DamagedTimer { get; set; }
+    public int ID { get; set; }
 
     [NonSerialized]
     public PlayerState state = PlayerState.Default;
+    [NonSerialized]
+    public LayerType layerType = LayerType.Default;
+    [NonSerialized]
+    public LayerType latestLayerType = LayerType.Default;
     float combatTimer;
     Coroutine combatMotion;
 
@@ -93,6 +99,8 @@ public class PlayerController : Controller, IDamageable
 
     public GameObject testEffect;
 
+    Coroutine upperCoroutine;
+    Coroutine fullbodyCoroutine;
 
     public void SetController(GameObject go, bool load, bool human = true)
     {
@@ -164,7 +172,14 @@ public class PlayerController : Controller, IDamageable
             }
             GameInstance.Instance.characterProfileUI.CreateCharacter(load, go);
             GameInstance.Instance.inventorySystem.UseItem(this, equipSlotIndex);
-            GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY, true);
+            GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this.gameObject, ref lastGridX, ref lastGridY, true);
+           
+            modelAnimator.SetLayerWeight(1, 0);
+            modelAnimator.SetLayerWeight(2, 0);
+            modelAnimator.SetLayerWeight(3, 0);
+            modelAnimator.SetLayerWeight(4, 0);
+            modelAnimator.SetLayerWeight(5, 0);
+            modelAnimator.SetLayerWeight(6, 0);
         }
         else
         {
@@ -291,10 +306,10 @@ public class PlayerController : Controller, IDamageable
         if (state == PlayerState.Dead) return;
       
         LastPosition = Transforms.position;
-        GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this, ref lastGridX, ref lastGridY, false);
-    
-       
-        if(animationWorking > 0)
+        GameInstance.Instance.worldGrids.UpdatePlayerInGrid(this.gameObject, ref lastGridX, ref lastGridY, false);
+
+        if (DamagedTimer > 0) SpasticityRecovery();
+        if (animationWorking > 0)
         {
             modelAnimator.SetFloat("lookAround", 0);
         }
@@ -329,14 +344,41 @@ public class PlayerController : Controller, IDamageable
             modelAnimator.SetFloat("dir", viewVelocity);
            
         }
-     
+
+        if (animationWorking == 0) CombatMotion();
+    }
+
+    IEnumerator ChangeSmooth(int layer, float target)
+    {
+        float timer = 1 - target;
+        bool increase = timer > 0 ? false : true;
+        while(true)
+        {
+            if (increase)
+            {
+                timer += Time.deltaTime * 4;
+                modelAnimator.SetLayerWeight(layer, timer);
+                if (timer > target) break;
+            }
+            else
+            {
+                timer -= Time.deltaTime * 4;
+                modelAnimator.SetLayerWeight(layer, timer);
+                if (timer < target) break;
+            }
+            yield return null;
+        }
+    }
+
+    void CombatMotion()
+    {
         if (state == PlayerState.Combat)
         {
             motion += Time.deltaTime;
             motion = motion > 1 ? 1 : motion;
             modelAnimator.SetFloat("combatMotion", motion);
         }
-        else if(state == PlayerState.Default)
+        else if (state == PlayerState.Default)
         {
             motion -= Time.deltaTime;
             motion = motion < 0 ? 0 : motion;
@@ -425,8 +467,9 @@ public class PlayerController : Controller, IDamageable
             turnRotate = true;
             rotateVector = h.point;
         }
+        //    Utility.ChangeAnimatorLayer(modelAnimator, LayerType.Upper, ref latestLayerType);
        
-
+       
         if (equipItem != null)
         {
             if (equipItem.itemStruct.item_type == ItemType.Equipmentable)  //무기
@@ -437,24 +480,30 @@ public class PlayerController : Controller, IDamageable
                     case WeaponType.None:
                         break;
                     case WeaponType.Axe:
+                        if (latestLayerType != LayerType.Default) StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+                        fullbodyCoroutine = StartCoroutine(ChangeSmooth((int)LayerType.FullBody, 1));
+                        latestLayerType = LayerType.FullBody;
                         StartAnimation("cut", 1);
                         break;
                 }
             }
             else if(equipItem.itemStruct.item_type == ItemType.Consumable) //음식 소모
             {
-                Debug.Log("Work");
                 Invoke("Consumption", 1.7f);
                 StartAnimation("eating", 1.8f);
             }
         }
         else //주먹으로 공격
         {
+            if (latestLayerType != LayerType.Default) StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+            upperCoroutine = StartCoroutine(ChangeSmooth((int)LayerType.Upper, 1));
+            latestLayerType = LayerType.Upper;
             Punch();
             CancelInvoke("StopMotion");
             Invoke("StopMotion", 1);
         }
         combatTimer = Time.time + 5f;
+       
         state = PlayerState.Combat;
     }
     void EndAttack(InputAction.CallbackContext callback)
@@ -472,7 +521,7 @@ public class PlayerController : Controller, IDamageable
         }
         else
         {
-            StartAnimation("punchRight", 0.8f);
+            StartAnimation("punchRight",0.8f);
           //  GetRightHand.GetWeaponTrail.Trail(true);
         }
     }
@@ -488,8 +537,11 @@ public class PlayerController : Controller, IDamageable
         if (animationWorking > 0) return;
 
         getItemAction = action;
-        StartAnimation("item", 0.8f);
-        Invoke("StopMotion", 1.117f);
+        if (latestLayerType != LayerType.Default) StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+        upperCoroutine = StartCoroutine(ChangeSmooth((int)LayerType.Upper, 1));
+        StartAnimation("item", 0.8f, 1.117f);
+       // StartAnimation("item", 1.117f);
+       // Invoke("StopMotion", 1.117f);
         Invoke("GetItem_Callback", 0.2f);
     }
     void GetItem_Callback()
@@ -577,9 +629,9 @@ public class PlayerController : Controller, IDamageable
         GameInstance.Instance.inventorySystem.UseItem(this, equipSlotIndex);
     }
 
-    void StartAnimation(string animationName, float timer)
+    void StartAnimation(string animationName, float timer, bool foced = false)
     {
-        if (animationWorking > 0) return;
+        if (animationWorking > 0 && !foced) return;
         animationWorking++;
         modelAnimator.SetTrigger(animationName);
        
@@ -587,10 +639,46 @@ public class PlayerController : Controller, IDamageable
         Invoke("StopAnimation", timer);
     }
 
-    void StopAnimation()
+    void StartAnimation(string animationName, float firstTimer, float secondTimer, bool foced = false)
     {
+        if (animationWorking > 0 && !foced) return;
+        animationWorking++;
+        modelAnimator.SetTrigger(animationName);
+
+        canMove++;
+
+        
+
+        Invoke("StopAnimation_Working", firstTimer);
+        Invoke("StopAnimation_Layer", secondTimer);
+    }
+
+    void StopAnimation_Working()
+    {
+        if (GetPlayer.dead) return;
         canMove--;
         animationWorking--;
+    }
+    void StopAnimation_Layer()
+    {
+        if (GetPlayer.dead) return;
+        if (latestLayerType != LayerType.Default) StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+
+        latestLayerType = LayerType.Default;
+    }
+
+    void StopAnimation()
+    {
+        if(GetPlayer.dead) return;
+        canMove--;
+        animationWorking--;
+       // if(animationWorking == 0) Utility.ChangeAnimatorLayer(modelAnimator, LayerType.Default, ref latestLayerType);
+       // if (animationWorking == 0)
+        {
+            if (latestLayerType != LayerType.Default) StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+
+            latestLayerType = LayerType.Default;
+        }
     }
 
     public void GetDamage(int damage, int opponentLayer)
@@ -598,8 +686,21 @@ public class PlayerController : Controller, IDamageable
         if (state == PlayerState.Dead) return;
         //GetPlayer.playerStruct.hp -= damage;
         GetPlayer.GetDamage(damage);
+        DamagedTimer = 0.5f;
+        // Utility.ChangeAnimatorLayer(modelAnimator, LayerType.FullBody, ref latestLayerType);
+        if (latestLayerType != LayerType.Default)
+        {
+            if(upperCoroutine != null) StopCoroutine(upperCoroutine);
+            modelAnimator.SetLayerWeight((int)latestLayerType, 0);
+         //   upperCoroutine = StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+        }
+        if (fullbodyCoroutine != null) StopCoroutine(fullbodyCoroutine);
+        modelAnimator.SetLayerWeight((int)LayerType.FullBody, 1);
+    //    fullbodyCoroutine = StartCoroutine(ChangeSmooth((int)LayerType.FullBody, 1));
+        latestLayerType = LayerType.FullBody;
         if (GetPlayer.playerStruct.hp <= 0)
         {
+            StartAnimation("dead", 10f, true);
             if (AllEventManager.customEvents.TryGetValue(4, out var events)) ((Action<PlayerController, int>)events)?.Invoke(this, opponentLayer);
            /* modelAnimator.SetTrigger("dead");
             GetPlayer.dead = true;
@@ -654,15 +755,20 @@ public class PlayerController : Controller, IDamageable
         }
         else
         {
-            modelAnimator.SetTrigger("hit");
+            StartAnimation("hit", 0.5f, true);
+          //  modelAnimator.SetTrigger("hit");
            // modelAnimator.SetTrigger("dead");
-            Invoke("StopAnimation", 0.5f);
-            Invoke("StopMotion", 0.667f);
+           // Invoke("StopAnimation", 0.5f);
+          //  Invoke("StopMotion", 0.667f);
         }
-        canMove++;
-        animationWorking++;
+       // canMove++;
+       // animationWorking++;
     }
-
+    public void SpasticityRecovery()
+    {
+        DamagedTimer -= Time.deltaTime;
+        if (DamagedTimer <= 0) DamagedTimer = 0;
+    }
     void Infected()
     {
         //감염되어 일어나는 애니메이션
@@ -721,7 +827,9 @@ public class PlayerController : Controller, IDamageable
         Inputs.actions["Attack"].performed -= Attack;
         Inputs.actions["Attack"].canceled -= EndAttack;*/
         //   Inputs.DeactivateInput();
-         Destroy(GetComponent<PlayerInput>());
+        modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[2].animator_name];
+
+        Destroy(GetComponent<PlayerInput>());
 
          RemoveAction();
          Inputs.actions["OpenInventory"].performed -= OpenInventory;
