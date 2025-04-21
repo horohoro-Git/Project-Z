@@ -248,11 +248,13 @@ public class InputManager : MonoBehaviour
                     {
                         pc.lookAround = false;
                         camera.lookAround = false;
+                        pc.modelAnimator.SetLayerWeight(3, 0);
                     }
                     else
                     {
                         pc.lookAround = true;
                         camera.lookAround = true;
+                        pc.modelAnimator.SetLayerWeight(3, 1);
                     }
                 }
             }

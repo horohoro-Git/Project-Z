@@ -26,10 +26,13 @@ public class MinimapUI : MonoBehaviour
     Queue<MinimapIcon> deactivatedMinimapIcons = new Queue<MinimapIcon>(50);
     Queue<MinimapIcon> activatedMinimapIcons = new Queue<MinimapIcon>(50);
 
+    List<GameObject> players = new List<GameObject>();
     List<GameObject> gameObjects = new List<GameObject>();
     List<GameObject> lives = new List<GameObject>();
     List<GameObject> itemBoxes = new List<GameObject>();
 
+    Dictionary<int, MinimapIcon> icons = new Dictionary<int, MinimapIcon>();
+    Dictionary<int, MinimapIcon> destroyIcons = new Dictionary<int, MinimapIcon>();
     // Start is called before the first frame update
     private void Awake()
     {
@@ -44,11 +47,24 @@ public class MinimapUI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RemoveIcons();
+        destroyIcons = new Dictionary<int, MinimapIcon>(icons);
+       // RemoveIcons();
         if (GameInstance.Instance.GetPlayers.Count > 0)
         {
+            int playerId = GameInstance.Instance.GetPlayers[0].GetComponent<IIdentifiable>().ID;
             Transform transforms = GameInstance.Instance.GetPlayers[0].Transforms;
-            MinimapIcon playerIcon = CreateIcon();
+
+            MinimapIcon playerIcon;
+            if (icons.ContainsKey(playerId))
+            {
+                playerIcon = icons[playerId];
+                destroyIcons.Remove(playerId);
+            }
+            else
+            {
+                playerIcon = CreateIcon();
+                icons[playerId] = playerIcon;
+            }
             playerIcon.image.sprite = playerSprite;
             playerIcon.GetRectTransform.SetParent(playerRectTransform);
             playerIcon.GetRectTransform.localPosition = Vector3.zero; //플레이어 위치 중앙 기준
@@ -67,7 +83,18 @@ public class MinimapUI : MonoBehaviour
                     Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
                     if(rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
                     {
-                        MinimapIcon itemIcon = CreateIcon();
+                        int objectId = gameObjects[i].GetComponent<IIdentifiable>().ID;
+                        MinimapIcon itemIcon;
+                        if (icons.ContainsKey(objectId))
+                        {
+                            itemIcon = icons[objectId];
+                            destroyIcons.Remove(objectId);
+                        }
+                        else
+                        {
+                            itemIcon = CreateIcon();
+                            icons[objectId] = itemIcon;
+                        }
                         itemIcon.image.sprite = itemSprite;
                         itemIcon.GetRectTransform.SetParent(objectRectTransform);
                         itemIcon.GetRectTransform.localPosition = rotatedPosition;
@@ -88,7 +115,18 @@ public class MinimapUI : MonoBehaviour
                     Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
                     if (rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
                     {
-                        MinimapIcon enemyIcon = CreateIcon();
+                        int enemyId = lives[i].GetComponent<IIdentifiable>().ID;
+                        MinimapIcon enemyIcon;
+                        if (icons.ContainsKey(enemyId))
+                        {
+                            enemyIcon = icons[enemyId];
+                            destroyIcons.Remove(enemyId);
+                        }
+                        else
+                        {
+                            enemyIcon = CreateIcon();
+                            icons[enemyId] = enemyIcon;
+                        }
                         enemyIcon.image.sprite = enemySprite;
                         enemyIcon.GetRectTransform.SetParent(enemyRectTransform);
                         enemyIcon.GetRectTransform.localPosition = rotatedPosition;
@@ -107,7 +145,18 @@ public class MinimapUI : MonoBehaviour
                     Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
                     if (rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
                     {
-                        MinimapIcon boxIcon = CreateIcon();
+                        int boxId = itemBoxes[i].GetComponent<IIdentifiable>().ID;
+                        MinimapIcon boxIcon;
+                        if (icons.ContainsKey(boxId))
+                        {
+                            boxIcon = icons[boxId];
+                            destroyIcons.Remove(boxId);
+                        }
+                        else
+                        {
+                            boxIcon = CreateIcon();
+                            icons[boxId] = boxIcon;
+                        }
                         boxIcon.image.sprite = itemBoxSprite;
                         boxIcon.GetRectTransform.SetParent(objectRectTransform);
                         boxIcon.GetRectTransform.localPosition = rotatedPosition;
@@ -117,6 +166,7 @@ public class MinimapUI : MonoBehaviour
                 }
             }
         }
+        RemoveIcons();
     }
 
 
@@ -127,6 +177,7 @@ public class MinimapUI : MonoBehaviour
             case MinimapIconType.None:
                 break;
             case MinimapIconType.Player:
+                players = GameInstance.Instance.worldGrids.ReturnObjects(minimapIconType);
                 break;
             case MinimapIconType.Enemy:
                 lives = GameInstance.Instance.worldGrids.ReturnObjects(minimapIconType);
@@ -157,21 +208,36 @@ public class MinimapUI : MonoBehaviour
         {
             MinimapIcon newIcon = deactivatedMinimapIcons.Dequeue();
             newIcon.gameObject.SetActive(true);
-            activatedMinimapIcons.Enqueue(newIcon);
+           // activatedMinimapIcons.Enqueue(newIcon);
             return newIcon;
         }
         else
         {
             MinimapIcon newIcon = Instantiate(icon);
             newIcon.gameObject.SetActive(true);
-            activatedMinimapIcons.Enqueue(newIcon);
+            //activatedMinimapIcons.Enqueue(newIcon);
             return newIcon;
         }
     }
 
     void RemoveIcons()
     {
-        while (activatedMinimapIcons.Count > 0)
+        foreach(KeyValuePair<int, MinimapIcon> keyValuePair in destroyIcons)
+        {
+            MinimapIcon minimapIcon = keyValuePair.Value;
+            if (icons.ContainsKey(keyValuePair.Key)) icons.Remove(keyValuePair.Key);
+
+            if (deactivatedMinimapIcons.Count > 50)
+            {
+                Destroy(minimapIcon);
+            }
+            else
+            {
+                minimapIcon.gameObject.SetActive(false);
+                deactivatedMinimapIcons.Enqueue(minimapIcon);
+            }
+        }
+       /* while (activatedMinimapIcons.Count > 0)
         {
             MinimapIcon minimapIcon = activatedMinimapIcons.Dequeue();
 
@@ -184,7 +250,7 @@ public class MinimapUI : MonoBehaviour
                 minimapIcon.gameObject.SetActive(false);
                 deactivatedMinimapIcons.Enqueue(minimapIcon);
             }
-        }
+        }*/
     }
 
     private void OnDestroy()

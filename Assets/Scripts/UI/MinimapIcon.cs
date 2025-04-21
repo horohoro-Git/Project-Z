@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,8 @@ using UnityEngine.UI;
 
 public class MinimapIcon : MonoBehaviour
 {
-
+    [NonSerialized]
+    public int ID;
     public Image image;
 
     RectTransform rectTransforms;

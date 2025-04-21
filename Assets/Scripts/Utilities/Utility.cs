@@ -699,6 +699,13 @@ public struct CustomEvent<T>
 
 }
 
+public enum LayerType
+{
+    Default,
+    Upper,
+    FullBody
+}
+
 public class Utility
 {
 
@@ -748,7 +755,6 @@ public class Utility
         return t != null;
     }
 
-
     public static void ChangeTagLayer(Transform parent, string newTag, int layerName)
     {
         if (parent != null)
@@ -764,6 +770,17 @@ public class Utility
             }
         }
     }
+
+    /*public static void ChangeAnimatorLayer(Animator animator, LayerType targetLayer, ref LayerType currentLayer)
+    {
+        if(animator != null)
+        {
+           // if(currentLayer != LayerType.Default) animator.SetLayerWeight((int)currentLayer, 0);
+          //  if (targetLayer != LayerType.Default) animator.SetLayerWeight((int)targetLayer, 1);
+            currentLayer = targetLayer;
+        }
+    }*/
+  
 }
 
 //UI 인터페이스

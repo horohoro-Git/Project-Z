@@ -4,6 +4,7 @@ using System;
 using UnityEngine.AI;
 using UnityEngine.UIElements;
 using Unity.VisualScripting;
+using System.Collections;
 public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 {
     UMACharacterAvatar characterAvatar;
@@ -30,6 +31,8 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     AnimationInstancingController animationInstancingController;
     public AnimationInstancingController GetInstancingController { get { if (animationInstancingController == null) animationInstancingController = GetComponentInParent<AnimationInstancingController>(); return animationInstancingController; } }
 
+    [NonSerialized]
+    public LayerType latestLayerType = LayerType.Default;
     public int ID { get; set; }
     public float DamagedTimer { get; set; }
 
@@ -55,6 +58,8 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     public bool isAnimationInstancing;
 
     HashSet<string> animationTriggers = new HashSet<string>();
+    Coroutine upperCoroutine;
+    Coroutine fullbodyCoroutine;
 
     private void Start()
     {
@@ -62,6 +67,7 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
        
         GetAgent.acceleration = 4;
         GetAgent.angularSpeed = 360;
+        GetAgent.radius = 0.2f;
      
     }
     //  List<Vector3> positions = new List<Vector3>();
@@ -76,20 +82,24 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
         targetRotation = new Quaternion();
 
-        if (animationWorking > 0) return;
-
-        if (target != null &&  focus)
+        if (animationWorking > 0)
+        {
+            GetAgent.velocity = Vector3.Lerp(GetAgent.velocity, Vector3.zero, Time.deltaTime * 10);
+            if(!isAnimationInstancing) UpdateAnimation();
+            return;
+        }
+        if (target != null && focus)
         {
             Vector3 direction = target.transform.position - GetTransform.position;
             targetRotation = Quaternion.LookRotation(direction);
             targetRotation = Quaternion.Euler(0, targetRotation.eulerAngles.y, 0);
-            GetTransform.rotation = Quaternion.Slerp(GetTransform.rotation, targetRotation, 5 * Time.deltaTime);
+            GetTransform.rotation = Quaternion.Slerp(GetTransform.rotation, targetRotation, 10 * Time.deltaTime);
         }
         if (next + last < Time.time)
         {
             last = Time.time;
             //  next = UnityEngine.Random.Range(0.3f, 0.8f);
-            next = 0.1f;
+            next = 0.05f;
             target = null;
 
             switch (eventStruct.npc_disposition)
@@ -170,9 +180,9 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
         }
     }
 
-    void StartAnimation(string animationName, float timer)
+    void StartAnimation(string animationName, float timer, bool forced = false)
     {
-        if (animationWorking > 0) return;
+        if (animationWorking > 0 && !forced) return;
         animationWorking++;
 
         if (animationTriggers.TryGetValue(animationName, out var trigger))
@@ -186,8 +196,14 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     }
     void StopAnimation()
     {
+        if(bDead) return;
         animationWorking--;
-        if(isAnimationInstancing) modelAnimator.enabled = false;
+        if (isAnimationInstancing) modelAnimator.enabled = false;
+        else
+        {
+            if (latestLayerType != LayerType.Default) StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+            latestLayerType = LayerType.Default;
+        }
     }
 
     void NeturalAction()
@@ -219,14 +235,14 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
     void FriendlyAction()
     {
-        Dictionary<int, PlayerController> players = GameInstance.Instance.worldGrids.FindPlayerDictinary();
+        Dictionary<int, GameObject> players = GameInstance.Instance.worldGrids.FindPlayerDictinary();
 
         float d = 0;
 
-        foreach (KeyValuePair<int, PlayerController> player in players)
+        foreach (KeyValuePair<int, GameObject> player in players)
         {
-            PlayerController pc = player.Value;
-            float distance = Vector3.Distance(pc.Transforms.position, GetTransform.position);
+            GameObject pc = player.Value;
+            float distance = Vector3.Distance(pc.transform.position, GetTransform.position);
 
             if (!target)
             {
@@ -287,14 +303,14 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
     void HositleAction()
     {
-        Dictionary<int, PlayerController> players = GameInstance.Instance.worldGrids.FindPlayerDictinary();
+        Dictionary<int, GameObject> players = GameInstance.Instance.worldGrids.FindPlayerDictinary();
 
         Dictionary<int, GameObject> list = GameInstance.Instance.worldGrids.FindEnemiesInGrid();
        
-        foreach (KeyValuePair<int, PlayerController> player in players)
+        foreach (KeyValuePair<int, GameObject> player in players)
         {
-            PlayerController pc = player.Value;
-            float distance = Vector3.Distance(pc.Transforms.position, GetTransform.position);
+            GameObject pc = player.Value;
+            float distance = Vector3.Distance(pc.transform.position, GetTransform.position);
 
             if (!target) target = pc.gameObject;
             else
@@ -332,11 +348,11 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
     void ZombieAction()
     {
-        Dictionary<int, PlayerController> players = GameInstance.Instance.worldGrids.FindPlayerDictinary();
-        foreach (KeyValuePair<int, PlayerController> player in players)
+        Dictionary<int, GameObject> players = GameInstance.Instance.worldGrids.FindPlayerDictinary();
+        foreach (KeyValuePair<int, GameObject> player in players)
         {
-            PlayerController pc = player.Value;
-            float distance = Vector3.Distance(pc.Transforms.position, GetTransform.position);
+            GameObject pc = player.Value;
+            float distance = Vector3.Distance(pc.transform.position, GetTransform.position);
 
             if (!target) target = pc.gameObject;
             else
@@ -369,18 +385,27 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
 
                 if (angledifference < 10)
                 {
-                    another = UnityEngine.Random.Range(0, 2);
-                    if(eventStruct.npc_disposition == NPCDispositionType.Infected)
+                    if (!isAnimationInstancing)
                     {
-                        StartAnimation("scratch", 2);
-                    }
-                    else
-                    {
-
-                        StartAnimation("attack", 2);
+                        another = UnityEngine.Random.Range(0, 2);
+                        if (eventStruct.npc_disposition == NPCDispositionType.Infected)
+                        {
+                            if (latestLayerType != LayerType.Default) StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+                            fullbodyCoroutine = StartCoroutine(ChangeSmooth((int)LayerType.Upper, 1));
+                            latestLayerType = LayerType.Upper;
+                            StartAnimation("scratch", 2);
+                        }
+                        else
+                        {
+                            if (latestLayerType != LayerType.Default) StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+                            fullbodyCoroutine = StartCoroutine(ChangeSmooth((int)LayerType.Upper, 1));
+                            latestLayerType = LayerType.Upper;
+                            StartAnimation("attack", 0.8f);
+                        }
                     }
                     if(isAnimationInstancing)
                     {
+                        StartAnimation("scratch", 2);
                         GetInstancingController.PlayerAnimation("Zombie@Attack");
                     }
                 }
@@ -392,7 +417,7 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     }
     bool NPCBehavior_Follow(float distance, bool friendly)
     {
-        if(distance > 1.2f && distance <= 40 || friendly && distance > 1.2f)
+        if(distance > 1f && distance <= 40 || friendly && distance > 1f)
         {
             focus = false;
             GetAgent.isStopped = false;
@@ -427,20 +452,35 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     {
         if (layer == 0b0011 && eventStruct.npc_disposition != NPCDispositionType.Infected && eventStruct.npc_disposition != NPCDispositionType.Hostile)
         {
-            Debug.Log("Hostile");
             NPCEventHandler.Publish(1000003, this);
         }
 
-        if(layer != gameObject.layer)
+        if (layer != gameObject.layer)
         {
             npcStruct.health -= damage;
             DamagedTimer = 0.5f;
+
+            if (!isAnimationInstancing)
+            {
+                if (latestLayerType != LayerType.Default)
+                {
+                    if (upperCoroutine != null) StopCoroutine(upperCoroutine);
+                    modelAnimator.SetLayerWeight((int)latestLayerType, 0);
+                    //   upperCoroutine = StartCoroutine(ChangeSmooth((int)latestLayerType, 0));
+                }
+                if (fullbodyCoroutine != null) StopCoroutine(fullbodyCoroutine);
+                modelAnimator.SetLayerWeight((int)LayerType.FullBody, 1);
+
+                //    fullbodyCoroutine = StartCoroutine(ChangeSmooth((int)LayerType.FullBody, 1));
+                latestLayerType = LayerType.FullBody;
+            }
             if (npcStruct.health <= 0)
             {
                 bDead = true;
                 npcStruct.health = 0;
                 if (AllEventManager.customEvents.TryGetValue(5, out var events)) ((Action<NPCController>)events)?.Invoke(this);
-                StartAnimation("zombieDead", 1f);
+                if (npcStruct.infected) StartAnimation("zombieDead", 1f, true);
+                else StartAnimation("dead", 10f, true);
                 if(isAnimationInstancing)
                 {
                     GetInstancingController.PlayerAnimation("Zombie@Death01_A");
@@ -451,20 +491,16 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
             }
             else
             {
-                StartAnimation("damaged", 0.5f);
-             
-                // modelAnimator.SetTrigger("damaged");
-                if (isAnimationInstancing)
-                {
-                    GetInstancingController.PlayerAnimation("Zombie@Damage01");
-                }
+
+                if (isAnimationInstancing) GetInstancingController.PlayerAnimation("Zombie@Damage01");
+                StartAnimation("damaged", 0.5f, true);
             }
         }
     }
 
     public bool Damaged(int damage, int layer)
     {
-        damage = 100;
+        damage = 50;
         if (gameObject.layer != layer) GetDamage(damage , layer);
         else return false;
         return true;
@@ -501,7 +537,10 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
             GetInstancingController.gameObject.layer = 0b1010; 
             GetInstancingController.gameObject.tag = "Enemy";
             Utility.ChangeTagLayer(GetInstancingController.transform, "Enemy", 0b1010);
+
         }
+    //    modelAnimator.SetLayerWeight(1, 0);
+     //   modelAnimator.SetLayerWeight(2, 0);
         GetAgent.stoppingDistance = npcStruct.attack_range;
         if (init) this.npcStruct.health = npcStruct.max_health;
         modelAnimator.cullingMode = AnimatorCullingMode.CullUpdateTransforms;
@@ -524,7 +563,6 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
             PlayerController pc = other.GetComponent<PlayerController>();
             if (pc != null)
             {
-                Debug.LogWarning("w");
                 pc.RegisterAction(OpenInventorySystem);
             }
         }
@@ -548,5 +586,28 @@ public class NPCController : MonoBehaviour, IDamageable, IIdentifiable
     void UpdateController()
     {
         modelAnimator.runtimeAnimatorController = AssetLoader.animators[GameInstance.Instance.assetLoader.animatorKeys[2].animator_name];
+        modelAnimator.SetLayerWeight(1, 0);
+        modelAnimator.SetLayerWeight(2, 0);
+    }
+    IEnumerator ChangeSmooth(int layer, float target)
+    {
+        float timer = 1 - target;
+        bool increase = timer > 0 ? false : true;
+        while (true)
+        {
+            if (increase)
+            {
+                timer += Time.deltaTime * 4;
+                modelAnimator.SetLayerWeight(layer, timer);
+                if (timer > target) break;
+            }
+            else
+            {
+                timer -= Time.deltaTime * 4;
+                modelAnimator.SetLayerWeight(layer, timer);
+                if (timer < target) break;
+            }
+            yield return null;
+        }
     }
 }

@@ -22,8 +22,8 @@ public class WorldGrids : MonoBehaviour
     private int indexingMaxY;
     int sizeX;
     int sizeY;
-    List<PlayerController>[,] players;
-    Dictionary<int, PlayerController> playerControllersDic = new Dictionary<int, PlayerController>();
+    List<GameObject>[,] players;
+    Dictionary<int, GameObject> playerControllersDic = new Dictionary<int, GameObject>();
   //  int layerMask = 1 << 3; 
     int[] findX = new int[9] {0, 1, 1, 0,-1,-1,-1,0,1 };
     int[] findY = new int[9] {0, 0, -1, -1,-1, 0, 1, 1, 1 };
@@ -44,32 +44,34 @@ public class WorldGrids : MonoBehaviour
 
         sizeX = indexingMaxX - indexingMinX + 1;
         sizeY = indexingMaxY - indexingMinY + 1;
-        players = new List<PlayerController>[sizeX, sizeY];
+        players = new List<GameObject>[sizeX, sizeY];
         for (int i = 0; i < sizeX; i++)
         {
             for (int j = 0; j < sizeY; j++)
             {
-                players[i, j] = new List<PlayerController>();
+                players[i, j] = new List<GameObject>();
             }
         }
-        //    players = new List<PlayerController>[index]
     }
   
 
     //플레이어의 위치를 기록
-    public void UpdatePlayerInGrid(PlayerController pc, ref int refX, ref int refY, bool init)
+    public void UpdatePlayerInGrid(GameObject pc, ref int refX, ref int refY, bool init)
     {
         //10f 간격으로 배열에 배치
-        Vector3 playerLoc = pc.Transforms.position;
+        Vector3 playerLoc = pc.transform.position;
         int x = Mathf.FloorToInt(playerLoc.x / 10) - indexingMinX;
         int y = Mathf.FloorToInt(playerLoc.z / 10) - indexingMinY;
         if (init)
         {
-            playerControllersDic[pc.GetInstanceID()] = pc;
+            int id = pc.GetInstanceID();
+            pc.GetComponent<IIdentifiable>().ID = id;
+            playerControllersDic[id] = pc;
 
             refX = x;
             refY = y;
             players[x, y].Add(pc);
+            GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Player);
         }
         else
         {
@@ -83,18 +85,19 @@ public class WorldGrids : MonoBehaviour
         }
     }
 
-    public void RemovePlayer(PlayerController pc, ref int refX, ref int refY)
+    public void RemovePlayer(GameObject pc, ref int refX, ref int refY)
     {
-        Vector3 playerLoc = pc.Transforms.position;
+        Vector3 playerLoc = pc.transform.position;
         int x = Mathf.FloorToInt(playerLoc.x / 10) - indexingMinX;
         int y = Mathf.FloorToInt(playerLoc.z / 10) - indexingMinY;
 
         playerControllersDic.Remove(pc.GetInstanceID());
         players[refX, refY].Remove(pc);
+        GameInstance.Instance.minimapUI.ChangeList(MinimapIconType.Player);
     }
 
     //적의 위치를 기반으로 그리드 탐색
-    public List<PlayerController> FindPlayersInGrid(Transform transforms, ref List<PlayerController> lists)
+    public List<GameObject> FindPlayersInGrid(Transform transforms, ref List<GameObject> lists)
     {
         lists.Clear();
         Vector3 currentPosition = transforms.position;   
@@ -108,14 +111,14 @@ public class WorldGrids : MonoBehaviour
 
             if (ValidCheck(posX, posY)) //인덱스 유효성 체크
             {
-                List<PlayerController> controllers = players[posX, posY];
+                List<GameObject> controllers = players[posX, posY];
                 int preCount = lists.Count;
                 lists.AddRange(controllers);
 
                 for (int j = lists.Count - 1; j >= preCount; j--)
                 {
-                    PlayerController controller = controllers[j];
-                    Vector3 dir = controller.Transforms.position - currentPosition;
+                    GameObject controller = controllers[j];
+                    Vector3 dir = controller.transform.position - currentPosition;
                     float distance = dir.magnitude;
                     dir = Vector3.Normalize(dir);
                    // if (!Physics.Raycast(currentPosition,dir,distance,layerMask)) lists.RemoveAt(j); // 플레이어와 적 사이에 장애물이 있지 않을 때에만
@@ -132,7 +135,7 @@ public class WorldGrids : MonoBehaviour
         return lives;
     }
 
-    public Dictionary<int, PlayerController> FindPlayerDictinary()
+    public Dictionary<int, GameObject> FindPlayerDictinary()
     {
 
         return playerControllersDic;
@@ -247,6 +250,7 @@ public class WorldGrids : MonoBehaviour
         switch (type)
         {
             case MinimapIconType.None:
+                dic = playerControllersDic;
                 break;
             case MinimapIconType.Object:
                 dic = objects;

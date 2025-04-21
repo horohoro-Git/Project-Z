@@ -52,6 +52,13 @@ public class CharacterProfileUI : MonoBehaviour, IPointerUpHandler, IPointerDown
             eventTrigger.triggers.Add(dragEnd);*/
         if (avatar != null)
         {
+            Animator modelAnimator = avatar.GetComponent<Animator>();
+            modelAnimator.SetLayerWeight(1, 0);
+            modelAnimator.SetLayerWeight(2, 0);
+            modelAnimator.SetLayerWeight(3, 0);
+            modelAnimator.SetLayerWeight(4, 0);
+            modelAnimator.SetLayerWeight(5, 0);
+            modelAnimator.SetLayerWeight(6, 0);
             avatar.ShowCharacter(true);
         }
     }

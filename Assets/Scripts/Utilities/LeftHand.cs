@@ -53,7 +53,6 @@ public class LeftHand : MonoBehaviour
 
         hitColliders = Physics.OverlapBox(boxCenter, boxSize);
 
-
         foreach (var collider in hitColliders)
         {
             int layer = gameObject.layer;
