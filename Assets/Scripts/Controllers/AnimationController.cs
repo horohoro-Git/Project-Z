@@ -116,7 +116,7 @@ public class AnimationController : MonoBehaviour
     public void StopAxeSlash()
     {
       //  GetPlayerController.equipWeapon.GetComponent<WeaponTrail>().Trail(false);
-       GetPlayerController.equipItem.GetComponent<Weapon>().StopAttack();
+        GetPlayerController.equipItem.GetComponent<Weapon>().StopAttack();
 
     }
 }

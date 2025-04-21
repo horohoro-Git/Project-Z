@@ -292,3 +292,6 @@ Several bug fixes
 
 04/20
 Changed animation layers to activate only when necessary, and optimized minimap icons to avoid reinitializing them every tick
+
+04/21
+The grid system has been converted to use shaders, enemies now track NPCs as well, minimap icons have been added for NPCs.

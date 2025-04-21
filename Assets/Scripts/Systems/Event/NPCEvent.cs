@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Xml;
 using UnityEngine;
 
 public class NPCEvent : MonoBehaviour
@@ -14,6 +15,7 @@ public class NPCEvent : MonoBehaviour
         AllEventManager.customEvents[1000002] = (Action<NPCEventStruct, NPCController>)(Friendly);
         AllEventManager.customEvents[1000003] = (Action<NPCEventStruct, NPCController>)(Hostile);
         AllEventManager.customEvents[1000004] = (Action<NPCEventStruct, NPCController>)(Zombie);
+        AllEventManager.customEvents[1000011] = (Action<NPCEventStruct, NPCController>)(ZombieClear);
 
     }
     //초기 이벤트
@@ -23,6 +25,7 @@ public class NPCEvent : MonoBehaviour
         NPCEventHandler.Subscribe(1000002, (Action<NPCEventStruct, NPCController>)AllEventManager.customEvents[1000002]);
         NPCEventHandler.Subscribe(1000003, (Action<NPCEventStruct, NPCController>)AllEventManager.customEvents[1000003]);
         NPCEventHandler.Subscribe(1000004, (Action<NPCEventStruct, NPCController>)AllEventManager.customEvents[1000004]);
+        NPCEventHandler.Subscribe(1000011, (Action<NPCEventStruct, NPCController>)AllEventManager.customEvents[1000011]);
 
        // NPCEventHandler.Publish(1000001, null);
     }
@@ -48,5 +51,10 @@ public class NPCEvent : MonoBehaviour
     void Zombie(NPCEventStruct nPCEventStruct, NPCController controller)
     {
         controller.ChangeEvent(nPCEventStruct);
+    }
+
+    void ZombieClear(NPCEventStruct nPCEventStruct, NPCController controller)
+    {
+        
     }
 }

@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.PlayerSettings;
 
 public class MinimapUI : MonoBehaviour
 {
     public RectTransform playerRectTransform;
+    public RectTransform npcRectTransform;
     public RectTransform enemyRectTransform;
     public RectTransform objectRectTransform;
  //   Camera camera;
@@ -17,6 +19,8 @@ public class MinimapUI : MonoBehaviour
     public Sprite playerSprite;
     public Sprite itemSprite;
     public Sprite enemySprite;
+    public Sprite friendlySprite;
+    public Sprite neturalSprite;
     public Sprite itemBoxSprite;
 
     [SerializeField]
@@ -29,6 +33,7 @@ public class MinimapUI : MonoBehaviour
     List<GameObject> players = new List<GameObject>();
     List<GameObject> gameObjects = new List<GameObject>();
     List<GameObject> lives = new List<GameObject>();
+    List<GameObject> npcs = new List<GameObject>();
     List<GameObject> itemBoxes = new List<GameObject>();
 
     Dictionary<int, MinimapIcon> icons = new Dictionary<int, MinimapIcon>();
@@ -51,124 +56,18 @@ public class MinimapUI : MonoBehaviour
        // RemoveIcons();
         if (GameInstance.Instance.GetPlayers.Count > 0)
         {
-            int playerId = GameInstance.Instance.GetPlayers[0].GetComponent<IIdentifiable>().ID;
-            Transform transforms = GameInstance.Instance.GetPlayers[0].Transforms;
-
-            MinimapIcon playerIcon;
-            if (icons.ContainsKey(playerId))
-            {
-                playerIcon = icons[playerId];
-                destroyIcons.Remove(playerId);
-            }
-            else
-            {
-                playerIcon = CreateIcon();
-                icons[playerId] = playerIcon;
-            }
-            playerIcon.image.sprite = playerSprite;
-            playerIcon.GetRectTransform.SetParent(playerRectTransform);
-            playerIcon.GetRectTransform.localPosition = Vector3.zero; //플레이어 위치 중앙 기준
-            playerIcon.GetRectTransform.localRotation = Quaternion.Euler(0, 0,  -(transforms.eulerAngles.y - 45) + 180); //플레이어 방향
-            playerIcon.GetRectTransform.sizeDelta = new Vector2(20, 20);
-
+            Transform transforms = GameInstance.Instance.GetPlayers[0].transform;
             if (GameInstance.Instance.worldGrids != null)
             {
-              //  List<GameObject> gameObjects = GameInstance.Instance.worldGrids.ReturnObjects();
-
-                for (int i = 0; i < gameObjects.Count; i++)
-                {
-                    Vector3 pos = gameObjects[i].transform.position - transforms.position;
-                    float rotationAngle = 45f;
-                    Quaternion rotation = Quaternion.Euler(0, 0, rotationAngle);
-                    Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
-                    if(rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
-                    {
-                        int objectId = gameObjects[i].GetComponent<IIdentifiable>().ID;
-                        MinimapIcon itemIcon;
-                        if (icons.ContainsKey(objectId))
-                        {
-                            itemIcon = icons[objectId];
-                            destroyIcons.Remove(objectId);
-                        }
-                        else
-                        {
-                            itemIcon = CreateIcon();
-                            icons[objectId] = itemIcon;
-                        }
-                        itemIcon.image.sprite = itemSprite;
-                        itemIcon.GetRectTransform.SetParent(objectRectTransform);
-                        itemIcon.GetRectTransform.localPosition = rotatedPosition;
-                        itemIcon.GetRectTransform.localRotation = Quaternion.Euler(Vector3.zero);
-                        itemIcon.GetRectTransform.sizeDelta = new Vector2(20, 20);
-                    }
-                }
-
-               // List<GameObject> lives = GameInstance.Instance.worldGrids.ReturnLives();
-
-                for(int i = 0;i < lives.Count;i++)
-                {
-                    Transform livesTransform = lives[i].transform;
-                    Vector3 pos = livesTransform.position - transforms.position;
-
-                    float rotationAngle = 45f;
-                    Quaternion rotation = Quaternion.Euler(0, 0, rotationAngle);
-                    Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
-                    if (rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
-                    {
-                        int enemyId = lives[i].GetComponent<IIdentifiable>().ID;
-                        MinimapIcon enemyIcon;
-                        if (icons.ContainsKey(enemyId))
-                        {
-                            enemyIcon = icons[enemyId];
-                            destroyIcons.Remove(enemyId);
-                        }
-                        else
-                        {
-                            enemyIcon = CreateIcon();
-                            icons[enemyId] = enemyIcon;
-                        }
-                        enemyIcon.image.sprite = enemySprite;
-                        enemyIcon.GetRectTransform.SetParent(enemyRectTransform);
-                        enemyIcon.GetRectTransform.localPosition = rotatedPosition;
-                        enemyIcon.GetRectTransform.localRotation = Quaternion.Euler(0, 0, -(livesTransform.eulerAngles.y - 45) + 180);
-                        enemyIcon.GetRectTransform.sizeDelta = new Vector2(20, 20);
-                    }
-                }
-
-                for (int i = 0; i < itemBoxes.Count; i++)
-                {
-                    Transform itemBoxTransform = itemBoxes[i].transform;
-                    Vector3 pos = itemBoxTransform.position - transforms.position;
-
-                    float rotationAngle = 45f;
-                    Quaternion rotation = Quaternion.Euler(0, 0, rotationAngle);
-                    Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
-                    if (rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
-                    {
-                        int boxId = itemBoxes[i].GetComponent<IIdentifiable>().ID;
-                        MinimapIcon boxIcon;
-                        if (icons.ContainsKey(boxId))
-                        {
-                            boxIcon = icons[boxId];
-                            destroyIcons.Remove(boxId);
-                        }
-                        else
-                        {
-                            boxIcon = CreateIcon();
-                            icons[boxId] = boxIcon;
-                        }
-                        boxIcon.image.sprite = itemBoxSprite;
-                        boxIcon.GetRectTransform.SetParent(objectRectTransform);
-                        boxIcon.GetRectTransform.localPosition = rotatedPosition;
-                        boxIcon.GetRectTransform.sizeDelta = new Vector2(30, 30);
-                        boxIcon.GetRectTransform.localRotation = Quaternion.Euler(Vector3.zero);
-                    }
-                }
+                MinimapUpdate(transforms, MinimapIconType.Player);
+                MinimapUpdate(transforms, MinimapIconType.Object);
+                MinimapUpdate(transforms, MinimapIconType.Enemy);
+                MinimapUpdate(transforms, MinimapIconType.NPC);
+                MinimapUpdate(transforms, MinimapIconType.ItemBox);
             }
         }
         RemoveIcons();
     }
-
 
     public void ChangeList(MinimapIconType minimapIconType)
     {
@@ -181,6 +80,9 @@ public class MinimapUI : MonoBehaviour
                 break;
             case MinimapIconType.Enemy:
                 lives = GameInstance.Instance.worldGrids.ReturnObjects(minimapIconType);
+                break;
+            case MinimapIconType.NPC:
+                npcs = GameInstance.Instance.worldGrids.ReturnObjects(minimapIconType);
                 break;
             case MinimapIconType.Object:
                 gameObjects = GameInstance.Instance.worldGrids.ReturnObjects(minimapIconType);
@@ -253,6 +155,103 @@ public class MinimapUI : MonoBehaviour
         }*/
     }
 
+    //icons : 현재 프레임에 추가 될 아이콘들
+    //destoryIcons : 이전 프레임의 icons로 현재 프레임의 icons와 비교하고 제거
+    void MinimapUpdate(Transform transforms, MinimapIconType minimapIconType)
+    {
+        RectTransform rect = objectRectTransform; // 깊이 역할
+        Vector2 sizeDelta = new Vector2(20, 20);  // 아이콘 크기 
+        List<GameObject> list = new List<GameObject>();
+        Sprite sprite = null;
+        switch (minimapIconType)
+        {
+            case MinimapIconType.None:
+                break;
+            case MinimapIconType.Player:
+                list = players;
+                sprite = playerSprite;
+                rect = playerRectTransform;
+                break;
+            case MinimapIconType.Enemy:
+                list = lives;
+                sprite = enemySprite;
+                rect = enemyRectTransform;
+                break;
+            case MinimapIconType.NPC:
+                list = npcs;
+                rect = npcRectTransform;
+                break;
+            case MinimapIconType.Object:
+                list = gameObjects;
+                sprite = itemSprite;
+                rect = objectRectTransform;
+                break;
+            case MinimapIconType.ItemBox:
+                list = itemBoxes;
+                sprite = itemBoxSprite;
+                sizeDelta = new Vector2(30, 30);
+                rect = objectRectTransform;
+                break;
+        }
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            Transform listTransform = list[i].transform;
+            Vector3 pos = listTransform.position - transforms.position;
+
+            float rotationAngle = 45f;
+            Quaternion rotation = Quaternion.Euler(0, 0, rotationAngle);
+            Vector3 rotatedPosition = rotation * new Vector3(pos.x * 4, pos.z * 4, 0);
+            if (rotatedPosition.x < 100 && rotatedPosition.y < 100 && rotatedPosition.x > -100 && rotatedPosition.y > -100)
+            {
+                int iconId = list[i].GetComponent<IIdentifiable>().ID;  // 오브젝트의 ID를 기준으로 판별
+                MinimapIcon minimapIcon;
+                if (icons.ContainsKey(iconId))
+                {
+                    minimapIcon = icons[iconId];
+                    destroyIcons.Remove(iconId);
+                }
+                else
+                {
+                    minimapIcon = CreateIcon();
+                    icons[iconId] = minimapIcon;
+                }
+                if(minimapIconType == MinimapIconType.NPC)
+                {
+                    NPCDispositionType dispositionType = list[i].GetComponent<NPCController>().eventStruct.npc_disposition;
+                    switch (dispositionType)
+                    {
+                        case NPCDispositionType.None:
+                            break;
+                        case NPCDispositionType.Netural:
+                            sprite = neturalSprite;
+                            break;
+                        case NPCDispositionType.Friendly:
+                            sprite = friendlySprite;
+                            break;
+                        case NPCDispositionType.Hostile:
+                            sprite = enemySprite;
+                            break;
+                    }
+
+                    minimapIcon.image.sprite = sprite;
+                }
+                else minimapIcon.image.sprite = sprite;
+                minimapIcon.GetRectTransform.SetParent(rect);
+                minimapIcon.GetRectTransform.localPosition = rotatedPosition;
+                minimapIcon.GetRectTransform.sizeDelta = sizeDelta;
+                if (minimapIconType == MinimapIconType.ItemBox || minimapIconType == MinimapIconType.Object)
+                {
+                    minimapIcon.GetRectTransform.localRotation = Quaternion.Euler(Vector3.zero);
+                }
+                else
+                {
+                    minimapIcon.GetRectTransform.localRotation = Quaternion.Euler(0, 0, -(listTransform.eulerAngles.y - 45) + 180);
+
+                }
+            }
+        }
+    }
     private void OnDestroy()
     {
         while (deactivatedMinimapIcons.Count > 0) deactivatedMinimapIcons.Dequeue();

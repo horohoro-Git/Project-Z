@@ -97,6 +97,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         GameInstance.Instance.housingSystem.RemoveRoofInWorld();
         GameInstance.Instance.housingSystem.TempStorage();
         GameInstance.Instance.playerController.RemoveAction();
+      //  GameInstance.Instance.playerController.AddCameraAction();
         GameInstance.Instance.playerController.Rigid.velocity = Vector3.zero;
     }
 
@@ -121,6 +122,7 @@ public class CreatableUISystem : MonoBehaviour, IUIComponent
         GameInstance.Instance.housingSystem.ResetMaterials();
         GameInstance.Instance.housingSystem.CheckRoofInWorld();
         GameInstance.Instance.playerController.AddAction();
+    //    GameInstance.Instance.playerController.RemoveCameraAction();
     }
 
     void ChangeSelectionType(StructureState structureState)
