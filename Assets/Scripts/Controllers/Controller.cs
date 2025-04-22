@@ -68,8 +68,56 @@ public class Controller : MonoBehaviour
 
     protected bool turnRotate;
     protected Vector3 rotateVector;
+    protected Queue<InputBuffer> inputBuffer = new Queue<InputBuffer>();
+    protected float delayTimer = 0f; 
+    protected float inputDelay = 0.02f;
+    float inputTime;
+    Vector3 latest;
+    bool stopped;
+    Vector3 realVector;
+
+    public struct InputBuffer
+    {
+        public Vector3 vector;
+        public float timer;
+        public InputBuffer(Vector3 vector, float timer)
+        {
+            this.vector = vector;
+            this.timer = timer;
+        }
+    };
+
     void FixedUpdate()
     {
+        if (inputBuffer.Count > 0)
+        {
+            InputBuffer buffer = inputBuffer.Peek();
+            if (realVector == Vector3.zero || inputTime >= buffer.timer + inputDelay)
+            {
+                realVector = buffer.vector;
+                inputTime = buffer.timer;
+                inputBuffer.Dequeue();
+            }
+            else
+            {
+                inputTime = Time.time;
+            }
+        }
+        else
+        {
+            inputTime = Time.time;
+        }
+
+        if (moveDir == Vector3.zero)
+        {
+            realVector = Vector3.zero;
+            inputBuffer.Clear();
+        }
+        if (realVector == moveDir)
+        {
+            inputBuffer.Clear();
+        }
+
         if (turnRotate)
         {
             Vector3 r = (rotateVector - Transforms.position);
@@ -103,9 +151,10 @@ public class Controller : MonoBehaviour
             viewSpeed = currentMoveSpeed;
             return;
         }
-        if (moveDir.magnitude > 0)
+        if (realVector.magnitude > 0)
         {
-            viewDir = moveDir;
+            //if (realVector.magnitude < 0.1f) return;
+            viewDir = realVector;
             viewSpeed = currentMoveSpeed;
             currentMoveSpeed = Mathf.SmoothDamp(currentMoveSpeed, moveSpeed * moveSpeedMutiplier, ref velocity, 0.2f);
             Rigid.velocity = viewDir * Time.fixedDeltaTime * currentMoveSpeed * moveSpeedMutiplier;
@@ -119,28 +168,29 @@ public class Controller : MonoBehaviour
         }
 
         if (currentMoveSpeed < 50) viewDir = Vector3.zero;
-
-      
-     //   Debug.Log(viewDir);
-
     }
-
+    private Vector3 lastValidDirection;
+    private bool wasMoving;
+    int rotateTick = 2;
     void Rotate()
     {
         if (viewDir != Vector3.zero)
         {
             float dot = Vector3.Dot(Transforms.forward.normalized, viewDir);
-            if(dot < -0.1f) turn = true; else turn = false;
+
+            if (dot < -0.1f) turn = true; else turn = false;
             Quaternion targetRotation = Quaternion.LookRotation(viewDir);
             currentDir = dot;
+
+
             if (longturn)
             {
                 Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 400 * Time.fixedDeltaTime);
             }
             if (!longturn)
             {
-               if(sprint) Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 300 * Time.fixedDeltaTime);
-               else Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 300 * Time.fixedDeltaTime);
+                if (sprint) Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 300 * Time.fixedDeltaTime);
+                else Transforms.rotation = Quaternion.RotateTowards(Transforms.rotation, targetRotation, 300 * Time.fixedDeltaTime);
             }
         }
     }

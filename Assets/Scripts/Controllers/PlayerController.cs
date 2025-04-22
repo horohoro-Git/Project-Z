@@ -390,8 +390,10 @@ public class PlayerController : Controller, IDamageable, IIdentifiable
     void MoveHandle(InputAction.CallbackContext callback)
     {
         Vector2 dir = callback.ReadValue<Vector2>();
-        
+
         moveDir = VectorUtility.RotateY(new Vector3(dir.x, 0, dir.y), 45);
+        InputBuffer buffer = new InputBuffer(moveDir, Time.time);
+        inputBuffer.Enqueue(buffer);
         modelAnimator.SetInteger("state", 1);
         if (lastVector != dir)
         {
@@ -399,12 +401,14 @@ public class PlayerController : Controller, IDamageable, IIdentifiable
             float dot = Vector3.Dot(Transforms.forward.normalized, moveDir);
             if (dot < -0.1f) longturn = true; else longturn = false;
         }
+        Debug.Log("ÀÌµ¿ ½ÃÀÛ " + dir);
     }
+  
     void MoveStop(InputAction.CallbackContext callback)
     {
-        Debug.Log("MoveStop");
         modelAnimator.SetInteger("state", 0);
         moveDir = Vector3.zero;
+        Debug.Log("ÀÌµ¿ ¸ØÃã");
     }
 
     void Run(InputAction.CallbackContext callback)

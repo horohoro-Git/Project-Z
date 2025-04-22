@@ -295,3 +295,6 @@ Changed animation layers to activate only when necessary, and optimized minimap 
 
 04/21
 The grid system has been converted to use shaders, enemies now track NPCs as well, minimap icons have been added for NPCs.
+
+04/22
+Add an input delay to diagonal movement so that stopping the player's diagonal movement feels more natural
